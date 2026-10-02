@@ -1,0 +1,29 @@
+{
+  "id": "topics-01",
+  "title": "Discover and use /cmd_vel",
+  "description": "Mission: discover the topic that controls the robot. Publish a velocity command and travel at least 1 metre.",
+  "steps": [
+    "Inspect the nodes and list the available topics.",
+    "Find the velocity topic and inspect its message type.",
+    "Inspect the Twist interface, then publish a single command.",
+    "Watch the robot move, then check your solution."
+  ],
+  "hints": [
+    "Start with ros2 node list. Nodes are participants in the ROS graph.",
+    "Use ros2 topic list. Which name suggests a velocity command?",
+    "Try ros2 topic type /cmd_vel and ros2 interface show geometry_msgs/msg/Twist.",
+    "Publish once: ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0.6}, angular: {z: 0.0}}\""
+  ],
+  "checks": [
+    {
+      "type": "topic_discovered"
+    },
+    {
+      "type": "twist_published"
+    },
+    {
+      "type": "robot_moved",
+      "distance": 1
+    }
+  ]
+}

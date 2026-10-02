@@ -1,0 +1,25 @@
+<!doctype html><meta charset="utf-8"><title>ROS2Learn browser smoke test</title><pre id="result">RUNNING</pre><iframe width="1200" height="1100"></iframe><script type="module">
+const frame=document.querySelector('iframe'),result=document.querySelector('#result');
+const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+const assert=(value,message)=>{if(!value)throw new Error(message);};
+try {
+// Use a deterministic animation clock: headless virtual time does not drive rAF.
+const html=await (await fetch('../')).text();
+frame.srcdoc=html.replace('<head>','<head><base href="../"><script>window.requestAnimationFrame=callback=>setTimeout(()=>callback(performance.now()),1000/60);<'+ '/script>');
+for(let i=0;i<100;i++){if(frame.contentDocument?.querySelector('#command')?.disabled===false)break;await wait(50);}
+const d=frame.contentDocument,$=id=>d.getElementById(id);
+assert($('command')&&!$('command').disabled,'Lesson did not load');
+const command=text=>{$('command').value=text;$('terminal-form').requestSubmit();};
+command('ros2 node list');assert($('output').textContent.includes('/simulator'),'Node missing');
+command('ros2 topic list');assert($('output').textContent.includes('/cmd_vel'),'Topic missing');
+command('ros2 topic type /cmd_vel');assert($('output').textContent.includes('geometry_msgs/msg/Twist'),'Type missing');
+command('ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.6}}"');
+await wait(3000);$('check').click();
+assert($('status').textContent.startsWith('Lab complete'),'Motion/check failed: '+$('distance').textContent);
+assert($('feedback').querySelectorAll('.pass').length===3,'Expected three passing checks');
+$('hint').click();assert($('hints').children.length===1,'Hint missing');
+$('reset').click();$('check').click();assert($('feedback').querySelectorAll('.fail').length===3,'Reset failed');assert($('distance').textContent==='0.00 m','Distance not reset');assert($('hints').children.length===0,'Hints not reset');
+command('bad command');assert($('output').textContent.includes('Unsupported command'),'Error missing');
+result.textContent='PASS: loading, CLI, motion, checking, hints, reset and errors';
+}catch(error){result.textContent='FAIL: '+error.message;}
+</script>
