@@ -8,7 +8,7 @@ export function parseMessage(text) {
 }
 export function execute(runtime, input) {
   const command=input.trim().replace(/\s+/g,' ');
-  if(command==='help') return 'Commands: ros2 node list; ros2 topic list; ros2 topic type TOPIC; ros2 topic info TOPIC; ros2 interface show geometry_msgs/msg/Twist; ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.6}}". Lab 01 supports single publications only. This is not a Linux shell.';
+  if(command==='help') return 'Commands: ros2 topic echo TOPIC [--field FIELD] [--once]; ros2 node list; ros2 topic list; ros2 topic type TOPIC; ros2 topic info TOPIC; ros2 interface show geometry_msgs/msg/Twist; ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.6}}". Lab 01 supports single publications only. This is not a Linux shell.';
   if(command==='ros2 node list') return [...runtime.nodes].join('\n');
   if(command==='ros2 topic list') { runtime.discovered=true; return [...runtime.topics.keys()].join('\n'); }
   const inspect=command.match(/^ros2 topic (type|info) (\/\S+)$/);

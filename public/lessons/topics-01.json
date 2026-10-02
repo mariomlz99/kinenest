@@ -6,7 +6,8 @@
     "Inspect the nodes and list the available topics.",
     "Find the velocity topic and inspect its message type.",
     "Inspect the Twist interface, then publish a single command.",
-    "Watch the robot move, then check your solution."
+    "Watch the robot move, then check your solution.",
+    "Optional: echo /odom in another terminal to watch pose and velocity change."
   ],
   "hints": [
     "Start with ros2 node list. Nodes are participants in the ROS graph.",

@@ -9,3 +9,7 @@ Validated on 2026-10-02 with bundled Node v24.21.0 and installed Google Chrome i
 - Inspected a 1440 px Chrome screenshot of the interface.
 
 The interactive Chrome connector was unavailable. Firefox/Edge/Safari have not been tested. GitHub Pages deployment must still be verified after push and enabling GitHub Actions as the repository's Pages source. No Python execution is included in this milestone.
+
+## Multiple terminals — 2026-10-03
+
+Eleven Node tests pass, including fan-out, no replay, odometry timing/pose, echo once, invalid fields, subscriber lifecycle and reset. Extended headless Chrome test passes the original lab plus adding a third terminal, simultaneous odometry and Twist echoes, Ctrl+C, Stop, Close and active-session reset. Static build and project-subpath loading pass.

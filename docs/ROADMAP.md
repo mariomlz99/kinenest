@@ -2,7 +2,7 @@
 
 ## Now
 
-Lab 01: graph introspection, Twist, terminal, 2D motion, checking/reset, tests and Pages workflow. Verify deployment with the lecturer before expanding.
+Lab 01: graph introspection, Twist, multiple terminals, live echo and ideal odometry, 2D motion, checking/reset, tests and Pages workflow. Verify deployment with the lecturer before expanding.
 
 ## Next
 
@@ -10,7 +10,7 @@ After Lab 01 acceptance: real Python via Pyodide, minimal rclpy/Twist, shared ru
 
 ## Later
 
-After CLI + Python stabilise: subscriptions, timers, odometry/scan samples, then Labs 02 and 03.
+After CLI + Python stabilise: Python subscriptions, timers and scan samples, then Labs 02 and 03.
 
 ## Ideas
 

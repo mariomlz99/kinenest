@@ -59,7 +59,32 @@ Official instructions: https://docs.github.com/en/pages/getting-started-with-git
 
 Wait two seconds and Check solution: all three checks pass, distance 1.20 m. Reset and check again: all incomplete. An invalid command should produce a readable error.
 
-The simulated controller holds a command for two seconds then stops; this is not a ROS 2 guarantee. Only linear.x and angular.z can be nonzero. Limits: 2 m/s and 3 rad/s. Unsupported axes are rejected. The parser supports JSON or simple YAML flow mappings, not full YAML. Publication requires --once; continuous publishing is unsupported. /odom and /scan are graph placeholders without samples. The one-shot CLI publisher has exited before the next command runs.
+The simulated controller holds a command for two seconds then stops; this is not a ROS 2 guarantee. Only linear.x and angular.z can be nonzero. Limits: 2 m/s and 3 rad/s. Unsupported axes are rejected. The parser supports JSON or simple YAML flow mappings, not full YAML. Publication requires --once; continuous publishing is unsupported. /odom publishes ideal pose and velocity at 5 Hz of simulated time; /scan remains a placeholder without samples. The one-shot CLI publisher has exited before the next command runs.
+
+## Multiple simulated terminals
+
+Two terminals open initially. Use **+ New terminal** to add more, and Close to remove a terminal. They share the same robot and ROS graph within the current page, with independent history and output. Separate browser tabs are separate simulations.
+
+In terminal 2, start observing position:
+
+    ros2 topic echo /odom --field pose.pose.position
+
+In terminal 1, publish:
+
+    ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.6}, angular: {z: 0.3}}"
+
+Position changes while the robot moves. Use Ctrl+C (with focus in that terminal) or Stop echo to return to its prompt. Full messages and other fields are supported:
+
+    ros2 topic echo /odom
+    ros2 topic echo /odom --field twist.twist
+    ros2 topic echo /odom --once
+    ros2 topic echo /cmd_vel
+
+Start the /cmd_vel echo before publishing: it observes each new command once, without replaying old messages or inventing commands while the robot moves. /odom streams at 5 Hz even at rest, with position in the odom frame, quaternion orientation and velocity in base_link. Covariance is zero in this ideal, noiseless simulation; no TF is broadcast. Echo supports --field and --once after the topic, not the full ROS CLI flag set.
+
+Echo nodes appear in node list and topic subscription counts while active. Stop, Close and Reset remove them. Reset preserves the open panels but clears all histories, output and running commands. Each terminal retains at most 100 history entries and 24,000 output characters; scrolling up pauses automatic scrolling. Live logs are keyboard-focusable but not continuously announced by screen readers.
+
+Syntax reference: https://github.com/ros2/ros2cli/blob/jazzy/ros2topic/ros2topic/verb/echo.py
 
 ## Structure
 
