@@ -154,3 +154,13 @@ Publication attempt: git push origin main failed with exit 128 because this sess
 ## Multi-agent review hardening — 2026-10-03
 
 Frozen revision 8679ae1; implementation b531505, production asset aad49715ede0. All 49 unit tests pass; the full built-site six-session course and real C++ 2.1/2.4 pass Chrome 141.0.7390.107 and Firefox 151.0.4. Targeted checker bypasses now fail; alternate inverse-TF control passes; seven Python fault inputs recover.200 responsive cases show no page overflow. Review branch only: no push/deploy/domain migration. See [full review report](review/FINAL_REVIEW_REPORT.md) for provenance, screenshots, commands, evidence and remaining physical-device/network/translation gaps.
+
+## Final release baseline — 4 October 2026
+
+Starting branch: review-hardening, commit f87d2e6cdbe5cdfd6a5da2539863bae61c6b9334. Compared with main 8679ae1008806352ce89efeb2d9cc651de557261; manually inspected production/checker/responsive/diagnostic changes before release work. Three pre-existing untracked files (much, otherwise, provide) are left untouched.
+
+Deleted generated dist and ran a clean baseline using the package scripts' exact Node entry points (npm is not on this tool environment's PATH): unit 49/49; build PASS; complete Chrome course PASS; complete Firefox course PASS; real C++ Chrome PASS; real C++ Firefox PASS. Public C++ 2.1 and 2.4, compiler diagnostics, runaway Stop, Reset and Compare passed. Build asset version aad49715ede0.
+
+Public GitHub Pages build-info still identifies 8679ae1. kinenest.com has no A record in this workstation's DNS response (ENODATA), and HTTPS build-info cannot be fetched. No domain deployment is claimed.
+
+Transition diagnosis: under a deliberately delayed 2-second transitions.css request, the first click appends an unstyled element at y=2390px, position static, animation none at 100ms. Navigation still occurs after one second. Normal cached CSS renders correctly. This reproduces a first-click CSS race; it does not establish the maintainer's exact network/browser conditions.
