@@ -63,11 +63,12 @@ Checks observe behaviour and accept different solutions. They are formative, not
 
 ## Local maintainer setup
 
-Students need only a browser. Maintainers need Node 22+ for tests/build and Python 3 for the simple preview server; no npm dependencies are installed.
+Students need only a browser. Maintainers need Node 22+ for tests/build and Python 3 for the simple preview server. The pinned Wrangler development dependency is used only for Cloudflare deployment and local routing checks.
 
 ~~~bash
 git clone https://github.com/mariomlz99/ros2learn.git
 cd ros2learn
+npm ci
 npm run dev
 ~~~
 
@@ -88,11 +89,11 @@ node scripts/check-browser.mjs chrome --built --suite=tf-browser
 
 ## Deployment
 
-GitHub repository Settings → Pages → Source: **GitHub Actions**. Pushes to main run tests, build and the complete Chrome course and experimental C++ suites before publishing dist/. Pull requests test without deploying.
+GitHub repository Settings → Pages → Source: **GitHub Actions**. Pushes to main run tests, build and complete Chrome and Firefox course/C++ suites, visible-transition and root-path acceptance before publishing dist/. Pull requests test without deploying.
 
 Production contains static assets only. The allowlist excludes tests, reference programs, docs and private development artifacts. Content-versioned relative paths work under /ros2learn/ and other project prefixes. The existing personal website is a separate repository.
 
-The repository remains ros2learn for now. A later move to kinenest requires explicit approval; see [BRANDING.md](docs/BRANDING.md). Update the source and site URLs in src/ui/product.js and documentation when migrating. No custom domain is configured.
+Cloudflare Workers Static Assets is prepared in wrangler.jsonc, serving dist/ with no application Worker. See the [exact build, preview and release steps](docs/CLOUDFLARE_RELEASE.md). The working GitHub Pages site remains available while the temporary Workers host and kinenest.com are validated. Repository/source/canonical migration follows that validation; the domain is not yet claimed as live.
 
 To verify a deployed commit with the same checks used after Pages publishes:
 

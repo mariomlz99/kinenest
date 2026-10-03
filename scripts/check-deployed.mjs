@@ -2,7 +2,7 @@ import {launch,wait} from './browser-driver.mjs';
 import {readFile,mkdir,writeFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {serveDirectory} from './static-server.mjs';
-const local=process.argv.includes('--local')?await serveDirectory(fileURLToPath(new URL('../dist/',import.meta.url))):null;
+const local=process.argv.includes('--local')?await serveDirectory(fileURLToPath(new URL('../dist/',import.meta.url)),{prefix:process.argv.find(a=>a.startsWith('--prefix='))?.slice(9)??'/ros2learn/'}):null;
 process.on('exit',()=>local?.close());
 const browser=process.argv[2]??'chrome',arg=name=>process.argv.find(a=>a.startsWith('--'+name+'='))?.split('=').slice(1).join('='),base=new URL(local?.url??arg('url')??'https://mariomlz99.github.io/ros2learn/'),expected=arg('commit'),root=new URL('../',import.meta.url);
 if(!expected||!/^[a-f0-9]{40}$/.test(expected))throw Error('Pass --commit=<full expected Git SHA>; old deployments are not valid test targets.');

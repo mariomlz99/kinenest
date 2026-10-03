@@ -10,10 +10,14 @@
     "test:chrome": "node scripts/check-course.mjs chrome",
     "test:firefox": "node scripts/check-course.mjs firefox",
     "test:cpp": "node scripts/check-cpp.mjs",
-    "test:deployed": "node scripts/check-deployed.mjs"
+    "test:deployed": "node scripts/check-deployed.mjs",
+    "test:transitions": "node scripts/check-transitions.mjs"
   },
   "engines": {
     "node": ">=22"
   },
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "wrangler": "4.147.0"
+  }
 }
