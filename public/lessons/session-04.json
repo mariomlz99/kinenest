@@ -8,7 +8,8 @@
       "fr": "Configurer votre nœud",
       "es": "Configurar un nodo",
       "de": "Einen Knoten konfigurieren",
-      "pt": "Configurar um nó"
+      "pt": "Configurar um nó",
+      "it": "Configurare il nodo"
     }
   },
   {
@@ -20,7 +21,8 @@
       "fr": "Ajuster sans réécrire",
       "es": "Ajustar sin reiniciar",
       "de": "Ohne Neustart anpassen",
-      "pt": "Ajustar sem reiniciar"
+      "pt": "Ajustar sem reiniciar",
+      "it": "Regolare senza riavviare"
     }
   },
   {
@@ -32,7 +34,8 @@
       "fr": "Publier un message personnalisé",
       "es": "Publicar un mensaje propio",
       "de": "Eigene Nachrichten senden",
-      "pt": "Publicar uma mensagem própria"
+      "pt": "Publicar uma mensagem própria",
+      "it": "Pubblicare un messaggio personalizzato"
     }
   },
   {
@@ -44,7 +47,8 @@
       "fr": "Envoyer un objectif d’action",
       "es": "Enviar un objetivo de acción",
       "de": "Ein Aktionsziel senden",
-      "pt": "Enviar um objetivo de ação"
+      "pt": "Enviar um objetivo de ação",
+      "it": "Inviare un goal a un’action"
     }
   },
   {
@@ -56,7 +60,8 @@
       "fr": "Suivre la progression",
       "es": "Seguir el progreso de una acción",
       "de": "Aktionsfortschritt verfolgen",
-      "pt": "Acompanhar o progresso da ação"
+      "pt": "Acompanhar o progresso da ação",
+      "it": "Seguire il feedback dell’action"
     }
   },
   {
@@ -68,7 +73,8 @@
       "fr": "Optionnel : annuler un objectif",
       "es": "Opcional: cancelar un objetivo",
       "de": "Optional: ein Ziel abbrechen",
-      "pt": "Opcional: cancelar um objetivo"
+      "pt": "Opcional: cancelar um objetivo",
+      "it": "Opzionale: annullare un goal"
     }
   }
 ]

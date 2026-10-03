@@ -92,6 +92,20 @@
         "send_goal_async devolve um identificador do objetivo, não o resultado final.",
         "No callback de aceitação: future.result().get_result_async().add_done_callback(on_result)."
       ]
+    },
+    "it": {
+      "title": "Inviare un goal a un’action",
+      "description": "Chiedi a /drive_distance_server di percorrere un metro e ricevi il risultato finale. Il server controlla il robot simulato.",
+      "steps": [
+        "Usa action list, action type /drive_distance e interface show ros2learn_interfaces/action/DriveDistance.",
+        "Invia DriveDistance.Goal con distance = 1.0.",
+        "Dopo l’accettazione, richiedi get_result_async e leggi result.success e result.final_distance."
+      ],
+      "hints": [
+        "DriveDistance è un’interfaccia didattica personalizzata, non un’action standard di ROS.",
+        "send_goal_async restituisce un goal handle, non direttamente il risultato finale.",
+        "Nel callback di accettazione: future.result().get_result_async().add_done_callback(on_result)."
+      ]
     }
   }
 }

@@ -97,6 +97,20 @@
         "O controlador assume +x em frente e +y à esquerda do robô.",
         "Pede target em base_link."
       ]
+    },
+    "it": {
+      "title": "Numeri corretti, riferimento sbagliato",
+      "description": "Il controllore continua a girare nella direzione sbagliata. La query TF restituisce coordinate valide, ma nel riferimento errato per calcolare la sterzata.",
+      "steps": [
+        "Ispeziona l’albero TF e identifica il riferimento richiesto da atan2(y, x).",
+        "Correggi la query, raggiungi il target e fermati.",
+        "Spiega perché le coordinate allineate al mondo non sono direttamente un errore angolare relativo al robot."
+      ],
+      "hints": [
+        "Guarda il primo argomento di lookup_transform.",
+        "Il controllore assume +x avanti e +y a sinistra del robot.",
+        "Richiedi il target in base_link."
+      ]
     }
   }
 }

@@ -112,6 +112,23 @@
         "Experimenta ros2 topic type /cmd_vel e ros2 interface show geometry_msgs/msg/Twist.",
         "Publica uma vez: ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0.6}, angular: {z: 0.0}}\""
       ]
+    },
+    "it": {
+      "title": "Scoprire e usare /cmd_vel",
+      "description": "Missione: trova il topic che controlla il robot. Pubblica un comando di velocità e percorri almeno un metro.",
+      "steps": [
+        "Ispeziona i nodi ed elenca i topic disponibili.",
+        "Trova il topic di velocità e leggi il tipo di messaggio.",
+        "Ispeziona l’interfaccia Twist, poi pubblica un comando singolo.",
+        "Osserva il robot muoversi, poi verifica la soluzione.",
+        "Opzionale: usa echo /odom in un altro terminale per osservare posa e velocità."
+      ],
+      "hints": [
+        "Inizia con ros2 node list. I nodi partecipano al grafo ROS.",
+        "Usa ros2 topic list. Quale nome suggerisce un comando di velocità?",
+        "Prova ros2 topic type /cmd_vel e ros2 interface show geometry_msgs/msg/Twist.",
+        "Pubblica una volta: ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0.6}, angular: {z: 0.0}}\""
+      ]
     }
   }
 }

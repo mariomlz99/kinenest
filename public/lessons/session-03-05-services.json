@@ -98,6 +98,21 @@
         "self.client = self.create_client(Trigger, \"/reset_robot\")",
         "future = self.client.call_async(Trigger.Request()); future.add_done_callback(self.on_response)"
       ]
+    },
+    "it": {
+      "title": "Chiamare un servizio",
+      "description": "Individua /reset_robot, crea un client Python Trigger e ricevi la risposta. Il robot parte spostato per rendere visibile il ripristino.",
+      "steps": [
+        "Individua il servizio dal terminale.",
+        "Crea il client Python e chiama call_async con una Trigger.Request vuota.",
+        "Aggiungi un callback di completamento e osserva la risposta."
+      ],
+      "hints": [
+        "Prova ros2 service list, poi ros2 service type /reset_robot.",
+        "Un topic trasmette messaggi. Un servizio riceve una richiesta e restituisce una risposta.",
+        "self.client = self.create_client(Trigger, \"/reset_robot\")",
+        "future = self.client.call_async(Trigger.Request()); future.add_done_callback(self.on_response)"
+      ]
     }
   }
 }

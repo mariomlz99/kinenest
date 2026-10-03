@@ -97,6 +97,20 @@
         "Usar odom daria coordenadas alinhadas com o mundo, não com o robô.",
         "lookup_transform(\"base_link\", \"target\", Time())"
       ]
+    },
+    "it": {
+      "title": "Dov’è il target rispetto al robot?",
+      "description": "Richiedi il target in base_link. x positivo significa avanti; y positivo significa sinistra. Lo stesso target nel mondo cambia coordinate quando il robot ruota.",
+      "steps": [
+        "Ispeziona l’albero TF: world → odom → base_link, più sensori e target.",
+        "Cerca target usando base_link come argomento target_frame.",
+        "Riporta translation.x e .y con report_relative e confrontali con il target visibile."
+      ],
+      "hints": [
+        "lookup_transform(target_frame, source_frame, Time()) esprime le coordinate sorgenti nel riferimento di destinazione.",
+        "Richiedere odom darebbe coordinate allineate al mondo, non relative al robot.",
+        "lookup_transform(\"base_link\", \"target\", Time())"
+      ]
     }
   }
 }

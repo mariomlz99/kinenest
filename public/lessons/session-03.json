@@ -8,7 +8,8 @@
       "fr": "Subscriber caméra",
       "es": "Subscriber de cámara",
       "de": "Kamera-Subscriber",
-      "pt": "Subscriber da câmara"
+      "pt": "Subscriber da câmara",
+      "it": "Subscriber della camera"
     }
   },
   {
@@ -20,7 +21,8 @@
       "fr": "Les images sont des données",
       "es": "Las imágenes son datos",
       "de": "Bilder sind Daten",
-      "pt": "Imagens são dados"
+      "pt": "Imagens são dados",
+      "it": "Le immagini sono dati"
     }
   },
   {
@@ -32,7 +34,8 @@
       "fr": "Détecter les pixels rouges",
       "es": "Detectar píxeles rojos",
       "de": "Rote Pixel erkennen",
-      "pt": "Detetar píxeis vermelhos"
+      "pt": "Detetar píxeis vermelhos",
+      "it": "Rilevare pixel rossi"
     }
   },
   {
@@ -44,7 +47,8 @@
       "fr": "À gauche, au centre ou à droite ?",
       "es": "¿Izquierda, centro o derecha?",
       "de": "Links, Mitte oder rechts?",
-      "pt": "Esquerda, centro ou direita?"
+      "pt": "Esquerda, centro ou direita?",
+      "it": "Sinistra, centro o destra?"
     }
   },
   {
@@ -56,7 +60,8 @@
       "fr": "Appeler un service",
       "es": "Llamar a un servicio",
       "de": "Einen Dienst aufrufen",
-      "pt": "Chamar um serviço"
+      "pt": "Chamar um serviço",
+      "it": "Chiamare un servizio"
     }
   },
   {
@@ -68,7 +73,8 @@
       "fr": "Trouver la cible",
       "es": "Encontrar el objetivo",
       "de": "Das Ziel finden",
-      "pt": "Encontrar o alvo"
+      "pt": "Encontrar o alvo",
+      "it": "Trovare il target"
     }
   }
 ]

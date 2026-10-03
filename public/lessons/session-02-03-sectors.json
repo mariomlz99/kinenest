@@ -92,6 +92,20 @@
         "Normaliza diferenças com atan2(sin(delta), cos(delta)).",
         "Exclui valores não finitos antes de min; um setor vazio pode devolver infinito."
       ]
+    },
+    "it": {
+      "title": "Elaborare settori LiDAR",
+      "description": "Riassumi le distanze davanti, a sinistra e a destra. Usa i metadati angolari invece di assumere un indice fisso.",
+      "steps": [
+        "Per il raggio i: angle = angle_min + i × angle_increment.",
+        "Trova la minima distanza finita entro ±15° da davanti (0), sinistra (+π/2) e destra (−π/2).",
+        "Chiama report_sectors(front, left, right) con le tre distanze calcolate."
+      ],
+      "hints": [
+        "Gli angoli sono in radianti; 15° = π/12.",
+        "Normalizza le differenze con atan2(sin(delta), cos(delta)).",
+        "Filtra le distanze non finite, poi usa min; un settore vuoto può restituire infinito."
+      ]
     }
   }
 }

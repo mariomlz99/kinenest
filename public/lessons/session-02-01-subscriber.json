@@ -92,6 +92,20 @@
         "Este scan tem 120 raios a partir de −π; o raio 60 aponta em frente.",
         "node.create_subscription(LaserScan, \"/scan\", receive, 10)"
       ]
+    },
+    "it": {
+      "title": "Il primo subscriber",
+      "description": "Un sensore pubblica ripetutamente. Sottoscrivi /scan e leggi le distanze ricevute dal callback.",
+      "steps": [
+        "Ispeziona /scan con topic type ed echo --once.",
+        "Crea una subscription LaserScan e stampa len(msg.ranges) e la distanza frontale.",
+        "Esegui, osserva le stampe ripetute e controlla la subscription con ros2 topic info /scan."
+      ],
+      "hints": [
+        "Il callback di una subscription riceve il messaggio come argomento.",
+        "Questa scansione di 120 raggi parte da −π; il raggio 60 punta avanti.",
+        "node.create_subscription(LaserScan, \"/scan\", receive, 10)"
+      ]
     }
   }
 }

@@ -107,6 +107,21 @@
         "Usa (160 - cx) / 160 e limita a velocidade angular a ±1 rad/s.",
         "Se abs(160 - cx) < 10, publica angular.z = 0. Sem píxeis vermelhos, roda devagar para procurar."
       ]
+    },
+    "it": {
+      "title": "Trovare il target",
+      "description": "Usa i pixel della camera per ruotare fino a centrare il target rosso. Continua a pubblicare velocità zero quando è centrato; verifica dopo l’arresto.",
+      "steps": [
+        "Calcola il centroide dei pixel rossi in ogni callback della camera.",
+        "Pubblica angular.z su /cmd_vel per girare verso il target.",
+        "Pubblica zero quando è centrato e verifica dopo l’arresto."
+      ],
+      "hints": [
+        "Riusa maschera e centroide. All’inizio il robot non guarda il target.",
+        "Un target a sinistra richiede angular.z positivo; a destra negativo.",
+        "Usa un errore come (160 - cx) / 160 e limita la velocità angolare a ±1 rad/s.",
+        "Se abs(160 - cx) < 10, pubblica angular.z = 0. Se non vedi pixel rossi, ruota lentamente per cercarli."
+      ]
     }
   }
 }

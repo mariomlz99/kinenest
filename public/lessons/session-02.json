@@ -8,7 +8,8 @@
       "fr": "Votre premier abonnement",
       "es": "Tu primer subscriber",
       "de": "Dein erster Subscriber",
-      "pt": "O primeiro subscriber"
+      "pt": "O primeiro subscriber",
+      "it": "Il primo subscriber"
     }
   },
   {
@@ -20,7 +21,8 @@
       "fr": "Les callbacks réagissent aux événements",
       "es": "Los callbacks reaccionan a eventos",
       "de": "Callbacks reagieren auf Ereignisse",
-      "pt": "Callbacks reagem a eventos"
+      "pt": "Callbacks reagem a eventos",
+      "it": "I callback reagiscono agli eventi"
     }
   },
   {
@@ -32,7 +34,8 @@
       "fr": "Traiter des secteurs LiDAR",
       "es": "Procesar sectores LiDAR",
       "de": "LiDAR-Sektoren auswerten",
-      "pt": "Processar setores LiDAR"
+      "pt": "Processar setores LiDAR",
+      "it": "Elaborare settori LiDAR"
     }
   },
   {
@@ -44,7 +47,8 @@
       "fr": "Réagir à un obstacle",
       "es": "Reaccionar a un obstáculo",
       "de": "Auf Hindernisse reagieren",
-      "pt": "Reagir a um obstáculo"
+      "pt": "Reagir a um obstáculo",
+      "it": "Reagire a un ostacolo"
     }
   }
 ]

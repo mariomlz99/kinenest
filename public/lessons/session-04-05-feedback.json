@@ -92,6 +92,20 @@
         "A distância está em msg.feedback.distance_travelled.",
         "Pede o resultado final ao identificador do objetivo aceite."
       ]
+    },
+    "it": {
+      "title": "Seguire il feedback dell’action",
+      "description": "Aggiungi un callback di feedback per osservare il movimento prima del risultato finale. Topic, servizi e action hanno ruoli distinti.",
+      "steps": [
+        "Riusa 4.4 e aggiungi feedback_callback all’invio del goal.",
+        "Stampa msg.feedback.distance_travelled mentre il robot si muove.",
+        "Dopo aver fermato Python, prova il goal equivalente dal terminale con --feedback."
+      ],
+      "hints": [
+        "Il feedback descrive l’avanzamento intermedio di un goal.",
+        "Il callback riceve un contenitore: msg.feedback.distance_travelled.",
+        "Il risultato finale si richiede comunque tramite il goal handle accettato."
+      ]
     }
   }
 }

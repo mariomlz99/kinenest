@@ -92,6 +92,20 @@
         "O navegador fornece a classe diretamente; não executa um gerador de interfaces.",
         "TargetInfo(visible=True, position=\"LEFT\", confidence=0.8)"
       ]
+    },
+    "it": {
+      "title": "Pubblicare un messaggio personalizzato",
+      "description": "Un’interfaccia definisce il contenuto di un messaggio. Pubblica TargetInfo: visibilità, posizione e confidenza.",
+      "steps": [
+        "Ispeziona ros2 interface show ros2learn_interfaces/msg/TargetInfo.",
+        "Pubblica almeno tre messaggi validi su /target_info da Python. La confidenza deve essere tra 0 e 1.",
+        "Osserva /target_info con echo. Modifica un campo e spiega perché non puoi pubblicare Twist sullo stesso topic tipizzato."
+      ],
+      "hints": [
+        "Importa TargetInfo da ros2learn_interfaces.msg.",
+        "Il browser fornisce direttamente la classe; non esegue un generatore di interfacce.",
+        "TargetInfo(visible=True, position=\"LEFT\", confidence=0.8)"
+      ]
     }
   }
 }

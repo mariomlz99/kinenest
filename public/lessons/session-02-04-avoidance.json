@@ -92,6 +92,20 @@
         "Reutiliza o cálculo de setores de 2.3.",
         "Cria um Twist novo em cada callback para não manter velocidades anteriores."
       ]
+    },
+    "it": {
+      "title": "Reagire a un ostacolo",
+      "description": "Avanza verso il blocco, gira quando il settore frontale è vicino e riprendi a muoverti nello spazio libero. Percorri almeno 2 m senza collisioni.",
+      "steps": [
+        "Combina un subscriber /scan e un publisher /cmd_vel.",
+        "Se il settore frontale ±15° è sotto 1,1 m, ferma l’avanzamento e gira a sinistra a circa 0,9 rad/s; altrimenti avanza a circa 0,6 m/s.",
+        "Esegui per almeno 8 secondi. Osserva raggi e grafo; spiega perché un comando costante senza sensori non è sicuro."
+      ],
+      "hints": [
+        "La protezione dalle collisioni impedisce di attraversare i blocchi, ma un contatto fa comunque fallire la verifica.",
+        "Riusa la funzione per i settori dell’esercizio 2.3.",
+        "Crea un nuovo Twist a ogni callback per non mantenere velocità o rotazioni precedenti."
+      ]
     }
   }
 }

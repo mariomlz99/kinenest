@@ -92,6 +92,20 @@
         "get_parameter(\"speed\").value lê o valor atual.",
         "O temporizador mantém o envio de comandos."
       ]
+    },
+    "it": {
+      "title": "Configurare il nodo",
+      "description": "Dichiara un parametro speed e usalo in un controllore con timer. Un parametro appartiene a un nodo.",
+      "steps": [
+        "Dichiara speed = 0.2.",
+        "Leggilo nel timer, limitalo a 0–0.8 e pubblica su /cmd_vel.",
+        "Ispeziona ros2 param list e ros2 param get /student_controller speed."
+      ],
+      "hints": [
+        "declare_parameter fornisce un valore iniziale.",
+        "get_parameter(\"speed\").value legge il valore corrente.",
+        "Un timer mantiene l’invio dei comandi al robot."
+      ]
     }
   }
 }

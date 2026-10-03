@@ -97,6 +97,20 @@
         "Experimenta 2*angle como velocidade angular, com limites.",
         "Avança só se abs(angle) < 0.3 e abranda perto do alvo."
       ]
+    },
+    "it": {
+      "title": "Chiudere il ciclo con TF",
+      "description": "Raggiungi il target in (1, 1) usando la sua posizione relativa. Ricalcola, sterza, avanza e fermati, senza comandi a durata fissa.",
+      "steps": [
+        "Cerca target in base_link dentro un timer.",
+        "Calcola distance = hypot(x,y), angle = atan2(y,x); gira verso il target e avanza quando sei allineato.",
+        "Limita la velocità angolare a ±1.5 e quella lineare a 0–0.7. Pubblica zero quando distance < 0.07 m."
+      ],
+      "hints": [
+        "Le coordinate sono già relative al robot: atan2(y,x) è l’errore angolare.",
+        "Usa un comando proporzionale come 2*angle, con limiti.",
+        "Avanza solo se abs(angle) < 0.3; rallenta vicino al goal."
+      ]
     }
   }
 }

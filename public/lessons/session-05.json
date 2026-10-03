@@ -8,7 +8,8 @@
       "fr": "Lire la pose du robot",
       "es": "Leer la pose del robot",
       "de": "Die Roboterpose lesen",
-      "pt": "Ler a pose do robô"
+      "pt": "Ler a pose do robô",
+      "it": "Leggere la posa del robot"
     }
   },
   {
@@ -20,7 +21,8 @@
       "fr": "Position et orientation",
       "es": "Posición y orientación",
       "de": "Position und Orientierung",
-      "pt": "Posição e orientação"
+      "pt": "Posição e orientação",
+      "it": "Posizione e orientamento"
     }
   },
   {
@@ -32,7 +34,8 @@
       "fr": "Dans quel repère ?",
       "es": "¿En qué marco?",
       "de": "Welches Koordinatensystem?",
-      "pt": "Qual é o referencial?"
+      "pt": "Qual é o referencial?",
+      "it": "Quale sistema di riferimento?"
     }
   },
   {
@@ -44,7 +47,8 @@
       "fr": "Où est la cible par rapport à moi ?",
       "es": "Objetivo relativo al robot",
       "de": "Das Ziel relativ zum Roboter",
-      "pt": "Alvo relativo ao robô"
+      "pt": "Alvo relativo ao robô",
+      "it": "Dov’è il target rispetto al robot?"
     }
   },
   {
@@ -56,7 +60,8 @@
       "fr": "Fermer la boucle avec TF",
       "es": "Control en bucle cerrado con TF",
       "de": "Mit TF regeln",
-      "pt": "Controlo em malha fechada com TF"
+      "pt": "Controlo em malha fechada com TF",
+      "it": "Chiudere il ciclo con TF"
     }
   },
   {
@@ -68,7 +73,8 @@
       "fr": "Direction de la cible et sécurité",
       "es": "Objetivo y seguridad LiDAR",
       "de": "Zielrichtung und Hindernisschutz",
-      "pt": "Objetivo e segurança LiDAR"
+      "pt": "Objetivo e segurança LiDAR",
+      "it": "Direzione del goal e sicurezza LiDAR"
     }
   }
 ]

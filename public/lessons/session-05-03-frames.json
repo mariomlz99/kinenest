@@ -92,6 +92,20 @@
         "Não somes simplesmente 0.2 a x em odom; o deslocamento roda com o robô.",
         "O buffer compõe os dois elos. Aqui só existem transformações planas atuais."
       ]
+    },
+    "it": {
+      "title": "Quale sistema di riferimento?",
+      "description": "Il laser è montato 0,2 m davanti a base_link. Trova la sua origine in odom, anche quando il robot è ruotato.",
+      "steps": [
+        "Ispeziona ros2 topic echo /tf --once. L’albero è odom → base_link → laser_link.",
+        "Crea Buffer e TransformListener. Nel timer richiedi lookup_transform(\"odom\", \"laser_link\", Time()).",
+        "Riporta translation.x e translation.y con report_transform. Il target_frame è il riferimento in cui vuoi esprimere la risposta."
+      ],
+      "hints": [
+        "Attendi le trasformazioni: gestisci TransformException nei primi callback.",
+        "Non basta aggiungere 0.2 a odom x: anche l’offset del sensore ruota con il robot.",
+        "Il buffer compone entrambi gli archi. Qui supporta solo l’ultima trasformazione planare, non query storiche."
+      ]
     }
   }
 }

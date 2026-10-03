@@ -104,6 +104,21 @@
         "image[:, :, 0].mean() calcula a média do primeiro canal.",
         "report_image_stats(image.shape, [image[:, :, i].mean() for i in range(3)])"
       ]
+    },
+    "it": {
+      "title": "Le immagini sono dati",
+      "description": "Converti ogni messaggio in un vero array NumPy, stampa la sua forma e riporta le medie dei tre canali.",
+      "steps": [
+        "Converti il messaggio Image con CvBridge.",
+        "Stampa image.shape e calcola la media di ciascun canale RGB.",
+        "Chiama report_image_stats con la forma e le tre medie."
+      ],
+      "hints": [
+        "Usa CvBridge.imgmsg_to_cv2 con desired_encoding=\"rgb8\".",
+        "La forma dell’array è altezza × larghezza × canali.",
+        "La media di un canale è image[:, :, 0].mean(). Calcolala per tutti e tre.",
+        "report_image_stats(image.shape, [image[:, :, i].mean() for i in range(3)])"
+      ]
     }
   }
 }

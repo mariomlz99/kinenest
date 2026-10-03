@@ -101,6 +101,21 @@
         "self.subscription = self.create_subscription(Image, \"/camera/image_raw\", self.image_callback, 10)",
         "No callback: print(f\"Image: {msg.width} x {msg.height}\")"
       ]
+    },
+    "it": {
+      "title": "Subscriber della camera",
+      "description": "Sottoscrivi /camera/image_raw e stampa larghezza e altezza di ogni immagine ricevuta.",
+      "steps": [
+        "Ispeziona /camera/image_raw con ros2 topic info.",
+        "Sottoscrivi Image e stampa msg.width e msg.height nel callback.",
+        "Esegui il nodo e controlla le stampe ripetute."
+      ],
+      "hints": [
+        "Anche una camera è un publisher. Usa ros2 topic list e ros2 topic info /camera/image_raw.",
+        "Crea una subscription Image con self.image_callback e profondità di coda 10.",
+        "self.subscription = self.create_subscription(Image, \"/camera/image_raw\", self.image_callback, 10)",
+        "Nel callback: print(f\"Image: {msg.width} x {msg.height}\")"
+      ]
     }
   }
 }

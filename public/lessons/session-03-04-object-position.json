@@ -104,6 +104,21 @@
         "Se existirem píxeis, cx = xs.mean(); caso contrário, usa None.",
         "Compara cx com image.shape[1] / 3 e 2 * image.shape[1] / 3. Comunica o centroide calculado."
       ]
+    },
+    "it": {
+      "title": "Sinistra, centro o destra?",
+      "description": "Trova il centroide orizzontale dei pixel rossi. Stampa LEFT, CENTER o RIGHT e chiama report_detection(visible, cx).",
+      "steps": [
+        "Trova i pixel rossi con una maschera.",
+        "Calcola il centroide orizzontale e stampa LEFT, CENTER o RIGHT.",
+        "Chiama report_detection(visible, cx), poi verifica su scene diverse."
+      ],
+      "hints": [
+        "Crea prima una maschera di pixel rossi.",
+        "ys, xs = np.where(mask) restituisce le coordinate dei pixel selezionati.",
+        "Se ci sono pixel, cx = xs.mean(). Altrimenti usa None.",
+        "Confronta cx con image.shape[1] / 3 e 2 * image.shape[1] / 3. Riporta il centroide calcolato alla verifica."
+      ]
     }
   }
 }

@@ -93,6 +93,20 @@
         "Usa um booleano para não cancelar em cada callback.",
         "handle.cancel_goal_async() pede o cancelamento; mantém o callback do resultado."
       ]
+    },
+    "it": {
+      "title": "Opzionale: annullare un goal",
+      "description": "Invia un goal di due metri, poi annullalo quando il feedback supera 0,3 m. Attendi il completamento dell’annullamento.",
+      "steps": [
+        "Riusa il client precedente e conserva il goal handle accettato.",
+        "Nel callback di feedback annulla una sola volta quando distance_travelled supera 0.3.",
+        "Controlla il risultato finale: lo stato 5 indica annullamento. Il robot deve fermarsi prima dei due metri."
+      ],
+      "hints": [
+        "L’annullamento è una richiesta; osserva anche il risultato finale.",
+        "Usa un booleano per non annullare a ogni messaggio di feedback.",
+        "handle.cancel_goal_async() richiede l’annullamento; conserva il callback del risultato dell’esercizio precedente."
+      ]
     }
   }
 }

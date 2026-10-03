@@ -9,22 +9,22 @@ try{
  $('python-code').value=program;$('run-python').click();await until(()=>$('python-state').textContent.includes('callbacks ready'));
  $('theme').click();$('layout').value='stack';$('layout').dispatchEvent(new Event('change'));
  const initialPose=$('pose').textContent;let previous=0;
- for(const lang of ['nl','fr','es','de','pt','en']){
+ for(const lang of ['nl','fr','es','de','pt','it','en']){
   $('language').value=lang;$('language').dispatchEvent(new Event('change'));await wait(350);
   assert(d.documentElement.lang===lang,'Document language');assert($('python-code').value===program,'Python modified');assert(d.body.dataset.lessonId===lesson,'Exercise changed');
   assert(d.documentElement.dataset.theme==='light'&&d.body.dataset.layout==='stack','Preferences changed');assert($('python-state').textContent.includes('callbacks ready'),'Worker restarted');
   const counts=$('python-output').textContent.trim().split(/\s+/).map(Number).filter(Number.isFinite);assert(counts.at(-1)>previous,'Callbacks stopped');assert(counts.filter(n=>n===1).length===1,'Python restarted');previous=counts.at(-1);
   assert($('mission-title').textContent!=='Read the robot pose'||lang==='en','Lesson translation absent');
-  assert(d.querySelectorAll('#language option').length===6,'Language options');
+  assert(d.querySelectorAll('#language option').length===7,'Language options');
  }
  assert($('pose').textContent!==initialPose,'Robot stopped moving');$('stop-python').click();
- for(const page of ['index.html','session-03.html','session-05.html','session-06.html','real-ros.html']){
+ for(const page of ['index.html','session-03.html','session-05.html','session-06.html','real-ros.html','about.html']){
   frame.src='../'+page;await until(()=>frame.contentDocument?.querySelector('#language')&&frame.contentWindow.location.pathname.endsWith(page));
   const doc=frame.contentDocument;
-  if(page!=='real-ros.html')await until(()=>doc.getElementById('mission-title').textContent!=='Loading lesson…'&&!doc.getElementById('check').disabled);
-  for(const lang of ['en','nl','fr','es','de','pt']){const control=doc.getElementById('language');control.value=lang;control.dispatchEvent(new Event('change'));await wait(50);assert(doc.documentElement.lang===lang,'Page language');assert(!/ROS2Learn|Lab 01/.test(doc.body.textContent),'Legacy branding');}
+  if(!['real-ros.html','about.html'].includes(page))await until(()=>doc.getElementById('mission-title').textContent!=='Loading lesson…'&&!doc.getElementById('check').disabled);
+  for(const lang of ['en','nl','fr','es','de','pt','it']){const control=doc.getElementById('language');control.value=lang;control.dispatchEvent(new Event('change'));await wait(50);assert(doc.documentElement.lang===lang,'Page language');if(page==='about.html'&&lang!=='en')assert(!doc.querySelector('main>p').textContent.startsWith('KineNest helps'),'About untranslated');assert(!/ROS2Learn|KineCourse|Lab 01/.test(doc.body.textContent),'Legacy branding');}
  }
- out.textContent='PASS: six languages, live Python/robot preservation, theme/layout, navigation and transition page';
+ out.textContent='PASS: seven languages, live Python/robot preservation, theme/layout, navigation and transition page';
 }catch(error){out.textContent='FAIL: '+error.message;}
 await fetch('/done',{method:'POST',body:out.textContent});
 </script></html>

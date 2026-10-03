@@ -98,6 +98,20 @@
         "Um temporizador é periódico; uma subscrição reage a mensagens.",
         "Cria publishers e subscrições uma vez; rclpy.spin distribui os eventos."
       ]
+    },
+    "it": {
+      "title": "I callback reagiscono agli eventi",
+      "description": "Aggiorna lo stato del nodo quando arriva una scansione. Usa un timer per pubblicare un messaggio di stato: sensore e timer hanno callback distinti.",
+      "steps": [
+        "Salva la distanza frontale più recente quando arriva una scansione.",
+        "Ogni 0,2 secondi pubblica la distanza come String su /chatter. Sottoscrivi /chatter e stampa ogni messaggio.",
+        "Osserva topic hz /scan e topic echo /chatter in terminali separati. Spiega quale callback aggiorna lo stato e quale lo pubblica."
+      ],
+      "hints": [
+        "Conserva una variabile o self.front tra i callback.",
+        "Un timer scatta periodicamente; una subscription reagisce ai messaggi in arrivo.",
+        "Crea publisher e subscription una volta sola, poi lascia che rclpy.spin gestisca gli eventi."
+      ]
     }
   }
 }

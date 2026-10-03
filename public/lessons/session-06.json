@@ -8,7 +8,8 @@
       "fr": "Le robot n’entend rien",
       "es": "El robot no recibe comandos",
       "de": "Der Roboter empfängt nichts",
-      "pt": "O robô não recebe comandos"
+      "pt": "O robô não recebe comandos",
+      "it": "Il robot non riceve i comandi"
     }
   },
   {
@@ -20,7 +21,8 @@
       "fr": "Bons nombres, mauvais repère",
       "es": "Números correctos, marco incorrecto",
       "de": "Richtige Zahlen, falscher Bezug",
-      "pt": "Números certos, referencial errado"
+      "pt": "Números certos, referencial errado",
+      "it": "Numeri corretti, riferimento sbagliato"
     }
   },
   {
@@ -32,7 +34,8 @@
       "fr": "Mission finale : trouver la balise rouge",
       "es": "Reto final: encontrar la baliza roja",
       "de": "Abschlussaufgabe: rote Bake finden",
-      "pt": "Desafio final: encontrar a baliza vermelha"
+      "pt": "Desafio final: encontrar a baliza vermelha",
+      "it": "Missione finale: trovare il segnale rosso"
     }
   }
 ]

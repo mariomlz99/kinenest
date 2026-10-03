@@ -125,6 +125,20 @@
         "O scan atualiza a distância; o callback de imagem decide o movimento.",
         "Sem alvo: procura. Descentrado: roda. Centrado e longe: avança. Centrado e perto: publica zero."
       ]
+    },
+    "it": {
+      "title": "Missione finale: trovare il segnale rosso",
+      "description": "Usa la camera per centrare il segnale rosso e LiDAR per fermarti a distanza sicura. Combina due callback di sensori con un publisher di comandi.",
+      "steps": [
+        "Conserva il settore frontale più recente nello stato del nodo.",
+        "In ogni callback della camera rileva i pixel rossi e il centroide. Gira verso il segnale; avanza solo se è centrato e la scansione lo consente.",
+        "Fermati a 0,55–1,10 m dalla superficie del segnale, mantienilo centrato e verifica. Usa i terminali per spiegare grafo e decisioni di controllo."
+      ],
+      "hints": [
+        "angular.z positivo gira a sinistra. Un centroide a sinistra del centro immagine richiede una rotazione positiva.",
+        "Separa stato e controllo: scan aggiorna la distanza; il callback della camera decide il movimento.",
+        "Target non visibile: ruota lentamente. Visibile ma decentrato: gira. Centrato e libero: avanza. Centrato e vicino: pubblica zero."
+      ]
     }
   }
 }

@@ -95,6 +95,20 @@
         "Ler apenas no arranque não aplica alterações posteriores.",
         "Consulta node.get_parameter(\"speed\").value em cada execução de tick."
       ]
+    },
+    "it": {
+      "title": "Regolare senza riavviare",
+      "description": "Dichiara speed e leggilo a ogni callback del timer. Modificalo dal terminale mentre Python continua a girare.",
+      "steps": [
+        "Dichiara speed con valore iniziale 0.2 su /student_controller.",
+        "Leggi node.get_parameter(\"speed\").value nel timer, limitalo a 0–0.8 e pubblica Twist.",
+        "Durante l’esecuzione: ros2 param list; ros2 param get /student_controller speed; ros2 param set /student_controller speed 0.6. Osserva il cambiamento e verifica."
+      ],
+      "hints": [
+        "I parametri appartengono ai nodi, non ai topic.",
+        "Leggere il parametro solo all’avvio non applica gli aggiornamenti successivi al controllore.",
+        "Mantieni il timer attivo; usa node.get_parameter(\"speed\").value dentro tick."
+      ]
     }
   }
 }

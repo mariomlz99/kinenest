@@ -92,6 +92,20 @@
         "Para movimento plano também funciona yaw = 2 * atan2(q.z, q.w).",
         "A expressão geral é atan2(2*(w*z+x*y), 1-2*(y*y+z*z))."
       ]
+    },
+    "it": {
+      "title": "Leggere la posa del robot",
+      "description": "Leggi posizione e orientamento da Odometry. La posa è diversa dal comando di velocità che ha mosso il robot.",
+      "steps": [
+        "Ispeziona /odom con echo --field pose.pose.",
+        "Sottoscrivi in Python. Leggi la posizione e calcola yaw dal quaternione.",
+        "Riporta il calcolo con report_pose(x, y, yaw). Prova un Twist singolo in un altro terminale e osserva le variazioni."
+      ],
+      "hints": [
+        "La posizione è msg.pose.pose.position; l’orientamento è msg.pose.pose.orientation.",
+        "Per il moto planare funziona anche yaw = 2 * atan2(q.z, q.w).",
+        "L’espressione generale per yaw è atan2(2*(w*z+x*y), 1-2*(y*y+z*z))."
+      ]
     }
   }
 }

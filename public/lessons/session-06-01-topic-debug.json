@@ -109,6 +109,20 @@
         "Usa ros2 node info /student_controller para ver os publishers.",
         "O simulador escuta /cmd_vel."
       ]
+    },
+    "it": {
+      "title": "Il robot non riceve i comandi",
+      "description": "Il controllore è attivo e pubblica, ma il robot non si muove. Diagnostica il grafo prima di modificare il codice.",
+      "steps": [
+        "Esegui il programma e ispeziona node list, topic list -t e topic info /cmd_vel.",
+        "Trova il topic del publisher e confrontalo con la subscription del simulatore. Correggi la differenza.",
+        "Lascia che il controllore corretto eviti il blocco. Spiega quali osservazioni hanno identificato il guasto."
+      ],
+      "hints": [
+        "Un nome di topic valido può comunque essere quello sbagliato.",
+        "Usa node info /student_controller per vedere i publisher.",
+        "Il simulatore ascolta /cmd_vel."
+      ]
     }
   }
 }

@@ -104,6 +104,21 @@
         "mask = (image[:, :, 0] > 180) & (image[:, :, 1] < 100) & (image[:, :, 2] < 100)",
         "visible = mask.sum() > 500; report_detection(visible). Também podes usar cv2.inRange e countNonZero."
       ]
+    },
+    "it": {
+      "title": "Rilevare pixel rossi",
+      "description": "Rileva un oggetto rosso dai pixel RGB. Riporta il booleano con report_detection(visible); Verifica soluzione prova quattro scene diverse.",
+      "steps": [
+        "Converti ogni immagine in un array RGB.",
+        "Crea una maschera di pixel rossi e indica se contiene più di 500 pixel.",
+        "Verifica soluzione prova il rilevatore su quattro scene diverse."
+      ],
+      "hints": [
+        "Le immagini RGB hanno tre canali. Il rosso deve essere alto; verde e blu bassi.",
+        "Separa i canali con image[:, :, 0], image[:, :, 1], image[:, :, 2].",
+        "mask = (image[:, :, 0] > 180) & (image[:, :, 1] < 100) & (image[:, :, 2] < 100)",
+        "visible = mask.sum() > 500; report_detection(visible). Vanno bene sia NumPy sia gli helper cv2.inRange/countNonZero."
+      ]
     }
   }
 }

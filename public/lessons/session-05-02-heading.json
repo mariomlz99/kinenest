@@ -92,6 +92,20 @@
         "roll, pitch, yaw = euler_from_quaternion([...])",
         "Um yaw positivo roda no sentido contrário ao dos ponteiros do relógio."
       ]
+    },
+    "it": {
+      "title": "Posizione e orientamento",
+      "description": "Usa un helper per ottenere yaw dal quaternione. Confronta un robot ruotato con uno traslato: entrambi hanno una posa, ma la direzione è diversa.",
+      "steps": [
+        "Importa euler_from_quaternion da tf_transformations.",
+        "Passa [q.x, q.y, q.z, q.w]; il terzo valore restituito è yaw in radianti.",
+        "Riporta x, y e yaw con report_pose e confrontali con il mondo. Prova un Twist con sola velocità angolare dal terminale."
+      ],
+      "hints": [
+        "L’ordine del quaternione è x, y, z, w.",
+        "roll, pitch, yaw = euler_from_quaternion([...])",
+        "Yaw positivo ruota in senso antiorario in questo mondo."
+      ]
     }
   }
 }
