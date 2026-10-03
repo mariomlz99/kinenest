@@ -13,6 +13,7 @@ try{
   const d=frame.contentDocument,$=id=>d.getElementById(id),select=$('lesson-select');
   assert(!$('run-python').disabled,'Selector enabled before the first lesson was ready');
   assert($('python-code').value.length>0,'First lesson has no starter code');
+  let workersStarted=0;const NativeWorker=frame.contentWindow.Worker;frame.contentWindow.Worker=class extends NativeWorker{constructor(...args){workersStarted++;super(...args);}};
   const first=select.value,second=select.options[1].value,code='# keep this draft during reload';
   $('python-code').value=code;
   // Reselecting the same lesson must still wait for its asynchronous reset.
@@ -22,7 +23,7 @@ try{
   await until(()=>!select.disabled);
   assert(d.body.dataset.lessonId===first&&d.body.dataset.lessonState==='ready','Incorrect readiness state');
   assert($('python-code').value===code,'Reload discarded the student draft');
-  assert($('python-state').textContent==='Python stopped','Run started while the lesson was loading');
+  assert(workersStarted===0&&$('stop-python').disabled,'Run started while the lesson was loading');
   // Even overlapping programmatic selections must finish on the latest request.
   select.value=second;select.dispatchEvent(new Event('change'));
   select.value=first;select.dispatchEvent(new Event('change'));

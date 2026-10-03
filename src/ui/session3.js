@@ -4,7 +4,7 @@ import { createTFView } from './tf-view.js';
 import { arrangeSession } from './workstation.js';
 import { SESSIONS } from './product.js';
 import { Runtime } from '../runtime/graph.js';
-import { PythonBridge } from '../python/bridge.js';
+import { ExecutionHost } from '../runtime/languages.js';
 import { createTerminals } from './terminals.js';
 import { sessionChecks } from '../exercises/perception.js';
 import { courseChecks, observeCourse } from '../exercises/course.js';
@@ -16,22 +16,22 @@ import { inspectPixels } from '../simulator/camera.js';
 const $=id=>document.getElementById(id),runtime=new Runtime();runtime.enableSession3();
 const session=Number(location.pathname.match(/session-0([2-6])/)?.[1]??3);
 let catalog=[],selection=0;
-let tfView,workspace,cpp=null,worldColors;
+let tfView,workspace,worldColors;
 let lesson,hints=0,epoch=0,testing=false,last=0,accumulator=0,lastFrame=-1,lastDetection=null;
 
 const output=text=>{const pre=$('python-output');pre.textContent=(pre.textContent+text+'\n').slice(-24000);pre.scrollTop=pre.scrollHeight;};
-const python=new PythonBridge(runtime,{output,status:text=>{$('python-state').dataset.loading=String(/^(Loading|Compiling|Linking)/.test(text));$('python-state').textContent=text;$('stop-python').disabled=!python.worker&&!cpp?.worker;},detection:value=>{lastDetection=value;$('detection').textContent=value.visible?'Student detection: visible'+(value.cx===null?'':' · centroid x = '+value.cx.toFixed(1)):'Student detection: no red target';}});
+const execution=new ExecutionHost(runtime,{output,status:text=>{$('python-state').dataset.loading=String(/^(Loading|Compiling|Linking)/.test(text));$('python-state').textContent=text;$('stop-python').disabled=!execution.active;},metrics:value=>{$('python-state').dataset.metrics=JSON.stringify(value);},detection:value=>{lastDetection=value;$('detection').textContent=value.visible?'Student detection: visible'+(value.cx===null?'':' · centroid x = '+value.cx.toFixed(1)):'Student detection: no red target';}});
 const terminals=createTerminals(runtime,error=>{if(error)$('status').textContent='Review the terminal error.';});
 async function json(name){const response=await fetch(new URL('../../public/lessons/'+name,import.meta.url),{signal:AbortSignal.timeout(15000)});if(!response.ok)throw new Error('Lesson HTTP '+response.status);return response.json();}
 function reset(){
-  epoch++;testing=false;python.stop();cpp?.stop();terminals.reset();runtime.reset();runtime.robot.x=lesson.startX??0;runtime.robot.y=lesson.startY??0;runtime.robot.yaw=lesson.startYaw??0;
+  epoch++;testing=false;execution.stop();$('stop-python').disabled=true;terminals.reset();runtime.reset();runtime.robot.x=lesson.startX??0;runtime.robot.y=lesson.startY??0;runtime.robot.yaw=lesson.startYaw??0;
   runtime.world=lesson.world??(session===2?structuredClone(TRAINING_WORLD):null);runtime.targets=lesson.targets;runtime.targetFrame=lesson.goal??[5,0];
   hints=0;lastDetection=null;lastFrame=-1;last=0;accumulator=0;$('hints').replaceChildren();$('hint').textContent='Reveal next hint';$('hint').disabled=false;$('feedback').hidden=true;$('check').disabled=false;$('python-output').textContent='';$('detection').textContent='No student detection reported';$('status').textContent='Ready. Complete the TODOs and Run Python.';runtime.cameraFrame();tfView?.setLesson(lesson);draw();
 }
 async function selectLesson(id){
   const request=++selection;
   workspace?.save();
-  python.stop();cpp?.stop();
+  execution.stop();$('stop-python').disabled=true;
   document.body.dataset.lessonState='loading';
   $('lesson-select').disabled=true;
   for(const control of ['run-python','restore-code','reset','check','hint'])$(control).disabled=true;
@@ -61,7 +61,7 @@ window.addEventListener('languagechange',()=>{renderLesson();for(const option of
 function showResults(){const results=session===3?sessionChecks(runtime,lesson):courseChecks(runtime,lesson);$('feedback').replaceChildren();for(const result of results){const p=document.createElement('p');p.className=result.passed?'pass':'fail';p.textContent=(result.passed?'✓ ':'○ ')+result.label;$('feedback').append(p);}$('feedback').hidden=false;$('status').textContent=results.every(r=>r.passed)?'Exercise complete. Your code passed the behavioural checks.':'Not complete yet. Review the checks, output and hints.';}
 const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function testScenes(){
-  if(!python.worker){$('status').textContent='Run your Python detector before checking.';return;}
+  if(!execution.peek('python')?.worker){$('status').textContent='Run your Python detector before checking.';return;}
   testing=true;$('check').disabled=true;const token=++epoch;
   const e=runtime.evidence;e.detectionCases.clear();e.positionCases.clear();e.detectionCounts.clear();e.positionCounts.clear();
   // Random positions and order prevent constant answers from passing. Ground truth stays on the JS side.
@@ -77,13 +77,14 @@ async function testScenes(){
 }
 $('lesson-select').addEventListener('change',()=>selectLesson($('lesson-select').value).catch(error=>{$('status').textContent=error.message;}));
 async function executeCode(language){
-  const code=workspace.code(language);reset();const token=epoch;
-  if(language==='python'){python.run(code);return;}
-  try{const {CppBridge}=await import('../cpp/bridge.js');if(token!==epoch)return;cpp??=new CppBridge(runtime,{output,metrics:value=>{$('python-state').dataset.metrics=JSON.stringify(value);},status:text=>{$('python-state').dataset.loading=String(/^(Loading|Compiling|Linking)/.test(text));$('python-state').textContent=text;$('stop-python').disabled=!cpp?.worker;}});cpp.run(code);}
-  catch(error){output('C++: '+error.message);}
+  const code=workspace.code(language);reset();const token=epoch;$('stop-python').disabled=false;
+  try{await execution.run(language,code);}
+  catch(error){if(token===epoch)output(error.message);}
+  if(token===epoch)$('stop-python').disabled=!execution.active;
 }
+window.addEventListener('pagehide',()=>execution.dispose());
 $('run-python').addEventListener('click',()=>executeCode(workspace.mode==='cpp'?'cpp':'python'));
-$('stop-python').addEventListener('click',()=>{epoch++;testing=false;runtime.testCase=null;runtime.targets=undefined;$('check').disabled=false;python.stop();cpp?.stop();});
+$('stop-python').addEventListener('click',()=>{epoch++;testing=false;runtime.testCase=null;runtime.targets=undefined;$('check').disabled=false;execution.stop();$('stop-python').disabled=true;});
 $('restore-code').addEventListener('click',()=>workspace.restore());
 $('reset').addEventListener('click',reset);
 $('check').addEventListener('click',()=>{if(lesson.testScenes)testScenes();else showResults();});

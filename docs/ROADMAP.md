@@ -21,3 +21,5 @@ A broader curriculum may follow the six-session course. Real ROS integration, RV
 Optional investigation: [rmw_wasm](https://github.com/ros2wasm/rmw_wasm) as a separate browser middleware adapter. Its README targets Humble and lists publishers, subscribers and services; actions, parameters and QoS are unsupported. No integration has been implemented or benchmarked.
 
 Start with precompiled talker/listener workers, then bridge a Twist to the existing simulator and checker. Measure download size, startup, memory, message latency and Stop/Reset in Chrome and Firefox on Pages before considering adoption. Pyodide integration and editable C++ compilation remain separate problems: the project's [builder](https://github.com/ros2wasm/ros2wasm-builder) cross-compiles packages in GitHub Actions. Keep the current six-session runtime as the default throughout any experiment.
+
+A future Rust adapter may use a small rclrs-like API and Rust-to-WebAssembly toolchain through the same registry. This is architecture planning only: no Rust runtime, UI or download is implemented.

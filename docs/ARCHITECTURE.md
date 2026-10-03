@@ -57,3 +57,9 @@ Lessons now use programming.python/cpp with supported, starterCode and an option
 The C++ adapter compiles a single translation unit through a pinned WebAssembly Clang/LLD worker, then supplies explicit kinenest imports for endpoint events, publishing and callback dispatch. LaserScan arrays cross the shared latest-sample mailbox and are copied into module memory for each callback. The real compiler and C++ algorithms run locally. Toolchain assets are lazy and cached separately; see CPP.md for limits, measurements and provenance.
 
 Shared transitions use the compact supplied logo, native CSS and sessionStorage no-repeat selection. Eligible internal links prevent default navigation and show one 850 ms animation within a deliberate 1,000 ms outgoing dwell. Reduced motion navigates immediately. Duplicate clicks retain the first destination; pagehide/pageshow, navigation exceptions and a five-second safety deadline clear overlays. Destination pages do not add another dwell. A separate inline indicator follows actual runtime loading/compilation stages. Reduced motion disables rotational effects.
+
+## Lazy language host and build diagnostics
+
+ExecutionHost loads adapter constructors from a registry and owns cancellation during asynchronous loading. It calls the existing run/stop methods; worker diagnostics and prepare/compile stages remain adapter-specific. RuntimeAdapter still owns endpoints, mailboxes and checking evidence. Adding a third adapter requires registering its factory and supported lesson variants, not duplicating the robot or checker. No Rust adapter or UI exists.
+
+Every production build writes build-info.json with Git commit, build time, asset version and dirty-worktree status. About shows the deployed identity and currently loaded asset version. Source previews can report unavailable metadata. The production smoke command requires an expected commit and rejects an older deployment before exercising it.
