@@ -22,19 +22,6 @@ export const UI = {
     "Startcode wiederherstellen",
     "Restaurar código inicial"
   ],
-  "Reset lab": [
-    "Lab resetten",
-    "Réinitialiser le labo",
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    }
-  ],
   "Check solution": [
     "Oplossing controleren",
     "Vérifier la solution",
@@ -52,45 +39,6 @@ export const UI = {
   "Python workspace": [
     "Python-werkruimte",
     "Espace Python",
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    }
-  ],
-  "Robot world": [
-    "Robotwereld",
-    "Monde du robot",
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    }
-  ],
-  "Live ROS graph": [
-    "Live ROS-graaf",
-    "Graphe ROS en direct",
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    }
-  ],
-  "Shared ROS learning terminals": [
-    "Gedeelde ROS-leerterminals",
-    "Terminaux ROS partagés",
     {
       "fallback": "en"
     },
@@ -150,84 +98,6 @@ export const UI = {
     "TF-Koordinatensysteme",
     "Referenciais TF"
   ],
-  "Subscribers & LiDAR": [
-    "Subscribers en LiDAR",
-    "Abonnements et LiDAR",
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    }
-  ],
-  "Perception & services": [
-    "Perceptie en services",
-    "Perception et services",
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    }
-  ],
-  "Parameters & actions": [
-    "Parameters en acties",
-    "Paramètres et actions",
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    }
-  ],
-  "Odometry & frames": [
-    "Odometrie en frames",
-    "Odométrie et repères",
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    }
-  ],
-  "Debugging & integration": [
-    "Debuggen en integratie",
-    "Débogage et intégration",
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    }
-  ],
-  "Real Python and NumPy, running entirely in your browser.": [
-    "Echte Python en NumPy, volledig in je browser.",
-    "Python et NumPy réels, entièrement dans votre navigateur.",
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    }
-  ],
   "Exercise complete. Your code passed the behavioural checks.": [
     "Oefening voltooid. Gedragscontroles geslaagd.",
     "Exercice terminé. Vérifications du comportement réussies.",
@@ -263,162 +133,6 @@ export const UI = {
     "Auf einem echten ROS 2-System",
     "Numa máquina com ROS 2 real"
   ],
-  "Edit the TODOs, then Run. Tab inserts four spaces; Escape then Tab leaves the editor. Stop terminates Python and its subscriptions. First run downloads Pyodide and NumPy from jsDelivr.": [
-    "Vul de TODO’s aan en voer uit. Tab voegt vier spaties toe; Escape gevolgd door Tab verlaat de editor. Stop beëindigt Python en de subscriptions. De eerste uitvoering downloadt Pyodide en NumPy via jsDelivr.",
-    "Complétez les TODO puis exécutez. Tab insère quatre espaces ; Échap puis Tab quitte l’éditeur. Stop termine Python et ses abonnements. La première exécution télécharge Pyodide et NumPy depuis jsDelivr.",
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    }
-  ],
-  "A callback can store its latest result on the node. Other callbacks or service logic can then use it without processing the same image again.": [
-    "Een callback kan zijn laatste resultaat in de node bewaren. Andere callbacks of services kunnen het gebruiken zonder het beeld opnieuw te verwerken.",
-    "Un callback peut mémoriser son dernier résultat dans le nœud. D’autres callbacks ou services peuvent l’utiliser sans retraiter l’image.",
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    }
-  ],
-  "Camera callback → updates node state → other node logic uses that state. This is an explanatory pattern, not a required solution.": [
-    "Camera-callback → werkt de nodetoestand bij → andere logica gebruikt die toestand. Dit is een voorbeeldpatroon, geen verplichte oplossing.",
-    "Callback caméra → met à jour l’état du nœud → d’autres traitements utilisent cet état. Ce schéma est explicatif, pas une solution imposée.",
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    }
-  ],
-  "KineCourse runs the Python code directly in the browser. On a real ROS 2 system, the same node would normally be placed inside a ROS package and executed from a built workspace.": [
-    "KineCourse voert Python rechtstreeks in de browser uit. Op een echt ROS 2-systeem staat dezelfde node normaal in een ROS-package en wordt hij vanuit een gebouwde workspace uitgevoerd.",
-    "KineCourse exécute Python directement dans le navigateur. Sur un vrai système ROS 2, le même nœud se trouve normalement dans un package ROS et s’exécute depuis un workspace construit.",
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    }
-  ],
-  "A Python package uses ament_python and declares a console entry point named detector in setup.py. With that package inside ~/ros2_ws/src and its dependencies installed:": [
-    "Een Python-package gebruikt ament_python en declareert een console-entrypoint detector in setup.py. Met het package in ~/ros2_ws/src en de afhankelijkheden geïnstalleerd:",
-    "Un package Python utilise ament_python et déclare un point d’entrée detector dans setup.py. Avec ce package dans ~/ros2_ws/src et ses dépendances installées :",
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    }
-  ],
-  "These are real-machine commands, not commands executed by the learning terminal. You do not need CMake for this Python package.": [
-    "Dit zijn opdrachten voor een echte machine; de leerterminal voert ze niet uit. Voor dit Python-package is geen CMake nodig.",
-    "Ces commandes sont destinées à une vraie machine ; le terminal pédagogique ne les exécute pas. Ce package Python ne nécessite pas CMake.",
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    }
-  ],
-  "What is simulated? Python API and checker notes": [
-    "Wat is gesimuleerd? Python-API en controles",
-    "Qu’est-ce qui est simulé ? API Python et vérifications",
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    }
-  ],
-  "KineCourse is an educational ROS 2 simulator. Its Python API and CLI reproduce the ROS 2 concepts used in these lessons, but the browser environment is not a complete DDS-based ROS 2 installation.": [
-    "KineCourse is een educatieve ROS 2-simulator. De Python-API en CLI bootsen de concepten uit deze lessen na, maar de browser is geen volledige ROS 2-installatie op basis van DDS.",
-    "KineCourse est un simulateur pédagogique ROS 2. Son API Python et sa CLI reproduisent les concepts utilisés dans ces cours, mais le navigateur n’est pas une installation ROS 2 complète basée sur DDS.",
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    }
-  ],
-  "Nodes, topics & motion": [
-    "Nodes, topics en beweging",
-    "Nœuds, topics et mouvement",
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    }
-  ],
-  "Explore the ROS 2 mental model, one message at a time.": [
-    "Ontdek het ROS 2-denkmodel, bericht voor bericht.",
-    "Découvrez le modèle mental de ROS 2, message par message.",
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    }
-  ],
-  "A small command. A moving robot.": [
-    "Een kleine opdracht. Een bewegende robot.",
-    "Une petite commande. Un robot en mouvement.",
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    }
-  ],
-  "Real ROS 2 →": [
-    "Echte ROS 2 →",
-    "ROS 2 réel →",
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    }
-  ],
   "Execute": [
     "Uitvoeren",
     "Exécuter",
@@ -447,19 +161,6 @@ export const UI = {
     "Alle Hinweise angezeigt",
     "Todas as dicas apresentadas"
   ],
-  "From KineCourse to real ROS 2": [
-    "Van KineCourse naar echte ROS 2",
-    "De KineCourse à ROS 2 réel",
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    }
-  ],
   "A Python workspace": [
     "Een Python-workspace",
     "Un workspace Python",
@@ -480,19 +181,6 @@ export const UI = {
     "¿Qué cambia en un robot real?",
     "Was ändert sich am echten Roboter?",
     "O que muda num robô real?"
-  ],
-  "Learn by experimenting": [
-    "Leren door te experimenteren",
-    "Apprendre en expérimentant",
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    }
   ],
   "Custom interfaces on a real ROS 2 machine": [
     "Eigen interfaces op een echte ROS 2-machine",
@@ -630,7 +318,7 @@ export const UI = {
   "Odometry callback reported correct x, y and yaw": [
     "Odometrie-callback rapporteerde correcte x, y en yaw",
     "Le callback d’odométrie a rapporté x, y et yaw correctement",
-    "Callback de odometría informó x, y e yaw correctos",
+    "Callback de odometría informó x, y, yaw correctos",
     "Odometrie-Callback meldete korrekte x, y und yaw",
     "Callback de odometria comunicou x, y e yaw corretos"
   ],
@@ -731,45 +419,6 @@ export const UI = {
     "Objetivo centrado y robot parado durante 8 imágenes",
     "Ziel zentriert und Roboter für 8 Bilder angehalten",
     "Alvo centrado e robô parado durante 8 imagens"
-  ],
-  "Python and NumPy are real. rclpy, Image, Twist, Trigger and cv_bridge are small educational implementations. KineCourse provides a lightweight educational subset of OpenCV-compatible functions: cv2.inRange, countNonZero and moments (m00, m10, m01). No full OpenCV, HSV conversion or real camera is installed.": [
-    "Python en NumPy zijn echt. rclpy, Image, Twist, Trigger en cv_bridge zijn kleine onderwijsimplementaties. De beperkte cv2-helper biedt inRange, countNonZero en moments (m00, m10, m01), geen volledige OpenCV, HSV-conversie of echte camera.",
-    "Python et NumPy sont réels. rclpy, Image, Twist, Trigger et cv_bridge sont de petites implémentations pédagogiques. Le helper cv2 limité propose inRange, countNonZero et moments (m00, m10, m01), sans OpenCV complet, conversion HSV ni caméra réelle.",
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    }
-  ],
-  "The 8 Hz camera renders synthetic RGB pixels from robot pose. Python receives only those pixels and Image metadata, not target coordinates. The checker helpers report your computed values: report_image_stats(shape, channel_means) and report_detection(visible, cx=None). These helpers are specific to this teaching environment. Detection checks change the visible scene and require several correct frames per scene.": [
-    "De camera maakt synthetische RGB-pixels op 8 Hz vanuit de robotpose. Python ontvangt pixels en beeldmetadata, geen doelcoördinaten. report_image_stats en report_detection geven je berekeningen door aan de controle; dit zijn onderwijshelpers. De detectiecontrole varieert de scène en vereist meerdere correcte beelden per scène.",
-    "La caméra produit des pixels RGB synthétiques à 8 Hz depuis la pose du robot. Python reçoit les pixels et métadonnées, pas les coordonnées de la cible. report_image_stats et report_detection transmettent vos calculs au vérificateur ; ce sont des helpers pédagogiques. La vérification varie les scènes et exige plusieurs images correctes par scène.",
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    }
-  ],
-  "rclpy.spin yields to the browser worker event loop; statements after spin are not resumed. Use asynchronous service calls with future.add_done_callback. Stop terminates the worker, so Python finally blocks are not guaranteed to run. Callback queues are bounded: a busy callback drops camera frames rather than accumulating them. Python service servers and DDS are not implemented. Other sessions introduce simulation-clock timers and a limited educational action client. The final challenge uses a Twist publisher, not the ROS action protocol.": [
-    "rclpy.spin geeft de uitvoering aan de eventloop van de worker; code na spin wordt niet hervat. Gebruik asynchrone services met future.add_done_callback. Stop beëindigt de worker; finally-blokken worden niet gegarandeerd uitgevoerd. Trage callbacks laten beelden vallen. Python-serviceservers en DDS ontbreken. Andere sessies introduceren timers en een beperkte action-client. De camerauitdaging gebruikt Twist, niet het action-protocol.",
-    "rclpy.spin passe la main à la boucle d’événements du worker ; le code après spin ne reprend pas. Utilisez des services asynchrones avec future.add_done_callback. Stop termine le worker ; les blocs finally ne sont pas garantis. Les callbacks lents perdent des images. Les serveurs de service Python et DDS ne sont pas implémentés. D’autres séances introduisent timers et client d’action limité. Le défi caméra utilise Twist, pas le protocole d’action.",
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    },
-    {
-      "fallback": "en"
-    }
   ],
   "Language": [
     "Taal",
@@ -1086,13 +735,6 @@ export const UI = {
     "Wegpunkte der Reihe nach besucht und am Ziel angehalten",
     "Visitou os pontos por ordem e parou no destino"
   ],
-  "From browser to a real robot": [
-    "Van browser naar echte robot",
-    "Du navigateur au robot réel",
-    "Del navegador a un robot real",
-    "Vom Browser zum echten Roboter",
-    "Do navegador a um robô real"
-  ],
   "Official ROS 2 package tutorial": [
     "Officiële ROS 2-packagehandleiding",
     "Tutoriel officiel des packages ROS 2",
@@ -1302,5 +944,47 @@ export const UI = {
     "Solo transformaciones 2D actuales. tf2 real también admite 3D e historial temporal.",
     "Nur aktuelle 2D-Transformationen. Echtes tf2 unterstützt auch 3D und Zeitverläufe.",
     "Apenas transformações 2D atuais. tf2 real também suporta 3D e histórico temporal."
+  ],
+  "Grid: 1 m · +x right · +y up": [
+    "Raster: 1 m · +x rechts · +y boven",
+    "Grille : 1 m · +x droite · +y haut",
+    "Cuadrícula: 1 m · +x derecha · +y arriba",
+    "Raster: 1 m · +x rechts · +y oben",
+    "Grelha: 1 m · +x direita · +y acima"
+  ],
+  "Python source code": [
+    "Python-broncode",
+    "Code source Python",
+    "Código fuente Python",
+    "Python-Quellcode",
+    "Código-fonte Python"
+  ],
+  "Python output": [
+    "Python-uitvoer",
+    "Sortie Python",
+    "Salida Python",
+    "Python-Ausgabe",
+    "Saída Python"
+  ],
+  "Course sessions": [
+    "Cursussessies",
+    "Sessions du cours",
+    "Sesiones del curso",
+    "Kurssitzungen",
+    "Sessões do curso"
+  ],
+  "Coordinate frames in the robot world": [
+    "Coördinatenframes in de robotwereld",
+    "Repères dans le monde du robot",
+    "Marcos de coordenadas en el mundo del robot",
+    "Koordinatensysteme in der Roboterwelt",
+    "Referenciais no mundo do robô"
+  ],
+  "From browser to a real robot": [
+    "Van browser naar echte robot",
+    "Du navigateur au robot réel",
+    "Del navegador a un robot real",
+    "Vom Browser zum echten Roboter",
+    "Do navegador a um robô real"
   ]
 };
