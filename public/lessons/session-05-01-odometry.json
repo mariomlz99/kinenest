@@ -1,0 +1,55 @@
+{
+  "id": "session-05-01-odometry",
+  "session": 5,
+  "number": "5.1",
+  "title": "Read the robot pose",
+  "description": "Read position and orientation from Odometry. Pose is different from the velocity command that made the robot move.",
+  "steps": [
+    "Inspect /odom with echo --field pose.pose.",
+    "Subscribe in Python. Read position and calculate yaw from quaternion orientation.",
+    "Report your calculation with report_pose(x, y, yaw). Try a one-shot Twist in another terminal and observe changes."
+  ],
+  "hints": [
+    "Position is msg.pose.pose.position; orientation is msg.pose.pose.orientation.",
+    "For planar motion yaw = 2 * atan2(q.z, q.w) also works.",
+    "The general yaw expression is atan2(2*(w*z+x*y), 1-2*(y*y+z*z))."
+  ],
+  "starterCode": "import rclpy\nfrom rclpy.node import Node\nimport math\nfrom nav_msgs.msg import Odometry\nfrom ros2learn import report_pose\n\nrclpy.init()\nnode = Node('student_controller')\n\ndef receive(msg):\n    # TODO: read position, convert orientation to yaw, report_pose\n    pass\nnode.create_subscription(Odometry, '/odom', receive, 10)\nrclpy.spin(node)\n",
+  "checks": [
+    {
+      "type": "pose"
+    }
+  ],
+  "startX": 1,
+  "startYaw": 0.4,
+  "translations": {
+    "nl": {
+      "title": "Lees de robotpose",
+      "description": "Lees positie en oriëntatie uit Odometry. Een pose is iets anders dan een snelheidscommando.",
+      "steps": [
+        "Inspecteer /odom met echo --field pose.pose.",
+        "Lees positie en bereken yaw uit de quaternion.",
+        "Rapporteer x, y en yaw met report_pose; probeer een Twist in een andere terminal."
+      ],
+      "hints": [
+        "De positie staat in msg.pose.pose.position.",
+        "Voor vlakke beweging werkt 2 * atan2(q.z, q.w).",
+        "Yaw wordt in radialen gemeten."
+      ]
+    },
+    "fr": {
+      "title": "Lire la pose du robot",
+      "description": "Lisez position et orientation dans Odometry. Une pose n’est pas une commande de vitesse.",
+      "steps": [
+        "Inspectez /odom avec echo --field pose.pose.",
+        "Lisez la position et calculez yaw depuis le quaternion.",
+        "Rapportez x, y et yaw avec report_pose ; essayez un Twist dans un autre terminal."
+      ],
+      "hints": [
+        "La position est dans msg.pose.pose.position.",
+        "Pour le mouvement plan, 2 * atan2(q.z, q.w) convient.",
+        "Yaw est mesuré en radians."
+      ]
+    }
+  }
+}

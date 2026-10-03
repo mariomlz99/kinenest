@@ -1,0 +1,55 @@
+{
+  "id": "session-05-02-heading",
+  "session": 5,
+  "number": "5.2",
+  "title": "Position plus orientation",
+  "description": "Use a quaternion helper to obtain yaw. Compare a turned robot with a translated robot: both have a pose, but their heading differs.",
+  "steps": [
+    "Import euler_from_quaternion from tf_transformations.",
+    "Pass [q.x, q.y, q.z, q.w]; the third returned value is yaw in radians.",
+    "Report x, y and yaw with report_pose and compare with the world display. Try angular-only Twist from the terminal."
+  ],
+  "hints": [
+    "The quaternion is ordered x, y, z, w.",
+    "roll, pitch, yaw = euler_from_quaternion([...])",
+    "A positive yaw turns counterclockwise in this world."
+  ],
+  "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom nav_msgs.msg import Odometry\nfrom tf_transformations import euler_from_quaternion\nfrom ros2learn import report_pose\n\nrclpy.init()\nnode = Node('student_controller')\n\ndef receive(msg):\n    # TODO: extract position and quaternion, calculate yaw, report pose\n    pass\nnode.create_subscription(Odometry, '/odom', receive, 10)\nrclpy.spin(node)\n",
+  "checks": [
+    {
+      "type": "pose"
+    }
+  ],
+  "startX": 0.5,
+  "startYaw": 1.2,
+  "translations": {
+    "nl": {
+      "title": "Positie plus oriëntatie",
+      "description": "Gebruik een quaternionhelper om de koers te vinden. Vergelijk draaien met verplaatsen.",
+      "steps": [
+        "Importeer euler_from_quaternion uit tf_transformations.",
+        "Geef [q.x, q.y, q.z, q.w] door; de derde waarde is yaw.",
+        "Gebruik report_pose en vergelijk met de wereldweergave."
+      ],
+      "hints": [
+        "De volgorde is x, y, z, w.",
+        "roll, pitch, yaw = euler_from_quaternion([...]).",
+        "Een positieve yaw draait tegen de klok in."
+      ]
+    },
+    "fr": {
+      "title": "Position et orientation",
+      "description": "Utilisez un helper quaternion pour trouver le cap. Comparez rotation et translation.",
+      "steps": [
+        "Importez euler_from_quaternion depuis tf_transformations.",
+        "Passez [q.x, q.y, q.z, q.w] ; la troisième valeur est yaw.",
+        "Utilisez report_pose et comparez avec le monde affiché."
+      ],
+      "hints": [
+        "L’ordre est x, y, z, w.",
+        "roll, pitch, yaw = euler_from_quaternion([...]).",
+        "Un yaw positif tourne dans le sens antihoraire."
+      ]
+    }
+  }
+}

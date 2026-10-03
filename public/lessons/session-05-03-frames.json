@@ -1,0 +1,55 @@
+{
+  "id": "session-05-03-frames",
+  "session": 5,
+  "number": "5.3",
+  "title": "Which coordinate frame?",
+  "description": "The laser is mounted 0.2 m ahead of base_link. Find its origin in odom, including when the robot is rotated.",
+  "steps": [
+    "Inspect ros2 topic echo /tf --once. The tree is odom → base_link → laser_link.",
+    "Create a Buffer and TransformListener. In a timer, request lookup_transform(\"odom\", \"laser_link\", Time()).",
+    "Report translation.x and translation.y using report_transform. The target frame is the frame in which you want the answer."
+  ],
+  "hints": [
+    "Wait for transforms: catch TransformException on early callbacks.",
+    "Do not simply add 0.2 to odom x; the mounting offset rotates with the robot.",
+    "The buffer composes both edges. Here it supports latest planar transforms, not historical queries."
+  ],
+  "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom tf2_ros import Buffer, TransformListener, TransformException\nfrom rclpy.time import Time\nfrom ros2learn import report_transform\n\nrclpy.init()\nnode = Node('student_controller')\n\nbuffer = Buffer()\nlistener = TransformListener(buffer, node)\ndef tick():\n    # TODO: look up the laser in odom, report x/y, catch TransformException\n    pass\nnode.create_timer(0.2, tick)\nrclpy.spin(node)\n",
+  "checks": [
+    {
+      "type": "transform"
+    }
+  ],
+  "startX": 1,
+  "startYaw": 1.5707963267948966,
+  "translations": {
+    "nl": {
+      "title": "In welk coördinatenstelsel?",
+      "description": "De laser zit 0.2 m vóór base_link. Zoek zijn oorsprong in odom, ook als de robot gedraaid is.",
+      "steps": [
+        "Inspecteer /tf en de TF-boom.",
+        "Maak een Buffer en TransformListener; vraag lookup_transform(\"odom\", \"laser_link\", Time()).",
+        "Rapporteer translation.x en .y met report_transform."
+      ],
+      "hints": [
+        "Vang TransformException op zolang er nog geen transformatie is.",
+        "Tel niet zomaar 0.2 op bij de wereld-x: de offset draait mee.",
+        "De buffer combineert de verbindingen; alleen de nieuwste vlakke transformaties worden ondersteund."
+      ]
+    },
+    "fr": {
+      "title": "Dans quel repère ?",
+      "description": "Le laser est placé 0.2 m devant base_link. Trouvez son origine dans odom, même lorsque le robot tourne.",
+      "steps": [
+        "Inspectez /tf et l’arbre TF.",
+        "Créez Buffer et TransformListener ; demandez lookup_transform(\"odom\", \"laser_link\", Time()).",
+        "Rapportez translation.x et .y avec report_transform."
+      ],
+      "hints": [
+        "Interceptez TransformException avant la première transformation.",
+        "N’ajoutez pas simplement 0.2 à x : le décalage tourne avec le robot.",
+        "Le buffer compose les liens ; seules les dernières transformations planes sont prises en charge."
+      ]
+    }
+  }
+}

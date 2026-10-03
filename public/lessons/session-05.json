@@ -1,0 +1,56 @@
+[
+  {
+    "id": "session-05-01-odometry",
+    "title": "Read the robot pose",
+    "number": "5.1",
+    "translations": {
+      "nl": "Lees de robotpose",
+      "fr": "Lire la pose du robot"
+    }
+  },
+  {
+    "id": "session-05-02-heading",
+    "title": "Position plus orientation",
+    "number": "5.2",
+    "translations": {
+      "nl": "Positie plus oriëntatie",
+      "fr": "Position et orientation"
+    }
+  },
+  {
+    "id": "session-05-03-frames",
+    "title": "Which coordinate frame?",
+    "number": "5.3",
+    "translations": {
+      "nl": "In welk coördinatenstelsel?",
+      "fr": "Dans quel repère ?"
+    }
+  },
+  {
+    "id": "session-05-04-relative",
+    "title": "Where is the target relative to me?",
+    "number": "5.4",
+    "translations": {
+      "nl": "Waar is het doel ten opzichte van mij?",
+      "fr": "Où est la cible par rapport à moi ?"
+    }
+  },
+  {
+    "id": "session-05-05-goal",
+    "title": "Close the loop with TF",
+    "number": "5.5",
+    "translations": {
+      "nl": "Sluit de regellus met TF",
+      "fr": "Fermer la boucle avec TF"
+    }
+  },
+  {
+    "id": "session-05-06-safety",
+    "title": "Goal direction plus obstacle safety",
+    "number": "5.6",
+    "translations": {
+      "nl": "Doelrichting en obstakelveiligheid",
+      "fr": "Direction de la cible et sécurité"
+    }
+  }
+]
