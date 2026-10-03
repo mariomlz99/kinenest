@@ -109,3 +109,10 @@ Captured 22 workstation views at desktop/laptop sizes; inspected light Session 1
 Full Chrome and Firefox course acceptance passed with this build: all 25 Python reference exercises, alternate solutions, negative controls, Stop/Reset, translations, Compare, TF, transitions and the added world-theme regression. No suite was skipped or retried.
 
 Publication of the theme follow-up remains pending: noninteractive HTTPS push again failed because no GitHub username/credential is available in this session. Production was last verified at 155e9188d07d; the validated theme build is 56c72703b2a8. The two local commits are ready for the maintainer’s authenticated git push origin main.
+
+
+## Consolidated workstation baseline — 2026-10-03
+
+Started clean on main at 13f0accc2e67e14c6ad42a6340657ad79d427877. All 44 unit tests, static build 56c72703b2a8, complete Chrome/Firefox course suites and both C++ suites pass. The first Firefox run exposed a test-only assumption: an immediate theme redraw may catch up to the latest robot pose between sensor frames. The regression now bounds continuous motion by one sensor period rather than requiring equality with an older visual sample; the complete Firefox baseline then passed.
+
+GitHub CLI is absent; the public Actions API confirms [run 37130011718](https://github.com/mariomlz99/ros2learn/actions/runs/37130011718) completed tests, build, C++ tests and Pages deployment successfully for the same commit. Production returns KineNest and asset version 56c72703b2a8. Native Chrome/CDP and Firefox/BiDi probes verified ordinary Session 2 hides C++/Compare, the query flag reveals them, and the deployed C++ obstacle controller compiles, moves the robot and passes the shared checker in both browsers. Cold toolchain loads were 1.95 s / 2.62 s and compilation 2.00 s / 1.53 s (Chrome/Firefox). No production feature was missing; it was gated.
