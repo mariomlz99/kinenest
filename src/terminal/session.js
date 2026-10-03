@@ -37,7 +37,7 @@ export class TerminalSession {
     const parts=command.split(/\s+/);
     if(parts.slice(0,3).join(' ')==='ros2 action send_goal'){
       const args=tokens(command),feedback=args.at(-1)==='--feedback';if(feedback)args.pop();
-      if(args.length!==6||args[3]!=='/drive_distance'||args[4]!==DRIVE)throw Error('Usage: ros2 action send_goal /drive_distance ros2learn_interfaces/action/DriveDistance "{distance: 1, speed: 0.5}" [--feedback]');
+      if(args.length!==6||args[3]!=='/drive_distance'||args[4]!==DRIVE)throw Error('Usage: ros2 action send_goal /drive_distance ros2learn_interfaces/action/DriveDistance "{distance: 1}" [--feedback]');
       const node='/ros2cli_action_'+this.id;
       const id=startGoal(this.runtime,node,parseMessage(args[5]),(event,payload)=>{if(event==='feedback'&&feedback)this.write('Feedback: '+formatMessage(payload));if(event==='result'){this.write('Result: '+formatMessage(payload));this.stop(false);}});
       this.runtime.nodes.add(node);this.runtime.actions.get('/drive_distance').clients.add(node);

@@ -7,7 +7,7 @@ export function resetCourse(r){
 }
 export function enableCourse(r){
   r.topics.set('/tf',{type:'tf2_msgs/msg/TFMessage',publishers:new Set(['/simulator']),subscribers:new Set()});
-  r.nodes.add('/drive_distance_server');r.parameters.set('/drive_distance_server',new Map([['speed',0.5]]));
+  r.nodes.add('/drive_distance_server');r.topic('/cmd_vel').publishers.add('/drive_distance_server');r.parameters.set('/drive_distance_server',new Map([['speed',0.5]]));
   r.actions.set('/drive_distance',{type:DRIVE,node:'/drive_distance_server',clients:new Set()});
 }
 export function transforms(r){
@@ -32,13 +32,14 @@ export function setParameter(r,node,name,value){
 }
 export function startGoal(r,node,goal,notify=()=>{}){
   if(!r.actions.has('/drive_distance'))throw Error('Action server unavailable');
+  if(!goal||typeof goal!=='object'||Object.keys(goal).some(k=>k!=='distance'))throw Error('DriveDistance goal contains only distance');
   const {distance}=goal,speed=r.parameters.get('/drive_distance_server')?.get('speed')??.5;
   if(typeof distance!=='number'||!Number.isFinite(distance)||distance<=0||distance>3||typeof speed!=='number'||!Number.isFinite(speed)||speed<=0||speed>1)throw Error('Goal requires 0 < distance ≤ 3 m and 0 < speed ≤ 1 m/s');
   if([...r.goals.values()].some(g=>g.status===2))throw Error('Drive server is busy; cancel or finish its current goal');
   const id=String(++r.goalCounter),g={id,node,distance,speed,start:r.robot.distance,status:2,notify};r.goals.set(id,g);r.course.actionAccepted++;
   let elapsed=0;
-  g.collisions=r.collisions;g.dispose=r.every(.1,()=>{elapsed+=.1;if(r.collisions>g.collisions){finishGoal(r,g,6);return;}const travelled=r.robot.distance-g.start;if(travelled>=distance-.015){finishGoal(r,g,4);return;}r.robot.command(Math.min(speed,(distance-travelled)/.1),0);if(elapsed>=.2-1e-9){elapsed=0;notify('feedback',{distance_travelled:travelled});}});
+  g.collisions=r.collisions;g.dispose=r.every(.1,()=>{elapsed+=.1;if(r.collisions>g.collisions){finishGoal(r,g,6);return;}const travelled=r.robot.distance-g.start;if(travelled>=distance-.015){finishGoal(r,g,4);return;}r.publish('/cmd_vel','geometry_msgs/msg/Twist',{linear:{x:Math.min(speed,(distance-travelled)/.1)}});if(elapsed>=.2-1e-9){elapsed=0;notify('feedback',{distance_travelled:travelled});}});
   return id;
 }
-function finishGoal(r,g,status){g.dispose();g.status=status;r.robot.command(0,0);g.result={status,result:{final_distance:r.robot.distance-g.start,success:status===4}};g.notify('result',g.result);}
+function finishGoal(r,g,status){g.dispose();g.status=status;r.publish('/cmd_vel','geometry_msgs/msg/Twist',{});g.result={status,result:{final_distance:r.robot.distance-g.start,success:status===4}};g.notify('result',g.result);}
 export function cancelGoal(r,id){const g=r.goals.get(id);if(!g||g.status!==2)return false;finishGoal(r,g,5);return true;}

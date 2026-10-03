@@ -369,7 +369,9 @@ class ClientGoalHandle:
     def __init__(self, key, accepted):
         self.key, self.accepted = key, accepted
         self._result_future = Future()
+        self._result_requested = False
     def get_result_async(self):
+        self._result_requested = True
         return self._result_future
     def cancel_goal_async(self):
         key = _id()
@@ -414,7 +416,8 @@ def _action_event(key, event, payload):
             _send('action_observed', event=event)
     elif event == 'result':
         _resolve(state['handle']._result_future, _object(data))
-        _send('action_observed', event=event, status=data['status'])
+        if state['handle']._result_requested:
+            _send('action_observed', event=event, status=data['status'])
     elif event == 'cancel':
         _resolve(_futures.pop(key), _object(data))
 

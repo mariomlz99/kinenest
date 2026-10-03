@@ -45,7 +45,7 @@ export class PythonBridge {
         r.nodes.add(data.node);this.nodes.add(data.node);break;
       case 'destroy':this.cleanupNode(data.node);break;
       case 'publisher':r.ensureTopic(data.topic,data.type??TWIST).publishers.add(data.node);break;
-      case 'publish':r.publish(data.topic,data.type??TWIST,data.message);e.pythonPublications++;break;
+      case 'publish':r.publish(data.topic,data.type??TWIST,data.message);e.pythonPublications++;if(data.topic==='/cmd_vel'){r.course.commandPublications=(r.course.commandPublications??0)+1;(r.course.commandSpeeds??=new Set()).add(data.message.linear?.x??0);}if(data.type==='ros2learn_interfaces/msg/TargetInfo')r.course.customPython=(r.course.customPython??0)+1;break;
       case 'timer':{
         const dispose=r.every(data.period,()=>{const key='timer-'+data.id;if(!this.worker||this.pending.has(key))return;this.pending.add(key);this.worker.postMessage({kind:'timer',id:data.id});if(this.pending.size===1)this.watchdog(5000,'Timer callback took too long; stopped.');});
         this.jobs.set(data.id,{dispose,node:data.node});break;
