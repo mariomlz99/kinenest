@@ -92,3 +92,5 @@ Visual review covered 22 workstation combinations, including Sessions 1, 2, 3, 5
 The seven-language engineering/editorial review preserves technical identifiers and concise tasks; native-speaker and classroom validation remain separate. Edge and Safari are still best-effort, not independently tested. Legal notices and raw compiler/Python/CLI diagnostics retain their original language.
 
 Validated production asset version: 155e9188d07d. GitHub Pages publication is checked separately below.
+
+Publication check: HTTPS push could not authenticate (no noninteractive GitHub username/credential). Existing SSH access was also unavailable: strict host-key verification found no saved GitHub host key; no trust settings were changed. The release therefore remains local. Production still returns KineCourse and asset version 1d0fc154a99a, while the validated local build is 155e9188d07d. Publish with git push origin main from the authenticated maintainer terminal, then inspect the Pages workflow and the deployed version. The personal root website and repository name were not modified.
