@@ -1,95 +1,101 @@
 # KineCourse
 
-Learn the ROS 2 mental model in your browser. A static university teaching workstation: no student installation, accounts or backend.
+Interactive robotics learning in your browser.
 
-Deployment: https://mariomlz99.github.io/ros2learn/ . This repository is independent of the existing personal website.
+KineCourse is a free, open-source teaching environment for robotics communication, sensors, perception and coordinate frames. Students use real Python and interactive simulations without installing a robotics stack or creating an account. Exercises mirror common ROS™ 2 APIs and command-line workflows so the same concepts transfer to a real robotics workspace.
+
+## Try online
+
+[Open KineCourse](https://mariomlz99.github.io/ros2learn/). Start in Session 1; Python begins in Session 2. Chrome and Firefox are tested. Edge and Safari remain best-effort and have not been independently verified.
+
+## What students learn
+
+Nodes, topics, messages, publishers, subscribers, callbacks, LiDAR, camera arrays, services, parameters, actions, odometry, transforms and debugging. One shared runtime connects the terminals, Python and robot within each page.
+
+No installation, account, backend, API key or paid service is required. The first Python run downloads Pyodide and NumPy; initial use requires internet.
+
+## Workstation views
+
+![Session 5: live coordinate frames and transform inspector](docs/media/session-05.png)
+
+[Session 1](docs/media/session-01.png) · [Camera perception](docs/media/session-03.png) · [Debugging](docs/media/session-06.png). A short demonstration video is planned; see the [demo outline](docs/DEMO.md).
 
 ## Six-session course
 
-Six approximately 90-minute sessions, with the first two introductory:
+Each session is designed for approximately 90 minutes. Sessions 1–2 introduce the basics; allow time for explanation and experimentation.
 
-1. Graph, CLI, topics, messages and cmd_vel: index.html.
-2. Subscribers, callback state, LiDAR sectors and obstacle avoidance: session-02.html.
-3. Camera, real NumPy, colour/centroid processing, services and visual control: session-03.html.
-4. Live parameters, TargetInfo, action goals/feedback and optional cancellation: session-04.html.
-5. Odometry, heading, TF and target-relative control with obstacle safety: session-05.html.
-6. Debugging repairs and a camera/LiDAR beacon challenge: session-06.html.
+| Session | Focus | Exercises |
+| --- | --- | --- |
+| 1 | Nodes & Topics | CLI discovery and robot commands |
+| 2 | Callbacks & LiDAR | 4 Python exercises |
+| 3 | Perception & Services | 6 Python exercises |
+| 4 | Parameters & Actions | 5 core exercises + optional cancellation |
+| 5 | Odometry & Frames | 5 core exercises + obstacle integration |
+| 6 | Debugging Challenge | 2 repairs + an integrated beacon mission |
 
-The final real-ros.html page explains the transition to a real Python ROS package and workspace. There are 25 Python exercises plus the original CLI lab. See docs/COURSE.md for pacing and scope. Class timings and translations should be reviewed with students before formal course adoption.
+The UI and teaching material support English, Nederlands, Français, Español, Deutsch and Português. Code, ROS identifiers and technical output remain English. Switching language preserves code and running Python. Light/dark and split/stacked layouts are available. Course timings and translations still need classroom and native-speaker review.
 
-Use the header to select dark/light, EN 🇬🇧 / NL 🇳🇱 / FR 🇫🇷 and side-by-side/stacked workspace layouts. Preferences are stored locally. Language changes affect interface and tutorial text; Python, ROS identifiers, commands and technical output remain English. Code is preserved when changing language, theme or layout. Free dragging of panels is deferred.
+## For lecturers
 
-## Run locally
+Send students a URL and begin. No ROS installation, Docker, student cloud accounts or local Python setup. Exercises, worlds, hints and translations are version-controlled alongside the course.
 
-Maintainers can preview with:
+Fork the repository, edit lesson JSON and enable Pages. See [AUTHORING.md](docs/AUTHORING.md), [course pacing](docs/COURSE.md) and [validation](docs/VALIDATION.md). No authoring GUI or grading database is required.
 
-    python3 -m http.server 8000 --bind 127.0.0.1
+## How it works
 
-Open http://localhost:8000 . To check the project path, serve the parent directory and open http://localhost:8000/ros2learn/ . Do not open the HTML through file://.
+Static HTML, CSS and JavaScript provide the workstation. Real Python and NumPy run in a Pyodide Web Worker. Educational message classes and robotics APIs connect student programs to the same graph used by the CLI. Canvas renders sensors and obstacles; SVG displays coordinate frames from actual runtime transforms.
 
-Maintainer tests/build require Node 22+, with no npm dependencies:
+Camera: 320 × 240 at 8 Hz. LiDAR: 120 rays at 5 Hz. Odometry: ideal 2D pose at 5 Hz. Stop terminates the worker, including an infinite loop. Slow callbacks drop sensor frames instead of accumulating work. Output and terminal history are bounded.
 
-    npm test
-    npm run build
-    npm run test:chrome -- --built
-    npm run test:firefox -- --built
+## Educational runtime and limitations
 
-Browser acceptance runs every session with real Pyodide/NumPy solutions, alternate solutions and negative controls. Chrome/Firefox must be installed for these maintainer tests. The runner starts only a temporary local test server. The production site consists entirely of static assets. Edge/Safari have not been independently verified.
+KineCourse is not a full robot middleware installation. Python, NumPy and student algorithms are real; rclpy, messages, services, parameters, actions, TF, cv_bridge, limited cv2 and the CLI are educational implementations.
 
-For one suite: node scripts/check-browser.mjs chrome --built --suite=session2 . Valid suites include browser (Session 1), session2 through session6. Pyodide downloads require internet. Each suite has a bounded timeout and cleanup.
+No DDS, QoS negotiation, TF history, native OpenCV, Gazebo, RViz, Nav2, SLAM or native package builds. TF is planar and latest-only. The two-second velocity timeout is a simulator controller policy. Each tab has a separate world. See [architecture](docs/ARCHITECTURE.md) and the [About page](https://mariomlz99.github.io/ros2learn/about.html).
+
+Checks observe behaviour and accept different solutions. They are formative, not tamper-proof grading. Reference programs are excluded from the production build but remain visible in this public repository. Browser source cannot securely hide answers or checkers.
+
+## Local maintainer setup
+
+Students need only a browser. Maintainers need Node 22+ for tests/build and Python 3 for the simple preview server; no npm dependencies are installed.
+
+~~~bash
+git clone https://github.com/mariomlz99/ros2learn.git
+cd ros2learn
+npm run dev
+~~~
+
+Open http://localhost:8000. Use HTTP, not file://.
+
+~~~bash
+npm test
+npm run build
+npm run test:chrome -- --built
+npm run test:firefox -- --built
+~~~
+
+Browser tests require the corresponding installed browser and access to the Pyodide CDN. They exercise all reference programs, alternate implementations, negative controls, Stop/Reset, translations and numerical TF agreement. To run one suite:
+
+~~~bash
+node scripts/check-browser.mjs chrome --built --suite=tf-browser
+~~~
 
 ## Deployment
 
-Set repository Settings → Pages → Source to GitHub Actions. The workflow runs unit/build tests and every Chrome acceptance suite before publishing dist. A push to main deploys; pull requests only test.
+GitHub repository Settings → Pages → Source: **GitHub Actions**. Pushes to main run tests, build and the complete Chrome suite before publishing dist/. Pull requests test without deploying.
 
-    git status
-    git push origin main
+Production contains static assets only. The allowlist excludes tests, reference programs, docs and private development artifacts. Content-versioned relative paths work under /ros2learn/ and other project prefixes. The existing personal website is a separate repository.
 
-The production allowlist excludes tests, reference answers, docs and Git metadata. Content-versioned relative asset paths support /ros2learn/ and avoid mixing old/new assets. If a stale tab fails to load after a deployment, reload with Ctrl+Shift+R; startup failures display diagnostics.
+The repository remains ros2learn for now. A later move to kinecourse requires explicit approval; see [BRANDING.md](docs/BRANDING.md). Update the source URL in src/ui/product.js and documentation when migrating. No custom domain is configured.
 
-GitHub instructions: https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages . No changes to the personal-site repository are required. Use your existing credential helper or SSH; never commit credentials.
+## Authoring
 
-## Shared terminals and Python
+Lesson catalogs and JSON files live in public/lessons/. They define tasks, starter code, hints, worlds, translations and behavioural checks. [AUTHORING.md](docs/AUTHORING.md) includes a minimal example and a validation workflow.
 
-Every terminal and the Python worker on a page share one graph and robot. Separate browser tabs are separate worlds. Add terminals to publish in one and observe in another. Ctrl+C / Stop command ends a foreground stream; Close and Reset clean up endpoints. Logs and history are bounded.
+## Licence and trademarks
 
-    ros2 node list
-    ros2 node info /simulator
-    ros2 topic list -t
-    ros2 topic info /cmd_vel -v
-    ros2 interface show geometry_msgs/msg/Twist
-    ros2 topic echo /odom --field pose.pose.position
-    ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist '{"linear":{"x":0.6}}'
+Original code and lessons are Apache-2.0: [LICENSE](LICENSE), [NOTICE](NOTICE). Pyodide, CPython and NumPy retain their own terms; see [third-party notices](licences.html).
 
-The one-shot command travels 1.2 m in the empty introductory world. This controller holds velocity for two seconds; continuous publication defaults to 1 Hz, with --rate / -r supported up to 20 Hz. The timeout and limits (2 m/s, 3 rad/s) are simulator policies, not ROS guarantees.
+ROS is a trademark of Open Source Robotics Foundation, Inc. KineCourse is an independent educational project and is not affiliated with or endorsed by Open Robotics.
 
-Supported CLI families:
-
-- node list/info.
-- topic list/type/info/find/echo/hz/bw/delay/pub.
-- interface list/packages/package/show/proto.
-- service list/type/info/find/call.
-- param list/get/set.
-- action list/type/info/send_goal, including --feedback.
-
-Topics exist according to actual endpoints, without per-lesson command filtering. Twist, String and TargetInfo publication is supported. Dynamic topics disappear when their final endpoint closes. Python supports the course message types, subscriptions, timers, publishers, Trigger clients, scalar parameters, the provided DriveDistance action client and latest planar TF lookup.
-
-## Simulation and limitations
-
-KineCourse reproduces the ROS 2 concepts and APIs used in these lessons, but it is not a complete DDS-based ROS 2 installation.
-
-Python and NumPy run for real in a cancellable Pyodide worker. rclpy, cv_bridge, limited cv2, messages, TF and actions are educational compatibility layers. Camera: 320 × 240 RGB at 8 Hz. LiDAR: 120 rays at 5 Hz against rectangular obstacles and world boundaries where a lesson supplies them. Odometry: 5 Hz ideal pose/velocity with valid quaternions. No-return rays are infinite; covariance is zero. Time pauses when the page is hidden. Slow Python callbacks drop sensor samples rather than building an unbounded queue. Stop terminates even infinite loops; finally blocks are not guaranteed to run.
-
-TF is latest-only and planar; all edges are republished on /tf. DDS, QoS negotiation, historical TF, native OpenCV, student-written service/action servers, shell/package execution, CMake/colcon execution, Nav2, SLAM, C++, RViz, Gazebo and cloud infrastructure are outside this release. See docs/ARCHITECTURE.md and the session documents for precise API boundaries.
-
-## Authoring and assessment
-
-Lessons, starter code, worlds, hints, translated teaching text and check types are data under public/lessons. Runtime logic lives in src/runtime, src/simulator and src/python; shared command parsing in src/terminal; check implementations in src/exercises; UI in src/ui.
-
-Checks observe messages, callbacks, reports and motion, not source-code strings. Multiple solutions are accepted. Reference solutions live in tests/python and are excluded from dist, but remain visible in the public source repository. A static, open-source client cannot conceal hints/checkers or provide tamper-proof grades. Use this for formative learning and assess explanations or fresh tasks separately.
-
-## Licence and name
-
-Original code and lessons use Apache-2.0; see LICENSE and NOTICE. Third-party licences remain applicable; see public/third-party.html. This project is independent of Open Robotics.
-
-KineCourse is the working public name; no trademark clearance is claimed. See docs/BRANDING.md.
+KineCourse is a working name, not a claim of trademark clearance. The independent brand distinguishes the product from the technology taught; descriptive ROS 2 references and technical identifiers are retained.

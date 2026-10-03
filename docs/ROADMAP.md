@@ -2,11 +2,11 @@
 
 ## Now
 
-Complete six-session browser course: original CLI lab; four Session 2 exercises; six Session 3 exercises; six Session 4 exercises including optional cancellation; six Session 5 exercises including integration; three Session 6 debugging/challenge tasks. Real Python/NumPy, camera, ray-cast LiDAR, parameters, custom messages, action client/server, planar TF and control share one runtime. Static hosting, light/dark, EN/NL/FR and split/stacked layouts are implemented.
+Complete six-session browser course: original CLI lab; four Session 2 exercises; six Session 3 exercises; six Session 4 exercises including optional cancellation; six Session 5 exercises including integration; three Session 6 debugging/challenge tasks. Real Python/NumPy, camera, ray-cast LiDAR, parameters, custom messages, action client/server, planar TF and control share one runtime. Static hosting, light/dark, EN/NL/FR/ES/DE/PT and split/stacked layouts are implemented.
 
 ## Next
 
-Lecturer review and classroom trials. Measure completion times, clarity and transfer to real ROS. Have native speakers review tutorial translations. Test Edge and Safari independently. Resolve the public-facing name before broader promotion; KineCourse is a preliminary candidate, not a cleared trademark.
+Lecturer review and classroom trials. Measure completion times, clarity and transfer to real ROS. Have native speakers review tutorial translations. Test Edge and Safari independently. KineCourse is the working public name, not a cleared trademark. Review a separate repository migration before broad promotion.
 
 ## Later
 
