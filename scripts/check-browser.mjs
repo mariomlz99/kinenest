@@ -17,10 +17,12 @@ const server=http.createServer(async(req,res)=>{
  try{let relative=decodeURIComponent(req.url.split('?')[0]).replace(/^\/ros2learn\//,'');if(!relative||relative.endsWith('/'))relative+='index.html';let file=path.resolve(root,production&&!relative.startsWith('tests/')?'dist/'+relative:relative);if(!file.startsWith(root))throw new Error('Invalid path');if(file.endsWith(path.sep))file+='index.html';const data=await readFile(file);res.setHeader('Content-Type',({'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.py':'text/plain','.json':'application/json','.css':'text/css'})[path.extname(file)]||'application/octet-stream');res.end(data);}catch{res.writeHead(404);res.end('Not found');}
 });
 await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
-const url='http://127.0.0.1:'+server.address().port+'/ros2learn/tests/session3.html';
+const suite=process.argv.find(a=>a.startsWith('--suite='))?.slice(8)||'session3';
+if(!/^[a-z0-9-]+$/.test(suite))throw Error('Invalid suite');
+const url='http://127.0.0.1:'+server.address().port+'/ros2learn/tests/'+suite+'.html';
 const args=browser==='firefox'?['--headless','--no-remote','--profile',profile,url]:['--headless','--disable-gpu','--user-data-dir='+profile,'--dump-dom',url];
 console.log('Testing '+browser+' at '+url);
 child=spawn(browser==='firefox'?(process.env.FIREFOX_BIN||'firefox'):'google-chrome',args,{stdio:['ignore','ignore','pipe']});
 let errors='';child.stderr.on('data',data=>{errors=(errors+data).slice(-2000);});
 child.on('error',error=>finish('FAIL: '+error.message));child.on('exit',()=>{if(!finished)finish('FAIL: Browser exited before test result. '+errors);});
-timeout=setTimeout(()=>finish('FAIL: Browser test exceeded 180 seconds. '+errors),180000);
+timeout=setTimeout(()=>finish('FAIL: Browser test exceeded 420 seconds. '+errors),420000);

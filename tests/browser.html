@@ -1,4 +1,4 @@
-<!doctype html><meta charset="utf-8"><title>ROS2Learn browser smoke test</title><pre id="result">RUNNING</pre><iframe width="1200" height="1100"></iframe><script type="module">
+<!doctype html><meta charset="utf-8"><title>ROS2Learn browser smoke test</title><pre id="result">RUNNING</pre><img src="/hold" alt=""><iframe width="1200" height="1100"></iframe><script type="module">
 const frame=document.querySelector('iframe'),result=document.querySelector('#result');
 const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 const assert=(value,message)=>{if(!value)throw new Error(message);};
@@ -43,4 +43,5 @@ const resetOutput=second.querySelector('pre').textContent;await wait(400);
 assert(second.querySelector('pre').textContent===resetOutput,'Messages arrived after reset');
 result.textContent='PASS: original lab and multiple terminals, live odometry/Twist, Ctrl+C, stop, close, reset';
 }catch(error){result.textContent='FAIL: '+error.message;}
+await fetch('/done',{method:'POST',body:result.textContent}).catch(()=>{});
 </script>
