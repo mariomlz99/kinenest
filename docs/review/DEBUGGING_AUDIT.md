@@ -15,3 +15,7 @@ Source safeguards: Python fetch attempts15s, load watchdog120s, callback watchdo
 Unexecuted fault combinations: wrong namespace/type in every lesson; missing subscriber; invalid timer; wrong sector/sign; reversed TF then correction; unavailable service/parameter; action rejection/cancel races; non-finite C++ serialization; failed CDN/cache; enormous paste; tab suspension. Shared tests cover some validation boundaries but are not a full novice diagnostic study.
 
 Disagreement: Session6 needs discoverable graph/terminal/TF evidence even on mobile. Other sessions should emphasize their relevant sensor. Exclusive panes could hide causes; postpone until user evidence. Keep streaming output non-live to avoid screen-reader flooding; concise execution status remains live.
+
+## Additional executed finding DBG-04
+
+Area: parameters; Session4; exercise4.1/4.2; languagePython; severitymedium; categorydiagnostics; priorityP2; confidencehigh; implementationyes. Real Chrome fault injection calls get_parameter('missing') before any declaration. Baseline raises an internal AttributeError for absent _parameters rather than naming the undeclared parameter. This hides the student error. Selected low-risk fix: raise a specific KeyError naming the parameter and declare_parameter. Preserve real traceback and cleanup. Reproduction: tests/diagnostics.html; correction/re-run must succeed. No broader parameter API change.

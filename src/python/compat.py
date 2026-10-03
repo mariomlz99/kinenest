@@ -188,6 +188,8 @@ class Node:
         _send('parameter_declare', node=self.name, name=name, value=value)
         return types.SimpleNamespace(value=value)
     def get_parameter(self, name):
+        if name not in getattr(self, '_parameters', {}):
+            raise KeyError(f'Parameter not declared: {name}. Call declare_parameter first.')
         value = self._parameters[name]
         _send('parameter_read', node=self.name, name=name, value=value)
         return types.SimpleNamespace(value=value)

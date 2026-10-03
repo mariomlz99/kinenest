@@ -23,3 +23,5 @@ Desktop ranks potential refresh draft loss highly; mobile agrees if reproduced. 
 Session hierarchy stays:1mission/robot/terminal;2code/LiDAR;3code/camera;4parameters/actions;5spatialTF/inspector;6diagnostic tools. Preserve current independent brand, support link, theme-aware logo, flags, reduced-motion transitions, static hosting and no tracking.
 
 Implementation branch is created only after this synthesis. No push, merge or deployment. Final validation must rerun both desktop browsers and record remaining unknowns rather than infer mobile support.
+
+During targeted post-review fault injection, DBG-04 exposed an internal AttributeError for get_parameter before declaration. Reproduced in real Python; select a narrow actionable exception fix (P2), with correction/re-run regression. Licences320px also exposed a long pinned compiler SHA overflow; local paragraph wrapping selected, no hidden overflow.
