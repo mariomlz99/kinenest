@@ -1,0 +1,531 @@
+{
+  "browser": "chrome",
+  "base": "http://127.0.0.1:41597/",
+  "delayedStylesheetMs": 600,
+  "results": [
+    {
+      "from": "index.html",
+      "to": "session-02.html",
+      "theme": "dark",
+      "forcedVariant": null,
+      "reducedMotion": false,
+      "prevented": true,
+      "elapsed": 1009.2000000029802,
+      "samples": [
+        {
+          "elapsed": 101.70000000298023,
+          "variant": "sensor-pulse",
+          "position": "fixed",
+          "opacity": "1",
+          "zIndex": "1000",
+          "background": "rgb(8, 20, 29)",
+          "pageBackground": "rgb(8, 20, 29)",
+          "width": 1425,
+          "height": 1100,
+          "viewport": [
+            1425,
+            1100
+          ],
+          "animations": [
+            {
+              "name": "kn-pulse",
+              "transform": "matrix(0.617455, 0, 0, 0.617455, 0, 0)",
+              "opacity": "0.69818"
+            }
+          ],
+          "image": true
+        },
+        {
+          "elapsed": 451.5,
+          "variant": "sensor-pulse",
+          "position": "fixed",
+          "opacity": "1",
+          "zIndex": "1000",
+          "background": "rgb(8, 20, 29)",
+          "pageBackground": "rgb(8, 20, 29)",
+          "width": 1425,
+          "height": 1100,
+          "viewport": [
+            1425,
+            1100
+          ],
+          "animations": [
+            {
+              "name": "kn-pulse",
+              "transform": "matrix(0.907215, 0, 0, 0.907215, 0, 0)",
+              "opacity": "0.260808"
+            }
+          ],
+          "image": true
+        }
+      ]
+    },
+    {
+      "from": "session-02.html",
+      "to": "session-03.html",
+      "theme": "dark",
+      "forcedVariant": null,
+      "reducedMotion": false,
+      "prevented": true,
+      "elapsed": 1019.0999999940395,
+      "samples": [
+        {
+          "elapsed": 101.70000000298023,
+          "variant": "robot-yaw",
+          "position": "fixed",
+          "opacity": "1",
+          "zIndex": "1000",
+          "background": "rgb(8, 20, 29)",
+          "pageBackground": "rgb(8, 20, 29)",
+          "width": 1425,
+          "height": 1100,
+          "viewport": [
+            1425,
+            1100
+          ],
+          "animations": [
+            {
+              "name": "kn-yaw",
+              "transform": "matrix(0.992934, 0.118664, -0.118664, 0.992934, 0, 0)",
+              "opacity": "1"
+            }
+          ],
+          "image": true
+        },
+        {
+          "elapsed": 451.29999999701977,
+          "variant": "robot-yaw",
+          "position": "fixed",
+          "opacity": "1",
+          "zIndex": "1000",
+          "background": "rgb(8, 20, 29)",
+          "pageBackground": "rgb(8, 20, 29)",
+          "width": 1425,
+          "height": 1100,
+          "viewport": [
+            1425,
+            1100
+          ],
+          "animations": [
+            {
+              "name": "kn-yaw",
+              "transform": "matrix(-0.994401, -0.105673, 0.105673, -0.994401, 0, 0)",
+              "opacity": "1"
+            }
+          ],
+          "image": true
+        }
+      ]
+    },
+    {
+      "from": "session-05.html",
+      "to": "session-06.html",
+      "theme": "dark",
+      "forcedVariant": null,
+      "reducedMotion": false,
+      "prevented": true,
+      "elapsed": 1015,
+      "samples": [
+        {
+          "elapsed": 101.20000000298023,
+          "variant": "sensor-pulse",
+          "position": "fixed",
+          "opacity": "1",
+          "zIndex": "1000",
+          "background": "rgb(8, 20, 29)",
+          "pageBackground": "rgb(8, 20, 29)",
+          "width": 1425,
+          "height": 1100,
+          "viewport": [
+            1425,
+            1100
+          ],
+          "animations": [
+            {
+              "name": "kn-pulse",
+              "transform": "matrix(0.633504, 0, 0, 0.633504, 0, 0)",
+              "opacity": "0.673957"
+            }
+          ],
+          "image": true
+        },
+        {
+          "elapsed": 451,
+          "variant": "sensor-pulse",
+          "position": "fixed",
+          "opacity": "1",
+          "zIndex": "1000",
+          "background": "rgb(8, 20, 29)",
+          "pageBackground": "rgb(8, 20, 29)",
+          "width": 1425,
+          "height": 1100,
+          "viewport": [
+            1425,
+            1100
+          ],
+          "animations": [
+            {
+              "name": "kn-pulse",
+              "transform": "matrix(0.918405, 0, 0, 0.918405, 0, 0)",
+              "opacity": "0.243916"
+            }
+          ],
+          "image": true
+        }
+      ]
+    },
+    {
+      "from": "about.html",
+      "to": "",
+      "theme": "dark",
+      "forcedVariant": null,
+      "reducedMotion": false,
+      "prevented": true,
+      "elapsed": 1014.3999999910593,
+      "samples": [
+        {
+          "elapsed": 100.8999999910593,
+          "variant": "lidar-sweep",
+          "position": "fixed",
+          "opacity": "1",
+          "zIndex": "1000",
+          "background": "rgb(8, 20, 29)",
+          "pageBackground": "rgb(8, 20, 29)",
+          "width": 1425,
+          "height": 1100,
+          "viewport": [
+            1425,
+            1100
+          ],
+          "animations": [
+            {
+              "name": "kn-sweep",
+              "transform": "matrix(0.913162, -0.407598, 0.407598, 0.913162, 0, 0)",
+              "opacity": "0.262646"
+            }
+          ],
+          "image": true
+        },
+        {
+          "elapsed": 450.79999999701977,
+          "variant": "lidar-sweep",
+          "position": "fixed",
+          "opacity": "1",
+          "zIndex": "1000",
+          "background": "rgb(8, 20, 29)",
+          "pageBackground": "rgb(8, 20, 29)",
+          "width": 1425,
+          "height": 1100,
+          "viewport": [
+            1425,
+            1100
+          ],
+          "animations": [
+            {
+              "name": "kn-sweep",
+              "transform": "matrix(0.999891, 0.0147603, -0.0147603, 0.999891, 0, 0)",
+              "opacity": "0.999266"
+            }
+          ],
+          "image": true
+        }
+      ]
+    },
+    {
+      "from": "index.html",
+      "to": "session-02.html",
+      "theme": "dark",
+      "forcedVariant": "lidar-sweep",
+      "reducedMotion": false,
+      "prevented": true,
+      "elapsed": 1014.5,
+      "samples": [
+        {
+          "elapsed": 100.70000000298023,
+          "variant": "lidar-sweep",
+          "position": "fixed",
+          "opacity": "1",
+          "zIndex": "1000",
+          "background": "rgb(8, 20, 29)",
+          "pageBackground": "rgb(8, 20, 29)",
+          "width": 1425,
+          "height": 1100,
+          "viewport": [
+            1425,
+            1100
+          ],
+          "animations": [
+            {
+              "name": "kn-sweep",
+              "transform": "matrix(0.913168, -0.407583, 0.407583, 0.913168, 0, 0)",
+              "opacity": "0.262706"
+            }
+          ],
+          "image": true
+        },
+        {
+          "elapsed": 450.5,
+          "variant": "lidar-sweep",
+          "position": "fixed",
+          "opacity": "1",
+          "zIndex": "1000",
+          "background": "rgb(8, 20, 29)",
+          "pageBackground": "rgb(8, 20, 29)",
+          "width": 1425,
+          "height": 1100,
+          "viewport": [
+            1425,
+            1100
+          ],
+          "animations": [
+            {
+              "name": "kn-sweep",
+              "transform": "matrix(0.999892, 0.0147303, -0.0147303, 0.999892, 0, 0)",
+              "opacity": "0.999269"
+            }
+          ],
+          "image": true
+        }
+      ]
+    },
+    {
+      "from": "index.html",
+      "to": "session-02.html",
+      "theme": "light",
+      "forcedVariant": "tf-rotate",
+      "reducedMotion": false,
+      "prevented": true,
+      "elapsed": 1011.9000000059605,
+      "samples": [
+        {
+          "elapsed": 101.1000000089407,
+          "variant": "tf-rotate",
+          "position": "fixed",
+          "opacity": "1",
+          "zIndex": "1000",
+          "background": "rgb(240, 245, 247)",
+          "pageBackground": "rgb(240, 245, 247)",
+          "width": 1425,
+          "height": 1100,
+          "viewport": [
+            1425,
+            1100
+          ],
+          "animations": [
+            {
+              "name": "kn-rotate",
+              "transform": "matrix(-0.997145, -0.0755156, 0.0755156, -0.997145, 0, 0)",
+              "opacity": "1"
+            }
+          ],
+          "image": true
+        },
+        {
+          "elapsed": 451,
+          "variant": "tf-rotate",
+          "position": "fixed",
+          "opacity": "1",
+          "zIndex": "1000",
+          "background": "rgb(240, 245, 247)",
+          "pageBackground": "rgb(240, 245, 247)",
+          "width": 1425,
+          "height": 1100,
+          "viewport": [
+            1425,
+            1100
+          ],
+          "animations": [
+            {
+              "name": "kn-rotate",
+              "transform": "matrix(0.994379, -0.105876, 0.105876, 0.994379, 0, 0)",
+              "opacity": "1"
+            }
+          ],
+          "image": true
+        }
+      ]
+    },
+    {
+      "from": "index.html",
+      "to": "session-02.html",
+      "theme": "dark",
+      "forcedVariant": "robot-yaw",
+      "reducedMotion": false,
+      "prevented": true,
+      "elapsed": 1018.8999999910593,
+      "samples": [
+        {
+          "elapsed": 101,
+          "variant": "robot-yaw",
+          "position": "fixed",
+          "opacity": "1",
+          "zIndex": "1000",
+          "background": "rgb(8, 20, 29)",
+          "pageBackground": "rgb(8, 20, 29)",
+          "width": 1425,
+          "height": 1100,
+          "viewport": [
+            1425,
+            1100
+          ],
+          "animations": [
+            {
+              "name": "kn-yaw",
+              "transform": "matrix(0.992926, 0.118737, -0.118737, 0.992926, 0, 0)",
+              "opacity": "1"
+            }
+          ],
+          "image": true
+        },
+        {
+          "elapsed": 454.29999999701977,
+          "variant": "robot-yaw",
+          "position": "fixed",
+          "opacity": "1",
+          "zIndex": "1000",
+          "background": "rgb(8, 20, 29)",
+          "pageBackground": "rgb(8, 20, 29)",
+          "width": 1425,
+          "height": 1100,
+          "viewport": [
+            1425,
+            1100
+          ],
+          "animations": [
+            {
+              "name": "kn-yaw",
+              "transform": "matrix(-0.949754, -0.312999, 0.312999, -0.949754, 0, 0)",
+              "opacity": "1"
+            }
+          ],
+          "image": true
+        }
+      ]
+    },
+    {
+      "from": "index.html",
+      "to": "session-02.html",
+      "theme": "light",
+      "forcedVariant": "orbit-ring",
+      "reducedMotion": false,
+      "prevented": true,
+      "elapsed": 1014,
+      "samples": [
+        {
+          "elapsed": 101.5,
+          "variant": "orbit-ring",
+          "position": "fixed",
+          "opacity": "1",
+          "zIndex": "1000",
+          "background": "rgb(240, 245, 247)",
+          "pageBackground": "rgb(240, 245, 247)",
+          "width": 1425,
+          "height": 1100,
+          "viewport": [
+            1425,
+            1100
+          ],
+          "animations": [
+            {
+              "name": "kn-rotate",
+              "transform": "matrix(-0.88106, -0.473005, 0.473005, -0.88106, 0, 0)",
+              "opacity": "1"
+            }
+          ],
+          "image": true
+        },
+        {
+          "elapsed": 451.40000000596046,
+          "variant": "orbit-ring",
+          "position": "fixed",
+          "opacity": "1",
+          "zIndex": "1000",
+          "background": "rgb(240, 245, 247)",
+          "pageBackground": "rgb(240, 245, 247)",
+          "width": 1425,
+          "height": 1100,
+          "viewport": [
+            1425,
+            1100
+          ],
+          "animations": [
+            {
+              "name": "kn-rotate",
+              "transform": "matrix(0.998097, -0.0616617, 0.0616617, 0.998097, 0, 0)",
+              "opacity": "1"
+            }
+          ],
+          "image": true
+        }
+      ]
+    },
+    {
+      "from": "index.html",
+      "to": "session-02.html",
+      "theme": "dark",
+      "forcedVariant": "sensor-pulse",
+      "reducedMotion": false,
+      "prevented": true,
+      "elapsed": 1012.8999999910593,
+      "samples": [
+        {
+          "elapsed": 101.09999999403954,
+          "variant": "sensor-pulse",
+          "position": "fixed",
+          "opacity": "1",
+          "zIndex": "1000",
+          "background": "rgb(8, 20, 29)",
+          "pageBackground": "rgb(8, 20, 29)",
+          "width": 1425,
+          "height": 1100,
+          "viewport": [
+            1425,
+            1100
+          ],
+          "animations": [
+            {
+              "name": "kn-pulse",
+              "transform": "matrix(0.617466, 0, 0, 0.617466, 0, 0)",
+              "opacity": "0.698164"
+            }
+          ],
+          "image": true
+        },
+        {
+          "elapsed": 451,
+          "variant": "sensor-pulse",
+          "position": "fixed",
+          "opacity": "1",
+          "zIndex": "1000",
+          "background": "rgb(8, 20, 29)",
+          "pageBackground": "rgb(8, 20, 29)",
+          "width": 1425,
+          "height": 1100,
+          "viewport": [
+            1425,
+            1100
+          ],
+          "animations": [
+            {
+              "name": "kn-pulse",
+              "transform": "matrix(0.907222, 0, 0, 0.907222, 0, 0)",
+              "opacity": "0.260797"
+            }
+          ],
+          "image": true
+        }
+      ]
+    },
+    {
+      "from": "about.html",
+      "to": "",
+      "theme": "dark",
+      "forcedVariant": null,
+      "reducedMotion": true,
+      "prevented": true,
+      "elapsed": 16.299999997019768,
+      "samples": []
+    }
+  ],
+  "history": "PASS"
+}

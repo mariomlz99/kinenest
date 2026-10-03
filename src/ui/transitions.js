@@ -7,7 +7,7 @@ export function createTransition({variant='sensor-pulse',loading=false,reducedMo
  return el;
 }
 // Only course-page navigation receives the intentional one-second presentation.
-export function installNavigationTransitions({root=document,navigate=url=>location.assign(url),reducedMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches,dwell=1000,safety=5000}={}){
+export function installNavigationTransitions({root=document,navigate=url=>location.assign(url),reducedMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches,dwell=1000,safety=5000,variant:forcedVariant}={}){
  let overlay,timer,recovery,busy=false;
  const clear=()=>{clearTimeout(timer);clearTimeout(recovery);overlay?.remove();overlay=null;busy=false;};
  const click=event=>{
@@ -17,7 +17,7 @@ export function installNavigationTransitions({root=document,navigate=url=>locati
   if(url.origin!==location.origin||!url.pathname.startsWith(base.pathname)||url.hash||url.pathname===location.pathname||!(/\.html$/.test(url.pathname)||url.pathname.endsWith('/')))return;
   event.preventDefault();if(busy)return;busy=true;
   let previous;try{previous=sessionStorage.getItem('kinenest-transition');}catch{}
-  const variant=chooseTransitionVariant(previous);try{sessionStorage.setItem('kinenest-transition',variant);}catch{}
+  const variant=VARIANTS.includes(forcedVariant)?forcedVariant:chooseTransitionVariant(previous);try{sessionStorage.setItem('kinenest-transition',variant);}catch{}
   const calm=reducedMotion();
   if(!calm){overlay=createTransition({variant,reducedMotion:false});document.body.append(overlay);}
   timer=setTimeout(()=>{try{navigate(url.href);}catch{clear();}},calm?0:dwell);
@@ -27,9 +27,11 @@ export function installNavigationTransitions({root=document,navigate=url=>locati
  root.addEventListener('click',click);window.addEventListener('pageshow',clear);window.addEventListener('pagehide',clear);
  return {clear,dispose(){clear();root.removeEventListener('click',click);window.removeEventListener('pageshow',clear);window.removeEventListener('pagehide',clear);}};
 }
+let navigationTransitions;
 export function setupTransitions(){
- if(document.querySelector('link[data-transitions]'))return;
- const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./transitions.css',import.meta.url).href;css.dataset.transitions='';document.head.append(css);
- installNavigationTransitions();
+ if(navigationTransitions)return navigationTransitions;
+ // CSS is linked in the initial HTML, before any page boot script.
+ navigationTransitions=installNavigationTransitions();
  const state=document.getElementById('python-state');if(state){const loader=createTransition({loading:true});loader.hidden=true;state.before(loader);const update=()=>{loader.hidden=state.dataset.loading!=='true';};new MutationObserver(update).observe(state,{attributes:true,attributeFilter:['data-loading']});update();}
+ return navigationTransitions;
 }

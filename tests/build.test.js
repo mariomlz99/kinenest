@@ -19,7 +19,8 @@ test('production build excludes reference answers and versions all application a
  await assert.rejects(access(new URL('dist/experiments/',root)));
  for(const name of files.filter(name=>name.endsWith('.html'))){
   const page=await readFile(new URL('dist/'+name,root),'utf8');
-  assert.match(page,/<title>KineNest/);assert.ok(page.includes('an Italian soul'));for(const url of ['https://www.linkedin.com/in/mario-malizia/','https://chatgpt.com/','https://openai.com/','https://buymeacoffee.com/mariomlz99'])assert.ok(page.includes('href="'+url+'"'));assert.doesNotMatch(page,/ROS2Learn|Lab 01|LAB 01|KineCourse|KineNest preliminary candidate/);
+  assert.match(page,/<title>KineNest/);
+  assert.ok(page.includes('href="./assets/'+versions[0]+'/src/ui/transitions.css" data-transitions'),name+': transition CSS must be in initial HTML');assert.ok(page.includes('an Italian soul'));for(const url of ['https://www.linkedin.com/in/mario-malizia/','https://chatgpt.com/','https://openai.com/','https://buymeacoffee.com/mariomlz99'])assert.ok(page.includes('href="'+url+'"'));assert.doesNotMatch(page,/ROS2Learn|Lab 01|LAB 01|KineCourse|KineNest preliminary candidate/);
   assert.ok(page.includes('property="og:title" content="KineNest'));
   assert.ok(page.includes('/ros2learn/assets/'+versions[0]+'/public/assets/brand/social-preview.png'));
   assert.ok(page.includes('rel="canonical" href="https://mariomlz99.github.io/ros2learn/'+(name==='index.html'?'':name)+'"'));
