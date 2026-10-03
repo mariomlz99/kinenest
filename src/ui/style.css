@@ -15,3 +15,6 @@ body:not([data-session]) main{padding-top:16px}body:not([data-session]) .intro{m
 .language-control{position:relative;display:inline-flex;align-items:center}.language-control #language{width:92px;color:transparent;cursor:pointer}.language-control #language option{color:#e4edf0;background:#10222e}#language-current{position:absolute;left:12px;pointer-events:none;font-size:12px;white-space:nowrap}[data-theme="light"] .language-control #language{color:transparent}[data-theme="light"] .language-control #language option{color:#183a42;background:#fff}
 
 [hidden]{display:none!important}
+
+/* Keep native keyboard/select behavior; draw the compact label once, including color emoji. */
+#preferences .language-control{background:#203844;border:1px solid #52717d;border-radius:6px;min-height:42px}#preferences .language-control #language{opacity:0;width:90px;border:0;min-height:40px}#preferences .language-control:focus-within{outline:2px solid #57ddbc;outline-offset:3px}:root[data-theme=light] #preferences .language-control{background:#e6eff2;border-color:#78929d;color:#183c48}
