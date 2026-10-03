@@ -19,3 +19,7 @@ Disagreement: Session6 needs discoverable graph/terminal/TF evidence even on mob
 ## Additional executed finding DBG-04
 
 Area: parameters; Session4; exercise4.1/4.2; languagePython; severitymedium; categorydiagnostics; priorityP2; confidencehigh; implementationyes. Real Chrome fault injection calls get_parameter('missing') before any declaration. Baseline raises an internal AttributeError for absent _parameters rather than naming the undeclared parameter. This hides the student error. Selected low-risk fix: raise a specific KeyError naming the parameter and declare_parameter. Preserve real traceback and cleanup. Reproduction: tests/diagnostics.html; correction/re-run must succeed. No broader parameter API change.
+
+## Additional executed finding DBG-05
+
+Area: publication diagnostics; sessions2–6; languagePython; severitymedium; categorybrowser/diagnostics; priorityP2; confidencehigh; implementationyes. Real Firefox publishes Twist.linear.x=NaN: JSON.parse fails before runtime validation, omitting the invalid field. Chrome emits a different parser message. Add finite-vector validation at the Python publisher boundary; retain host validation for all adapters. Test NaN/infinity plus correction. Risklow: only values already rejected by the runtime change diagnostic. Initial final-suite attempt stopped for this repair; no failed attempt is reported as a pass.

@@ -130,6 +130,13 @@ class Publisher:
     def publish(self, msg):
         if not isinstance(msg, self.message_type):
             raise TypeError('Wrong message type for publisher')
+        if isinstance(msg, Twist):
+            import math
+            for vector in ('linear', 'angular'):
+                for axis in ('x', 'y', 'z'):
+                    value = getattr(getattr(msg, vector), axis)
+                    if not isinstance(value, (int, float)) or not math.isfinite(value):
+                        raise ValueError(f'Twist.{vector}.{axis} must be a finite number')
         payload = vars(msg) if isinstance(msg, (String, TargetInfo)) else {'linear': vars(msg.linear), 'angular': vars(msg.angular)}
         _send('publish', node=self.node, topic=self.topic, type=_type_name(self.message_type), message=payload)
 
