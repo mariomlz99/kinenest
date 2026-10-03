@@ -25,10 +25,25 @@ function reset(){
 async function selectLesson(id){
   const request=++selection;
   if(lesson)drafts.set(lesson.id,$('python-code').value);
-  python.stop();const next=await json(id+'.json');if(request!==selection)return;lesson=next;reset();
-  renderLesson();
-  $('python-code').value=drafts.get(id)??lesson.starterCode;
-  for(const id of ['run-python','restore-code','reset','check','hint'])$(id).disabled=false;
+  python.stop();
+  document.body.dataset.lessonState='loading';
+  $('lesson-select').disabled=true;
+  for(const control of ['run-python','restore-code','reset','check','hint'])$(control).disabled=true;
+  $('status').textContent='Loading lesson…';
+  try{
+    const next=await json(id+'.json');if(request!==selection)return;lesson=next;reset();
+    renderLesson();
+    $('python-code').value=drafts.get(id)??lesson.starterCode;
+    document.body.dataset.lessonId=id;
+    document.body.dataset.lessonState='ready';
+    for(const control of ['run-python','restore-code','reset','check','hint'])$(control).disabled=false;
+  }catch(error){
+    if(request!==selection)return;
+    document.body.dataset.lessonState='error';
+    throw error;
+  }finally{
+    if(request===selection)$('lesson-select').disabled=false;
+  }
 }
 function localLesson(){return {...lesson,...lesson.translations?.[language()]};}
 function renderLesson(){
@@ -93,4 +108,4 @@ const names={2:'Subscribers & LiDAR',3:'Perception & services',4:'Parameters & a
 document.querySelector('.intro .eyebrow').textContent='Learn by experimenting';
 $('session-title').textContent=names[session];$('session-tag').textContent='SESSION 0'+session;
 catalog=await json('session-0'+session+'.json');for(const entry of catalog){const option=document.createElement('option');option.value=entry.id;option.textContent=entry.number+' — '+(entry.translations?.[language()]??entry.title);$('lesson-select').append(option);}
-$('lesson-select').disabled=false;await selectLesson(catalog[0].id);requestAnimationFrame(frame);
+await selectLesson(catalog[0].id);requestAnimationFrame(frame);

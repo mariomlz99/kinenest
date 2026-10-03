@@ -8,7 +8,7 @@ try{
  const d=frame.contentDocument,$=id=>d.getElementById(id);
  for(let index=0;index<6;index++){
    $('lesson-select').selectedIndex=index;$('lesson-select').dispatchEvent(new Event('change'));
-   await until(()=>$('lesson-number').textContent==='EXERCISE 3.'+(index+1));
+   await until(()=>d.body.dataset.lessonState==='ready'&&$('lesson-number').textContent==='EXERCISE 3.'+(index+1));
    $('python-code').value=await (await fetch('./python/solution-'+(index+1)+'.py')).text();$('run-python').click();
    await until(()=>$('python-state').textContent.includes('callbacks ready'),90);
    await wait(index===5?6500:1000);$('check').click();
@@ -18,13 +18,13 @@ try{
  }
  // Accept a different node structure, names and cv2-style algorithm.
  $('lesson-select').selectedIndex=3;$('lesson-select').dispatchEvent(new Event('change'));
- await until(()=>$('lesson-number').textContent==='EXERCISE 3.4');
+ await until(()=>d.body.dataset.lessonState==='ready'&&$('lesson-number').textContent==='EXERCISE 3.4');
  $('python-code').value=await (await fetch('./python/alternative-position.py')).text();$('run-python').click();
  await until(()=>$('python-state').textContent.includes('callbacks ready'),60);$('check').click();await until(()=>!$('check').disabled,20);
  if(!$('status').textContent.startsWith('Exercise complete'))throw new Error('Alternative cv2 implementation rejected: '+$('feedback').textContent);
  // A constant detector must fail the varied-scene test.
  $('lesson-select').selectedIndex=2;$('lesson-select').dispatchEvent(new Event('change'));
- await until(()=>$('lesson-number').textContent==='EXERCISE 3.3');
+ await until(()=>d.body.dataset.lessonState==='ready'&&$('lesson-number').textContent==='EXERCISE 3.3');
  let code=await (await fetch('./python/solution-3.py')).text();$('python-code').value=code.replace('report_detection(mask.sum() > 500)','report_detection(True)');$('run-python').click();
  await until(()=>$('python-state').textContent.includes('callbacks ready'),60);$('check').click();await until(()=>!$('check').disabled,20);
  if($('status').textContent.startsWith('Exercise complete'))throw new Error('Hard-coded detector passed');

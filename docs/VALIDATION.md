@@ -38,3 +38,13 @@ Inspected the Dutch light-theme 1440-pixel workstation screenshot. A full run of
 The complete Firefox production run passed all sessions. A combined Chrome run encountered a transient fetch failure after individual suites had passed; the worker now fetches its local teaching API before loading Pyodide and retries failed fetches with a bounded timeout and an explicit path/error. The final Chrome run was repeated after this loader fix.
 
 Final full Chrome production run passed all six sessions after the loader fix. A targeted real-Python regression also verifies that the String payload "Infinity" stays text while non-finite LaserScan ranges decode as floats. Shared translation lookup uses a precomputed map to keep frequent visual updates inexpensive.
+
+## Pages CI lesson-loading race — 2026-10-03
+
+[Run 37115132011](https://github.com/mariomlz99/ros2learn/actions/runs/37115132011) passed all 32 unit tests, the static build and browser Sessions 1–4, then timed out at the first Session 5 exercise with Python stopped and no output. Inspection found that the lesson selector became enabled before initial loading completed; reselecting the current lesson also left Run active while a pending response could reset the newly started worker. The acceptance harness incorrectly used the unchanged exercise title as its readiness signal.
+
+Lesson controls now stay disabled until the selected lesson has finished loading and resetting. Tests wait for explicit ready state and selected lesson ID. A new browser regression delays lesson JSON responses by 350 ms and checks initial readiness, same-lesson reload, blocked Run, preserved drafts and overlapping selections. It failed against the previous build and passes against the fix in Chrome and Firefox. All 32 unit tests and the static build pass; all six Session 5 reference programs also pass in Firefox.
+
+The Node.js 20 deprecation warning and Ubuntu migration notice were separate from the failed browser test. CI now uses checkout/setup-node v7 and pins ubuntu-24.04; the application test Node version remains 22. GitHub-hosted deployment verification still requires pushing the fix.
+
+The complete corrected Chrome production run passed: delayed-loading regression, original CLI lab, all 25 Python reference exercises across Sessions 2–6, alternate solutions, negative controls, Stop/Reset, theme/language/layout and String payload regression. No browser suite was skipped or retried in this run.

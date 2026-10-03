@@ -3,12 +3,12 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
 async function until(fn,seconds=30){for(let i=0;i<seconds*10;i++){if(fn())return;await wait(100);}throw Error('Timeout: '+frame.contentDocument?.getElementById('python-state')?.textContent+' / '+frame.contentDocument?.getElementById('python-output')?.textContent);}
 async function progress(text){result.textContent+='\n'+text;await fetch('/progress',{method:'POST',body:text});}
 try{for(const session of sessions){
- frame.src='../session-0'+session+'.html';await until(()=>frame.contentDocument?.getElementById('session-tag')?.textContent==='SESSION 0'+session&&!frame.contentDocument?.getElementById('lesson-select')?.disabled);
+ frame.src='../session-0'+session+'.html';await until(()=>frame.contentDocument?.getElementById('session-tag')?.textContent==='SESSION 0'+session&&frame.contentDocument?.body.dataset.lessonState==='ready');
  const d=frame.contentDocument,$=id=>d.getElementById(id),ids=[...$('lesson-select').options].map(o=>o.value);
  if(ids.length<3)throw Error('Missing lesson catalog: '+session);
  for(const [index,id]of ids.entries()){
   if(document.body.dataset.filter&&!id.includes(document.body.dataset.filter))continue;
-  $('lesson-select').value=id;$('lesson-select').dispatchEvent(new Event('change'));await until(()=>$('lesson-number').textContent==='EXERCISE '+session+'.'+(index+1));
+  $('lesson-select').value=id;$('lesson-select').dispatchEvent(new Event('change'));await until(()=>d.body.dataset.lessonState==='ready'&&d.body.dataset.lessonId===id&&!$('run-python').disabled);
   $('check').click();if($('status').textContent.startsWith('Exercise complete'))throw Error('Empty exercise passed '+id);
   $('python-code').value=await(await fetch('./python/course/'+id+'.py')).text();$('run-python').click();await until(()=>$('python-state').textContent.includes('callbacks ready'),90);
   if(id.includes('parameter')||id.includes('tuning')){await wait(1000);$('command').value='ros2 param set /student_controller speed 0.6';$('terminal-form').dispatchEvent(new Event('submit',{cancelable:true,bubbles:true}));}
@@ -16,7 +16,7 @@ try{for(const session of sessions){
   await progress('PASS '+id);$('stop-python').click();
  }
  if(session==='2'){
-  $('lesson-select').selectedIndex=2;$('lesson-select').dispatchEvent(new Event('change'));await until(()=>$('lesson-number').textContent==='EXERCISE 2.3');
+  $('lesson-select').selectedIndex=2;$('lesson-select').dispatchEvent(new Event('change'));await until(()=>d.body.dataset.lessonState==='ready'&&$('lesson-number').textContent==='EXERCISE 2.3');
   $('python-code').value=await(await fetch('./python/course/alternative-sectors.py')).text();$('run-python').click();await until(()=>$('python-state').textContent.includes('callbacks ready'),90);await until(()=>{$('check').click();return $('status').textContent.startsWith('Exercise complete');});$('stop-python').click();await progress('PASS alternate NumPy sector implementation');
  }
  // Layout and theme controls must be usable without losing the selected program.
