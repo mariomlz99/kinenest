@@ -4,7 +4,7 @@ A safe place to learn robotics by making things move.
 
 <img src="public/assets/brand/kinenest-logo.png" alt="KineNest logo" width="320">
 
-KineNest is a free, open-source teaching environment for robotics communication, sensors, perception and coordinate frames. Students use real Python and interactive simulations without installing a robotics stack or creating an account. Exercises mirror common ROS™ 2 APIs and command-line workflows so the same concepts transfer to a real robotics workspace.
+KineNest is a free, open-source teaching environment for robotics communication, sensors, perception and coordinate frames. Students write real Python throughout the course and compile C++ locally in supported exercises. Interactive simulations require no robotics installation or account. Exercises mirror common ROS™ 2 APIs and command-line workflows so the same concepts transfer to a real robotics workspace.
 
 ## Try online
 
@@ -12,7 +12,7 @@ KineNest is a free, open-source teaching environment for robotics communication,
 
 ## What students learn
 
-Nodes, topics, messages, publishers, subscribers, callbacks, LiDAR, camera arrays, services, parameters, actions, odometry, transforms and debugging. One shared runtime connects the terminals, Python and robot within each page.
+Nodes, topics, messages, publishers, subscribers, callbacks, LiDAR, camera arrays, services, parameters, actions, odometry, transforms and debugging. One shared runtime connects the terminals, Python, supported C++ programs and robot within each page.
 
 No installation, account, backend, API key or paid service is required. The first Python run downloads Pyodide and NumPy; initial use requires internet.
 

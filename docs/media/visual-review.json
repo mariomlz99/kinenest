@@ -16,6 +16,22 @@
     "legacy": false
   },
   {
+    "page": "index.html",
+    "lang": "en",
+    "theme": "light",
+    "overflow": false,
+    "title": "KineNest — Session 1 · Nodes & Topics",
+    "mission": "Discover and use /cmd_vel",
+    "steps": [
+      "Inspect the nodes and list the available topics.",
+      "Find the velocity topic and inspect its message type.",
+      "Inspect the Twist interface, then publish a single command.",
+      "Watch the robot move, then check your solution.",
+      "Optional: echo /odom in another terminal to watch pose and velocity change."
+    ],
+    "legacy": false
+  },
+  {
     "page": "session-02.html",
     "lang": "en",
     "theme": "dark",
@@ -30,7 +46,7 @@
     "legacy": false
   },
   {
-    "page": "session-02.html?experimentalCpp=1",
+    "page": "session-02.html",
     "lang": "it",
     "theme": "light",
     "overflow": false,
@@ -44,7 +60,7 @@
     "legacy": false
   },
   {
-    "page": "session-02.html?experimentalCpp=1",
+    "page": "session-02.html",
     "lang": "de",
     "theme": "dark",
     "overflow": false,

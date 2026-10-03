@@ -58,3 +58,21 @@ The suite compiles hello-world, functional and class controllers, checks callbac
 Historical VALIDATION.md entries describe the earlier gate. Capture tooling previously used the flag; it now uses ordinary URLs. No hidden server switch controls C++. The production build includes bridge.js, compat.hpp, toolchain.js, worker.js and vendor host/licences; large compiler binaries remain pinned remote downloads triggered by Run.
 
 On this pass, local public C++ was already working. The live site still served 13f0acc, where the older gate hid both modes without experimentalCpp=1. Chrome and Firefox probes confirmed both URL cases. Publishing the pending commits is required; broadening C++ parity remains deferred until that release is verified.
+
+Further parity starts only after ordinary-URL production execution is verified: finish Session 2 fundamentals first, then camera pixels and service clients, followed by parameters/actions, odometry/TF and integrated debugging. Each new executable variant needs a real compiler run, behavioural success and failure cases, Stop/Reset and both browsers. Rust, native package builds and Session 7 remain deferred.
+
+## Public-release remeasurement
+
+Both browser suites passed after the brand/support pass. The normal Session 2 Python view transferred 270,614 bytes (document plus main-page Resource Timing transferSize, local static server, fresh browser) and fetched no src/cpp or compiler assets before C++ use. This is page startup before Run, not the Pyodide/NumPy download or total browser traffic.
+
+| Measurement | Chrome | Firefox |
+| --- | ---: | ---: |
+| Cold compiler/toolchain transfer | 60,347,928 bytes | 60,347,928 bytes |
+| Cold robotics toolchain load | 1.84 s | 1.91 s |
+| Warm cache load | 0.12 s | 0.52 s |
+| Warm compiler transfer | 0 bytes | 0 bytes |
+| Class controller compile | 1.94 s | 1.43 s |
+| Class controller link | 0.035 s | 0.013 s |
+| Generated controller module | 328,991 bytes | 328,991 bytes |
+
+Fresh browser profiles define cold; concurrent workstation activity and network conditions affect timings. No compiler preload was added.
