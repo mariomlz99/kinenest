@@ -115,7 +115,8 @@
     "cpp": {
       "supported": true,
       "experimental": true,
-      "starterCode": "#include <rclcpp/rclcpp.hpp>\n#include <sensor_msgs/msg/laser_scan.hpp>\n\nclass Reader : public rclcpp::Node {\npublic:\n    Reader() : Node(\"student_controller\") {\n        // TODO: create a LaserScan subscription on /scan.\n    }\nprivate:\n    void receive(sensor_msgs::msg::LaserScan::SharedPtr msg) {\n        // TODO: print the beam count and forward distance.\n    }\n    rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_;\n};\n\nint main() {\n    rclcpp::init();\n    auto node = std::make_shared<Reader>();\n    rclcpp::spin(node);\n}\n"
+      "starterCode": "#include <rclcpp/rclcpp.hpp>\n#include <sensor_msgs/msg/laser_scan.hpp>\n\nclass Reader : public rclcpp::Node {\npublic:\n    Reader() : Node(\"student_controller\") {\n        // TODO: create a LaserScan subscription on /scan.\n    }\nprivate:\n    void receive(sensor_msgs::msg::LaserScan::SharedPtr msg) {\n        // TODO: print the beam count and forward distance.\n    }\n    rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_;\n};\n\nint main() {\n    rclcpp::init();\n    auto node = std::make_shared<Reader>();\n    rclcpp::spin(node);\n}\n",
+      "visibility": "public"
     }
   }
 }

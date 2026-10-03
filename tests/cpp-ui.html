@@ -1,4 +1,22 @@
-<!doctype html><meta charset="utf-8"><img src="/hold" hidden alt=""><pre id="result">RUNNING</pre><iframe width="1440" height="1100" src="../session-02.html?experimentalCpp=1"></iframe><script type="module">
-const f=document.querySelector('iframe'),out=document.getElementById('result'),wait=ms=>new Promise(r=>setTimeout(r,ms));async function until(fn,seconds=90){for(let i=0;i<seconds*10;i++){if(fn())return;await wait(100);}throw Error('Timeout '+f.contentDocument?.getElementById('python-output')?.textContent);}const assert=(v,m)=>{if(!v)throw Error(m);};
-try{await until(()=>f.contentDocument?.body?.dataset.lessonState==='ready');const d=f.contentDocument,$=id=>d.getElementById(id);d.querySelector('[data-code-language="compare"]').click();$('python-code').value='# retained draft';$('cpp-code').value=await(await fetch('./cpp/avoidance.cpp')).text();$('run-cpp').click();await until(()=>$('python-state').textContent.includes('callbacks ready'));await until(()=>{$('check').click();return $('status').textContent.startsWith('Exercise complete');});assert($('python-code').value==='# retained draft','Python draft changed');$('language').value='it';$('language').dispatchEvent(new Event('change'));await wait(100);assert($('stop-python').disabled===false,'Language stopped C++');assert($('python-code').value==='# retained draft','Language lost Python');$('reset').click();assert($('stop-python').disabled,'Reset did not terminate C++');assert(!$('graph').textContent.includes('/student_controller'),'Reset kept endpoint');out.textContent='PASS: Compare runs compiled C++, shared subscriber checker, UI language and Reset';}catch(e){out.textContent='FAIL: '+e.message;}await fetch('/done',{method:'POST',body:out.textContent});
+<!doctype html><meta charset="utf-8"><img src="/hold" hidden alt=""><pre id="result">RUNNING</pre><iframe width="1440" height="1100" src="../session-02.html"></iframe><script type="module">
+const f=document.querySelector('iframe'),out=document.getElementById('result'),wait=ms=>new Promise(r=>setTimeout(r,ms));
+async function until(fn,seconds=90){for(let i=0;i<seconds*10;i++){if(fn())return;await wait(100);}throw Error('Timeout '+f.contentDocument?.getElementById('python-output')?.textContent);}const assert=(v,m)=>{if(!v)throw Error(m);};
+try{
+ await until(()=>f.contentDocument?.body?.dataset.lessonState==='ready');const d=f.contentDocument,$=id=>d.getElementById(id);
+ assert(!f.contentWindow.location.search,'Test must use ordinary URL');
+ for(const [index,file]of [[0,'subscriber.cpp'],[3,'avoidance.cpp']]){
+  if(index){$('lesson-select').selectedIndex=index;$('lesson-select').dispatchEvent(new Event('change'));await until(()=>d.body.dataset.lessonState==='ready'&&d.body.dataset.lessonId.endsWith('avoidance'));}
+  for(const mode of ['python','cpp','compare'])assert(!d.querySelector('[data-code-language="'+mode+'"]').hidden,'Missing public mode '+mode);
+  d.querySelector('[data-code-language="compare"]').click();$('python-code').value='# retained draft';$('cpp-code').value=await(await fetch('./cpp/'+file)).text();const source=$('cpp-code').value;
+  $('run-cpp').click();await until(()=>$('python-state').textContent.includes('callbacks ready'));
+  await until(()=>{$('check').click();return $('status').textContent.startsWith('Exercise complete');});
+  assert($('python-code').value==='# retained draft','Python draft changed');
+  $('language').value='it';$('language').dispatchEvent(new Event('change'));$('theme').click();$('layout').value='stack';$('layout').dispatchEvent(new Event('change'));await wait(100);
+  assert(!$('stop-python').disabled,'Preferences stopped C++');assert($('python-code').value==='# retained draft'&&$('cpp-code').value===source,'Preferences lost drafts');
+  $('reset').click();assert($('stop-python').disabled,'Reset did not terminate C++');assert(!$('graph').textContent.includes('/student_controller')&&!$('graph').textContent.includes('/scan_reader'),'Reset kept endpoint');
+  $('language').value='en';$('language').dispatchEvent(new Event('change'));await fetch('/progress',{method:'POST',body:'PASS public C++ exercise '+(index?'2.4':'2.1')});
+ }
+ $('lesson-select').selectedIndex=1;$('lesson-select').dispatchEvent(new Event('change'));await until(()=>d.body.dataset.lessonState==='ready'&&d.body.dataset.lessonId.endsWith('callbacks'));assert(d.querySelector('[data-code-language="cpp"]').hidden&&d.querySelector('[data-code-language="compare"]').hidden,'Unsupported modes visible');
+ out.textContent='PASS: ordinary URLs compile/run C++ exercises 2.1 and 2.4, shared checkers, Compare drafts, language/theme/layout, Reset and unsupported fallback';
+}catch(e){out.textContent='FAIL: '+e.message;}await fetch('/done',{method:'POST',body:out.textContent});
 </script>

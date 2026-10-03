@@ -1,6 +1,6 @@
 # Experimental browser C++
 
-Open session-02.html?experimentalCpp=1. Exercises 2.1 and 2.4 offer Python, C++ and Compare. The normal course remains Python-first. Compare contains editable student drafts; it does not insert answers. Only the selected program runs at a time.
+Open session-02.html. Tested exercises 2.1 and 2.4 offer Python, C++ and Compare by default, with an Experimental label. Future implemented variants can remain developer-gated by ?experimentalCpp=1. The normal course remains Python-first. Compare contains editable student drafts; it does not insert answers. Only the selected program runs at a time.
 
 ## Implemented
 

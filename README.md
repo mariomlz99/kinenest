@@ -51,7 +51,7 @@ Camera: 320 × 240 at 8 Hz. LiDAR: 120 rays at 5 Hz. Odometry: ideal 2D pose at 
 
 ## Python and experimental C++
 
-Python supports the complete course. [Experimental C++](https://mariomlz99.github.io/ros2learn/session-02.html?experimentalCpp=1) supports the scan subscriber and obstacle-avoidance exercises (2.1 and 2.4). It compiles real C++ to WebAssembly locally and uses the same robot and checks. Python/C++/Compare preserves independent drafts. The toolchain downloads about 60 MB only when C++ runs; its age and limited API keep it experimental. See [support, measurements and reproduction](docs/CPP.md).
+Python supports the complete course. [Experimental C++](https://mariomlz99.github.io/ros2learn/session-02.html) is available by default for the scan subscriber and obstacle-avoidance exercises (2.1 and 2.4). It compiles real C++ to WebAssembly locally and uses the same robot and checks. Python/C++/Compare preserves independent drafts. The toolchain downloads about 60 MB only when C++ runs; its age and limited API keep it experimental. See [support, measurements and reproduction](docs/CPP.md).
 
 ## Educational runtime and limitations
 

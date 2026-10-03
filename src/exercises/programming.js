@@ -1,5 +1,6 @@
 export function codeVariants(lesson){return lesson.programming??{python:{supported:true,starterCode:lesson.starterCode??''},cpp:{supported:false,starterCode:''}};}
-export function cppVisible(lesson,experimental=false){const cpp=codeVariants(lesson).cpp;return !!cpp&&(cpp.supported&&!cpp.experimental||experimental&&cpp.experimental);}
+export function languageVisible(lesson,language,experimental=false){const variant=codeVariants(lesson)[language];return !!variant?.supported&&(variant.visibility==='public'||!variant.experimental||experimental);}
+export const cppVisible=(lesson,experimental=false)=>languageVisible(lesson,'cpp',experimental);
 export class DraftStore {
   constructor(){this.lessons=new Map();}
   get(lesson,language){return this.lessons.get(lesson.id)?.[language]??codeVariants(lesson)[language]?.starterCode??'';}
