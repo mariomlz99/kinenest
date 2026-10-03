@@ -1,0 +1,36 @@
+{
+  "browser": "firefox",
+  "viewport": [
+    390,
+    844
+  ],
+  "results": [
+    "Python page fetched no compiler",
+    "390px real C++ callback and checker pass",
+    "Stop remains operable",
+    "Compare stacks at390px",
+    "German controls cause no page overflow at390px",
+    "Theme and UI language preserve both drafts",
+    "Unsupported lesson hides C++",
+    "Returning restores C++ draft",
+    "Reset during C++ preparation leaves no endpoints",
+    "Python still runs after mobile C++ Reset"
+  ],
+  "rect": {
+    "a": {
+      "x": 37,
+      "y": 1133,
+      "w": 304,
+      "h": 390
+    },
+    "c": {
+      "x": 37,
+      "y": 1568,
+      "w": 304,
+      "h": 390
+    },
+    "overflow": false,
+    "python": "# mobile draft",
+    "cpp": "#include <rclcpp/rclcpp.hpp>\n#include <sensor_msgs/msg/laser_scan.hpp>\nint main() {\n  rclcpp::init();\n  auto node = std::make_shared<rclcpp::Node>(\"scan_reader\");\n  auto sub = node->create_subscription<sensor_msgs::msg::LaserScan>(\n    \"/scan\", 10, [node](sensor_msgs::msg::LaserScan::SharedPtr scan) {\n      RCLCPP_INFO(node->get_logger(), \"beams %zu front %.2f\", scan->ranges.size(), scan->ranges.at(scan->ranges.size()/2));\n    });\n  rclcpp::spin(node);\n}\n"
+  }
+}

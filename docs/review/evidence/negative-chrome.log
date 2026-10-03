@@ -1,0 +1,26 @@
+PASS print-only negative + Reset session-02-01-subscriber
+PASS print-only negative + Reset session-02-02-callbacks
+PASS print-only negative + Reset session-02-03-sectors
+PASS print-only negative + Reset session-02-04-avoidance
+PASS print-only negative + Reset session-03-01-camera-subscriber
+PASS print-only negative + Reset session-03-02-image-data
+PASS print-only negative + Reset session-03-03-color-detection
+PASS print-only negative + Reset session-03-04-object-position
+PASS print-only negative + Reset session-03-05-services
+PASS print-only negative + Reset session-03-06-target-challenge
+PASS print-only negative + Reset session-04-01-configure
+PASS print-only negative + Reset session-04-02-tuning
+PASS print-only negative + Reset session-04-03-custom
+PASS print-only negative + Reset session-04-04-goal
+PASS print-only negative + Reset session-04-05-feedback
+PASS print-only negative + Reset session-04-06-cancel
+PASS print-only negative + Reset session-05-01-odometry
+PASS print-only negative + Reset session-05-02-heading
+PASS print-only negative + Reset session-05-03-frames
+PASS print-only negative + Reset session-05-04-relative
+PASS print-only negative + Reset session-05-05-goal
+PASS print-only negative + Reset session-05-06-safety
+PASS print-only negative + Reset session-06-01-topic-debug
+PASS print-only negative + Reset session-06-02-frame-debug
+PASS print-only negative + Reset session-06-03-beacon
+PASS 25 real Python print-only negatives chrome

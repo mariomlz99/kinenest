@@ -14,3 +14,5 @@
 - Pre-existing untracked much, otherwise and provide are excluded and left untouched.
 
 Reviewers use isolated detached worktrees at the revision above. No reviewer may change the main checkout or push. Reports must distinguish static inspection, executed evidence and untested hypotheses. Findings use the requested ID/area/session/exercise/language/severity/category/observation/evidence/reproduction/impact/change/risk/confidence/implementation fields. Independent disagreement is retained during synthesis.
+
+Actual Pages smoke passed Chrome and Firefox at the same SHA.25print-only Python negatives and Reset passed both. Responsive200cases:9four-pixel preference overflows at320. See REVIEW_METHOD.md for reviewer isolation/tool limitations and evidence provenance.

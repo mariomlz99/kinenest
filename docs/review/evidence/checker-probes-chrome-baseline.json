@@ -1,0 +1,29 @@
+{
+  "browser": "chrome",
+  "results": [
+    {
+      "id": "session-04-01-configure",
+      "status": "Exercise complete. Your code passed the behavioural checks.",
+      "output": "Loading numpy\nLoaded numpy\n",
+      "graph": "/drive_distance_server → /cmd_vel → /simulator\n/simulator → /odom → (no subscribers)\n/simulator → /scan → (no subscribers)\n/simulator → /tf → (no subscribers)\n/simulator → /camera/image_raw → (no subscribers)\n/student_controller → /review_noise → (no subscribers)\n\n(no client) ⇄ /reset_robot ⇄ /reset_server"
+    },
+    {
+      "id": "session-04-03-custom",
+      "status": "Exercise complete. Your code passed the behavioural checks.",
+      "output": "Loading numpy\nLoaded numpy\n",
+      "graph": "/drive_distance_server → /cmd_vel → /simulator\n/simulator → /odom → (no subscribers)\n/simulator → /scan → (no subscribers)\n/simulator → /tf → (no subscribers)\n/simulator → /camera/image_raw → (no subscribers)\n/student_controller → /review_wrong_target_topic → (no subscribers)\n\n(no client) ⇄ /reset_robot ⇄ /reset_server"
+    },
+    {
+      "id": "session-02-04-avoidance",
+      "status": "Exercise complete. Your code passed the behavioural checks.",
+      "output": "Loading numpy\nLoaded numpy\n",
+      "graph": "/drive_distance_server, /student_controller → /cmd_vel → /simulator\n/simulator → /odom → (no subscribers)\n/simulator → /scan → /student_controller\n/simulator → /tf → (no subscribers)\n/simulator → /camera/image_raw → (no subscribers)\n\n(no client) ⇄ /reset_robot ⇄ /reset_server"
+    },
+    {
+      "id": "session-06-03-beacon",
+      "status": "Exercise complete. Your code passed the behavioural checks.",
+      "output": "Loading numpy\nLoaded numpy\n",
+      "graph": "/drive_distance_server, /student_controller → /cmd_vel → /simulator\n/simulator → /odom → /student_controller\n/simulator → /scan → (no subscribers)\n/simulator → /tf → (no subscribers)\n/simulator → /camera/image_raw → /student_controller\n\n(no client) ⇄ /reset_robot ⇄ /reset_server"
+    }
+  ]
+}

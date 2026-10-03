@@ -1,0 +1,121 @@
+{
+  "browser": "chrome",
+  "python": [
+    {
+      "cache": "cold-profile",
+      "elapsedMs": 2099.5,
+      "stages": [
+        {
+          "ms": 8.200000002980232,
+          "text": "Loading real Python and NumPy… first load requires internet."
+        },
+        {
+          "ms": 13,
+          "text": "Loading Python runtime…"
+        },
+        {
+          "ms": 1395.7999999970198,
+          "text": "Loading NumPy…"
+        },
+        {
+          "ms": 2081.2000000029802,
+          "text": "Python executing…"
+        },
+        {
+          "ms": 2082.2999999970198,
+          "text": "Python running · callbacks ready"
+        }
+      ]
+    },
+    {
+      "cache": "warm-http-cache-new-worker",
+      "elapsedMs": 2163.0999999940395,
+      "stages": [
+        {
+          "ms": 2.699999988079071,
+          "text": "Loading real Python and NumPy… first load requires internet."
+        },
+        {
+          "ms": 9.899999991059303,
+          "text": "Loading Python runtime…"
+        },
+        {
+          "ms": 1033.5,
+          "text": "Loading NumPy…"
+        },
+        {
+          "ms": 2125.5999999940395,
+          "text": "Python executing…"
+        },
+        {
+          "ms": 2126.5999999940395,
+          "text": "Python running · callbacks ready"
+        }
+      ]
+    }
+  ],
+  "render": [
+    {
+      "page": "session-02.html",
+      "width": 390,
+      "wallSeconds": 3.004119000004721,
+      "mainThreadTaskSeconds": 0.236326,
+      "scriptSeconds": 0.142112,
+      "layoutSeconds": 0.005606000000000001,
+      "heapBytes": 3305200
+    },
+    {
+      "page": "session-02.html",
+      "width": 1440,
+      "wallSeconds": 3.0038620000123046,
+      "mainThreadTaskSeconds": 0.28258700000000003,
+      "scriptSeconds": 0.17824700000000002,
+      "layoutSeconds": 0.006274999999999999,
+      "heapBytes": 3701324
+    },
+    {
+      "page": "session-03.html",
+      "width": 390,
+      "wallSeconds": 3.004784999997355,
+      "mainThreadTaskSeconds": 0.266111,
+      "scriptSeconds": 0.160643,
+      "layoutSeconds": 0.005791000000000001,
+      "heapBytes": 3789204
+    },
+    {
+      "page": "session-03.html",
+      "width": 1440,
+      "wallSeconds": 3.003326999998535,
+      "mainThreadTaskSeconds": 0.25041,
+      "scriptSeconds": 0.14593,
+      "layoutSeconds": 0.006603000000000001,
+      "heapBytes": 2505996
+    },
+    {
+      "page": "session-05.html",
+      "width": 390,
+      "wallSeconds": 3.0032159999973373,
+      "mainThreadTaskSeconds": 0.290544,
+      "scriptSeconds": 0.16851,
+      "layoutSeconds": 0.006221000000000001,
+      "heapBytes": 3734944
+    },
+    {
+      "page": "session-05.html",
+      "width": 1440,
+      "wallSeconds": 3.0042780000076164,
+      "mainThreadTaskSeconds": 0.309045,
+      "scriptSeconds": 0.17877200000000004,
+      "layoutSeconds": 0.006844000000000003,
+      "heapBytes": 3096028
+    }
+  ],
+  "pageResources": {
+    "transferBytes": 273875,
+    "count": 33
+  },
+  "output": {
+    "characters": 24000,
+    "nodes": 1
+  }
+}

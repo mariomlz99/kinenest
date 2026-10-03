@@ -1,0 +1,6 @@
+Deployment identity {"commit":"8679ae1008806352ce89efeb2d9cc651de557261","builtAt":"2026-10-03T18:32:20.986Z","project":"KineNest","assetVersion":"f72334de2a11","dirty":false}
+Python page startup resources {"documentAndResourceTransferBytes":26052,"resources":32}
+PASS deployed C++ 2.1
+PASS deployed C++ 2.4
+PASS deployed real Python
+PASS deployed chrome: expected commit, public C++ 2.1/2.4, real Python, footer on nine pages and one-second navigation
