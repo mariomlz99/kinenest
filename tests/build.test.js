@@ -13,6 +13,7 @@ test('production build excludes reference answers and versions all application a
  const html=await readFile(new URL('dist/session-03.html',root),'utf8');assert.ok(html.includes('./assets/'+versions[0]+'/src/ui/session3-boot.js'));
  await access(new URL('dist/assets/'+versions[0]+'/src/python/compat.py',root));
  await assert.rejects(access(new URL('dist/tests/python/solution-1.py',root)));
+ await assert.rejects(access(new URL('dist/experiments/',root)));
  for(const name of files.filter(name=>name.endsWith('.html'))){
   const page=await readFile(new URL('dist/'+name,root),'utf8');
   assert.match(page,/<title>KineNest/);assert.ok(page.includes('an Italian soul'));for(const url of ['https://www.linkedin.com/in/mario-malizia/','https://chatgpt.com/','https://openai.com/'])assert.ok(page.includes('href="'+url+'"'));assert.doesNotMatch(page,/ROS2Learn|Lab 01|LAB 01|KineCourse|KineNest preliminary candidate/);

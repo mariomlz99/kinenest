@@ -1,0 +1,46 @@
+{
+  "repository": "https://github.com/ros2wasm/ros2wasm-website",
+  "revision": "ee6f4aec4e5f71eeceeb236ee9d4e99543adf25b",
+  "assets": [
+    {
+      "file": "talker.js",
+      "bytes": 279834,
+      "sha256": "08b32c563dcb782bc970ae0ddcc896ea77c6e7c7bc5f5038ac893e43a6a80f55"
+    },
+    {
+      "file": "talker.wasm",
+      "bytes": 16999455,
+      "sha256": "89adc4634520a3201e11005a3c462e8976a4a6035a897d0a64eefa8dfbdc0012"
+    },
+    {
+      "file": "listener.js",
+      "bytes": 281413,
+      "sha256": "a39ac308fae69e8103b3cbf05512d1d78a54b2cbade08000c2cf71b944ab8aee"
+    },
+    {
+      "file": "listener.wasm",
+      "bytes": 18116565,
+      "sha256": "89a8917907e11fcdec11dc4f1f58bdd33586bf2238cc3a4090631f7408da41a1"
+    },
+    {
+      "file": "server.js",
+      "bytes": 275855,
+      "sha256": "156b4b4f81c0f0dd53e816254e2202964f9346d08a7ce9c91570efd2b9cc08aa"
+    },
+    {
+      "file": "server.wasm",
+      "bytes": 16677179,
+      "sha256": "fdc226e059ff4d0be31a447384536b377f8ecd9885eecc79abbe92b0a73e6ca2"
+    },
+    {
+      "file": "client.js",
+      "bytes": 277798,
+      "sha256": "7374a48711fba8f7bd0fde3b1ea9bdb92a5bfcb09720b343c644e54e90ed913c"
+    },
+    {
+      "file": "client.wasm",
+      "bytes": 16885350,
+      "sha256": "ec140d0a35feed4be4399e1049392831a42cc0693a7204b339e13c2460808fd8"
+    }
+  ]
+}

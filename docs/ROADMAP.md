@@ -18,7 +18,7 @@ Improve the editor and consider movable/resizable panels after classroom feedbac
 
 A broader curriculum may follow the six-session course. Real ROS integration, RViz/Gazebo, native CMake execution and cloud runtimes remain separate future work. No backend, accounts, grades database or LMS integration is planned for this phase.
 
-Optional investigation: [rmw_wasm](https://github.com/ros2wasm/rmw_wasm) as a separate browser middleware adapter. Its README targets Humble and lists publishers, subscribers and services; actions, parameters and QoS are unsupported. No integration has been implemented or benchmarked.
+Optional investigation: [rmw_wasm](https://github.com/ros2wasm/rmw_wasm) as a separate browser middleware adapter. Its README targets Humble and lists publishers, subscribers and services; actions, parameters and QoS are unsupported. An isolated pinned-artifact pub/sub and service probe passed Chrome and Firefox; see [the feasibility report](../experiments/rmw-wasm/README.md). A source rebuild and native Twist-to-simulator bridge remain unverified. No production integration exists.
 
 Start with precompiled talker/listener workers, then bridge a Twist to the existing simulator and checker. Measure download size, startup, memory, message latency and Stop/Reset in Chrome and Firefox on Pages before considering adoption. Pyodide integration and editable C++ compilation remain separate problems: the project's [builder](https://github.com/ros2wasm/ros2wasm-builder) cross-compiles packages in GitHub Actions. Keep the current six-session runtime as the default throughout any experiment.
 
