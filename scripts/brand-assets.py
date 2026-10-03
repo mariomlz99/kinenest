@@ -26,7 +26,8 @@ for y in range(art.height):
             pixels[x,y]=(0,0,0,0)
         else:
             # Unmatte anti-aliased edges and translucent sensor shading from white.
-            alpha=(255-lo)/255
+            blend=max(0,min(1,(lo-100)/80))
+            alpha=1-blend*lo/255
             pixels[x,y]=tuple(max(0,min(255,round((c-255*(1-alpha))/alpha))) for c in (r,g,b))+(round(alpha*255),)
 font=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',42)
 product=(out.parents[2]/'src/ui/product.js').read_text()
@@ -42,7 +43,7 @@ for theme,ink in [('light',(8,73,87)),('dark',(231,244,247))]:
         for y in range(770,995):
             for x in range(0,635):
                 r,g,b,a=p[x,y]
-                if a:p[x,y]=ink+(a,)
+                if a:p[x,y]=ink+(max(0,round((a-20)*255/235)),)
     full=Image.new('RGBA',(1254,1160));full.alpha_composite(themed)
     draw=ImageDraw.Draw(full)
     for i,line in enumerate(lines):draw.text((627,1025+i*57),line,font=font,fill=ink+(255,),anchor='mm')
