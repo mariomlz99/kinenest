@@ -26,7 +26,9 @@ export class RuntimeAdapter {
   handle(data){
     const r=this.runtime,e=r.evidence;
     switch(data.kind){
-      case 'loading':break;
+      case 'loading':if(data.text)this.status(data.text);break;
+      case 'shutdown':this.stop();break;
+      case 'unsubscribe':this.subscriptions.get(data.id)?.dispose();this.subscriptions.delete(data.id);this.mailbox.remove(data.id);break;
       case 'executing':this.status(this.language+' executing…');this.watchdog(10000,this.language+' took too long; stopped. Check for an infinite loop.');break;
       case 'ready':clearTimeout(this.timer);this.status(this.language+' running · callbacks ready');break;
       case 'stdout':this.output(data.text);break;
@@ -41,7 +43,7 @@ export class RuntimeAdapter {
         const dispose=r.every(data.period,()=>{const key='timer-'+data.id;if(!this.worker||this.pending.has(key))return;this.pending.add(key);this.worker.postMessage({kind:'timer',id:data.id});if(this.pending.size===1)this.watchdog(5000,'Timer callback took too long; stopped.');});
         this.jobs.set(data.id,{dispose,node:data.node});break;
       }
-      case 'timer_cancel':this.jobs.get(data.id)?.dispose();this.jobs.delete(data.id);break;
+      case 'timer_cancel':this.jobs.get(data.id)?.dispose();this.jobs.delete(data.id);this.mailbox.remove('timer-'+data.id);break;
       case 'timer_processed':r.course.timers++;break;
       case 'parameter_declare':declareParameter(r,data.node,data.name,data.value);break;
       case 'parameter_read':r.course.paramReads++;r.course.paramValues.add(data.value);break;

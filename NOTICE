@@ -1,3 +1,6 @@
+KineNest
+Copyright 2026 Mario Malizia and contributors
+
 ROS2Learn
 Copyright 2026 ROS2Learn contributors
 
@@ -5,3 +8,8 @@ Original code and lesson content are licensed under Apache License 2.0.
 This independent educational project is not affiliated with or endorsed by Open Robotics.
 ROS is a trademark of Open Source Robotics Foundation, Inc.
 Third-party runtime components retain their own licences; see public/third-party.html.
+
+Experimental C++: adapted shared.js by Ben Smith (binji/wasm-clang), Apache-2.0.
+Clang/LLVM and the sysroot retain their upstream licences, including LLVM
+exceptions and component notices. See src/cpp/vendor/LICENSE* and licences.html.
+Language badges (Py, C++) are original text artwork under Apache-2.0.

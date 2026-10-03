@@ -20,13 +20,13 @@ let tfView,workspace,cpp=null;
 let lesson,hints=0,epoch=0,testing=false,last=0,accumulator=0,lastFrame=-1,lastDetection=null;
 
 const output=text=>{const pre=$('python-output');pre.textContent=(pre.textContent+text+'\n').slice(-24000);pre.scrollTop=pre.scrollHeight;};
-const python=new PythonBridge(runtime,{output,status:text=>{$('python-state').textContent=text;$('stop-python').disabled=!python.worker&&!cpp?.worker;},detection:value=>{lastDetection=value;$('detection').textContent=value.visible?'Student detection: visible'+(value.cx===null?'':' · centroid x = '+value.cx.toFixed(1)):'Student detection: no red target';}});
+const python=new PythonBridge(runtime,{output,status:text=>{$('python-state').dataset.loading=String(/^(Loading|Compiling|Linking)/.test(text));$('python-state').textContent=text;$('stop-python').disabled=!python.worker&&!cpp?.worker;},detection:value=>{lastDetection=value;$('detection').textContent=value.visible?'Student detection: visible'+(value.cx===null?'':' · centroid x = '+value.cx.toFixed(1)):'Student detection: no red target';}});
 const terminals=createTerminals(runtime,error=>{if(error)$('status').textContent='Review the terminal error.';});
 async function json(name){const response=await fetch(new URL('../../public/lessons/'+name,import.meta.url),{signal:AbortSignal.timeout(15000)});if(!response.ok)throw new Error('Lesson HTTP '+response.status);return response.json();}
 function reset(){
   epoch++;testing=false;python.stop();cpp?.stop();terminals.reset();runtime.reset();runtime.robot.x=lesson.startX??0;runtime.robot.y=lesson.startY??0;runtime.robot.yaw=lesson.startYaw??0;
   runtime.world=lesson.world??(session===2?structuredClone(TRAINING_WORLD):null);runtime.targets=lesson.targets;runtime.targetFrame=lesson.goal??[5,0];
-  hints=0;lastDetection=null;lastFrame=-1;last=0;accumulator=0;$('hints').replaceChildren();$('hint').textContent='Reveal next hint';$('hint').disabled=false;$('feedback').hidden=true;$('check').disabled=false;$('python-output').textContent='';$('detection').textContent='No student detection reported';$('status').textContent='Ready. Complete the TODOs and Run Python.';runtime.cameraFrame();tfView?.setLesson(lesson);
+  hints=0;lastDetection=null;lastFrame=-1;last=0;accumulator=0;$('hints').replaceChildren();$('hint').textContent='Reveal next hint';$('hint').disabled=false;$('feedback').hidden=true;$('check').disabled=false;$('python-output').textContent='';$('detection').textContent='No student detection reported';$('status').textContent='Ready. Complete the TODOs and Run Python.';runtime.cameraFrame();tfView?.setLesson(lesson);draw();
 }
 async function selectLesson(id){
   const request=++selection;
@@ -79,7 +79,7 @@ $('lesson-select').addEventListener('change',()=>selectLesson($('lesson-select')
 async function executeCode(language){
   const code=workspace.code(language);reset();const token=epoch;
   if(language==='python'){python.run(code);return;}
-  try{const {CppBridge}=await import('../cpp/bridge.js');if(token!==epoch)return;cpp??=new CppBridge(runtime,{output,status:text=>{$('python-state').textContent=text;$('stop-python').disabled=!cpp?.worker;}});cpp.run(code);}
+  try{const {CppBridge}=await import('../cpp/bridge.js');if(token!==epoch)return;cpp??=new CppBridge(runtime,{output,metrics:value=>{$('python-state').dataset.metrics=JSON.stringify(value);},status:text=>{$('python-state').dataset.loading=String(/^(Loading|Compiling|Linking)/.test(text));$('python-state').textContent=text;$('stop-python').disabled=!cpp?.worker;}});cpp.run(code);}
   catch(error){output('C++: '+error.message);}
 }
 $('run-python').addEventListener('click',()=>executeCode(workspace.mode==='cpp'?'cpp':'python'));

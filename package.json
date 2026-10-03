@@ -8,7 +8,8 @@
     "build": "node scripts/build.mjs",
     "dev": "python3 -m http.server 8000 --bind 127.0.0.1",
     "test:chrome": "node scripts/check-course.mjs chrome",
-    "test:firefox": "node scripts/check-course.mjs firefox"
+    "test:firefox": "node scripts/check-course.mjs firefox",
+    "test:cpp": "node scripts/check-cpp.mjs"
   },
   "engines": {
     "node": ">=22"

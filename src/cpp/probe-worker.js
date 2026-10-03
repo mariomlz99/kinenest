@@ -1,0 +1,2 @@
+import {loadToolchain} from './toolchain.js';
+onmessage=async({data})=>{try{const tool=await loadToolchain({output:text=>postMessage({kind:'output',text}),stage:text=>postMessage({kind:'stage',text})});const module=await tool.compile(data.code);const app=await tool.instantiate(module,{});await app.run();postMessage({kind:'done',metrics:tool.metrics});}catch(error){postMessage({kind:'error',text:String(error)});}};

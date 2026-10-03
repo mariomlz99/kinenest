@@ -22,7 +22,7 @@ export class CodeWorkspace {
  render(){const available=cppVisible(this.lesson,this.experimental),cpp=codeVariants(this.lesson).cpp;for(const button of this.controls.children){button.hidden=button.dataset.codeLanguage!=='python'&&!available;button.setAttribute('aria-pressed',String(button.dataset.codeLanguage===this.mode));}
   this.editors.dataset.mode=this.mode;for(const pane of this.editors.children)pane.hidden=this.mode!=='compare'&&pane.dataset.codePane!==this.mode;
   const run=document.getElementById('run-python');run.textContent=this.mode==='cpp'?'Run C++':'Run Python';run.disabled=this.mode==='cpp'&&!cpp?.supported;this.runCpp.hidden=this.mode!=='compare';this.runCpp.disabled=!cpp?.supported;
-  this.note.textContent=this.mode==='python'?'':cpp?.supported?'Experimental C++ · browser compilation.':'C++ comparison draft. Execution is not available for this exercise.';
+  this.note.textContent=this.mode==='python'?(this.preferred!=='python'&&!available?'This exercise uses Python. Your C++ draft is preserved.':''):cpp?.supported?'Experimental C++ · browser compilation.':'C++ comparison draft. Execution is not available for this exercise.';
  }
  code(language){this.save();return language==='cpp'?this.cpp.value:this.python.value;}
  restore(){const lang=this.mode==='cpp'?'cpp':'python';const editor=lang==='cpp'?this.cpp:this.python;editor.value=this.drafts.restore(this.lesson,lang);}
