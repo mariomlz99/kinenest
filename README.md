@@ -94,6 +94,15 @@ Production contains static assets only. The allowlist excludes tests, reference 
 
 The repository remains ros2learn for now. A later move to kinenest requires explicit approval; see [BRANDING.md](docs/BRANDING.md). Update the source and site URLs in src/ui/product.js and documentation when migrating. No custom domain is configured.
 
+To verify a deployed commit with the same checks used after Pages publishes:
+
+~~~bash
+npm run test:deployed -- chrome --url=https://mariomlz99.github.io/ros2learn/ --commit=<full-git-sha>
+npm run test:deployed -- firefox --url=https://mariomlz99.github.io/ros2learn/ --commit=<full-git-sha>
+~~~
+
+The command waits for build-info.json to identify that commit, then runs public C++ exercises 2.1/2.4, a real Python subscriber, attribution and navigation checks. About → Build information shows deployed and loaded asset versions. Optional middleware work is isolated in [experiments/rmw-wasm](experiments/rmw-wasm/README.md), outside the Pages bundle.
+
 ## Authoring
 
 Lesson catalogs and JSON files live in public/lessons/. They define tasks, starter code, hints, worlds, translations and behavioural checks. [AUTHORING.md](docs/AUTHORING.md) includes a minimal example and a validation workflow.

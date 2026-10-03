@@ -1,6 +1,6 @@
 const frame=document.querySelector('iframe'),result=document.getElementById('result'),sessions=document.body.dataset.sessions.split(',');
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
-async function until(fn,seconds=30){for(let i=0;i<seconds*10;i++){if(fn())return;await wait(100);}throw Error('Timeout: '+frame.contentDocument?.getElementById('python-state')?.textContent+' / '+frame.contentDocument?.getElementById('python-output')?.textContent);}
+async function until(fn,seconds=30){for(let i=0;i<seconds*10;i++){if(fn())return;await wait(100);}throw Error('Timeout: lesson='+frame.contentDocument?.body?.dataset.lessonId+' state='+frame.contentDocument?.body?.dataset.lessonState+' status='+frame.contentDocument?.getElementById('status')?.textContent+' execution='+frame.contentDocument?.getElementById('python-state')?.textContent+' / '+frame.contentDocument?.getElementById('python-output')?.textContent);}
 async function checkedFetch(url,options={}){try{const response=await fetch(url,{...options,signal:AbortSignal.timeout(15000)});if(!response.ok)throw Error('HTTP '+response.status);return response;}catch(error){throw Error('Request '+url+': '+error.message);}}
 async function progress(text){result.textContent+='\n'+text;await checkedFetch('/progress',{method:'POST',body:text});}
 try{for(const session of sessions){
