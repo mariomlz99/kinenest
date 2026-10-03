@@ -23,6 +23,7 @@ try{
  const color=style($('editor-help')).color;const rgb=color.match(/[\d.]+/g).slice(0,3).map(Number),lin=rgb.map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;}),lum=lin.reduce((s,v,i)=>s+v*[.2126,.7152,.0722][i],0);assert(1.05/(lum+.05)>=4.5,'Light editor help contrast');
  assert($('python-code').getAttribute('autocapitalize')==='off'&&$('cpp-code').getAttribute('autocorrect')==='off','Code input assistance may alter source');
  $('language').value='en';$('language').dispatchEvent(new Event('change'));await wait(50);assert(d.querySelector('.code-support').textContent.includes('60 MB'),'Compiler size notice missing');
+ for(const lines of [10,40,100]){for(const editor of [$('python-code'),$('cpp-code')]){editor.value=Array.from({length:lines},(_,i)=>'line_'+i+' = '+('long_identifier_'.repeat(12))).join('\n');assert(editor.getBoundingClientRect().height>=360,'Long source collapsed editor');assert(editor.scrollWidth>editor.clientWidth,'Long lines should scroll inside editor');}fits(d,'Source length '+lines);}
  out.textContent='PASS: nine public pages at13widths, seven-language phone Compare, preserved drafts, readable editable text and help, touch targets, no overflow';
 }catch(e){out.textContent='FAIL: '+e.message;}await fetch('/done',{method:'POST',body:out.textContent});
 </script></html>
