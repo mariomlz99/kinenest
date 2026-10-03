@@ -4,4 +4,4 @@ Read README.md and docs/ARCHITECTURE.md. Keep student execution static and insta
 
 Edit public/lessons/topics-01.json for mission wording, hints and thresholds. New concepts may require runtime/checker extensions and tests.
 
-Verify CLI → robot → check → reset in a browser under /ros2learn/, keyboard navigation and laptop layout. Discuss dependencies and backend changes first. Never commit credentials or dist. Licence selection is pending.
+Verify CLI → robot → check → reset in a browser under /ros2learn/, keyboard navigation and laptop layout. Discuss dependencies and backend changes first. Never commit credentials or dist. Contributions are under Apache-2.0; third-party dependencies keep their own licences.

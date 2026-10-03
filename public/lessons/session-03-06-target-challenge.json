@@ -1,0 +1,35 @@
+{
+  "id": "session-03-06-target-challenge",
+  "title": "Find the target",
+  "number": "3.6",
+  "description": "Use camera pixels to rotate until the red target is centered. Keep publishing zero velocity once centered; Check solution after the robot has stopped.",
+  "steps": [
+    "Read the mission and complete the Python TODOs.",
+    "Run Python; observe the camera, output and shared graph.",
+    "Use progressive hints if needed, then Check solution."
+  ],
+  "hints": [
+    "Reuse your mask and centroid calculation. The robot starts facing away from the target.",
+    "A target to the left needs positive angular.z. A target to the right needs negative angular.z.",
+    "Use an error such as (160 - cx) / 160; clamp the angular speed to ±1 rad/s.",
+    "If abs(160 - cx) < 10, publish angular.z = 0. If no red pixels are visible, rotate slowly to search."
+  ],
+  "checks": [
+    {
+      "type": "camera_subscriber"
+    },
+    {
+      "type": "image_array"
+    },
+    {
+      "type": "control"
+    },
+    {
+      "type": "centered"
+    }
+  ],
+  "starterCode": "import rclpy\nimport numpy as np\nfrom rclpy.node import Node\nfrom sensor_msgs.msg import Image\nfrom cv_bridge import CvBridge\nfrom geometry_msgs.msg import Twist\nfrom ros2learn import report_detection, report_image_stats\n\nclass CameraReader(Node):\n    def __init__(self):\n        super().__init__('camera_reader')\n        self.publisher = self.create_publisher(Twist, '/cmd_vel', 10)\n        self.bridge = CvBridge()\n        self.subscription = self.create_subscription(\n            Image, '/camera/image_raw', self.image_callback, 10)\n\n    def image_callback(self, msg):\n        image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='rgb8')\n        # TODO: find the red target's centroid using the pixels.\n        # Positive angular.z turns left; negative turns right.\n        # Stop when the target is close to x = 160.\n        # Publish a Twist each callback and report_detection(visible, cx).\n        pass\n\nrclpy.init()\nnode = CameraReader()\nrclpy.spin(node)\n",
+  "testScenes": false,
+  "startYaw": -1.1,
+  "startX": 0
+}

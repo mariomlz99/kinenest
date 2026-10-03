@@ -1,4 +1,5 @@
-import { execute } from './cli.js';
+import { interfaceType } from '../runtime/interfaces.js';
+import { execute, parsePublication } from './cli.js';
 
 export function fieldValue(message, path) {
   let value=message;
@@ -10,6 +11,8 @@ export function fieldValue(message, path) {
 }
 
 export function formatMessage(value, indent=0) {
+  if(ArrayBuffer.isView(value))return '<'+value.byteLength+' bytes>';
+
   if(Array.isArray(value)) return '['+value.map(v=>formatMessage(v)).join(', ')+']';
   if(value!==null && typeof value==='object') return Object.entries(value).map(([key,child])=>{
     const nested=child!==null && typeof child==='object' && !Array.isArray(child);
@@ -26,11 +29,35 @@ export class TerminalSession {
   }
   get running(){return this.unsubscribe!==null;}
   run(input) {
-    if(this.running) throw new Error('Stop echo with Ctrl+C before entering another command.');
+    if(this.running) throw new Error('Stop the running command with Ctrl+C before entering another command.');
     const command=input.trim();if(!command)return;
     this.history.push(command);if(this.history.length>100)this.history.shift();this.cursor=this.history.length;
     this.write('$ '+command);
     const parts=command.split(/\s+/);
+    if(parts.slice(0,3).join(' ')==='ros2 topic pub'){
+      const pub=parsePublication(command);if(pub.once){this.write(execute(this.runtime,command));return;}
+      const node='/ros2cli_pub_'+this.id;
+      try{this.runtime.publish(pub.topic,pub.type,pub.message);}catch(error){this.runtime.removeEmptyTopics();throw error;}
+      const topic=this.runtime.topic(pub.topic);topic.publishers.add(node);this.runtime.nodes.add(node);
+      let count=1;
+      const cancel=this.runtime.every(1/pub.rate,()=>{this.runtime.publish(pub.topic,pub.type,pub.message);this.write('publishing #'+(++count)+' on '+pub.topic);});
+      this.unsubscribe=()=>{cancel();topic.publishers.delete(node);this.runtime.nodes.delete(node);this.runtime.removeEmptyTopics();};
+      this.write('publishing #1 on '+pub.topic+' at '+pub.rate+' Hz. Ctrl+C to stop.');this.onState(true);return;
+    }
+    if(['hz','bw','delay'].includes(parts[2])&&parts.slice(0,2).join(' ')==='ros2 topic'){
+      if(parts.length!==4)throw new Error('Usage: ros2 topic '+parts[2]+' TOPIC');
+      const topic=parts[3],mode=parts[2];this.runtime.topic(topic);let first=null,count=0,bytes=0,totalDelay=0;
+      this.unsubscribe=this.runtime.subscribe(topic,'/ros2cli_'+mode+'_'+this.id,message=>{
+        if(first===null){first=this.runtime.time;return;}
+        count++;bytes+=message.data?.byteLength??new TextEncoder().encode(JSON.stringify(message)).length;
+        if(mode==='delay'){
+          if(!message.header?.stamp){this.write('This message has no header timestamp; delay is undefined.');this.stop(false);return;}
+          totalDelay+=this.runtime.time-message.header.stamp.sec-message.header.stamp.nanosec/1e9;
+        }
+        if(count%8===0){const elapsed=this.runtime.time-first;this.write(mode==='hz'?'average rate: '+(count/elapsed).toFixed(2)+' Hz (simulation time)':mode==='bw'?(bytes/elapsed/1024).toFixed(2)+' KiB/s (estimated message payload; not DDS wire bandwidth)':'average delay: '+(totalDelay/count).toFixed(6)+' s (simulation time)');}
+      });
+      this.write('Measuring '+topic+'; Ctrl+C to stop.');this.onState(true);return;
+    }
     if(parts.slice(0,3).join(' ')!=='ros2 topic echo') {this.write(execute(this.runtime,command));return;}
     const topicName=parts[3];let field=null,once=false;
     for(let i=4;i<parts.length;i++) {
@@ -41,10 +68,10 @@ export class TerminalSession {
     if(!topicName)throw new Error('Usage: ros2 topic echo TOPIC [--field FIELD] [--once]');
     const topic=this.runtime.topic(topicName);
     if(topic.placeholder)throw new Error(topicName+' has no simulated sensor samples yet. Try /odom or /cmd_vel.');
-    const sample=topicName==='/odom'?this.runtime.odometry():{linear:{x:0,y:0,z:0},angular:{x:0,y:0,z:0}};
+    const sample=topicName==='/camera/image_raw'?(this.runtime.camera??interfaceType(topic.type).prototype):topicName==='/odom'?this.runtime.odometry():topicName==='/scan'?this.runtime.scan():interfaceType(topic.type).prototype;
     if(field!==null)fieldValue(sample,field);
     this.unsubscribe=this.runtime.subscribe(topicName,'/ros2cli_echo_'+this.id,message=>{
-      this.write(formatMessage(field===null?message:fieldValue(message,field))+'\n---');
+      const {_frameId,...display}=message;this.write(formatMessage(field===null?display:fieldValue(message,field))+'\n---');
       if(once)this.stop(false);
     });
     this.write('Listening on '+topicName+' — waiting for new messages. Ctrl+C or Stop echo to return to the prompt.');

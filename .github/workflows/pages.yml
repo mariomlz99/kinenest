@@ -20,6 +20,8 @@ jobs:
           node-version: '22'
       - run: npm test
       - run: npm run build
+      - name: Test real Python in Chrome against the static build
+        run: npm run test:chrome -- --built
       - uses: actions/upload-pages-artifact@v3
         if: github.event_name != 'pull_request'
         with:

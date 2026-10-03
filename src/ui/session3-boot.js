@@ -1,0 +1,1 @@
+(async()=>{try{await import('./session3.js');}catch(error){console.error(error);document.getElementById('mission-title').textContent='Session could not start';document.getElementById('status').textContent=error.message+' Try Ctrl+Shift+R.';}})();

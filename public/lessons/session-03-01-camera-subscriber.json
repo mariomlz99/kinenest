@@ -1,0 +1,29 @@
+{
+  "id": "session-03-01-camera-subscriber",
+  "title": "Your robot can see",
+  "number": "3.1",
+  "description": "Subscribe to /camera/image_raw and print the width and height of each received image.",
+  "steps": [
+    "Read the mission and complete the Python TODOs.",
+    "Run Python; observe the camera, output and shared graph.",
+    "Use progressive hints if needed, then Check solution."
+  ],
+  "hints": [
+    "A camera is another publisher. Use ros2 topic list and ros2 topic info /camera/image_raw.",
+    "Create an Image subscription with self.image_callback and queue depth 10.",
+    "self.subscription = self.create_subscription(Image, \"/camera/image_raw\", self.image_callback, 10)",
+    "Inside the callback: print(f\"Image: {msg.width} x {msg.height}\")"
+  ],
+  "checks": [
+    {
+      "type": "camera_subscriber"
+    },
+    {
+      "type": "dimensions"
+    }
+  ],
+  "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom sensor_msgs.msg import Image\n\nclass CameraReader(Node):\n    def __init__(self):\n        super().__init__('camera_reader')\n        # TODO: create a subscription and keep it as self.subscription.\n\n    def image_callback(self, msg):\n        # TODO: print the width and height of each image.\n        pass\n\nrclpy.init()\nnode = CameraReader()\nrclpy.spin(node)\n",
+  "testScenes": false,
+  "startYaw": 0,
+  "startX": 0
+}

@@ -28,7 +28,7 @@ test('odometry streams at 5 Hz with pose, timestamp, quaternion and velocity',()
 test('echo once cleans up; invalid topic/field/flags never create subscriptions',()=>{
  const r=new Runtime(),a=session(r,1);a.terminal.run('ros2 topic echo /odom --once --field pose.pose.position');
  r.step(.2);assert.equal(a.terminal.running,false);assert.equal(r.topic('/odom').subscribers.size,0);assert.match(a.output.at(-1),/x: 0/);
- for(const command of ['ros2 topic echo /missing','ros2 topic echo /scan','ros2 topic echo /odom --field bogus','ros2 topic echo /odom --field','ros2 topic echo /odom --rate 3'])assert.throws(()=>a.terminal.run(command));
+ for(const command of ['ros2 topic echo /missing','ros2 topic echo /odom --field bogus','ros2 topic echo /odom --field','ros2 topic echo /odom --rate 3'])assert.throws(()=>a.terminal.run(command));
  assert.equal(r.nodes.size,1);assert.throws(()=>fieldValue({},'__proto__'));
 });
 test('reset and close remove subscriptions; stale cleanup cannot remove new nodes',()=>{

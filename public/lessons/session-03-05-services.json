@@ -1,0 +1,26 @@
+{
+  "id": "session-03-05-services",
+  "title": "Ask another node to do something",
+  "number": "3.5",
+  "description": "Discover /reset_robot, then create a Python Trigger client and receive its response. The robot starts displaced so you can see the reset.",
+  "steps": [
+    "Discover the service in a terminal.",
+    "Create the Python client and call_async with an empty Trigger.Request.",
+    "Attach a completion callback and inspect the response."
+  ],
+  "hints": [
+    "Try ros2 service list, then ros2 service type /reset_robot.",
+    "A topic streams messages. A service sends a request and receives a response.",
+    "self.client = self.create_client(Trigger, \"/reset_robot\")",
+    "future = self.client.call_async(Trigger.Request()); future.add_done_callback(self.on_response)"
+  ],
+  "checks": [
+    {
+      "type": "service"
+    }
+  ],
+  "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom std_srvs.srv import Trigger\n\nclass ResetClient(Node):\n    def __init__(self):\n        super().__init__('reset_client')\n        # TODO: self.client = self.create_client(...)\n\n    def reset(self):\n        # TODO: request = Trigger.Request()\n        # Call asynchronously, then attach self.on_response to the future.\n        pass\n\n    def on_response(self, future):\n        response = future.result()\n        print(response.success, response.message)\n\nrclpy.init()\nnode = ResetClient()\nnode.reset()\nrclpy.spin(node)\n",
+  "testScenes": false,
+  "startYaw": 0,
+  "startX": 2
+}

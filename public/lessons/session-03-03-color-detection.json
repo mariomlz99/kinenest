@@ -1,0 +1,32 @@
+{
+  "id": "session-03-03-color-detection",
+  "title": "Simple vision",
+  "number": "3.3",
+  "description": "Detect a red object from RGB pixels. Report your boolean using report_detection(visible), then Check solution tests four varied scenes.",
+  "steps": [
+    "Read the mission and complete the Python TODOs.",
+    "Run Python; observe the camera, output and shared graph.",
+    "Use progressive hints if needed, then Check solution."
+  ],
+  "hints": [
+    "RGB images have three channels. Red should be high; green and blue should be low.",
+    "Split the channels with image[:, :, 0], image[:, :, 1], image[:, :, 2].",
+    "mask = (image[:, :, 0] > 180) & (image[:, :, 1] < 100) & (image[:, :, 2] < 100)",
+    "visible = mask.sum() > 500; report_detection(visible). NumPy or the small cv2.inRange/countNonZero helpers both work."
+  ],
+  "checks": [
+    {
+      "type": "camera_subscriber"
+    },
+    {
+      "type": "image_array"
+    },
+    {
+      "type": "detection"
+    }
+  ],
+  "starterCode": "import rclpy\nimport numpy as np\nfrom rclpy.node import Node\nfrom sensor_msgs.msg import Image\nfrom cv_bridge import CvBridge\nfrom ros2learn import report_detection, report_image_stats\n\nclass CameraReader(Node):\n    def __init__(self):\n        super().__init__('camera_reader')\n        self.bridge = CvBridge()\n        self.subscription = self.create_subscription(\n            Image, '/camera/image_raw', self.image_callback, 10)\n\n    def image_callback(self, msg):\n        image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='rgb8')\n        # TODO: threshold the RGB channels, then count matching pixels.\n        # Use report_detection(visible) with your calculated boolean.\n        pass\n\nrclpy.init()\nnode = CameraReader()\nrclpy.spin(node)\n",
+  "testScenes": true,
+  "startYaw": 0,
+  "startX": 0
+}

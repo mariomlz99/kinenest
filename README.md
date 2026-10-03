@@ -12,7 +12,7 @@ Discover nodes/topics, inspect Twist, publish velocity and observe a robot. Prog
 
 ROS2Learn is an educational ROS 2 simulator. Its Python API and CLI reproduce the ROS 2 concepts used in these lessons, but the browser environment is not a complete DDS-based ROS 2 installation.
 
-Version 0.1 provides CLI only. Python/Pyodide is milestone 2. Commands use common Humble/Jazzy syntax with the subset documented below.
+Lab 01 provides the CLI introduction. Session 3 adds real Python/Pyodide, NumPy, camera callbacks and services. Session 2 has not been implemented in this repository. Commands use a documented subset of common Humble/Jazzy syntax.
 
 ## Local preview
 
@@ -29,7 +29,7 @@ Maintainers need Node.js 22+. Students do not. No npm dependencies or installati
     npm test
     npm run build
 
-The build copies index.html, src/ and public/ to dist/. All application URLs are relative. No third-party fonts, scripts or downloads in v0.1.
+The static build publishes the two HTML entry pages, licence notices and an allowlist of src/ and public/ under a content-versioned asset directory. Tests, reference solutions and development files are excluded. All application URLs support a project subpath. Lab 01 has no external runtime downloads; Session 3 fetches pinned Pyodide and NumPy assets when Run is first pressed.
 
 ## GitHub setup
 
@@ -37,8 +37,8 @@ The build copies index.html, src/ and public/ to dist/. All application URLs are
 2. Review and commit prepared files, then push:
 
        git status
-       git add README.md CONTRIBUTING.md .gitignore .github package.json index.html src public scripts tests docs
-       git commit -m "Build static ROS2Learn Lab 01 and Pages deployment"
+       git add README.md CONTRIBUTING.md LICENSE NOTICE .gitignore .github package.json index.html session-03.html src public scripts tests docs
+       git commit -m "Update browser lessons and static Pages deployment"
        git push origin main
 
 3. Watch Actions → Test and deploy GitHub Pages. Deployment follows successful tests/build. Pull requests do not deploy.
@@ -59,7 +59,7 @@ Official instructions: https://docs.github.com/en/pages/getting-started-with-git
 
 Wait two seconds and Check solution: all three checks pass, distance 1.20 m. Reset and check again: all incomplete. An invalid command should produce a readable error.
 
-The simulated controller holds a command for two seconds then stops; this is not a ROS 2 guarantee. Only linear.x and angular.z can be nonzero. Limits: 2 m/s and 3 rad/s. Unsupported axes are rejected. The parser supports JSON or simple YAML flow mappings, not full YAML. Publication requires --once; continuous publishing is unsupported. /odom publishes ideal pose and velocity at 5 Hz of simulated time; /scan remains a placeholder without samples. The one-shot CLI publisher has exited before the next command runs.
+The simulated controller holds a command for two seconds then stops; this is not a ROS 2 guarantee. Only linear.x and angular.z can be nonzero. Limits: 2 m/s and 3 rad/s. Unsupported axes are rejected. The parser supports JSON or simple YAML flow mappings, not full YAML. Publication defaults to 1 Hz, supports --rate / -r and --once, and runs until Ctrl+C or Stop command. /odom and /scan publish at 5 Hz of simulated time; scan uses 36 synthetic rays with infinite no-return distances in the empty Lab 01 world. The one-shot CLI publisher has exited before the next command runs.
 
 ## Multiple simulated terminals
 
@@ -73,7 +73,7 @@ In terminal 1, publish:
 
     ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.6}, angular: {z: 0.3}}"
 
-Position changes while the robot moves. Use Ctrl+C (with focus in that terminal) or Stop echo to return to its prompt. Full messages and other fields are supported:
+Position changes while the robot moves. Use Ctrl+C (with focus in that terminal) or Stop command to return to its prompt. Full messages and other fields are supported:
 
     ros2 topic echo /odom
     ros2 topic echo /odom --field twist.twist
@@ -99,7 +99,7 @@ Syntax reference: https://github.com/ros2/ros2cli/blob/jazzy/ros2topic/ros2topic
 
 ## Licensing
 
-Owner licence selection is pending. Public visibility alone does not grant an open-source licence. Select a licence before inviting reuse.
+Original code and lesson content: Apache-2.0. See LICENSE and NOTICE. Third-party runtime components retain their own licences; see public/third-party.html. This independent project is not affiliated with or endorsed by Open Robotics. Review the ROS-derived project name before a wider branded launch; no trademark permission is claimed.
 
 ## Browser regression check
 
@@ -108,3 +108,54 @@ With the local server running, open /ros2learn/tests/browser.html (or /tests/bro
     google-chrome --headless --disable-gpu --virtual-time-budget=12000 --dump-dom http://localhost:8000/ros2learn/tests/browser.html
 
 The browser test harness is excluded from the production build.
+
+## Session 3: camera perception and services
+
+Open session-03.html, choose an exercise, complete the TODOs and Run Python. The six exercises cover image callbacks, NumPy arrays, colour detection, centroid location, asynchronous Trigger clients and vision-driven robot control. Camera images are 320 × 240 RGB at 8 Hz of simulation time. Camera movement follows robot pose. Code executes in a dedicated worker; Stop and Reset terminate it and remove its graph entities. Internet is required for the initial Pyodide/NumPy download. No local installation is required.
+
+A Python run and every terminal share one runtime within the page. Use these commands while Python is active:
+
+    ros2 topic info /camera/image_raw
+    ros2 topic hz /camera/image_raw
+    ros2 topic echo /camera/image_raw --once
+    ros2 service list
+    ros2 service type /reset_robot
+    ros2 service call /reset_robot std_srvs/srv/Trigger
+
+See docs/SESSION3.md for APIs, limitations, assessment and teaching notes.
+
+## Cross-browser acceptance tests
+
+With Chrome or Firefox installed on the maintainer machine (not required on the student machine beyond a supported browser):
+
+    npm run test:chrome
+    npm run test:firefox
+
+The tests start a temporary local static test server, launch a fresh headless browser, and run real Pyodide solutions. They need network access to the Pyodide CDN and may take a minute or more. The runner and reference programs are never deployed to Pages. Chrome/Firefox are selected by google-chrome/firefox on PATH.
+
+## Source visibility and spoilers
+
+Students can inspect all client-side code, lesson hints and checking logic. Production excludes reference programs, but the public GitHub repository contains test fixtures and therefore exposes those examples. Obfuscation cannot turn a static open-source app into a secure examination system. Use these checks for formative practice; use a separate assessment task if grades depend on independent work.
+
+Checks are behavioural and do not match a particular source program. NumPy threshold masks and cv2.inRange/moments solutions are both exercised in tests. Multiple node names, functional callbacks and Node subclasses are accepted. Learners still need to use the documented API subset; this is not full rclpy.
+
+## Shared ROS 2 basics
+
+Every lab uses the same CLI implementation. Discover the actual topic/service graph for that lab; camera and reset service endpoints appear in Session 3, while dynamic topics appear when created. There is no per-lesson command allowlist. Type help or ros2 --help.
+
+- Nodes: list, info.
+- Topics: list [-t], type, info [-v], find, echo [--field PATH] [--once], hz, bw, delay, pub [--once | --rate HZ].
+- Interfaces: list, packages, package, show, proto for the teaching message/service types.
+- Services: list [-t], type, info, find, call.
+
+A continuous publisher can run in one terminal while another uses echo or hz. Publishing supports Twist and String, including newly named topics. Only /cmd_vel drives the robot. Sensor topics are generated by the simulator. Rates use simulation time, which pauses when the page is hidden. bw reports an estimated payload size, not DDS wire traffic. delay requires a stamped message and measures simulated delivery delay. Publication rates are capped at 20 Hz for browser usability. DDS/QoS, daemon, doctor, service-event introspection, package execution, parameters and ROS action clients are not implemented; this remains an educational subset, not an entire ROS distribution.
+
+    ros2 topic pub -r 2 /chatter std_msgs/msg/String '{"data":"hello"}'
+    ros2 topic echo /chatter
+    ros2 topic hz /chatter
+    ros2 node info /simulator
+    ros2 interface show sensor_msgs/msg/Image
+
+## Course plan
+
+Six sessions of 90 minutes, with Sessions 1–2 introductory. See docs/COURSE.md for the agreed progression and proposed final consolidation session. Future sessions are planning material, not implemented features.
