@@ -14,8 +14,8 @@ test('production build excludes reference answers and versions all application a
  await assert.rejects(access(new URL('dist/tests/python/solution-1.py',root)));
  for(const name of files.filter(name=>name.endsWith('.html'))){
   const page=await readFile(new URL('dist/'+name,root),'utf8');
-  assert.match(page,/<title>KineCourse/);assert.doesNotMatch(page,/ROS2Learn|Lab 01|LAB 01|KineCourse preliminary candidate/);
-  assert.ok(page.includes('property="og:title" content="KineCourse'));
+  assert.match(page,/<title>KineNest/);assert.doesNotMatch(page,/ROS2Learn|Lab 01|LAB 01|KineCourse|KineNest preliminary candidate/);
+  assert.ok(page.includes('property="og:title" content="KineNest'));
  }
  const lesson=JSON.parse(await readFile(new URL('dist/assets/'+versions[0]+'/public/lessons/session-03-03-color-detection.json',root),'utf8'));assert.ok(lesson.starterCode.includes('TODO'));assert.equal(lesson.solution,undefined);
 });

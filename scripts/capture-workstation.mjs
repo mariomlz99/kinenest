@@ -4,10 +4,10 @@ import {spawn} from 'node:child_process';
 import path from 'node:path';
 import {tmpdir} from 'node:os';
 import {fileURLToPath} from 'node:url';
-const root=fileURLToPath(new URL('../dist/',import.meta.url)),output=path.resolve(process.argv[2]??'/tmp/kinecourse-captures');await mkdir(output,{recursive:true});
+const root=fileURLToPath(new URL('../dist/',import.meta.url)),output=path.resolve(process.argv[2]??'/tmp/kinenest-captures');await mkdir(output,{recursive:true});
 const server=http.createServer(async(req,res)=>{try{const name=decodeURIComponent(req.url.split('?')[0]).replace(/^\/ros2learn\//,'')||'index.html',file=path.resolve(root,name);if(!file.startsWith(root))throw Error('Invalid path');res.setHeader('Content-Type',({'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.py':'text/plain'})[path.extname(file)]||'application/octet-stream');res.end(await readFile(file));}catch{res.writeHead(404);res.end();}});
 await new Promise(r=>server.listen(0,'127.0.0.1',r));const base=process.argv[3]??('http://127.0.0.1:'+server.address().port+'/ros2learn/');
-const profile=await mkdtemp(path.join(tmpdir(),'kinecourse-capture-')),browser=spawn('google-chrome',['--headless','--disable-gpu','--remote-debugging-port=0','--user-data-dir='+profile,'about:blank'],{stdio:'ignore'}),wait=ms=>new Promise(r=>setTimeout(r,ms));
+const profile=await mkdtemp(path.join(tmpdir(),'kinenest-capture-')),browser=spawn('google-chrome',['--headless','--disable-gpu','--remote-debugging-port=0','--user-data-dir='+profile,'about:blank'],{stdio:'ignore'}),wait=ms=>new Promise(r=>setTimeout(r,ms));
 let socket;
 try{
  let port;for(let i=0;i<100;i++){try{port=(await readFile(path.join(profile,'DevToolsActivePort'),'utf8')).split('\n')[0];break;}catch{await wait(100);}}if(!port)throw Error('Chrome debugging port unavailable');

@@ -6,7 +6,7 @@ Complete six-session browser course: original CLI lab; four Session 2 exercises;
 
 ## Next
 
-Lecturer review and classroom trials. Measure completion times, clarity and transfer to real ROS. Have native speakers review tutorial translations. Test Edge and Safari independently. KineCourse is the working public name, not a cleared trademark. Review a separate repository migration before broad promotion.
+Lecturer review and classroom trials. Measure completion times, clarity and transfer to real ROS. Have native speakers review tutorial translations. Test Edge and Safari independently. KineNest is the working public name, not a cleared trademark. Review a separate repository migration before broad promotion.
 
 ## Later
 

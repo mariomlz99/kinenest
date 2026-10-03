@@ -2,7 +2,7 @@
 
 A proposed 30–45 second manual recording, after release validation:
 
-1. Open KineCourse and show the six-session navigation (3 s).
+1. Open KineNest and show the six-session navigation (3 s).
 2. Session 1: ros2 topic list, then a Twist moves the robot (5 s).
 3. Session 2: run a subscriber and show LiDAR-driven avoidance (6 s).
 4. Session 3: show real NumPy red-pixel detection and camera centering (7 s).

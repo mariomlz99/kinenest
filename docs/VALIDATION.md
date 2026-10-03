@@ -70,3 +70,5 @@ Deployment status: local release commits are ready, but this session could not p
 ## KineNest baseline — 2026-10-03
 
 Starting revision 951f662 is clean and matches origin/main; its Pages deployment succeeded. All 37 unit tests and the static build pass. Full Firefox acceptance passes. Chrome passed Sessions 1–4 but stalled at Session 5 without a test result; local fixture and lesson HTTP requests returned 200. An isolated Session 5 run passed with an explicitly persistent headless Chrome session. The harness now uses remote-debugging-port=0 instead of dump-dom (an extraction mode), and reference/progress fetches have bounded, path-specific errors. No student code was changed to address this harness failure. A full Chrome recheck follows.
+
+The complete persistent-session Chrome baseline passed all suites, including all 25 Python exercises, TF, translations, alternate implementations, negative controls and Stop/Reset.

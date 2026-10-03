@@ -79,7 +79,7 @@ Read the implementation for thresholds. report_pose, report_transform, report_re
 
 ## Text and hints
 
-Use short tasks: concept, action, observation and check. Keep long context in a reference panel. Hints should progress from concept to API to partial syntax. Starter code and comments remain English. Follow [BRANDING.md](BRANDING.md); use KineCourse as the product name and ROS 2 descriptively.
+Use short tasks: concept, action, observation and check. Keep long context in a reference panel. Hints should progress from concept to API to partial syntax. Starter code and comments remain English. Follow [BRANDING.md](BRANDING.md); use KineNest as the product name and ROS 2 descriptively.
 
 ## Six languages
 

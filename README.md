@@ -1,12 +1,14 @@
-# KineCourse
+# KineNest
 
-Interactive robotics learning in your browser.
+Learn robotics by making things move.
 
-KineCourse is a free, open-source teaching environment for robotics communication, sensors, perception and coordinate frames. Students use real Python and interactive simulations without installing a robotics stack or creating an account. Exercises mirror common ROS™ 2 APIs and command-line workflows so the same concepts transfer to a real robotics workspace.
+<img src="public/assets/brand/kinenest-logo.png" alt="KineNest logo" width="320">
+
+KineNest is a free, open-source teaching environment for robotics communication, sensors, perception and coordinate frames. Students use real Python and interactive simulations without installing a robotics stack or creating an account. Exercises mirror common ROS™ 2 APIs and command-line workflows so the same concepts transfer to a real robotics workspace.
 
 ## Try online
 
-[Open KineCourse](https://mariomlz99.github.io/ros2learn/). Start in Session 1; Python begins in Session 2. Chrome and Firefox are tested. Edge and Safari remain best-effort and have not been independently verified.
+[Open KineNest](https://mariomlz99.github.io/ros2learn/). Start in Session 1; Python begins in Session 2. Chrome and Firefox are tested. Edge and Safari remain best-effort and have not been independently verified.
 
 ## What students learn
 
@@ -49,7 +51,7 @@ Camera: 320 × 240 at 8 Hz. LiDAR: 120 rays at 5 Hz. Odometry: ideal 2D pose at 
 
 ## Educational runtime and limitations
 
-KineCourse is not a full robot middleware installation. Python, NumPy and student algorithms are real; rclpy, messages, services, parameters, actions, TF, cv_bridge, limited cv2 and the CLI are educational implementations.
+KineNest is not a full robot middleware installation. Python, NumPy and student algorithms are real; rclpy, messages, services, parameters, actions, TF, cv_bridge, limited cv2 and the CLI are educational implementations.
 
 No DDS, QoS negotiation, TF history, native OpenCV, Gazebo, RViz, Nav2, SLAM or native package builds. TF is planar and latest-only. The two-second velocity timeout is a simulator controller policy. Each tab has a separate world. See [architecture](docs/ARCHITECTURE.md) and the [About page](https://mariomlz99.github.io/ros2learn/about.html).
 
@@ -86,7 +88,7 @@ GitHub repository Settings → Pages → Source: **GitHub Actions**. Pushes to m
 
 Production contains static assets only. The allowlist excludes tests, reference programs, docs and private development artifacts. Content-versioned relative paths work under /ros2learn/ and other project prefixes. The existing personal website is a separate repository.
 
-The repository remains ros2learn for now. A later move to kinecourse requires explicit approval; see [BRANDING.md](docs/BRANDING.md). Update the source URL in src/ui/product.js and documentation when migrating. No custom domain is configured.
+The repository remains ros2learn for now. A later move to kinenest requires explicit approval; see [BRANDING.md](docs/BRANDING.md). Update the source URL in src/ui/product.js and documentation when migrating. No custom domain is configured.
 
 ## Authoring
 
@@ -96,6 +98,6 @@ Lesson catalogs and JSON files live in public/lessons/. They define tasks, start
 
 Original code and lessons are Apache-2.0: [LICENSE](LICENSE), [NOTICE](NOTICE). Pyodide, CPython and NumPy retain their own terms; see [third-party notices](licences.html).
 
-ROS is a trademark of Open Source Robotics Foundation, Inc. KineCourse is an independent educational project and is not affiliated with or endorsed by Open Robotics.
+ROS is a trademark of Open Source Robotics Foundation, Inc. KineNest is an independent educational project and is not affiliated with or endorsed by Open Robotics.
 
-KineCourse is a working name, not a claim of trademark clearance. The independent brand distinguishes the product from the technology taught; descriptive ROS 2 references and technical identifiers are retained.
+KineNest is a working name, not a claim of trademark clearance. The independent brand distinguishes the product from the technology taught; descriptive ROS 2 references and technical identifiers are retained.

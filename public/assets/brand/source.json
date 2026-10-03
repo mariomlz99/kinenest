@@ -1,0 +1,15 @@
+{
+  "source": "Maintainer-supplied logo.png",
+  "sha256": "51b3697e850390fa643f5e2e8b07613992a97c72efca52ebcf6fca1111b339f4",
+  "originalSize": [
+    1254,
+    1254
+  ],
+  "iconCrop": [
+    375,
+    125,
+    880,
+    755
+  ],
+  "pipeline": "scripts/brand-assets.py"
+}
