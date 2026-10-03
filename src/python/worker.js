@@ -12,10 +12,11 @@ async function teachingAPI(){
 }
 async function handle(data){
   if(data.kind==='start'){
-    postMessage({kind:'loading'});
+    postMessage({kind:'loading',text:'Loading Python runtime…'});
     const source=await teachingAPI();
     importScripts(INDEX+'pyodide.js');
     pyodide=await loadPyodide({indexURL:INDEX,stdout:output,stderr:output});
+    postMessage({kind:'loading',text:'Loading NumPy…'});
     for(let attempt=0;attempt<3;attempt++){
       try{await pyodide.loadPackage('numpy');pyodide.runPython('import numpy');break;}
       catch(error){if(attempt===2)throw new Error('NumPy download failed. Check the connection and press Run again. '+error);await new Promise(resolve=>setTimeout(resolve,500*(attempt+1)));}

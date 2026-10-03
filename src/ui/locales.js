@@ -1366,5 +1366,101 @@ export const UI = {
     "TODOs ergänzen und ausführen. Tab rückt ein; Escape und Tab verlassen den Editor. Stop beendet die Ausführung.",
     "Completa os TODOs e executa. Tab indenta; Escape e Tab sai do editor. Stop termina a execução.",
     "Completa i TODO ed esegui. Tab indenta; Esc seguito da Tab esce dall’editor. Stop termina l’esecuzione."
+  ],
+  "Loading Python runtime…": [
+    "Python-runtime laden…",
+    "Chargement de Python…",
+    "Cargando Python…",
+    "Python-Laufzeit laden…",
+    "A carregar Python…",
+    "Caricamento di Python…"
+  ],
+  "Loading NumPy…": [
+    "NumPy laden…",
+    "Chargement de NumPy…",
+    "Cargando NumPy…",
+    "NumPy laden…",
+    "A carregar NumPy…",
+    "Caricamento di NumPy…"
+  ],
+  "Loading C++ toolchain…": [
+    "C++-toolchain laden…",
+    "Chargement des outils C++…",
+    "Cargando herramientas C++…",
+    "C++-Werkzeuge laden…",
+    "A carregar ferramentas C++…",
+    "Caricamento degli strumenti C++…"
+  ],
+  "Compiling C++…": [
+    "C++ compileren…",
+    "Compilation C++…",
+    "Compilando C++…",
+    "C++ kompilieren…",
+    "A compilar C++…",
+    "Compilazione C++…"
+  ],
+  "Linking WebAssembly…": [
+    "WebAssembly linken…",
+    "Édition des liens WebAssembly…",
+    "Enlazando WebAssembly…",
+    "WebAssembly linken…",
+    "A ligar WebAssembly…",
+    "Collegamento WebAssembly…"
+  ],
+  "Python stopped": [
+    "Python gestopt",
+    "Python arrêté",
+    "Python detenido",
+    "Python angehalten",
+    "Python parado",
+    "Python fermato"
+  ],
+  "Python executing…": [
+    "Python wordt uitgevoerd…",
+    "Python en cours…",
+    "Python en ejecución…",
+    "Python wird ausgeführt…",
+    "Python em execução…",
+    "Python in esecuzione…"
+  ],
+  "Python running · callbacks ready": [
+    "Python actief · callbacks gereed",
+    "Python actif · callbacks prêts",
+    "Python activo · callbacks listos",
+    "Python aktiv · Callbacks bereit",
+    "Python ativo · callbacks prontos",
+    "Python attivo · callback pronti"
+  ],
+  "C++ stopped": [
+    "C++ gestopt",
+    "C++ arrêté",
+    "C++ detenido",
+    "C++ angehalten",
+    "C++ parado",
+    "C++ fermato"
+  ],
+  "C++ executing…": [
+    "C++ wordt uitgevoerd…",
+    "C++ en cours…",
+    "C++ en ejecución…",
+    "C++ wird ausgeführt…",
+    "C++ em execução…",
+    "C++ in esecuzione…"
+  ],
+  "C++ running · callbacks ready": [
+    "C++ actief · callbacks gereed",
+    "C++ actif · callbacks prêts",
+    "C++ activo · callbacks listos",
+    "C++ aktiv · Callbacks bereit",
+    "C++ ativo · callbacks prontos",
+    "C++ attivo · callback pronti"
+  ],
+  "RGB channel means:": [
+    "Gemiddelde RGB-kanalen:",
+    "Moyennes des canaux RGB :",
+    "Medias de los canales RGB:",
+    "RGB-Kanalmittelwerte:",
+    "Médias dos canais RGB:",
+    "Medie dei canali RGB:"
   ]
 };

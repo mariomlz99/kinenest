@@ -1,0 +1,2 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {VARIANTS,chooseTransitionVariant} from '../src/ui/transitions.js';
+test('transition choice is deterministic when injected and never repeats',()=>{assert.equal(VARIANTS.length,5);for(const previous of VARIANTS)for(const n of [0,.25,.5,.999]){const next=chooseTransitionVariant(previous,()=>n);assert.ok(VARIANTS.includes(next));assert.notEqual(next,previous);}});

@@ -1,3 +1,4 @@
+import {setupTransitions} from './transitions.js';
 import { setupBranding } from './product.js';
 import {UI as strings, LANGUAGES} from './locales.js';
 const sourceNodes=new WeakMap();
@@ -9,7 +10,7 @@ export function translate(text){
   if(prefix)return prefix+translate(text.slice(prefix.length));
   const key=originals.get(text);
   if(key){const value=strings[key][LANGUAGES.indexOf(lang)-1];return lang==='en'||typeof value!=='string'?key:value;}
-  for(const key of ['Session','Exercise','Distance travelled:','Reveal next hint']){
+  for(const key of ['RGB channel means:','Session','Exercise','Distance travelled:','Reveal next hint']){
     if(text.startsWith(key+' '))return translate(key)+text.slice(key.length);
     if(lang!=='en'&&text.startsWith(key.toUpperCase()+' '))return translate(key)+text.slice(key.length);
   }
@@ -17,7 +18,7 @@ export function translate(text){
 }
 export function setupPreferences(){
   if(document.getElementById('preferences'))return;
-  setupBranding();
+  setupBranding();setupTransitions();
   const flags={en:'🇬🇧',nl:'🇳🇱',fr:'🇫🇷',es:'🇪🇸',de:'🇩🇪',pt:'🇵🇹',it:'🇮🇹'};
   const controls=document.createElement('div');controls.id='preferences';
   controls.innerHTML='<label class="language-control"><span class="sr-only">Language</span><span id="language-current" aria-hidden="true"></span><select id="language" aria-label="Language"><option value="en">🇬🇧 EN · English</option><option value="nl">🇳🇱 NL · Nederlands</option><option value="fr">🇫🇷 FR · Français</option><option value="es">🇪🇸 ES · Español</option><option value="de">🇩🇪 DE · Deutsch</option><option value="pt">🇵🇹 PT · Português</option><option value="it">🇮🇹 IT · Italiano</option></select></label><button id="theme" type="button">Light</button><label><span class="sr-only">Layout</span><select id="layout" aria-label="Layout"><option value="split">Workbench</option><option value="stack">Stacked</option></select></label>';

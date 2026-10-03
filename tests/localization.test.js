@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile,readdir} from 'node:fs/promises';
 import {LANGUAGES,UI} from '../src/ui/locales.js';
-export const required=['Run Python','Stop Python','Restore starter code','Reset','Check solution','Reveal next hint','Learning terminals','Language','Layout','Light','Dark','Workbench','Stacked','Real environment','Source','Licences','About','Nodes & Topics','Callbacks & LiDAR','Perception & Services','Parameters & Actions','Odometry & Frames','Debugging Challenge','From browser to a real robot','On a real ROS 2 machine','Exercise complete.','Assessment and privacy','Licence and independence','KineNest teaches concepts and workflows used with ROS™ 2.'];
+export const required=['Loading Python runtime…','Loading NumPy…','Loading C++ toolchain…','Compiling C++…','Linking WebAssembly…','Python stopped','C++ stopped','Run Python','Stop Python','Restore starter code','Reset','Check solution','Reveal next hint','Learning terminals','Language','Layout','Light','Dark','Workbench','Stacked','Real environment','Source','Licences','About','Nodes & Topics','Callbacks & LiDAR','Perception & Services','Parameters & Actions','Odometry & Frames','Debugging Challenge','From browser to a real robot','On a real ROS 2 machine','Exercise complete.','Assessment and privacy','Licence and independence','KineNest teaches concepts and workflows used with ROS™ 2.'];
 test('seven-language UI has explicit translations or declared English fallbacks',()=>{
  assert.deepEqual(LANGUAGES,['en','nl','fr','es','de','pt','it']);
  for(const [key,row]of Object.entries(UI)){assert.equal(row.length,6,key);for(const value of row)assert.ok(typeof value==='string'&&value.length||value?.fallback==='en',key);}
