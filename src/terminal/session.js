@@ -1,5 +1,6 @@
 import { interfaceType } from '../runtime/interfaces.js';
-import { execute, parsePublication } from './cli.js';
+import { startGoal, cancelGoal, DRIVE } from '../runtime/course.js';
+import { execute, parsePublication, parseMessage, tokens } from './cli.js';
 
 export function fieldValue(message, path) {
   let value=message;
@@ -34,6 +35,14 @@ export class TerminalSession {
     this.history.push(command);if(this.history.length>100)this.history.shift();this.cursor=this.history.length;
     this.write('$ '+command);
     const parts=command.split(/\s+/);
+    if(parts.slice(0,3).join(' ')==='ros2 action send_goal'){
+      const args=tokens(command),feedback=args.at(-1)==='--feedback';if(feedback)args.pop();
+      if(args.length!==6||args[3]!=='/drive_distance'||args[4]!==DRIVE)throw Error('Usage: ros2 action send_goal /drive_distance ros2learn_interfaces/action/DriveDistance "{distance: 1, speed: 0.5}" [--feedback]');
+      const node='/ros2cli_action_'+this.id;
+      const id=startGoal(this.runtime,node,parseMessage(args[5]),(event,payload)=>{if(event==='feedback'&&feedback)this.write('Feedback: '+formatMessage(payload));if(event==='result'){this.write('Result: '+formatMessage(payload));this.stop(false);}});
+      this.runtime.nodes.add(node);this.runtime.actions.get('/drive_distance').clients.add(node);
+      this.unsubscribe=()=>{this.runtime.actions.get('/drive_distance')?.clients.delete(node);this.runtime.nodes.delete(node);cancelGoal(this.runtime,id);};this.write('Goal accepted. Ctrl+C cancels this teaching action.');this.onState(true);return;
+    }
     if(parts.slice(0,3).join(' ')==='ros2 topic pub'){
       const pub=parsePublication(command);if(pub.once){this.write(execute(this.runtime,command));return;}
       const node='/ros2cli_pub_'+this.id;
@@ -78,6 +87,6 @@ export class TerminalSession {
     this.onState(true);
   }
   recall(direction){this.cursor=Math.max(0,Math.min(this.history.length,this.cursor+direction));return this.history[this.cursor]??'';}
-  stop(announce=true){if(!this.running)return;this.unsubscribe();this.unsubscribe=null;if(announce)this.write('^C');this.onState(false);}
+  stop(announce=true){if(!this.running)return;const dispose=this.unsubscribe;this.unsubscribe=null;dispose();if(announce)this.write('^C');this.onState(false);}
   reset(){this.stop(false);this.history=[];this.cursor=0;}
 }

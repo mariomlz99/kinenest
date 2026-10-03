@@ -1,12 +1,13 @@
 import { laserScan, collides } from '../simulator/lidar.js';
 import { renderCamera, inspectPixels, CAMERA_PERIOD } from '../simulator/camera.js';
 import { newEvidence } from '../exercises/perception.js';
+import { resetCourse, enableCourse, transforms, cancelGoal } from './course.js';
 import { Robot } from '../simulator/robot.js';
 export const TWIST='geometry_msgs/msg/Twist';
 export class Runtime {
   constructor() { this.robot=new Robot(); this.reset(); }
   reset() {
-    this.world=null;this.collisions=0;this.robot.reset(); this.discovered=false; this.publications=0;
+    resetCourse(this);this.world=null;this.collisions=0;this.robot.reset(); this.discovered=false; this.publications=0;
     this.jobs=new Set();this.listeners=new Map(); this.time=0; this.odomElapsed=0;
     this.nodes=new Set(['/simulator']);
     this.services=new Map();this.evidence=newEvidence();this.cameraElapsed=0;this.frameId=0;this.frames=new Map();this.camera=null;this.targets=undefined;this.testCase=null;
@@ -23,10 +24,10 @@ export class Runtime {
   ensureTopic(name,type){if(!/^\/[A-Za-z_][A-Za-z_0-9/]*$/.test(name))throw new Error('Use an absolute topic name such as /chatter');const existing=this.topics.get(name);if(existing&&existing.type!==type)throw new Error('Topic type mismatch: '+existing.type);if(!existing)this.topics.set(name,{type,publishers:new Set(),subscribers:new Set(),dynamic:true});return this.topic(name);}
   removeEmptyTopics(){for(const [name,t] of this.topics)if(t.dynamic&&!t.publishers.size&&!t.subscribers.size)this.topics.delete(name);}
   enableSession3() {
-    this.session3Enabled=true;
+    this.session3Enabled=true;enableCourse(this);
     this.topics.set('/camera/image_raw',{type:'sensor_msgs/msg/Image',publishers:new Set(['/simulator']),subscribers:new Set()});
     this.nodes.add('/reset_server');
-    this.services.set('/reset_robot',{type:'std_srvs/srv/Trigger',node:'/reset_server',clients:new Set(),handler:()=>{this.robot.reset();return {success:true,message:'Robot reset'};}});
+    this.services.set('/reset_robot',{type:'std_srvs/srv/Trigger',node:'/reset_server',clients:new Set(),handler:()=>{for(const id of this.goals.keys())cancelGoal(this,id);this.robot.reset();return {success:true,message:'Robot reset'};}});
   }
   service(name){const service=this.services.get(name);if(!service)throw new Error('Unknown service: '+name);return service;}
   callService(name,type,request={}) {
@@ -49,7 +50,7 @@ export class Runtime {
     const entries=listeners.get(topicName)??new Map();
     listeners.set(topicName,entries); entries.set(id,callback);
     nodes.add(nodeName); topic.subscribers.add(nodeName);
-    return ()=>{entries.delete(id);topic.subscribers.delete(nodeName);if(!existingNode)nodes.delete(nodeName);this.removeEmptyTopics();};
+    return ()=>{entries.delete(id);if(![...entries.keys()].some(key=>String(key).startsWith(nodeName+':')))topic.subscribers.delete(nodeName);if(!existingNode)nodes.delete(nodeName);this.removeEmptyTopics();};
   }
   emit(topic, message) {
     for(const callback of [...(this.listeners.get(topic)?.values()??[])]) callback(structuredClone(message));
@@ -71,11 +72,15 @@ export class Runtime {
       const slice=Math.min(remaining,1/60,0.2-this.odomElapsed,this.session3Enabled?CAMERA_PERIOD-this.cameraElapsed:Infinity,...[...this.jobs].map(job=>job.remaining));
       const before={x:this.robot.x,y:this.robot.y,distance:this.robot.distance};this.robot.step(slice);if(collides(this.robot,this.world)){Object.assign(this.robot,before);this.robot.command(0,0);this.collisions++;}this.time+=slice;this.odomElapsed+=slice;this.cameraElapsed+=this.session3Enabled?slice:0;remaining-=slice;
       if(this.session3Enabled&&this.cameraElapsed>=CAMERA_PERIOD-1e-12){this.cameraElapsed=0;this.cameraFrame();}
-      if(this.odomElapsed>=0.2-1e-12){this.odomElapsed=0;this.emit('/odom',this.odometry());this.emit('/scan',this.scan());}
+      if(this.odomElapsed>=0.2-1e-12){this.odomElapsed=0;this.emit('/odom',this.odometry());this.emit('/scan',this.scan());if(this.topics.has('/tf'))this.emit('/tf',transforms(this));}
       for(const job of [...this.jobs]){job.remaining-=slice;if(job.remaining<1e-12){job.remaining=job.period;job.callback();}}
     }
   }
   publish(topic,type,msg) {
+    if(type==='ros2learn_interfaces/msg/TargetInfo'){
+      if(!msg||typeof msg.visible!=='boolean'||typeof msg.position!=='string'||typeof msg.confidence!=='number'||!Number.isFinite(msg.confidence)||msg.confidence<0||msg.confidence>1||Object.keys(msg).some(k=>!['visible','position','confidence'].includes(k)))throw Error('TargetInfo needs bool visible, string position and confidence in [0,1]');
+      this.ensureTopic(topic,type);this.course.custom=(this.course.custom??0)+1;this.emit(topic,msg);return;
+    }
     if(type==='std_msgs/msg/String'){if(!msg||typeof msg.data!=='string'||Object.keys(msg).some(k=>k!=='data'))throw new Error('String requires {data: "text"}');this.ensureTopic(topic,type);this.emit(topic,{data:msg.data});return;}
     if(type!==TWIST)throw new Error('Publishing supports geometry_msgs/msg/Twist and std_msgs/msg/String.');
     const existing=this.topics.get(topic);if(existing&&existing.type!==type)throw new Error('Expected '+existing.type);
