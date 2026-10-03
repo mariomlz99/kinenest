@@ -1,3 +1,4 @@
+import {SENSORS} from '../simulator/sensors.js';
 // Course-only extensions. All clocks and motion use the shared simulator.
 export const DRIVE='ros2learn_interfaces/action/DriveDistance';
 export function resetCourse(r){
@@ -12,7 +13,7 @@ export function enableCourse(r){
 }
 export function transforms(r){
   const transform=(parent,child,x,y,yaw)=>({header:{stamp:r.stamp(),frame_id:parent},child_frame_id:child,transform:{translation:{x,y,z:0},rotation:{x:0,y:0,z:Math.sin(yaw/2),w:Math.cos(yaw/2)}}});
-  return {transforms:[transform('world','odom',0,0,0),transform('odom','base_link',r.robot.x,r.robot.y,r.robot.yaw),transform('base_link','laser_link',.2,0,0),transform('base_link','camera_link',0,0,0),transform('world','target',...(r.targetFrame??[5,0]),0)]};
+  return {transforms:[transform('world','odom',0,0,0),transform('odom','base_link',r.robot.x,r.robot.y,r.robot.yaw),...Object.values(SENSORS).map(m=>transform('base_link',m.frame,m.x,m.y,m.yaw)),transform('world','target',...(r.targetFrame??[5,0]),0)]};
 }
 // Compose the same published edges used by Python's Buffer and the TF views.
 export function lookup(r,target,source){

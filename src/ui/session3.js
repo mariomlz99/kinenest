@@ -1,3 +1,4 @@
+import {sensorPose,ROBOT_RADIUS,SENSORS} from '../simulator/sensors.js';
 import { createTFView } from './tf-view.js';
 import { arrangeSession } from './workstation.js';
 import { SESSIONS } from './product.js';
@@ -94,10 +95,10 @@ function draw(){
     const sx=x=>ox+(x-bounds.minX)*scale,sy=y=>height-oy-(y-bounds.minY)*scale;
     ctx.fillStyle='#0b1b25';ctx.fillRect(0,0,width,height);ctx.strokeStyle='#517381';ctx.strokeRect(ox,oy,scale*(bounds.maxX-bounds.minX),scale*(bounds.maxY-bounds.minY));
     for(const o of world?.obstacles??[]){ctx.fillStyle='#899aa8';ctx.fillRect(sx(o.x),sy(o.y+o.h),o.w*scale,o.h*scale);}
-    if($('show-rays').checked){const scan=runtime.scan();ctx.strokeStyle='#3b7969';ctx.beginPath();scan.ranges.forEach((d,i)=>{if(!Number.isFinite(d))return;const angle=r.yaw+scan.angle_min+i*scan.angle_increment,x=r.x+.2*Math.cos(r.yaw),y=r.y+.2*Math.sin(r.yaw);ctx.moveTo(sx(x),sy(y));ctx.lineTo(sx(x+d*Math.cos(angle)),sy(y+d*Math.sin(angle)));});ctx.stroke();}
+    if($('show-rays').checked){const scan=runtime.latestScan??runtime.scan(),sensor=runtime.sensorSamples.lidar?.pose??sensorPose(r,'lidar');ctx.strokeStyle='#3b7969';ctx.beginPath();scan.ranges.forEach((d,i)=>{if(!Number.isFinite(d))return;const angle=sensor.yaw+scan.angle_min+i*scan.angle_increment,{x,y}=sensor;ctx.moveTo(sx(x),sy(y));ctx.lineTo(sx(x+d*Math.cos(angle)),sy(y+d*Math.sin(angle)));});ctx.stroke();}
     for(const t of runtime.targets??[{x:5,y:0,color:[235,45,45]},{x:6,y:-2,color:[40,85,230]}]){ctx.fillStyle='rgb('+(t.color??[235,45,45]).join(',')+')';ctx.fillRect(sx(t.x)-6,sy(t.y)-6,12,12);}
     if(lesson.goal){ctx.strokeStyle='#ffe490';ctx.beginPath();ctx.arc(sx(lesson.goal[0]),sy(lesson.goal[1]),8,0,Math.PI*2);ctx.stroke();}
-    ctx.save();ctx.translate(sx(r.x),sy(r.y));ctx.rotate(-r.yaw);ctx.fillStyle='#57ddbc';ctx.beginPath();ctx.moveTo(10,0);ctx.lineTo(-7,-6);ctx.lineTo(-7,6);ctx.closePath();ctx.fill();ctx.restore();tfView?.draw({sx,sy,scale,width,height});
+    ctx.save();ctx.translate(sx(r.x),sy(r.y));ctx.rotate(-r.yaw);ctx.fillStyle='#57ddbc';ctx.beginPath();ctx.arc(0,0,ROBOT_RADIUS*scale,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#163d48';ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(ROBOT_RADIUS*scale,0);ctx.stroke();ctx.restore();for(const [name,mount]of Object.entries(SENSORS)){const p=sensorPose(r,name);ctx.fillStyle=name==='lidar'?'#b5fff0':'#e8f1ff';ctx.strokeStyle='#163d48';ctx.beginPath();if(name==='lidar')ctx.arc(sx(p.x),sy(p.y),1.7,0,Math.PI*2);else ctx.rect(sx(p.x)-1,sy(p.y)-1.3,2,2.6);ctx.fill();ctx.stroke();}tfView?.draw({sx,sy,scale,width,height});
     $('tf-tree').textContent=transforms(runtime).transforms.map(t=>t.header.frame_id+' → '+t.child_frame_id).join('\n');
     $('parameters').textContent=[...runtime.parameters].map(([node,params])=>node+'\n'+[...params].map(([k,v])=>'  '+k+': '+v).join('\n')).join('\n')||'(no declared parameters)';
     $('action-progress').textContent=[...runtime.goals.values()].slice(-3).map(g=>'Goal '+g.id+' · '+({2:'executing',4:'succeeded',5:'cancelled',6:'aborted'}[g.status])+' · '+(g.result?.result.final_distance??(r.distance-g.start)).toFixed(2)+' / '+g.distance+' m').join('\n')||'(no goals)';

@@ -15,7 +15,7 @@ export function createTFView(runtime,session){
   const label=document.createElement('label'),check=document.createElement('input');check.type='checkbox';check.value=id;check.dataset.frame=id;label.append(check,document.createTextNode(id));controls.append(label);checks.set(id,check);
   const group=svg('g',{'data-frame':id,class:'frame-origin'}),rotated=svg('g',{class:'frame-axes'});
   rotated.append(svg('path',{d:'M 0 0 L 32 0 M 27 -3 L 32 0 L 27 3',class:'axis-x'}),svg('path',{d:'M 0 0 L 0 -32 M -3 -27 L 0 -32 L 3 -27',class:'axis-y'}),svg('text',{x:38,y:4,class:'axis-label'},'x'),svg('text',{x:-3,y:-38,class:'axis-label'},'y'));
-  // Label leaders distinguish coincident world/odom and base_link/camera_link origins.
+  // Label leaders separate nearby sensor origins and coincident world/odom frames.
   const offset={world:40,odom:60,base_link:18,laser_link:40,camera_link:62,target:18}[id]??18;
   group.append(rotated,svg('circle',{r:3,class:'frame-dot'}),svg('line',{x1:0,y1:3,x2:5,y2:offset-3,class:'frame-leader'}),svg('text',{x:8,y:offset,class:'frame-label'},id));spatial.append(group);axes.set(id,{group,rotated});
  }
@@ -36,6 +36,7 @@ export function createTFView(runtime,session){
   for(const button of tree.querySelectorAll('[data-tree-frame]'))button.setAttribute('aria-pressed',String(button.dataset.treeFrame===selected));
   vector.style.display=$('tf-show-vector').checked?'':'none';if(projection){const base=snapshot.frames.find(f=>f.id==='base_link'),target=snapshot.frames.find(f=>f.id==='target');for(const [key,n]of Object.entries({x1:projection.sx(base.x),y1:projection.sy(base.y),x2:projection.sx(target.x),y2:projection.sy(target.y)}))vector.setAttribute(key,n);}
  }
+ const showAll=document.createElement('button');showAll.type='button';showAll.id='tf-show-all';showAll.textContent='Show all frames';showAll.addEventListener('click',()=>{for(const check of checks.values())check.checked=true;update();});controls.append(showAll);
  controls.addEventListener('change',update);panel.addEventListener('change',update);
  return {draw(p){projection=p;update();},setLesson(lesson){for(const [id,check]of checks)check.checked=(lesson.frames??defaultFrames(lesson.number)).includes(id);$('tf-target').value=lesson.number==='5.3'?'odom':'base_link';$('tf-source').value=lesson.number==='5.3'?'laser_link':'target';$('tf-selected').value=lesson.number==='5.3'?'laser_link':'base_link';$('tf-show-vector').checked=lesson.number!=='5.3';panel.querySelector('details').open=lesson.number==='5.3';update();}};
 }

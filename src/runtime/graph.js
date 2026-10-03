@@ -1,3 +1,4 @@
+import {SENSORS,sensorPose} from '../simulator/sensors.js';
 import { laserScan, collides } from '../simulator/lidar.js';
 import { renderCamera, inspectPixels, CAMERA_PERIOD } from '../simulator/camera.js';
 import { newEvidence } from '../exercises/perception.js';
@@ -8,7 +9,7 @@ export class Runtime {
   constructor() { this.robot=new Robot(); this.reset(); }
   reset() {
     resetCourse(this);this.world=null;this.collisions=0;this.robot.reset(); this.discovered=false; this.publications=0;
-    this.jobs=new Set();this.listeners=new Map(); this.time=0; this.odomElapsed=0;
+    this.latestScan=null;this.sensorSamples={};this.jobs=new Set();this.listeners=new Map(); this.time=0; this.odomElapsed=0;
     this.nodes=new Set(['/simulator']);
     this.services=new Map();this.evidence=newEvidence();this.cameraElapsed=0;this.frameId=0;this.frames=new Map();this.camera=null;this.targets=undefined;this.testCase=null;
     this.topics=new Map([
@@ -36,7 +37,9 @@ export class Runtime {
     return service.handler(request);
   }
   cameraFrame() {
-    const image=renderCamera(this.robot,this.targets);image.header={stamp:this.stamp(),frame_id:'camera_link'};
+    const image=renderCamera(this.robot,this.targets);image.header={stamp:this.stamp(),frame_id:SENSORS.camera.frame};
+    this.emit('/tf',transforms(this));
+    this.sensorSamples.camera={stamp:image.header.stamp,basePose:{x:this.robot.x,y:this.robot.y,yaw:this.robot.yaw},pose:sensorPose(this.robot,'camera')};
     this.camera=image;const id=++this.frameId,truth=inspectPixels(image);
     this.frames.set(id,{truth,caseId:this.testCase??'practice'});if(this.frames.size>32)this.frames.delete(this.frames.keys().next().value);
     if(truth.visible&&Math.abs(truth.cx-160)<12&&Math.abs(this.robot.angular)<0.02&&Math.abs(this.robot.linear)<0.02)this.evidence.centeredFrames++;else this.evidence.centeredFrames=0;
@@ -72,7 +75,7 @@ export class Runtime {
       const slice=Math.min(remaining,1/60,0.2-this.odomElapsed,this.session3Enabled?CAMERA_PERIOD-this.cameraElapsed:Infinity,...[...this.jobs].map(job=>job.remaining));
       const before={x:this.robot.x,y:this.robot.y,distance:this.robot.distance};this.robot.step(slice);if(collides(this.robot,this.world)){Object.assign(this.robot,before);this.robot.command(0,0);this.collisions++;}this.time+=slice;this.odomElapsed+=slice;this.cameraElapsed+=this.session3Enabled?slice:0;remaining-=slice;
       if(this.session3Enabled&&this.cameraElapsed>=CAMERA_PERIOD-1e-12){this.cameraElapsed=0;this.cameraFrame();}
-      if(this.odomElapsed>=0.2-1e-12){this.odomElapsed=0;this.emit('/odom',this.odometry());this.emit('/scan',this.scan());if(this.topics.has('/tf'))this.emit('/tf',transforms(this));}
+      if(this.odomElapsed>=0.2-1e-12){this.odomElapsed=0;if(this.topics.has('/tf'))this.emit('/tf',transforms(this));this.emit('/odom',this.odometry());const scan=this.scan();this.sensorSamples.lidar={stamp:scan.header.stamp,basePose:{x:this.robot.x,y:this.robot.y,yaw:this.robot.yaw},pose:sensorPose(this.robot,'lidar')};this.latestScan=scan;this.emit('/scan',scan);}
       for(const job of [...this.jobs]){job.remaining-=slice;if(job.remaining<1e-12){job.remaining=job.period;job.callback();}}
     }
   }

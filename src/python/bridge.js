@@ -1,3 +1,4 @@
+import {LatestMailbox} from '../runtime/mailbox.js';
 import { declareParameter, setParameter, startGoal, cancelGoal, lookup } from '../runtime/course.js';
 import { TWIST } from '../runtime/graph.js';
 import { evaluateReport } from '../exercises/perception.js';
@@ -5,7 +6,7 @@ import { evaluateReport } from '../exercises/perception.js';
 export class PythonBridge {
   constructor(runtime,{output=()=>{},status=()=>{},detection=()=>{}}={}){
     this.runtime=runtime;this.output=output;this.status=status;this.detection=detection;
-    this.jobs=new Map();this.actionIds=new Map();this.worker=null;this.nodes=new Set();this.subscriptions=new Map();this.pending=new Set();this.processed=new Map();this.reports=new Map();this.timer=null;
+    this.jobs=new Map();this.actionIds=new Map();this.worker=null;this.nodes=new Set();this.subscriptions=new Map();this.mailbox=new LatestMailbox();this.pending=this.mailbox.inFlight;this.processed=new Map();this.reports=new Map();this.timer=null;
   }
   run(code){
     this.stop();this.processed.clear();this.reports.clear();
@@ -19,7 +20,7 @@ export class PythonBridge {
   }
   watchdog(ms,message){clearTimeout(this.timer);this.timer=setTimeout(()=>{this.output(message);this.stop();},ms);}
   cleanupNode(node){
-    for(const [id,sub]of this.subscriptions)if(sub.node===node){sub.dispose();this.subscriptions.delete(id);this.pending.delete(id);}
+    for(const [id,sub]of this.subscriptions)if(sub.node===node){sub.dispose();this.subscriptions.delete(id);this.mailbox.remove(id);}
     for(const topic of this.runtime.topics.values()){topic.publishers.delete(node);topic.subscribers.delete(node);}
     for(const service of this.runtime.services.values())service.clients.delete(node);
     for(const [id,job]of this.jobs)if(job.node===node){job.dispose();this.jobs.delete(id);this.pending.delete('timer-'+id);}
@@ -30,7 +31,7 @@ export class PythonBridge {
   stop(){
     clearTimeout(this.timer);this.worker?.terminate();this.worker=null;
     for(const node of [...this.nodes])this.cleanupNode(node);
-    this.runtime.parameterListeners.delete(this.parameterListener);this.actionIds.clear();this.pending.clear();this.runtime.robot.command(0,0);this.status('Python stopped');
+    this.runtime.parameterListeners.delete(this.parameterListener);this.actionIds.clear();this.mailbox.clear();this.runtime.robot.command(0,0);this.status('Python stopped');
   }
   handle(data){
     const r=this.runtime,e=r.evidence;
@@ -74,17 +75,18 @@ export class PythonBridge {
       case 'subscribe':{
         r.ensureTopic(data.topic,data.type??'sensor_msgs/msg/Image');
         const dispose=r.subscribe(data.topic,data.node,image=>{
-          if(!this.worker||this.pending.has(data.id))return;
-          this.pending.add(data.id);
+          if(!this.worker)return;
+          this.mailbox.offer(data.id,()=>{
           if(data.type&&data.type!=='sensor_msgs/msg/Image'){
             const sample=++r.sampleCounter;r.samples.set(sample,{topic:data.topic,message:image});if(r.samples.size>100)r.samples.delete(r.samples.keys().next().value);
             this.worker.postMessage({kind:'message',subscription:data.id,message:image,sample});
           }else{const {data:bytes,_frameId:frame,...meta}=image;this.worker.postMessage({kind:'image',subscription:data.id,frame,meta,bytes},[bytes.buffer]);}
-          if(this.pending.size===1)this.watchdog(5000,'Image callback took too long; stopped.');
+          if(this.pending.size===1)this.watchdog(5000,'Sensor callback took too long; stopped.');
+          });
         },{existingNode:true,id:data.node+':python-'+data.id});
         this.subscriptions.set(data.id,{dispose,node:data.node});break;
       }
-      case 'frame_done':this.pending.delete(data.subscription);if(!this.pending.size)clearTimeout(this.timer);break;
+      case 'frame_done':this.mailbox.done(data.subscription);if(!this.pending.size)clearTimeout(this.timer);break;
       case 'processed':{
         e.callbacks++;const access=new Set(data.access);e.dimensions ||= access.has('width')&&access.has('height');e.converted ||= access.has('converted')||access.has('data');
         this.processed.set(data.frame,access);if(this.processed.size>32)this.processed.delete(this.processed.keys().next().value);

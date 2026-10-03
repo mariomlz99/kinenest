@@ -4,7 +4,7 @@
 
 Native JavaScript modules, CSS, Canvas/SVG and JSON. Seven static entry pages reuse the workstation UI for Sessions 2–6. GitHub Pages serves an allowlisted dist with content-versioned src/public directories. All module, lesson and worker URLs remain relative to those directories. Reference answers/tests are excluded.
 
-The preferences module switches light/dark, split/stacked layout and EN/NL/FR/ES/DE/PT. JSON carries translated lesson titles/descriptions/steps/hints. Shared UI translations are separate from code. Language changes do not reset the simulator or modify Python. Code drafts stay in memory per lesson; preferences alone use localStorage.
+The preferences module switches light/dark, split/stacked layout and EN/NL/FR/ES/DE/PT/IT. JSON carries translated lesson titles/descriptions/steps/hints. Shared UI translations are separate from code. Language changes do not reset the simulator or modify Python. Code drafts stay in memory per lesson; preferences alone use localStorage.
 
 ## Runtime and geometry
 
@@ -14,7 +14,7 @@ Fixed-step (maximum 1/60 s) exact constant-twist integration drives x/y/yaw. Val
 
 ## Python and bounded transport
 
-A dedicated worker loads pinned Pyodide 0.28.3 and NumPy 2.2.5. NumPy downloads have bounded retries. Python modules are educational definitions executed by actual CPython. Typed subscriptions receive image bytes or nested ROS-shaped objects. Sensor/timer queues allow one in-flight callback each; callbacks acknowledge completion. Watchdogs stop long-running initial code/callbacks. Stop terminates the worker, cleans graph endpoints/jobs/goals, and invalidates stale messages. Hidden-tab time pauses.
+A dedicated worker loads pinned Pyodide 0.28.3 and NumPy 2.2.5. NumPy downloads have bounded retries. Python modules are educational definitions executed by actual CPython. Typed subscriptions receive image bytes or nested ROS-shaped objects. Sensor queues allow one in-flight callback and one replaceable latest sample per subscription; acknowledgements deliver the newest waiting sample. Timers allow one in-flight callback. Watchdogs stop long-running initial code/callbacks. Stop terminates the worker, cleans graph endpoints/jobs/goals, and invalidates stale messages. Hidden-tab time pauses.
 
 spin yields to worker events; statements after spin do not resume. Node subclasses and functional callbacks both work. Camera bridge returns genuine ndarray values. LaserScan access is tracked for formative evidence. No regex interpretation or source matching is used. The optional cv2 layer implements only inRange/countNonZero/moments.
 
@@ -38,6 +38,10 @@ An explicit parser supports the documented ROS subset; it is not a shell or full
 
 ## Spatial transforms and disclosure
 
-The TF inspector, spatial axes and SVG hierarchy use src/ui/tf-model.js and the published edges from runtime/course.js. The shared lookup composes those edges, as Python Buffer does; there is no separate visual pose model. Spatial labels retain actual origins, including coincident camera/base and world/odom frames. Sensor offsets rotate with base_link. Numeric data attributes support browser assertions without exporting application runtime globals.
+The TF inspector, spatial axes and SVG hierarchy use src/ui/tf-model.js and the published edges from runtime/course.js. The shared lookup composes those edges, as Python Buffer does; there is no separate visual pose model. Spatial labels retain actual origins, including distinct camera/laser mounts and coincident world/odom frames. Sensor offsets rotate with base_link. Numeric data attributes support browser assertions without exporting application runtime globals.
 
 Session 5 defaults to world/base_link/target; exercise 5.3 selects base_link/laser_link. Source and target selectors follow lookup_transform(target_frame, source_frame) semantics. The dashed vector always connects base_link to the target. Panel disclosure follows session focus; it does not remove graph endpoints or CLI capabilities.
+
+## Sensor mounting and capture time
+
+src/simulator/sensors.js is the shared mounting configuration: laser_link at (+0.20, 0) m, camera_link at (+0.10, 0) m, both forward-facing. The 0.18 m circular footprint encloses the camera; the laser projects slightly forward on the nose. Projection, ray origins, TF, world markers and inspectors use these mounts. Camera and scan samples are generated after pose integration with the current simulation timestamp. TF is emitted at each sensor capture before its sample. The displayed LiDAR rays use the scan’s captured origin, not a later robot pose. Reset clears samples and queued callbacks.

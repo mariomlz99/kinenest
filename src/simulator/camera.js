@@ -1,7 +1,9 @@
-export const CAMERA_WIDTH=320, CAMERA_HEIGHT=240, CAMERA_PERIOD=0.125;
+import {SENSORS,sensorPose} from './sensors.js';
+export const CAMERA_WIDTH=SENSORS.camera.width, CAMERA_HEIGHT=SENSORS.camera.height, CAMERA_PERIOD=SENSORS.camera.period;
 
 // A tiny pinhole camera: +yaw turns left, so a target to the left has a smaller image x.
 export function renderCamera(robot, targets=[{x:5,y:0,color:[235,45,45]},{x:6,y:-2,color:[40,85,230]}]) {
+  robot=sensorPose(robot,'camera');
   const width=CAMERA_WIDTH,height=CAMERA_HEIGHT,data=new Uint8Array(width*height*3);
   for(let y=0;y<height;y++)for(let x=0;x<width;x++) {
     const i=(y*width+x)*3;data[i]=y<120?75:65;data[i+1]=y<120?104:73;data[i+2]=y<120?127:66;
