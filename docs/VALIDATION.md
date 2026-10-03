@@ -94,3 +94,16 @@ The seven-language engineering/editorial review preserves technical identifiers 
 Validated production asset version: 155e9188d07d. GitHub Pages publication is checked separately below.
 
 Publication check: HTTPS push could not authenticate (no noninteractive GitHub username/credential). Existing SSH access was also unavailable: strict host-key verification found no saved GitHub host key; no trust settings were changed. The release therefore remains local. Production still returns KineCourse and asset version 1d0fc154a99a, while the validated local build is 155e9188d07d. Publish with git push origin main from the authenticated maintainer terminal, then inspect the Pages workflow and the deployed version. The personal root website and repository name were not modified.
+
+
+## White world surfaces in light theme — 2026-10-03
+
+At the start of this follow-up, origin/main matched 8017b1c and the public Pages site returned KineNest with asset version 155e9188d07d. The earlier release was therefore published after the authentication failure recorded above.
+
+The SVG Session 1 grid and Canvas worlds in Sessions 2–6 now use shared CSS theme colors. Light mode has white world surfaces; grid lines, rays, robot heading, target vectors and TF annotations retain contrast. Theme changes redraw immediately without modifying camera pixel data or advancing/resetting the runtime. The TF vector arrowhead now uses the same color as its line.
+
+All 44 unit tests and the static build pass (asset version 56c72703b2a8). The new theme browser regression passes Chrome and Firefox for all six sessions, including actual Canvas pixels, SVG styles, label/axis contrast, unchanged camera pixels, preserved drafts/selection, continued CLI-driven motion, dark restoration and saved theme. Existing CLI and real-Python TF regressions also pass in both browsers. The theme regression is part of the regular course acceptance command and Pages CI.
+
+Captured 22 workstation views at desktop/laptop sizes; inspected light Session 1, light Session 2 LiDAR/Compare and light Session 5 TF. The updated Session 5 screenshot is in docs/media. Full course acceptance and publication results follow below.
+
+Full Chrome and Firefox course acceptance passed with this build: all 25 Python reference exercises, alternate solutions, negative controls, Stop/Reset, translations, Compare, TF, transitions and the added world-theme regression. No suite was skipped or retried.

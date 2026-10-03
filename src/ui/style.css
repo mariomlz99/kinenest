@@ -18,3 +18,47 @@ body:not([data-session]) main{padding-top:16px}body:not([data-session]) .intro{m
 
 /* Keep native keyboard/select behavior; draw the compact label once, including color emoji. */
 #preferences .language-control{background:#203844;border:1px solid #52717d;border-radius:6px;min-height:42px}#preferences .language-control #language{opacity:0;width:90px;border:0;min-height:40px}#preferences .language-control:focus-within{outline:2px solid #57ddbc;outline-offset:3px}:root[data-theme=light] #preferences .language-control{background:#e6eff2;border-color:#78929d;color:#183c48}
+
+/* One palette for SVG worlds, Canvas worlds and spatial TF overlays. */
+:root{
+  --world-background:#0b1b25;
+  --world-grid:#243c48;
+  --world-boundary:#517381;
+  --world-obstacle:#899aa8;
+  --world-rays:#3b7969;
+  --world-goal:#ffe490;
+  --world-robot:#57ddbc;
+  --world-heading:#163d48;
+  --world-text:#aac0c9;
+  --world-origin:#69838e;
+  --frame-x:#ff8479;
+  --frame-y:#81db93;
+  --frame-text:#ffffff;
+  --frame-leader:#dae8ef;
+  --frame-vector:#f7de8c;
+}
+:root[data-theme=light]{
+  --world-background:#ffffff;
+  --world-grid:#d5e0e5;
+  --world-boundary:#718996;
+  --world-obstacle:#687f8c;
+  --world-rays:#459880;
+  --world-goal:#8a6100;
+  --world-robot:#087b69;
+  --world-heading:#ffffff;
+  --world-text:#284652;
+  --world-origin:#526f7d;
+  --frame-x:#b2332b;
+  --frame-y:#17692f;
+  --frame-text:#183440;
+  --frame-leader:#526f7d;
+  --frame-vector:#8a6100;
+}
+.world-background{fill:var(--world-background)}
+.world-grid{stroke:var(--world-grid)}
+.world-caption{fill:var(--world-text)}
+.world-origin{fill:var(--world-origin)}
+.robot-body{fill:var(--world-robot)}
+.robot-heading{stroke:var(--world-heading)}
+#trail{stroke:var(--world-robot)}
+#map{background:var(--world-background)}

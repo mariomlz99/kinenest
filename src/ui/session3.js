@@ -16,7 +16,7 @@ import { inspectPixels } from '../simulator/camera.js';
 const $=id=>document.getElementById(id),runtime=new Runtime();runtime.enableSession3();
 const session=Number(location.pathname.match(/session-0([2-6])/)?.[1]??3);
 let catalog=[],selection=0;
-let tfView,workspace,cpp=null;
+let tfView,workspace,cpp=null,worldColors;
 let lesson,hints=0,epoch=0,testing=false,last=0,accumulator=0,lastFrame=-1,lastDetection=null;
 
 const output=text=>{const pre=$('python-output');pre.textContent=(pre.textContent+text+'\n').slice(-24000);pre.scrollTop=pre.scrollHeight;};
@@ -89,6 +89,13 @@ $('reset').addEventListener('click',reset);
 $('check').addEventListener('click',()=>{if(lesson.testScenes)testScenes();else showResults();});
 $('hint').addEventListener('click',()=>{if(hints>=localLesson().hints.length)return;const p=document.createElement('p');p.textContent=localLesson().hints[hints++];$('hints').append(p);$('hint').disabled=hints===localLesson().hints.length;});
 let leaveEditor=false;$('python-code').addEventListener('keydown',event=>{if(event.key==='Escape'){leaveEditor=true;return;}if(event.key==='Tab'&&!event.shiftKey&&!leaveEditor){event.preventDefault();const el=event.target;el.setRangeText('    ',el.selectionStart,el.selectionEnd,'end');}leaveEditor=false;});
+// Cache computed theme colors; do not read CSS on every sensor frame.
+function updateWorldColors(){
+  const styles=getComputedStyle(document.documentElement);
+  worldColors=Object.fromEntries(['background','boundary','obstacle','rays','goal','robot','heading'].map(key=>[key,styles.getPropertyValue('--world-'+key).trim()]));
+  if(lesson){lastFrame=-1;draw();}
+}
+window.addEventListener('themechange',updateWorldColors);
 function draw(){
   const image=runtime.camera;
   if(image&&lastFrame!==runtime.frameId){
@@ -100,12 +107,12 @@ function draw(){
     const r=runtime.robot,ctx=$('map').getContext('2d'),world=runtime.world,bounds=world?.bounds??{minX:-2,maxX:8,minY:-4,maxY:4};
     const width=$('map').width,height=$('map').height,scale=Math.min((width-60)/(bounds.maxX-bounds.minX),(height-60)/(bounds.maxY-bounds.minY)),ox=(width-scale*(bounds.maxX-bounds.minX))/2,oy=(height-scale*(bounds.maxY-bounds.minY))/2;
     const sx=x=>ox+(x-bounds.minX)*scale,sy=y=>height-oy-(y-bounds.minY)*scale;
-    ctx.fillStyle='#0b1b25';ctx.fillRect(0,0,width,height);ctx.strokeStyle='#517381';ctx.strokeRect(ox,oy,scale*(bounds.maxX-bounds.minX),scale*(bounds.maxY-bounds.minY));
-    for(const o of world?.obstacles??[]){ctx.fillStyle='#899aa8';ctx.fillRect(sx(o.x),sy(o.y+o.h),o.w*scale,o.h*scale);}
-    if($('show-rays').checked){const scan=runtime.latestScan??runtime.scan(),sensor=runtime.sensorSamples.lidar?.pose??sensorPose(r,'lidar');ctx.strokeStyle='#3b7969';ctx.beginPath();scan.ranges.forEach((d,i)=>{if(!Number.isFinite(d))return;const angle=sensor.yaw+scan.angle_min+i*scan.angle_increment,{x,y}=sensor;ctx.moveTo(sx(x),sy(y));ctx.lineTo(sx(x+d*Math.cos(angle)),sy(y+d*Math.sin(angle)));});ctx.stroke();}
+    ctx.fillStyle=worldColors.background;ctx.fillRect(0,0,width,height);ctx.strokeStyle=worldColors.boundary;ctx.strokeRect(ox,oy,scale*(bounds.maxX-bounds.minX),scale*(bounds.maxY-bounds.minY));
+    for(const o of world?.obstacles??[]){ctx.fillStyle=worldColors.obstacle;ctx.fillRect(sx(o.x),sy(o.y+o.h),o.w*scale,o.h*scale);}
+    if($('show-rays').checked){const scan=runtime.latestScan??runtime.scan(),sensor=runtime.sensorSamples.lidar?.pose??sensorPose(r,'lidar');ctx.strokeStyle=worldColors.rays;ctx.beginPath();scan.ranges.forEach((d,i)=>{if(!Number.isFinite(d))return;const angle=sensor.yaw+scan.angle_min+i*scan.angle_increment,{x,y}=sensor;ctx.moveTo(sx(x),sy(y));ctx.lineTo(sx(x+d*Math.cos(angle)),sy(y+d*Math.sin(angle)));});ctx.stroke();}
     for(const t of runtime.targets??[{x:5,y:0,color:[235,45,45]},{x:6,y:-2,color:[40,85,230]}]){ctx.fillStyle='rgb('+(t.color??[235,45,45]).join(',')+')';ctx.fillRect(sx(t.x)-6,sy(t.y)-6,12,12);}
-    if(lesson.goal){ctx.strokeStyle='#ffe490';ctx.beginPath();ctx.arc(sx(lesson.goal[0]),sy(lesson.goal[1]),8,0,Math.PI*2);ctx.stroke();}
-    ctx.save();ctx.translate(sx(r.x),sy(r.y));ctx.rotate(-r.yaw);ctx.fillStyle='#57ddbc';ctx.beginPath();ctx.arc(0,0,ROBOT_RADIUS*scale,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#163d48';ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(ROBOT_RADIUS*scale,0);ctx.stroke();ctx.restore();for(const [name,mount]of Object.entries(SENSORS)){const p=sensorPose(r,name);ctx.fillStyle=name==='lidar'?'#b5fff0':'#e8f1ff';ctx.strokeStyle='#163d48';ctx.beginPath();if(name==='lidar')ctx.arc(sx(p.x),sy(p.y),1.7,0,Math.PI*2);else ctx.rect(sx(p.x)-1,sy(p.y)-1.3,2,2.6);ctx.fill();ctx.stroke();}tfView?.draw({sx,sy,scale,width,height});
+    if(lesson.goal){ctx.strokeStyle=worldColors.goal;ctx.beginPath();ctx.arc(sx(lesson.goal[0]),sy(lesson.goal[1]),8,0,Math.PI*2);ctx.stroke();}
+    ctx.save();ctx.translate(sx(r.x),sy(r.y));ctx.rotate(-r.yaw);ctx.fillStyle=worldColors.robot;ctx.beginPath();ctx.arc(0,0,ROBOT_RADIUS*scale,0,Math.PI*2);ctx.fill();ctx.strokeStyle=worldColors.heading;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(ROBOT_RADIUS*scale,0);ctx.stroke();ctx.restore();for(const [name,mount]of Object.entries(SENSORS)){const p=sensorPose(r,name);ctx.fillStyle=name==='lidar'?'#b5fff0':'#e8f1ff';ctx.strokeStyle='#163d48';ctx.beginPath();if(name==='lidar')ctx.arc(sx(p.x),sy(p.y),1.7,0,Math.PI*2);else ctx.rect(sx(p.x)-1,sy(p.y)-1.3,2,2.6);ctx.fill();ctx.stroke();}tfView?.draw({sx,sy,scale,width,height});
     $('tf-tree').textContent=transforms(runtime).transforms.map(t=>t.header.frame_id+' → '+t.child_frame_id).join('\n');
     $('parameters').textContent=[...runtime.parameters].map(([node,params])=>node+'\n'+[...params].map(([k,v])=>'  '+k+': '+v).join('\n')).join('\n')||'(no declared parameters)';
     $('action-progress').textContent=[...runtime.goals.values()].slice(-3).map(g=>'Goal '+g.id+' · '+({2:'executing',4:'succeeded',5:'cancelled',6:'aborted'}[g.status])+' · '+(g.result?.result.final_distance??(r.distance-g.start)).toFixed(2)+' / '+g.distance+' m').join('\n')||'(no goals)';
@@ -115,7 +122,7 @@ function draw(){
 }
 function frame(now){if(last)accumulator+=Math.min((now-last)/1000,.1);last=now;while(accumulator>=1/60){if(testing)runtime.robot.command(0,0);runtime.step(1/60);if(session!==3)observeCourse(runtime,lesson);accumulator-=1/60;}draw();requestAnimationFrame(frame);}
 document.addEventListener('visibilitychange',()=>{last=0;accumulator=0;});
-setupPreferences();arrangeSession(session);tfView=createTFView(runtime,session);workspace=new CodeWorkspace({onRunCpp:()=>executeCode('cpp')});
+setupPreferences();updateWorldColors();arrangeSession(session);tfView=createTFView(runtime,session);workspace=new CodeWorkspace({onRunCpp:()=>executeCode('cpp')});
 const names=Object.fromEntries(SESSIONS.map((name,i)=>[i+1,name]));
 document.querySelector('.intro .eyebrow').textContent='Python · 90 min';
 $('session-title').textContent=names[session];$('session-tag').textContent='SESSION 0'+session;

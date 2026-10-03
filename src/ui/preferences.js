@@ -25,7 +25,7 @@ export function setupPreferences(){
   document.querySelector('header').append(controls);
   let theme='dark',layout='split';try{theme=localStorage.getItem('ros2learn-theme')||theme;layout=localStorage.getItem('ros2learn-layout')||layout;}catch{}
   const save=(key,value)=>{try{localStorage.setItem('ros2learn-'+key,value);}catch{}};
-  const applyTheme=()=>{document.documentElement.dataset.theme=theme;document.getElementById('theme').textContent=theme==='dark'?translate('Light'):translate('Dark');};applyTheme();
+  const applyTheme=()=>{const previous=document.documentElement.dataset.theme;document.documentElement.dataset.theme=theme;document.getElementById('theme').textContent=theme==='dark'?translate('Light'):translate('Dark');if(previous!==theme)window.dispatchEvent(new Event('themechange'));};applyTheme();
   document.getElementById('theme').onclick=()=>{theme=theme==='dark'?'light':'dark';save('theme',theme);applyTheme();};
   const applyLayout=()=>{document.body.dataset.layout=layout;};applyLayout();document.getElementById('layout').value=layout;
   document.getElementById('layout').onchange=e=>{layout=e.target.value;save('layout',layout);applyLayout();};

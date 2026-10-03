@@ -9,3 +9,13 @@ body[data-session] main{padding-top:16px}.intro{display:grid;grid-template-colum
 .code-languages{display:flex;gap:6px;margin:14px 0}.code-languages button{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;min-height:36px}.code-languages button[aria-pressed="true"]{border-color:#57ddbc;background:#173d43}.code-editors{display:grid;gap:14px}.code-editors[data-mode="compare"]{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.code-pane{min-width:0}.code-pane>label{display:block;font:12px ui-monospace,monospace;margin:8px 0;color:#adc3cb}.code-pane textarea{width:100%;min-height:360px;font:13px/1.6 ui-monospace,monospace;background:#07151e;color:#e5eff3;border:1px solid #3c5661;border-radius:5px;resize:vertical;padding:15px;tab-size:4}.code-support{font-size:12px;color:#adbec7;margin:10px 0}.code-support:empty{display:none}[data-theme="light"] .code-pane textarea{background:#fff;color:#17343e}[data-theme="light"] .code-languages button[aria-pressed="true"]{background:#d2eee7;border-color:#187966}[data-theme="light"] .code-pane>label,[data-theme="light"] .code-support{color:#38565d}.workbench:has(.code-editors[data-mode="compare"]){grid-template-columns:minmax(0,1.45fr) minmax(0,1fr)}@media(max-width:1200px){.code-editors[data-mode="compare"]{grid-template-columns:1fr}}@media(max-width:950px){.workbench:has(.code-editors[data-mode="compare"]){grid-template-columns:1fr}}
 
 #cpp-code{height:390px;font:14px/1.6 ui-monospace,monospace;white-space:pre;overflow:auto}:root[data-theme=light] #cpp-code{background:#f8fbfc;color:#183440}
+
+/* Match frame annotations to the world, including white surfaces in light mode. */
+.axis-x{stroke:var(--frame-x)}
+.axis-y{stroke:var(--frame-y)}
+.axis-label,.frame-label{fill:var(--frame-text);stroke:var(--world-background)}
+.frame-dot{fill:var(--frame-text)}
+.frame-leader{stroke:var(--frame-leader)}
+#tf-vector{stroke:var(--frame-vector);color:var(--frame-vector)}
+:root[data-theme=light] .tree-edge{stroke:#567481}
+.relative-arrow{fill:var(--frame-vector)}

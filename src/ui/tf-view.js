@@ -7,7 +7,7 @@ export function createTFView(runtime,session){
  const world=document.querySelector('.world-panel'),map=document.getElementById('map');map.width=720;map.height=400;
  const stage=document.createElement('div');stage.className='tf-stage';map.before(stage);stage.append(map);
  const spatial=svg('svg',{id:'tf-spatial',viewBox:'0 0 720 400',role:'img','aria-label':'Coordinate frames in the robot world','data-i18n-label':'Coordinate frames in the robot world'});stage.append(spatial);
- const defs=svg('defs'),marker=svg('marker',{id:'relative-arrow',viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:6,markerHeight:6,orient:'auto-start-reverse'});marker.append(svg('path',{d:'M 0 0 L 10 5 L 0 10 z',fill:'currentColor'}));defs.append(marker);spatial.append(defs);
+ const defs=svg('defs'),marker=svg('marker',{id:'relative-arrow',viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:6,markerHeight:6,orient:'auto-start-reverse'});marker.append(svg('path',{d:'M 0 0 L 10 5 L 0 10 z',class:'relative-arrow',fill:'currentColor'}));defs.append(marker);spatial.append(defs);
  const vector=svg('line',{id:'tf-vector','marker-end':'url(#relative-arrow)'});spatial.append(vector);
  const controls=document.createElement('fieldset');controls.className='frame-controls';controls.innerHTML='<legend>Frames</legend>';stage.after(controls);
  const ids=frameSnapshot(runtime).frames.map(f=>f.id),axes=new Map(),checks=new Map();
