@@ -1,0 +1,27 @@
+<!doctype html><meta charset="utf-8"><title>Hardened behavioral contracts</title><pre id="result">RUNNING</pre><img src="/hold" alt=""><iframe title="Course under test" width="1440" height="1100"></iframe><script type="module">
+const frame=document.querySelector('iframe'),out=document.getElementById('result'),wait=ms=>new Promise(r=>setTimeout(r,ms));
+const assert=(v,m)=>{if(!v)throw Error(m);};
+async function until(fn,seconds=60){for(let i=0;i<seconds*10;i++){if(fn())return;await wait(100);}throw Error('Timeout '+out.textContent+' '+frame.contentDocument?.getElementById('python-output')?.textContent);}
+async function read(name){const r=await fetch('./python/course/'+name+'.py');if(!r.ok)throw Error('Missing reference '+name);return r.text();}
+async function progress(text){out.textContent=text;await fetch('/progress',{method:'POST',body:text});}
+try{
+ for(const [id,alternate]of [['session-04-01-configure','alternative-configure'],['session-04-03-custom','alternative-custom'],['session-06-03-beacon','alternative-beacon']]){
+  await new Promise(resolve=>{frame.onload=resolve;frame.src='../session-'+id.split('-')[1]+'.html';});await until(()=>frame.contentDocument?.body?.dataset.lessonState==='ready');const d=frame.contentDocument,$=id=>d.getElementById(id);
+  $('lesson-select').value=id;$('lesson-select').dispatchEvent(new Event('change'));await until(()=>d.body.dataset.lessonId===id&&d.body.dataset.lessonState==='ready');
+  const reference=await read(id);let bypass;
+  if(id.includes('configure'))bypass=reference.replace('from geometry_msgs.msg import Twist','from std_msgs.msg import String').replace("Twist, '/cmd_vel'","String, '/noise'").replace(/cmd = Twist\(\)[\s\S]*?publisher.publish\(cmd\)/,"publisher.publish(String(data=str(speed)))");
+  else if(id.includes('custom'))bypass=reference.replace("'/target_info'","'/wrong_topic'");
+  else bypass=reference.replace('from sensor_msgs.msg import Image, LaserScan','from sensor_msgs.msg import Image\nfrom nav_msgs.msg import Odometry').replace('front = min(msg.ranges[55:66])','front = 4.5 - msg.pose.pose.position.x').replace("node.create_subscription(LaserScan, '/scan', scan, 10)","node.create_subscription(Odometry, '/odom', scan, 10)");
+  const cases=[['reference',reference,true],['alternate',await read(alternate),true],['old bypass',bypass,false],['print only',"print('Exercise complete /cmd_vel /target_info /scan')",false],['empty','',false]];
+  for(const [label,code,expected]of cases){
+   $('reset').click();$('check').click();assert(!$('status').textContent.startsWith('Exercise complete'),'Reset retained evidence '+id);
+   $('python-code').value=code;$('run-python').click();await until(()=>$('python-state').textContent.includes('callbacks ready'));
+   if(expected)await until(()=>{$('check').click();return $('status').textContent.startsWith('Exercise complete');},40);
+   else{await wait(label==='old bypass'?(id.includes('beacon')?12000:1500):250);$('check').click();assert(!$('status').textContent.startsWith('Exercise complete'),id+' accepted '+label);}
+   $('stop-python').click();assert($('python-code').value===code,'Stop erased source');$('reset').click();$('check').click();assert(!$('status').textContent.startsWith('Exercise complete'),'Reset retained success');
+   await progress('PASS '+id+' '+label+' + Stop/Reset');
+  }
+ }
+ out.textContent='PASS: references and class/helper/NumPy alternates pass; three old bypasses, print-only and empty fail; Stop/Reset clear evidence';
+}catch(e){out.textContent='FAIL: '+e.message;}await fetch('/done',{method:'POST',body:out.textContent});
+</script>
