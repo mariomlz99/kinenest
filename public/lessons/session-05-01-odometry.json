@@ -14,7 +14,6 @@
     "For planar motion yaw = 2 * atan2(q.z, q.w) also works.",
     "The general yaw expression is atan2(2*(w*z+x*y), 1-2*(y*y+z*z))."
   ],
-  "starterCode": "import rclpy\nfrom rclpy.node import Node\nimport math\nfrom nav_msgs.msg import Odometry\nfrom ros2learn import report_pose\n\nrclpy.init()\nnode = Node('student_controller')\n\ndef receive(msg):\n    # TODO: read position, convert orientation to yaw, report_pose\n    pass\nnode.create_subscription(Odometry, '/odom', receive, 10)\nrclpy.spin(node)\n",
   "checks": [
     {
       "type": "pose"
@@ -106,6 +105,16 @@
         "Per il moto planare funziona anche yaw = 2 * atan2(q.z, q.w).",
         "L’espressione generale per yaw è atan2(2*(w*z+x*y), 1-2*(y*y+z*z))."
       ]
+    }
+  },
+  "programming": {
+    "python": {
+      "supported": true,
+      "starterCode": "import rclpy\nfrom rclpy.node import Node\nimport math\nfrom nav_msgs.msg import Odometry\nfrom ros2learn import report_pose\n\nrclpy.init()\nnode = Node('student_controller')\n\ndef receive(msg):\n    # TODO: read position, convert orientation to yaw, report_pose\n    pass\nnode.create_subscription(Odometry, '/odom', receive, 10)\nrclpy.spin(node)\n"
+    },
+    "cpp": {
+      "supported": false,
+      "starterCode": ""
     }
   }
 }

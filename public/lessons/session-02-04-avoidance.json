@@ -14,7 +14,6 @@
     "Use the sector function from 2.3.",
     "Construct a fresh Twist each callback so the previous turn or speed does not linger."
   ],
-  "starterCode": "import rclpy\nfrom rclpy.node import Node\nimport math\nfrom sensor_msgs.msg import LaserScan\nfrom geometry_msgs.msg import Twist\n\nrclpy.init()\nnode = Node('student_controller')\n\n# TODO: reuse your sector calculation from 2.3\npublisher = node.create_publisher(Twist, '/cmd_vel', 10)\ndef scan(msg):\n    # TODO: turn if blocked, otherwise advance\n    pass\nnode.create_subscription(LaserScan, '/scan', scan, 10)\nrclpy.spin(node)\n",
   "checks": [
     {
       "type": "avoidance"
@@ -106,6 +105,17 @@
         "Riusa la funzione per i settori dell’esercizio 2.3.",
         "Crea un nuovo Twist a ogni callback per non mantenere velocità o rotazioni precedenti."
       ]
+    }
+  },
+  "programming": {
+    "python": {
+      "supported": true,
+      "starterCode": "import rclpy\nfrom rclpy.node import Node\nimport math\nfrom sensor_msgs.msg import LaserScan\nfrom geometry_msgs.msg import Twist\n\nrclpy.init()\nnode = Node('student_controller')\n\n# TODO: reuse your sector calculation from 2.3\npublisher = node.create_publisher(Twist, '/cmd_vel', 10)\ndef scan(msg):\n    # TODO: turn if blocked, otherwise advance\n    pass\nnode.create_subscription(LaserScan, '/scan', scan, 10)\nrclpy.spin(node)\n"
+    },
+    "cpp": {
+      "supported": false,
+      "experimental": true,
+      "starterCode": "#include <rclcpp/rclcpp.hpp>\n#include <sensor_msgs/msg/laser_scan.hpp>\n#include <geometry_msgs/msg/twist.hpp>\n#include <cmath>\n\nclass Controller : public rclcpp::Node {\npublic:\n    Controller() : Node(\"student_controller\") {\n        // TODO: create a Twist publisher and LaserScan subscription.\n    }\nprivate:\n    void receive(sensor_msgs::msg::LaserScan::SharedPtr msg) {\n        // TODO: find the front sector; choose forward motion or a left turn.\n    }\n    rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr publisher_;\n    rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_;\n};\n\nint main() {\n    rclcpp::init();\n    rclcpp::spin(std::make_shared<Controller>());\n}\n"
     }
   }
 }

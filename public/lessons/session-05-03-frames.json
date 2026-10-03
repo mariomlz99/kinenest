@@ -14,7 +14,6 @@
     "Do not simply add 0.2 to odom x; the mounting offset rotates with the robot.",
     "The buffer composes both edges. Here it supports latest planar transforms, not historical queries."
   ],
-  "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom tf2_ros import Buffer, TransformListener, TransformException\nfrom rclpy.time import Time\nfrom ros2learn import report_transform\n\nrclpy.init()\nnode = Node('student_controller')\n\nbuffer = Buffer()\nlistener = TransformListener(buffer, node)\ndef tick():\n    # TODO: look up the laser in odom, report x/y, catch TransformException\n    pass\nnode.create_timer(0.2, tick)\nrclpy.spin(node)\n",
   "checks": [
     {
       "type": "transform"
@@ -106,6 +105,16 @@
         "Non basta aggiungere 0.2 a odom x: anche l’offset del sensore ruota con il robot.",
         "Il buffer compone entrambi gli archi. Qui supporta solo l’ultima trasformazione planare, non query storiche."
       ]
+    }
+  },
+  "programming": {
+    "python": {
+      "supported": true,
+      "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom tf2_ros import Buffer, TransformListener, TransformException\nfrom rclpy.time import Time\nfrom ros2learn import report_transform\n\nrclpy.init()\nnode = Node('student_controller')\n\nbuffer = Buffer()\nlistener = TransformListener(buffer, node)\ndef tick():\n    # TODO: look up the laser in odom, report x/y, catch TransformException\n    pass\nnode.create_timer(0.2, tick)\nrclpy.spin(node)\n"
+    },
+    "cpp": {
+      "supported": false,
+      "starterCode": ""
     }
   }
 }

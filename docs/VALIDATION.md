@@ -76,3 +76,5 @@ The complete persistent-session Chrome baseline passed all suites, including all
 KineNest branding/localization: supplied-logo derivatives inspected, 26 Italian lesson translations added, all seven languages checked in Chrome and Firefox with continuous Python/robot motion and preserved code/theme/layout. About and attribution text are translated. A repeated language-label write initially caused a MutationObserver loop; updating only changed labels fixed it, and both browser tests pass.
 
 Sensor stage: 41 unit tests pass, including distinct camera/LiDAR origins, rotated mounting transforms, capture-pose timestamps, same-stamp TF, bounded newest-sample delivery and Reset cleanup. Camera mount is now +0.10 m; LiDAR remains +0.20 m.
+
+Language-neutral stage: 43 unit tests and the full Chrome/Firefox Python course suites pass after extracting RuntimeAdapter and migrating starter data. Both browsers pass Compare-mode tests for independent drafts, UI-language changes, exercise fallback, retained programming preference and experimental-only visibility.

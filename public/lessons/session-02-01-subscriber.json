@@ -14,7 +14,6 @@
     "This 120-ray scan starts at −π; ray 60 points forward.",
     "node.create_subscription(LaserScan, \"/scan\", receive, 10)"
   ],
-  "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom sensor_msgs.msg import LaserScan\n\nrclpy.init()\nnode = Node('student_controller')\n\ndef receive(msg):\n    # TODO: print the number of rays and the forward range\n    pass\n# TODO: create a subscription\nrclpy.spin(node)\n",
   "checks": [
     {
       "type": "subscriber"
@@ -106,6 +105,17 @@
         "Questa scansione di 120 raggi parte da −π; il raggio 60 punta avanti.",
         "node.create_subscription(LaserScan, \"/scan\", receive, 10)"
       ]
+    }
+  },
+  "programming": {
+    "python": {
+      "supported": true,
+      "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom sensor_msgs.msg import LaserScan\n\nrclpy.init()\nnode = Node('student_controller')\n\ndef receive(msg):\n    # TODO: print the number of rays and the forward range\n    pass\n# TODO: create a subscription\nrclpy.spin(node)\n"
+    },
+    "cpp": {
+      "supported": false,
+      "experimental": true,
+      "starterCode": "#include <rclcpp/rclcpp.hpp>\n#include <sensor_msgs/msg/laser_scan.hpp>\n\nclass Reader : public rclcpp::Node {\npublic:\n    Reader() : Node(\"student_controller\") {\n        // TODO: create a LaserScan subscription on /scan.\n    }\nprivate:\n    void receive(sensor_msgs::msg::LaserScan::SharedPtr msg) {\n        // TODO: print the beam count and forward distance.\n    }\n    rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_;\n};\n\nint main() {\n    rclcpp::init();\n    auto node = std::make_shared<Reader>();\n    rclcpp::spin(node);\n}\n"
     }
   }
 }

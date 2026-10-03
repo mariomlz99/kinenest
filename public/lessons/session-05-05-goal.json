@@ -14,7 +14,6 @@
     "Use proportional steering such as 2*angle, clamped.",
     "Only drive forward when abs(angle) < 0.3; slow down near the goal."
   ],
-  "starterCode": "import rclpy\nfrom rclpy.node import Node\nimport math\nfrom geometry_msgs.msg import Twist\nfrom tf2_ros import Buffer, TransformListener, TransformException\nfrom rclpy.time import Time\n\nrclpy.init()\nnode = Node('student_controller')\n\nbuffer = Buffer()\nlistener = TransformListener(buffer, node)\npublisher = node.create_publisher(Twist, '/cmd_vel', 10)\ndef tick():\n    # TODO: relative target -> bounded Twist -> stop near goal\n    pass\nnode.create_timer(0.1, tick)\nrclpy.spin(node)\n",
   "checks": [
     {
       "type": "goal"
@@ -111,6 +110,16 @@
         "Usa un comando proporzionale come 2*angle, con limiti.",
         "Avanza solo se abs(angle) < 0.3; rallenta vicino al goal."
       ]
+    }
+  },
+  "programming": {
+    "python": {
+      "supported": true,
+      "starterCode": "import rclpy\nfrom rclpy.node import Node\nimport math\nfrom geometry_msgs.msg import Twist\nfrom tf2_ros import Buffer, TransformListener, TransformException\nfrom rclpy.time import Time\n\nrclpy.init()\nnode = Node('student_controller')\n\nbuffer = Buffer()\nlistener = TransformListener(buffer, node)\npublisher = node.create_publisher(Twist, '/cmd_vel', 10)\ndef tick():\n    # TODO: relative target -> bounded Twist -> stop near goal\n    pass\nnode.create_timer(0.1, tick)\nrclpy.spin(node)\n"
+    },
+    "cpp": {
+      "supported": false,
+      "starterCode": ""
     }
   }
 }

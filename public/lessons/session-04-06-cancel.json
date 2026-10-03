@@ -14,7 +14,6 @@
     "Use a boolean to avoid sending the cancellation on every feedback event.",
     "handle.cancel_goal_async() requests cancellation; keep the result callback from the previous lab."
   ],
-  "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom rclpy.action import ActionClient\nfrom ros2learn_interfaces.action import DriveDistance\n\nrclpy.init()\nnode = Node('student_controller')\n\n# TODO: adapt the previous exercise: retain the goal handle,\n# send a 2 m goal, cancel once after 0.3 m of feedback,\n# and receive its final result.\nrclpy.spin(node)\n",
   "checks": [
     {
       "type": "cancel"
@@ -107,6 +106,16 @@
         "Usa un booleano per non annullare a ogni messaggio di feedback.",
         "handle.cancel_goal_async() richiede l’annullamento; conserva il callback del risultato dell’esercizio precedente."
       ]
+    }
+  },
+  "programming": {
+    "python": {
+      "supported": true,
+      "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom rclpy.action import ActionClient\nfrom ros2learn_interfaces.action import DriveDistance\n\nrclpy.init()\nnode = Node('student_controller')\n\n# TODO: adapt the previous exercise: retain the goal handle,\n# send a 2 m goal, cancel once after 0.3 m of feedback,\n# and receive its final result.\nrclpy.spin(node)\n"
+    },
+    "cpp": {
+      "supported": false,
+      "starterCode": ""
     }
   }
 }

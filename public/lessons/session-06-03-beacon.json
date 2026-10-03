@@ -14,7 +14,6 @@
     "Separate sensing state from the controller: scan updates distance; image callback decides motion.",
     "No visible target: rotate slowly. Visible but off-center: turn. Centered and clear: move. Centered and close: publish zero."
   ],
-  "starterCode": "import rclpy\nfrom rclpy.node import Node\nimport numpy as np\nfrom sensor_msgs.msg import Image, LaserScan\nfrom geometry_msgs.msg import Twist\nfrom cv_bridge import CvBridge\nfrom ros2learn import report_detection\n\nrclpy.init()\nnode = Node('student_controller')\n\n# TODO: combine your camera detector and scan safety controller\n# Keep the latest forward distance between callbacks.\n# Use pixels, not hard-coded target coordinates, to steer.\n# Stop when centered and close enough.\nrclpy.spin(node)\n",
   "checks": [
     {
       "type": "dock"
@@ -139,6 +138,16 @@
         "Separa stato e controllo: scan aggiorna la distanza; il callback della camera decide il movimento.",
         "Target non visibile: ruota lentamente. Visibile ma decentrato: gira. Centrato e libero: avanza. Centrato e vicino: pubblica zero."
       ]
+    }
+  },
+  "programming": {
+    "python": {
+      "supported": true,
+      "starterCode": "import rclpy\nfrom rclpy.node import Node\nimport numpy as np\nfrom sensor_msgs.msg import Image, LaserScan\nfrom geometry_msgs.msg import Twist\nfrom cv_bridge import CvBridge\nfrom ros2learn import report_detection\n\nrclpy.init()\nnode = Node('student_controller')\n\n# TODO: combine your camera detector and scan safety controller\n# Keep the latest forward distance between callbacks.\n# Use pixels, not hard-coded target coordinates, to steer.\n# Stop when centered and close enough.\nrclpy.spin(node)\n"
+    },
+    "cpp": {
+      "supported": false,
+      "starterCode": ""
     }
   }
 }

@@ -17,5 +17,5 @@ test('production build excludes reference answers and versions all application a
   assert.match(page,/<title>KineNest/);assert.doesNotMatch(page,/ROS2Learn|Lab 01|LAB 01|KineCourse|KineNest preliminary candidate/);
   assert.ok(page.includes('property="og:title" content="KineNest'));
  }
- const lesson=JSON.parse(await readFile(new URL('dist/assets/'+versions[0]+'/public/lessons/session-03-03-color-detection.json',root),'utf8'));assert.ok(lesson.starterCode.includes('TODO'));assert.equal(lesson.solution,undefined);
+ const lesson=JSON.parse(await readFile(new URL('dist/assets/'+versions[0]+'/public/lessons/session-03-03-color-detection.json',root),'utf8'));assert.ok(lesson.programming.python.starterCode.includes('TODO'));assert.equal(lesson.solution,undefined);
 });

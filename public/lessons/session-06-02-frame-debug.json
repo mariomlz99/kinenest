@@ -14,7 +14,6 @@
     "The heading controller assumes +x forward and +y left of the robot.",
     "Request the target in base_link."
   ],
-  "starterCode": "import rclpy\nfrom rclpy.node import Node\nimport math\nfrom geometry_msgs.msg import Twist\nfrom tf2_ros import Buffer, TransformListener, TransformException\nfrom rclpy.time import Time\n\nrclpy.init()\nnode = Node('student_controller')\n\nbuffer = Buffer()\nlistener = TransformListener(buffer, node)\npublisher = node.create_publisher(Twist, '/cmd_vel', 10)\ndef tick():\n    try:\n        p = buffer.lookup_transform('odom', 'target', Time()).transform.translation\n    except TransformException:\n        return\n    distance = math.hypot(p.x, p.y)\n    angle = math.atan2(p.y, p.x)\n    cmd = Twist()\n    if distance > 0.07:\n        cmd.angular.z = max(-1.5, min(1.5, 2*angle))\n        cmd.linear.x = min(0.7, distance) if abs(angle) < 0.3 else 0.0\n    publisher.publish(cmd)\nnode.create_timer(0.1, tick)\nrclpy.spin(node)\n",
   "checks": [
     {
       "type": "goal"
@@ -111,6 +110,16 @@
         "Il controllore assume +x avanti e +y a sinistra del robot.",
         "Richiedi il target in base_link."
       ]
+    }
+  },
+  "programming": {
+    "python": {
+      "supported": true,
+      "starterCode": "import rclpy\nfrom rclpy.node import Node\nimport math\nfrom geometry_msgs.msg import Twist\nfrom tf2_ros import Buffer, TransformListener, TransformException\nfrom rclpy.time import Time\n\nrclpy.init()\nnode = Node('student_controller')\n\nbuffer = Buffer()\nlistener = TransformListener(buffer, node)\npublisher = node.create_publisher(Twist, '/cmd_vel', 10)\ndef tick():\n    try:\n        p = buffer.lookup_transform('odom', 'target', Time()).transform.translation\n    except TransformException:\n        return\n    distance = math.hypot(p.x, p.y)\n    angle = math.atan2(p.y, p.x)\n    cmd = Twist()\n    if distance > 0.07:\n        cmd.angular.z = max(-1.5, min(1.5, 2*angle))\n        cmd.linear.x = min(0.7, distance) if abs(angle) < 0.3 else 0.0\n    publisher.publish(cmd)\nnode.create_timer(0.1, tick)\nrclpy.spin(node)\n"
+    },
+    "cpp": {
+      "supported": false,
+      "starterCode": ""
     }
   }
 }

@@ -14,7 +14,6 @@
     "Use node info /student_controller to see its publishers.",
     "The simulator listens on /cmd_vel."
   ],
-  "starterCode": "import rclpy\nfrom rclpy.node import Node\nimport math\nfrom sensor_msgs.msg import LaserScan\nfrom geometry_msgs.msg import Twist\n\nrclpy.init()\nnode = Node('student_controller')\n\ndef sector(msg, center):\n    values = []\n    for i, distance in enumerate(msg.ranges):\n        angle = msg.angle_min + i * msg.angle_increment\n        delta = math.atan2(math.sin(angle-center), math.cos(angle-center))\n        if abs(delta) <= math.pi/12 + 1e-9 and math.isfinite(distance):\n            values.append(distance)\n    return min(values) if values else float('inf')\npublisher = node.create_publisher(Twist, '/velocity', 10)\ndef scan(msg):\n    front = sector(msg, 0)\n    cmd = Twist()\n    if front < 1.1:\n        cmd.angular.z = 0.9\n    else:\n        cmd.linear.x = 0.6\n    publisher.publish(cmd)\nnode.create_subscription(LaserScan, '/scan', scan, 10)\nrclpy.spin(node)\n",
   "checks": [
     {
       "type": "avoidance"
@@ -123,6 +122,16 @@
         "Usa node info /student_controller per vedere i publisher.",
         "Il simulatore ascolta /cmd_vel."
       ]
+    }
+  },
+  "programming": {
+    "python": {
+      "supported": true,
+      "starterCode": "import rclpy\nfrom rclpy.node import Node\nimport math\nfrom sensor_msgs.msg import LaserScan\nfrom geometry_msgs.msg import Twist\n\nrclpy.init()\nnode = Node('student_controller')\n\ndef sector(msg, center):\n    values = []\n    for i, distance in enumerate(msg.ranges):\n        angle = msg.angle_min + i * msg.angle_increment\n        delta = math.atan2(math.sin(angle-center), math.cos(angle-center))\n        if abs(delta) <= math.pi/12 + 1e-9 and math.isfinite(distance):\n            values.append(distance)\n    return min(values) if values else float('inf')\npublisher = node.create_publisher(Twist, '/velocity', 10)\ndef scan(msg):\n    front = sector(msg, 0)\n    cmd = Twist()\n    if front < 1.1:\n        cmd.angular.z = 0.9\n    else:\n        cmd.linear.x = 0.6\n    publisher.publish(cmd)\nnode.create_subscription(LaserScan, '/scan', scan, 10)\nrclpy.spin(node)\n"
+    },
+    "cpp": {
+      "supported": false,
+      "starterCode": ""
     }
   }
 }

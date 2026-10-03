@@ -14,7 +14,6 @@
     "get_parameter(\"speed\").value reads the current value.",
     "A timer keeps the robot receiving commands."
   ],
-  "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom geometry_msgs.msg import Twist\n\nrclpy.init()\nnode = Node('student_controller')\n\n# TODO: declare the speed parameter\npublisher = node.create_publisher(Twist, '/cmd_vel', 10)\ndef tick():\n    # TODO: read speed, clamp, publish\n    pass\nnode.create_timer(0.2, tick)\nrclpy.spin(node)\n",
   "checks": [
     {
       "type": "configured"
@@ -106,6 +105,16 @@
         "get_parameter(\"speed\").value legge il valore corrente.",
         "Un timer mantiene l’invio dei comandi al robot."
       ]
+    }
+  },
+  "programming": {
+    "python": {
+      "supported": true,
+      "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom geometry_msgs.msg import Twist\n\nrclpy.init()\nnode = Node('student_controller')\n\n# TODO: declare the speed parameter\npublisher = node.create_publisher(Twist, '/cmd_vel', 10)\ndef tick():\n    # TODO: read speed, clamp, publish\n    pass\nnode.create_timer(0.2, tick)\nrclpy.spin(node)\n"
+    },
+    "cpp": {
+      "supported": false,
+      "starterCode": ""
     }
   }
 }

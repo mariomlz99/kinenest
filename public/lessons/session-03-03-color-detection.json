@@ -25,7 +25,6 @@
       "type": "detection"
     }
   ],
-  "starterCode": "import rclpy\nimport numpy as np\nfrom rclpy.node import Node\nfrom sensor_msgs.msg import Image\nfrom cv_bridge import CvBridge\nfrom ros2learn import report_detection, report_image_stats\n\nclass CameraReader(Node):\n    def __init__(self):\n        super().__init__('camera_reader')\n        self.bridge = CvBridge()\n        self.subscription = self.create_subscription(\n            Image, '/camera/image_raw', self.image_callback, 10)\n\n    def image_callback(self, msg):\n        image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='rgb8')\n        # TODO: threshold the RGB channels, then count matching pixels.\n        # Use report_detection(visible) with your calculated boolean.\n        pass\n\nrclpy.init()\nnode = CameraReader()\nrclpy.spin(node)\n",
   "testScenes": true,
   "startYaw": 0,
   "startX": 0,
@@ -119,6 +118,16 @@
         "mask = (image[:, :, 0] > 180) & (image[:, :, 1] < 100) & (image[:, :, 2] < 100)",
         "visible = mask.sum() > 500; report_detection(visible). Vanno bene sia NumPy sia gli helper cv2.inRange/countNonZero."
       ]
+    }
+  },
+  "programming": {
+    "python": {
+      "supported": true,
+      "starterCode": "import rclpy\nimport numpy as np\nfrom rclpy.node import Node\nfrom sensor_msgs.msg import Image\nfrom cv_bridge import CvBridge\nfrom ros2learn import report_detection, report_image_stats\n\nclass CameraReader(Node):\n    def __init__(self):\n        super().__init__('camera_reader')\n        self.bridge = CvBridge()\n        self.subscription = self.create_subscription(\n            Image, '/camera/image_raw', self.image_callback, 10)\n\n    def image_callback(self, msg):\n        image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='rgb8')\n        # TODO: threshold the RGB channels, then count matching pixels.\n        # Use report_detection(visible) with your calculated boolean.\n        pass\n\nrclpy.init()\nnode = CameraReader()\nrclpy.spin(node)\n"
+    },
+    "cpp": {
+      "supported": false,
+      "starterCode": ""
     }
   }
 }

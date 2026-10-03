@@ -14,7 +14,6 @@
     "The class is supplied directly in the browser; no interface generator is running.",
     "TargetInfo(visible=True, position=\"LEFT\", confidence=0.8)"
   ],
-  "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom ros2learn_interfaces.msg import TargetInfo\n\nrclpy.init()\nnode = Node('student_controller')\n\n# TODO: create a TargetInfo publisher for /target_info\n# TODO: publish your status from a timer\nrclpy.spin(node)\n",
   "checks": [
     {
       "type": "custom"
@@ -106,6 +105,16 @@
         "Il browser fornisce direttamente la classe; non esegue un generatore di interfacce.",
         "TargetInfo(visible=True, position=\"LEFT\", confidence=0.8)"
       ]
+    }
+  },
+  "programming": {
+    "python": {
+      "supported": true,
+      "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom ros2learn_interfaces.msg import TargetInfo\n\nrclpy.init()\nnode = Node('student_controller')\n\n# TODO: create a TargetInfo publisher for /target_info\n# TODO: publish your status from a timer\nrclpy.spin(node)\n"
+    },
+    "cpp": {
+      "supported": false,
+      "starterCode": ""
     }
   }
 }

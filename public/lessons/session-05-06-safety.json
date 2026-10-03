@@ -15,7 +15,6 @@
     "Try zero linear.x and angular.z = 0.8 while blocked; resume goal control when clear.",
     "Keep a bypass counter: set it to 15 while blocked; once clear, move at 0.45 m/s for 15 callbacks of a 0.1 s timer, then resume goal control."
   ],
-  "starterCode": "import rclpy\nfrom rclpy.node import Node\nimport math\nfrom geometry_msgs.msg import Twist\nfrom tf2_ros import Buffer, TransformListener, TransformException\nfrom rclpy.time import Time\nfrom sensor_msgs.msg import LaserScan\n\nrclpy.init()\nnode = Node('student_controller')\n\n# TODO: combine the TF controller from 5.5 with a scan callback\n# Store the front-sector distance and override unsafe forward commands.\nrclpy.spin(node)\n",
   "checks": [
     {
       "type": "integrated"
@@ -134,6 +133,16 @@
         "Prova linear.x zero e angular.z = 0.8 quando sei bloccato; riprendi verso il goal quando la strada è libera.",
         "Usa un contatore di aggiramento: impostalo a 15 quando sei bloccato; poi avanza a 0.45 m/s per 15 callback da 0.1 s prima di riprendere verso il goal."
       ]
+    }
+  },
+  "programming": {
+    "python": {
+      "supported": true,
+      "starterCode": "import rclpy\nfrom rclpy.node import Node\nimport math\nfrom geometry_msgs.msg import Twist\nfrom tf2_ros import Buffer, TransformListener, TransformException\nfrom rclpy.time import Time\nfrom sensor_msgs.msg import LaserScan\n\nrclpy.init()\nnode = Node('student_controller')\n\n# TODO: combine the TF controller from 5.5 with a scan callback\n# Store the front-sector distance and override unsafe forward commands.\nrclpy.spin(node)\n"
+    },
+    "cpp": {
+      "supported": false,
+      "starterCode": ""
     }
   }
 }

@@ -14,7 +14,6 @@
     "A timer runs periodically; a subscription runs on message arrival.",
     "Create publishers and subscriptions once, then let rclpy.spin dispatch events."
   ],
-  "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom sensor_msgs.msg import LaserScan\nfrom std_msgs.msg import String\n\nrclpy.init()\nnode = Node('student_controller')\n\nfront = 0.0\n# TODO: scan callback updates front\n# TODO: timer publishes front as String on /chatter\n# TODO: subscriber prints /chatter messages\nrclpy.spin(node)\n",
   "checks": [
     {
       "type": "subscriber"
@@ -112,6 +111,16 @@
         "Un timer scatta periodicamente; una subscription reagisce ai messaggi in arrivo.",
         "Crea publisher e subscription una volta sola, poi lascia che rclpy.spin gestisca gli eventi."
       ]
+    }
+  },
+  "programming": {
+    "python": {
+      "supported": true,
+      "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom sensor_msgs.msg import LaserScan\nfrom std_msgs.msg import String\n\nrclpy.init()\nnode = Node('student_controller')\n\nfront = 0.0\n# TODO: scan callback updates front\n# TODO: timer publishes front as String on /chatter\n# TODO: subscriber prints /chatter messages\nrclpy.spin(node)\n"
+    },
+    "cpp": {
+      "supported": false,
+      "starterCode": ""
     }
   }
 }

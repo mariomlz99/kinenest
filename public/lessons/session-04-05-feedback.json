@@ -14,7 +14,6 @@
     "The feedback callback gets an envelope: msg.feedback.distance_travelled.",
     "The final result is still requested from the accepted goal handle."
   ],
-  "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom rclpy.action import ActionClient\nfrom ros2learn_interfaces.action import DriveDistance\n\nrclpy.init()\nnode = Node('student_controller')\n\nclient = ActionClient(node, DriveDistance, '/drive_distance')\ndef feedback(msg):\n    # TODO: print msg.feedback.distance_travelled\n    pass\ndef on_result(future):\n    # TODO: inspect status and result\n    pass\ndef accepted(future):\n    # TODO: check handle.accepted, request result and attach on_result\n    pass\n# TODO: create goal and send it with feedback_callback=feedback\nrclpy.spin(node)\n",
   "checks": [
     {
       "type": "action"
@@ -106,6 +105,16 @@
         "Il callback riceve un contenitore: msg.feedback.distance_travelled.",
         "Il risultato finale si richiede comunque tramite il goal handle accettato."
       ]
+    }
+  },
+  "programming": {
+    "python": {
+      "supported": true,
+      "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom rclpy.action import ActionClient\nfrom ros2learn_interfaces.action import DriveDistance\n\nrclpy.init()\nnode = Node('student_controller')\n\nclient = ActionClient(node, DriveDistance, '/drive_distance')\ndef feedback(msg):\n    # TODO: print msg.feedback.distance_travelled\n    pass\ndef on_result(future):\n    # TODO: inspect status and result\n    pass\ndef accepted(future):\n    # TODO: check handle.accepted, request result and attach on_result\n    pass\n# TODO: create goal and send it with feedback_callback=feedback\nrclpy.spin(node)\n"
+    },
+    "cpp": {
+      "supported": false,
+      "starterCode": ""
     }
   }
 }

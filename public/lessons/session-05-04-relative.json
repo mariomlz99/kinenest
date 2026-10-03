@@ -14,7 +14,6 @@
     "Requesting odom instead would give world-aligned coordinates, not robot-relative coordinates.",
     "lookup_transform(\"base_link\", \"target\", Time())"
   ],
-  "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom tf2_ros import Buffer, TransformListener, TransformException\nfrom rclpy.time import Time\nfrom ros2learn import report_relative\n\nrclpy.init()\nnode = Node('student_controller')\n\nbuffer = Buffer()\nlistener = TransformListener(buffer, node)\ndef tick():\n    # TODO: get target relative to robot and report x/y\n    pass\nnode.create_timer(0.2, tick)\nrclpy.spin(node)\n",
   "checks": [
     {
       "type": "relative"
@@ -111,6 +110,16 @@
         "Richiedere odom darebbe coordinate allineate al mondo, non relative al robot.",
         "lookup_transform(\"base_link\", \"target\", Time())"
       ]
+    }
+  },
+  "programming": {
+    "python": {
+      "supported": true,
+      "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom tf2_ros import Buffer, TransformListener, TransformException\nfrom rclpy.time import Time\nfrom ros2learn import report_relative\n\nrclpy.init()\nnode = Node('student_controller')\n\nbuffer = Buffer()\nlistener = TransformListener(buffer, node)\ndef tick():\n    # TODO: get target relative to robot and report x/y\n    pass\nnode.create_timer(0.2, tick)\nrclpy.spin(node)\n"
+    },
+    "cpp": {
+      "supported": false,
+      "starterCode": ""
     }
   }
 }

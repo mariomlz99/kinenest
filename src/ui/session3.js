@@ -1,3 +1,4 @@
+import {CodeWorkspace} from './code-workspace.js';
 import {sensorPose,ROBOT_RADIUS,SENSORS} from '../simulator/sensors.js';
 import { createTFView } from './tf-view.js';
 import { arrangeSession } from './workstation.js';
@@ -15,22 +16,22 @@ import { inspectPixels } from '../simulator/camera.js';
 const $=id=>document.getElementById(id),runtime=new Runtime();runtime.enableSession3();
 const session=Number(location.pathname.match(/session-0([2-6])/)?.[1]??3);
 let catalog=[],selection=0;
-let tfView;
+let tfView,workspace,cpp=null;
 let lesson,hints=0,epoch=0,testing=false,last=0,accumulator=0,lastFrame=-1,lastDetection=null;
-const drafts=new Map();
+
 const output=text=>{const pre=$('python-output');pre.textContent=(pre.textContent+text+'\n').slice(-24000);pre.scrollTop=pre.scrollHeight;};
-const python=new PythonBridge(runtime,{output,status:text=>{$('python-state').textContent=text;$('stop-python').disabled=!python.worker;},detection:value=>{lastDetection=value;$('detection').textContent=value.visible?'Student detection: visible'+(value.cx===null?'':' · centroid x = '+value.cx.toFixed(1)):'Student detection: no red target';}});
+const python=new PythonBridge(runtime,{output,status:text=>{$('python-state').textContent=text;$('stop-python').disabled=!python.worker&&!cpp?.worker;},detection:value=>{lastDetection=value;$('detection').textContent=value.visible?'Student detection: visible'+(value.cx===null?'':' · centroid x = '+value.cx.toFixed(1)):'Student detection: no red target';}});
 const terminals=createTerminals(runtime,error=>{if(error)$('status').textContent='Review the terminal error.';});
 async function json(name){const response=await fetch(new URL('../../public/lessons/'+name,import.meta.url),{signal:AbortSignal.timeout(15000)});if(!response.ok)throw new Error('Lesson HTTP '+response.status);return response.json();}
 function reset(){
-  epoch++;testing=false;python.stop();terminals.reset();runtime.reset();runtime.robot.x=lesson.startX??0;runtime.robot.y=lesson.startY??0;runtime.robot.yaw=lesson.startYaw??0;
+  epoch++;testing=false;python.stop();cpp?.stop();terminals.reset();runtime.reset();runtime.robot.x=lesson.startX??0;runtime.robot.y=lesson.startY??0;runtime.robot.yaw=lesson.startYaw??0;
   runtime.world=lesson.world??(session===2?structuredClone(TRAINING_WORLD):null);runtime.targets=lesson.targets;runtime.targetFrame=lesson.goal??[5,0];
   hints=0;lastDetection=null;lastFrame=-1;last=0;accumulator=0;$('hints').replaceChildren();$('hint').textContent='Reveal next hint';$('hint').disabled=false;$('feedback').hidden=true;$('check').disabled=false;$('python-output').textContent='';$('detection').textContent='No student detection reported';$('status').textContent='Ready. Complete the TODOs and Run Python.';runtime.cameraFrame();tfView?.setLesson(lesson);
 }
 async function selectLesson(id){
   const request=++selection;
-  if(lesson)drafts.set(lesson.id,$('python-code').value);
-  python.stop();
+  workspace?.save();
+  python.stop();cpp?.stop();
   document.body.dataset.lessonState='loading';
   $('lesson-select').disabled=true;
   for(const control of ['run-python','restore-code','reset','check','hint'])$(control).disabled=true;
@@ -38,10 +39,10 @@ async function selectLesson(id){
   try{
     const next=await json(id+'.json');if(request!==selection)return;lesson=next;reset();
     renderLesson();
-    $('python-code').value=drafts.get(id)??lesson.starterCode;
+    workspace.load(lesson);
     document.body.dataset.lessonId=id;
     document.body.dataset.lessonState='ready';
-    for(const control of ['run-python','restore-code','reset','check','hint'])$(control).disabled=false;
+    for(const control of ['run-python','restore-code','reset','check','hint'])$(control).disabled=false;workspace.render();
   }catch(error){
     if(request!==selection)return;
     document.body.dataset.lessonState='error';
@@ -75,9 +76,15 @@ async function testScenes(){
   runtime.testCase=null;runtime.targets=undefined;testing=false;$('check').disabled=false;showResults();
 }
 $('lesson-select').addEventListener('change',()=>selectLesson($('lesson-select').value).catch(error=>{$('status').textContent=error.message;}));
-$('run-python').addEventListener('click',()=>{const code=$('python-code').value;reset();python.run(code);});
-$('stop-python').addEventListener('click',()=>{epoch++;testing=false;runtime.testCase=null;runtime.targets=undefined;$('check').disabled=false;python.stop();});
-$('restore-code').addEventListener('click',()=>{$('python-code').value=lesson.starterCode;});
+async function executeCode(language){
+  const code=workspace.code(language);reset();const token=epoch;
+  if(language==='python'){python.run(code);return;}
+  try{const {CppBridge}=await import('../cpp/bridge.js');if(token!==epoch)return;cpp??=new CppBridge(runtime,{output,status:text=>{$('python-state').textContent=text;$('stop-python').disabled=!cpp?.worker;}});cpp.run(code);}
+  catch(error){output('C++: '+error.message);}
+}
+$('run-python').addEventListener('click',()=>executeCode(workspace.mode==='cpp'?'cpp':'python'));
+$('stop-python').addEventListener('click',()=>{epoch++;testing=false;runtime.testCase=null;runtime.targets=undefined;$('check').disabled=false;python.stop();cpp?.stop();});
+$('restore-code').addEventListener('click',()=>workspace.restore());
 $('reset').addEventListener('click',reset);
 $('check').addEventListener('click',()=>{if(lesson.testScenes)testScenes();else showResults();});
 $('hint').addEventListener('click',()=>{if(hints>=localLesson().hints.length)return;const p=document.createElement('p');p.textContent=localLesson().hints[hints++];$('hints').append(p);$('hint').disabled=hints===localLesson().hints.length;});
@@ -108,7 +115,7 @@ function draw(){
 }
 function frame(now){if(last)accumulator+=Math.min((now-last)/1000,.1);last=now;while(accumulator>=1/60){if(testing)runtime.robot.command(0,0);runtime.step(1/60);if(session!==3)observeCourse(runtime,lesson);accumulator-=1/60;}draw();requestAnimationFrame(frame);}
 document.addEventListener('visibilitychange',()=>{last=0;accumulator=0;});
-setupPreferences();arrangeSession(session);tfView=createTFView(runtime,session);
+setupPreferences();arrangeSession(session);tfView=createTFView(runtime,session);workspace=new CodeWorkspace({onRunCpp:()=>executeCode('cpp')});
 const names=Object.fromEntries(SESSIONS.map((name,i)=>[i+1,name]));
 document.querySelector('.intro .eyebrow').textContent='Python · 90 min';
 $('session-title').textContent=names[session];$('session-tag').textContent='SESSION 0'+session;

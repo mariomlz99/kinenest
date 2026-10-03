@@ -14,7 +14,6 @@
     "send_goal_async resolves to a goal handle, not directly to the final result.",
     "In the accepted callback: future.result().get_result_async().add_done_callback(on_result)."
   ],
-  "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom rclpy.action import ActionClient\nfrom ros2learn_interfaces.action import DriveDistance\n\nrclpy.init()\nnode = Node('student_controller')\n\nclient = ActionClient(node, DriveDistance, '/drive_distance')\ndef feedback(msg):\n    # TODO: print msg.feedback.distance_travelled\n    pass\ndef on_result(future):\n    # TODO: inspect status and result\n    pass\ndef accepted(future):\n    # TODO: check handle.accepted, request result and attach on_result\n    pass\n# TODO: create goal and send it with feedback_callback=feedback\nrclpy.spin(node)\n",
   "checks": [
     {
       "type": "action_result"
@@ -106,6 +105,16 @@
         "send_goal_async restituisce un goal handle, non direttamente il risultato finale.",
         "Nel callback di accettazione: future.result().get_result_async().add_done_callback(on_result)."
       ]
+    }
+  },
+  "programming": {
+    "python": {
+      "supported": true,
+      "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom rclpy.action import ActionClient\nfrom ros2learn_interfaces.action import DriveDistance\n\nrclpy.init()\nnode = Node('student_controller')\n\nclient = ActionClient(node, DriveDistance, '/drive_distance')\ndef feedback(msg):\n    # TODO: print msg.feedback.distance_travelled\n    pass\ndef on_result(future):\n    # TODO: inspect status and result\n    pass\ndef accepted(future):\n    # TODO: check handle.accepted, request result and attach on_result\n    pass\n# TODO: create goal and send it with feedback_callback=feedback\nrclpy.spin(node)\n"
+    },
+    "cpp": {
+      "supported": false,
+      "starterCode": ""
     }
   }
 }

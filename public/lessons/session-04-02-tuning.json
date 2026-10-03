@@ -14,7 +14,6 @@
     "Reading once during startup will not apply later updates to your controller.",
     "Keep the timer running; use node.get_parameter(\"speed\").value inside tick."
   ],
-  "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom geometry_msgs.msg import Twist\n\nrclpy.init()\nnode = Node('student_controller')\n\n# TODO: declare the speed parameter\npublisher = node.create_publisher(Twist, '/cmd_vel', 10)\ndef tick():\n    # TODO: read speed, clamp, publish\n    pass\nnode.create_timer(0.2, tick)\nrclpy.spin(node)\n",
   "checks": [
     {
       "type": "parameter"
@@ -109,6 +108,16 @@
         "Leggere il parametro solo all’avvio non applica gli aggiornamenti successivi al controllore.",
         "Mantieni il timer attivo; usa node.get_parameter(\"speed\").value dentro tick."
       ]
+    }
+  },
+  "programming": {
+    "python": {
+      "supported": true,
+      "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom geometry_msgs.msg import Twist\n\nrclpy.init()\nnode = Node('student_controller')\n\n# TODO: declare the speed parameter\npublisher = node.create_publisher(Twist, '/cmd_vel', 10)\ndef tick():\n    # TODO: read speed, clamp, publish\n    pass\nnode.create_timer(0.2, tick)\nrclpy.spin(node)\n"
+    },
+    "cpp": {
+      "supported": false,
+      "starterCode": ""
     }
   }
 }

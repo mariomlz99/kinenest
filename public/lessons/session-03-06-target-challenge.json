@@ -28,7 +28,6 @@
       "type": "centered"
     }
   ],
-  "starterCode": "import rclpy\nimport numpy as np\nfrom rclpy.node import Node\nfrom sensor_msgs.msg import Image\nfrom cv_bridge import CvBridge\nfrom geometry_msgs.msg import Twist\nfrom ros2learn import report_detection, report_image_stats\n\nclass CameraReader(Node):\n    def __init__(self):\n        super().__init__('camera_reader')\n        self.publisher = self.create_publisher(Twist, '/cmd_vel', 10)\n        self.bridge = CvBridge()\n        self.subscription = self.create_subscription(\n            Image, '/camera/image_raw', self.image_callback, 10)\n\n    def image_callback(self, msg):\n        image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='rgb8')\n        # TODO: find the red target's centroid using the pixels.\n        # Positive angular.z turns left; negative turns right.\n        # Stop when the target is close to x = 160.\n        # Publish a Twist each callback and report_detection(visible, cx).\n        pass\n\nrclpy.init()\nnode = CameraReader()\nrclpy.spin(node)\n",
   "testScenes": false,
   "startYaw": -1.1,
   "startX": 0,
@@ -122,6 +121,16 @@
         "Usa un errore come (160 - cx) / 160 e limita la velocità angolare a ±1 rad/s.",
         "Se abs(160 - cx) < 10, pubblica angular.z = 0. Se non vedi pixel rossi, ruota lentamente per cercarli."
       ]
+    }
+  },
+  "programming": {
+    "python": {
+      "supported": true,
+      "starterCode": "import rclpy\nimport numpy as np\nfrom rclpy.node import Node\nfrom sensor_msgs.msg import Image\nfrom cv_bridge import CvBridge\nfrom geometry_msgs.msg import Twist\nfrom ros2learn import report_detection, report_image_stats\n\nclass CameraReader(Node):\n    def __init__(self):\n        super().__init__('camera_reader')\n        self.publisher = self.create_publisher(Twist, '/cmd_vel', 10)\n        self.bridge = CvBridge()\n        self.subscription = self.create_subscription(\n            Image, '/camera/image_raw', self.image_callback, 10)\n\n    def image_callback(self, msg):\n        image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='rgb8')\n        # TODO: find the red target's centroid using the pixels.\n        # Positive angular.z turns left; negative turns right.\n        # Stop when the target is close to x = 160.\n        # Publish a Twist each callback and report_detection(visible, cx).\n        pass\n\nrclpy.init()\nnode = CameraReader()\nrclpy.spin(node)\n"
+    },
+    "cpp": {
+      "supported": false,
+      "starterCode": ""
     }
   }
 }

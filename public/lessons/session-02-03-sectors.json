@@ -14,7 +14,6 @@
     "Wrap differences with atan2(sin(delta), cos(delta)).",
     "Filter non-finite ranges, then take min; an empty sector can return infinity."
   ],
-  "starterCode": "import rclpy\nfrom rclpy.node import Node\nimport math\nfrom sensor_msgs.msg import LaserScan\nfrom ros2learn import report_sectors\n\nrclpy.init()\nnode = Node('student_controller')\n\ndef scan(msg):\n    # TODO: calculate front/left/right minima using the beam angles\n    # TODO: report_sectors(front, left, right)\n    pass\nnode.create_subscription(LaserScan, '/scan', scan, 10)\nrclpy.spin(node)\n",
   "checks": [
     {
       "type": "sectors"
@@ -106,6 +105,16 @@
         "Normalizza le differenze con atan2(sin(delta), cos(delta)).",
         "Filtra le distanze non finite, poi usa min; un settore vuoto può restituire infinito."
       ]
+    }
+  },
+  "programming": {
+    "python": {
+      "supported": true,
+      "starterCode": "import rclpy\nfrom rclpy.node import Node\nimport math\nfrom sensor_msgs.msg import LaserScan\nfrom ros2learn import report_sectors\n\nrclpy.init()\nnode = Node('student_controller')\n\ndef scan(msg):\n    # TODO: calculate front/left/right minima using the beam angles\n    # TODO: report_sectors(front, left, right)\n    pass\nnode.create_subscription(LaserScan, '/scan', scan, 10)\nrclpy.spin(node)\n"
+    },
+    "cpp": {
+      "supported": false,
+      "starterCode": ""
     }
   }
 }

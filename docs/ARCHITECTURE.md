@@ -45,3 +45,9 @@ Session 5 defaults to world/base_link/target; exercise 5.3 selects base_link/las
 ## Sensor mounting and capture time
 
 src/simulator/sensors.js is the shared mounting configuration: laser_link at (+0.20, 0) m, camera_link at (+0.10, 0) m, both forward-facing. The 0.18 m circular footprint encloses the camera; the laser projects slightly forward on the nose. Projection, ray origins, TF, world markers and inspectors use these mounts. Camera and scan samples are generated after pose integration with the current simulation timestamp. TF is emitted at each sensor capture before its sample. The displayed LiDAR rays use the scan’s captured origin, not a later robot pose. Reset clears samples and queued callbacks.
+
+## Execution adapters and drafts
+
+RuntimeAdapter owns graph endpoints, sensor mailboxes, parameters/actions, evidence and cleanup. PythonBridge supplies a Pyodide worker; the experimental C++ adapter supplies a compiled WebAssembly worker. Both use the same typed event protocol and runtime. Checkers count code publications and processed samples, independently of the execution language.
+
+Lessons now use programming.python/cpp with supported, starterCode and an optional experimental flag. World, task, ID and checks stay shared. DraftStore keeps separate code per exercise and language. Compare renders the actual editable drafts; switching views or UI language does not restart execution. C++ controls are gated by ?experimentalCpp=1 until the performance/support gate is met. Unsupported exercises fall back to Python without deleting the C++ draft.

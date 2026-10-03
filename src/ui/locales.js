@@ -279,22 +279,6 @@ export const UI = {
     "Subscriber de scan leu distâncias em três callbacks",
     "Il subscriber ha letto i dati di distanza in tre callback"
   ],
-  "Python subscriber received 3 String messages": [
-    "Python-subscriber ontving 3 String-berichten",
-    "Le subscriber Python a reçu 3 messages String",
-    "Subscriber Python recibió 3 mensajes String",
-    "Python-Subscriber empfing 3 String-Nachrichten",
-    "Subscriber Python recebeu 3 mensagens String",
-    "Il subscriber Python ha ricevuto 3 messaggi String"
-  ],
-  "Timer fired and Python published at least 5 commands": [
-    "Timer actief en minstens 5 Python-publicaties",
-    "Timer actif et au moins 5 publications Python",
-    "Temporizador activo y al menos 5 comandos publicados",
-    "Timer aktiv und mindestens 5 Befehle veröffentlicht",
-    "Temporizador ativo e pelo menos 5 comandos publicados",
-    "Il timer è scattato e Python ha pubblicato almeno 5 comandi"
-  ],
   "Front, left and right sectors computed from actual scan angles": [
     "Voor-, linker- en rechtersector berekend uit echte scanhoeken",
     "Secteurs avant, gauche et droit calculés à partir des angles du scan",
@@ -318,14 +302,6 @@ export const UI = {
     "Parameter deklariert und zur Bewegungssteuerung verwendet",
     "Parâmetros declarados e usados ao publicar movimento",
     "Parametri dichiarati e usati per pubblicare il movimento"
-  ],
-  "Live parameter changed and Python read both values": [
-    "Parameter gewijzigd tijdens uitvoering en beide waarden gelezen",
-    "Paramètre modifié pendant l’exécution et deux valeurs lues",
-    "Parámetro cambiado en vivo; Python leyó ambos valores",
-    "Parameter live geändert; Python las beide Werte",
-    "Parâmetro alterado em execução; Python leu ambos os valores",
-    "Parametro modificato durante l'esecuzione; Python ha letto entrambi i valori"
   ],
   "Published three valid TargetInfo messages through the graph": [
     "Drie geldige TargetInfo-berichten gepubliceerd",
@@ -454,22 +430,6 @@ export const UI = {
     "Schwerpunkt in allen 4 Szenen korrekt",
     "Centroide correto nas 4 cenas",
     "Centroide corretto nelle 4 scene di prova"
-  ],
-  "Python client created → request → response → robot reset": [
-    "Python-client gemaakt → verzoek → antwoord → robot gereset",
-    "Client Python créé → requête → réponse → robot réinitialisé",
-    "Cliente Python creado → petición → respuesta → robot reiniciado",
-    "Python-Client erstellt → Anfrage → Antwort → Roboter zurückgesetzt",
-    "Cliente Python criado → pedido → resposta → robô reiniciado",
-    "Client Python creato → richiesta → risposta → robot ripristinato"
-  ],
-  "Python published control commands": [
-    "Python publiceerde besturingscommando’s",
-    "Python a publié des commandes de contrôle",
-    "Python publicó comandos de control",
-    "Python veröffentlichte Steuerbefehle",
-    "Python publicou comandos de controlo",
-    "Python ha pubblicato comandi di controllo"
   ],
   "Target centered and robot stopped for 8 camera frames": [
     "Doel gecentreerd en robot stil voor 8 camerabeelden",
@@ -1278,5 +1238,133 @@ export const UI = {
     "Alle Koordinatensysteme zeigen",
     "Mostrar todos os referenciais",
     "Mostra tutti i riferimenti"
+  ],
+  "Client created → request → response → robot reset": [
+    "code-client gemaakt → verzoek → antwoord → robot gereset",
+    "Client code créé → requête → réponse → robot réinitialisé",
+    "Cliente code creado → petición → respuesta → robot reiniciado",
+    "code-Client erstellt → Anfrage → Antwort → Roboter zurückgesetzt",
+    "Cliente code criado → pedido → resposta → robô reiniciado",
+    "Client code creato → richiesta → risposta → robot ripristinato"
+  ],
+  "Code published control commands": [
+    "code publiceerde besturingscommando’s",
+    "code a publié des commandes de contrôle",
+    "code publicó comandos de control",
+    "code veröffentlichte Steuerbefehle",
+    "code publicou comandos de controlo",
+    "code ha pubblicato comandi di controllo"
+  ],
+  "Timer fired and code published at least 5 commands": [
+    "Timer actief en minstens 5 code-publicaties",
+    "Timer actif et au moins 5 publications code",
+    "Temporizador activo y al menos 5 comandos publicados",
+    "Timer aktiv und mindestens 5 Befehle veröffentlicht",
+    "Temporizador ativo e pelo menos 5 comandos publicados",
+    "Il timer è scattato e code ha pubblicato almeno 5 comandi"
+  ],
+  "Subscriber received 3 String messages": [
+    "code-subscriber ontving 3 String-berichten",
+    "Le subscriber code a reçu 3 messages String",
+    "Subscriber code recibió 3 mensajes String",
+    "code-Subscriber empfing 3 String-Nachrichten",
+    "Subscriber code recebeu 3 mensagens String",
+    "Il subscriber code ha ricevuto 3 messaggi String"
+  ],
+  "Live parameter changed and code read both values": [
+    "Parameter gewijzigd tijdens uitvoering en beide waarden gelezen",
+    "Paramètre modifié pendant l’exécution et deux valeurs lues",
+    "Parámetro cambiado en vivo; code leyó ambos valores",
+    "Parameter live geändert; code las beide Werte",
+    "Parâmetro alterado em execução; code leu ambos os valores",
+    "Parametro modificato durante l'esecuzione; code ha letto entrambi i valori"
+  ],
+  "Code": [
+    "Code",
+    "Code",
+    "Código",
+    "Code",
+    "Código",
+    "Codice"
+  ],
+  "Code language": [
+    "Programmeertaal",
+    "Langage de programmation",
+    "Lenguaje de programación",
+    "Programmiersprache",
+    "Linguagem de programação",
+    "Linguaggio di programmazione"
+  ],
+  "Compare": [
+    "Vergelijken",
+    "Comparer",
+    "Comparar",
+    "Vergleichen",
+    "Comparar",
+    "Confronta"
+  ],
+  "Run C++": [
+    "C++ uitvoeren",
+    "Exécuter C++",
+    "Ejecutar C++",
+    "C++ ausführen",
+    "Executar C++",
+    "Esegui C++"
+  ],
+  "Stop": [
+    "Stoppen",
+    "Arrêter",
+    "Detener",
+    "Stoppen",
+    "Parar",
+    "Ferma"
+  ],
+  "C++ source code": [
+    "C++-broncode",
+    "Code source C++",
+    "Código fuente C++",
+    "C++-Quellcode",
+    "Código-fonte C++",
+    "Codice sorgente C++"
+  ],
+  "Code output": [
+    "Code-uitvoer",
+    "Sortie du code",
+    "Salida del código",
+    "Code-Ausgabe",
+    "Saída do código",
+    "Output del codice"
+  ],
+  "This exercise uses Python. Your C++ draft is preserved.": [
+    "Deze oefening gebruikt Python. Je C++-code blijft bewaard.",
+    "Cet exercice utilise Python. Votre code C++ est conservé.",
+    "Este ejercicio usa Python. Tu código C++ se conserva.",
+    "Diese Übung verwendet Python. Dein C++-Entwurf bleibt erhalten.",
+    "Este exercício usa Python. O teu código C++ é preservado.",
+    "Questo esercizio usa Python. Il codice C++ resta salvato."
+  ],
+  "Experimental C++ · browser compilation.": [
+    "Experimentele C++ · compilatie in de browser.",
+    "C++ expérimental · compilation dans le navigateur.",
+    "C++ experimental · compilación en el navegador.",
+    "Experimentelles C++ · Kompilierung im Browser.",
+    "C++ experimental · compilação no navegador.",
+    "C++ sperimentale · compilazione nel browser."
+  ],
+  "C++ comparison draft. Execution is not available for this exercise.": [
+    "C++-code ter vergelijking. Uitvoeren is voor deze oefening niet beschikbaar.",
+    "Code C++ de comparaison. L’exécution n’est pas disponible pour cet exercice.",
+    "Código C++ para comparar. La ejecución no está disponible en este ejercicio.",
+    "C++-Vergleichsentwurf. Ausführung ist für diese Übung nicht verfügbar.",
+    "Código C++ para comparação. A execução não está disponível neste exercício.",
+    "Codice C++ per il confronto. L’esecuzione non è disponibile per questo esercizio."
+  ],
+  "Complete the TODOs, then Run. Tab indents; Escape then Tab leaves the editor. Stop terminates execution.": [
+    "Vul de TODOs aan en voer uit. Tab springt in; Escape en Tab verlaten de editor. Stop beëindigt de uitvoering.",
+    "Complétez les TODOs, puis exécutez. Tab indente ; Échap puis Tab quitte l’éditeur. Stop termine l’exécution.",
+    "Completa los TODOs y ejecuta. Tab indenta; Escape y Tab sale del editor. Stop termina la ejecución.",
+    "TODOs ergänzen und ausführen. Tab rückt ein; Escape und Tab verlassen den Editor. Stop beendet die Ausführung.",
+    "Completa os TODOs e executa. Tab indenta; Escape e Tab sai do editor. Stop termina a execução.",
+    "Completa i TODO ed esegui. Tab indenta; Esc seguito da Tab esce dall’editor. Stop termina l’esecuzione."
   ]
 };
