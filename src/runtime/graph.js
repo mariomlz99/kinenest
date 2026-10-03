@@ -1,3 +1,4 @@
+import { laserScan, collides } from '../simulator/lidar.js';
 import { renderCamera, inspectPixels, CAMERA_PERIOD } from '../simulator/camera.js';
 import { newEvidence } from '../exercises/perception.js';
 import { Robot } from '../simulator/robot.js';
@@ -5,7 +6,7 @@ export const TWIST='geometry_msgs/msg/Twist';
 export class Runtime {
   constructor() { this.robot=new Robot(); this.reset(); }
   reset() {
-    this.robot.reset(); this.discovered=false; this.publications=0;
+    this.world=null;this.collisions=0;this.robot.reset(); this.discovered=false; this.publications=0;
     this.jobs=new Set();this.listeners=new Map(); this.time=0; this.odomElapsed=0;
     this.nodes=new Set(['/simulator']);
     this.services=new Map();this.evidence=newEvidence();this.cameraElapsed=0;this.frameId=0;this.frames=new Map();this.camera=null;this.targets=undefined;this.testCase=null;
@@ -18,15 +19,7 @@ export class Runtime {
   }
   every(period,callback){if(!Number.isFinite(period)||period<.05||period>60)throw new Error('Lab publication rate must be between 1/60 and 20 Hz.');const job={period,remaining:period,callback};this.jobs.add(job);return ()=>this.jobs.delete(job);}
   stamp(){const nanos=Math.round(this.time*1e9);return {sec:Math.floor(nanos/1e9),nanosec:nanos%1e9};}
-  scan(){
-    const ranges=[];const targets=this.session3Enabled?(this.targets??[{x:5,y:0},{x:6,y:-2}]):[];
-    for(let i=0;i<36;i++){
-      const angle=this.robot.yaw-Math.PI+i*Math.PI/18;let distance=Infinity;
-      for(const target of targets){const dx=target.x-this.robot.x,dy=target.y-this.robot.y,along=dx*Math.cos(angle)+dy*Math.sin(angle),cross=-dx*Math.sin(angle)+dy*Math.cos(angle);if(along>0&&Math.abs(cross)<.5){const hit=along-Math.sqrt(.25-cross*cross);if(hit>=.1&&hit<=10)distance=Math.min(distance,hit);}}
-      ranges.push(distance);
-    }
-    return {header:{stamp:this.stamp(),frame_id:'laser'},angle_min:-Math.PI,angle_max:Math.PI-Math.PI/18,angle_increment:Math.PI/18,time_increment:0,scan_time:.2,range_min:.1,range_max:10,ranges,intensities:[]};
-  }
+  scan(){return laserScan(this.robot,this.world,this.stamp());}
   ensureTopic(name,type){if(!/^\/[A-Za-z_][A-Za-z_0-9/]*$/.test(name))throw new Error('Use an absolute topic name such as /chatter');const existing=this.topics.get(name);if(existing&&existing.type!==type)throw new Error('Topic type mismatch: '+existing.type);if(!existing)this.topics.set(name,{type,publishers:new Set(),subscribers:new Set(),dynamic:true});return this.topic(name);}
   removeEmptyTopics(){for(const [name,t] of this.topics)if(t.dynamic&&!t.publishers.size&&!t.subscribers.size)this.topics.delete(name);}
   enableSession3() {
@@ -75,8 +68,8 @@ export class Runtime {
     // Integrate to each 5 Hz odometry boundary, independent of caller step size.
     let remaining=dt;
     while(remaining>1e-12) {
-      const slice=Math.min(remaining,0.2-this.odomElapsed,this.session3Enabled?CAMERA_PERIOD-this.cameraElapsed:Infinity,...[...this.jobs].map(job=>job.remaining));
-      this.robot.step(slice);this.time+=slice;this.odomElapsed+=slice;this.cameraElapsed+=this.session3Enabled?slice:0;remaining-=slice;
+      const slice=Math.min(remaining,1/60,0.2-this.odomElapsed,this.session3Enabled?CAMERA_PERIOD-this.cameraElapsed:Infinity,...[...this.jobs].map(job=>job.remaining));
+      const before={x:this.robot.x,y:this.robot.y,distance:this.robot.distance};this.robot.step(slice);if(collides(this.robot,this.world)){Object.assign(this.robot,before);this.robot.command(0,0);this.collisions++;}this.time+=slice;this.odomElapsed+=slice;this.cameraElapsed+=this.session3Enabled?slice:0;remaining-=slice;
       if(this.session3Enabled&&this.cameraElapsed>=CAMERA_PERIOD-1e-12){this.cameraElapsed=0;this.cameraFrame();}
       if(this.odomElapsed>=0.2-1e-12){this.odomElapsed=0;this.emit('/odom',this.odometry());this.emit('/scan',this.scan());}
       for(const job of [...this.jobs]){job.remaining-=slice;if(job.remaining<1e-12){job.remaining=job.period;job.callback();}}

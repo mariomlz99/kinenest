@@ -31,7 +31,7 @@ test('String topics can be created, observed and removed without moving robot',(
  assert.throws(()=>parsePublication('ros2 topic pub -r 0 /cmd_vel '+TWIST+' {}'));
 });
 test('scan is live and topic metrics stop cleanly',()=>{
- const r=new Runtime(),values=[],scan=new TerminalSession(r,1,text=>values.push(text));scan.run('ros2 topic echo /scan --once');r.step(.2);assert.match(values.at(-1),/range_max: 10/);assert.equal(r.scan().ranges.length,36);
+ const r=new Runtime(),values=[],scan=new TerminalSession(r,1,text=>values.push(text));scan.run('ros2 topic echo /scan --once');r.step(.2);assert.match(values.at(-1),/range_max: 10/);assert.equal(r.scan().ranges.length,120);
  for(const mode of ['hz','bw','delay']){const out=[],session=new TerminalSession(r,2,text=>out.push(text));session.run('ros2 topic '+mode+' /odom');r.step(2);assert.ok(out.length>2);assert.ok(!out.at(-1).includes('NaN'));session.stop();}
  assert.equal(r.topic('/odom').subscribers.size,0);
 });
