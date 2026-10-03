@@ -1,0 +1,55 @@
+{
+  "id": "session-02-04-avoidance",
+  "session": 2,
+  "number": "2.4",
+  "title": "React to an obstacle",
+  "description": "Drive toward the block, turn when the front sector becomes close, then move into clear space. Travel at least 2 m without a collision.",
+  "steps": [
+    "Combine a /scan subscriber and a /cmd_vel publisher.",
+    "If the front ±15° sector is closer than 1.1 m, stop forward motion and turn left at about 0.9 rad/s; otherwise move at about 0.6 m/s.",
+    "Let it run at least 8 seconds. Observe the rays and graph; explain why a blind constant command is unsafe."
+  ],
+  "hints": [
+    "The robot has a collision guard, but touching an obstacle still fails the check.",
+    "Use the sector function from 2.3.",
+    "Construct a fresh Twist each callback so the previous turn or speed does not linger."
+  ],
+  "starterCode": "import rclpy\nfrom rclpy.node import Node\nimport math\nfrom sensor_msgs.msg import LaserScan\nfrom geometry_msgs.msg import Twist\n\nrclpy.init()\nnode = Node('student_controller')\n\n# TODO: reuse your sector calculation from 2.3\npublisher = node.create_publisher(Twist, '/cmd_vel', 10)\ndef scan(msg):\n    # TODO: turn if blocked, otherwise advance\n    pass\nnode.create_subscription(LaserScan, '/scan', scan, 10)\nrclpy.spin(node)\n",
+  "checks": [
+    {
+      "type": "avoidance"
+    }
+  ],
+  "startX": 0,
+  "startYaw": 0,
+  "translations": {
+    "nl": {
+      "title": "Reageer op een obstakel",
+      "description": "Rijd naar het blok, draai wanneer het dichtbij komt en ga verder in vrije ruimte. Leg minstens 2 m af zonder botsing.",
+      "steps": [
+        "Combineer /scan en een /cmd_vel-publisher.",
+        "Draai links met 0.9 rad/s als de voorste sector dichterbij is dan 1.1 m; rijd anders met 0.6 m/s.",
+        "Laat minstens 8 s lopen en leg uit waarom een constante snelheid onveilig is."
+      ],
+      "hints": [
+        "De botsingsbeveiliging voorkomt doorrijden, maar een botsing faalt de oefening.",
+        "Hergebruik de sectorfunctie.",
+        "Maak elke callback een nieuwe Twist."
+      ]
+    },
+    "fr": {
+      "title": "Réagir à un obstacle",
+      "description": "Avancez vers le bloc, tournez lorsqu’il approche puis continuez dans l’espace libre. Parcourez au moins 2 m sans collision.",
+      "steps": [
+        "Combinez /scan et un publisher /cmd_vel.",
+        "Tournez à gauche à 0.9 rad/s si le secteur avant est à moins de 1.1 m ; sinon avancez à 0.6 m/s.",
+        "Laissez tourner au moins 8 s et expliquez le danger d’une vitesse constante."
+      ],
+      "hints": [
+        "La protection empêche de traverser un obstacle, mais une collision fait échouer l’exercice.",
+        "Réutilisez la fonction de secteur.",
+        "Créez un nouveau Twist à chaque callback."
+      ]
+    }
+  }
+}

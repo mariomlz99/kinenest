@@ -1,0 +1,38 @@
+[
+  {
+    "id": "session-02-01-subscriber",
+    "title": "Your first subscriber",
+    "number": "2.1",
+    "translations": {
+      "nl": "Je eerste subscriber",
+      "fr": "Votre premier abonnement"
+    }
+  },
+  {
+    "id": "session-02-02-callbacks",
+    "title": "Callbacks are reactions",
+    "number": "2.2",
+    "translations": {
+      "nl": "Callbacks reageren op gebeurtenissen",
+      "fr": "Les callbacks réagissent aux événements"
+    }
+  },
+  {
+    "id": "session-02-03-sectors",
+    "title": "Process LiDAR sectors",
+    "number": "2.3",
+    "translations": {
+      "nl": "Verwerk LiDAR-sectoren",
+      "fr": "Traiter des secteurs LiDAR"
+    }
+  },
+  {
+    "id": "session-02-04-avoidance",
+    "title": "React to an obstacle",
+    "number": "2.4",
+    "translations": {
+      "nl": "Reageer op een obstakel",
+      "fr": "Réagir à un obstacle"
+    }
+  }
+]

@@ -1,0 +1,61 @@
+{
+  "id": "session-02-02-callbacks",
+  "session": 2,
+  "number": "2.2",
+  "title": "Callbacks are reactions",
+  "description": "Let incoming scans update node state, then use a timer to publish a status message. Sensor events and timer events are separate callbacks.",
+  "steps": [
+    "Store the most recent forward distance when a scan arrives.",
+    "Use a 0.2-second timer to publish that distance as String on /chatter. Subscribe to /chatter and print each message.",
+    "Observe topic hz /scan and topic echo /chatter in separate terminals. Explain which callback updates the state and which publishes it."
+  ],
+  "hints": [
+    "Keep a variable or self.front between callbacks.",
+    "A timer runs periodically; a subscription runs on message arrival.",
+    "Create publishers and subscriptions once, then let rclpy.spin dispatch events."
+  ],
+  "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom sensor_msgs.msg import LaserScan\nfrom std_msgs.msg import String\n\nrclpy.init()\nnode = Node('student_controller')\n\nfront = 0.0\n# TODO: scan callback updates front\n# TODO: timer publishes front as String on /chatter\n# TODO: subscriber prints /chatter messages\nrclpy.spin(node)\n",
+  "checks": [
+    {
+      "type": "subscriber"
+    },
+    {
+      "type": "chatter"
+    },
+    {
+      "type": "timer"
+    }
+  ],
+  "startX": 0,
+  "startYaw": 0,
+  "translations": {
+    "nl": {
+      "title": "Callbacks reageren op gebeurtenissen",
+      "description": "Bewaar de laatste afstand uit de scan. Een aparte timer publiceert die toestand als String.",
+      "steps": [
+        "Werk front bij in de scan-callback.",
+        "Publiceer front elke 0.2 s op /chatter en print ontvangen berichten in een subscriber.",
+        "Vergelijk ros2 topic hz /scan met ros2 topic echo /chatter."
+      ],
+      "hints": [
+        "Bewaar de waarde tussen callbacks.",
+        "Een timer is periodiek; een subscription reageert op nieuwe berichten.",
+        "Maak de endpoints één keer en gebruik rclpy.spin."
+      ]
+    },
+    "fr": {
+      "title": "Les callbacks réagissent aux événements",
+      "description": "Mémorisez la dernière distance du scan. Un timer séparé publie cet état dans un String.",
+      "steps": [
+        "Mettez front à jour dans le callback du scan.",
+        "Publiez front toutes les 0.2 s sur /chatter et affichez les messages reçus dans un abonnement.",
+        "Comparez ros2 topic hz /scan et ros2 topic echo /chatter."
+      ],
+      "hints": [
+        "Conservez la valeur entre les callbacks.",
+        "Un timer est périodique ; un abonnement réagit aux messages.",
+        "Créez les endpoints une fois puis utilisez rclpy.spin."
+      ]
+    }
+  }
+}
