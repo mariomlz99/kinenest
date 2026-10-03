@@ -3,18 +3,24 @@ const INDEX='https://cdn.jsdelivr.net/pyodide/v0.28.3/full/';
 let outputCount=0, outputTime=0;
 self.emit_json=text=>postMessage(JSON.parse(text));
 function output(text){const now=Date.now();if(now-outputTime>1000){outputTime=now;outputCount=0;}if(outputCount++<40)postMessage({kind:'stdout',text:String(text).slice(0,4000)});}
+async function teachingAPI(){
+  const url=new URL('./compat.py',self.location.href);
+  for(let attempt=0;attempt<3;attempt++){
+    try{const response=await fetch(url,{signal:AbortSignal.timeout(15000)});if(!response.ok)throw Error('HTTP '+response.status);return await response.text();}
+    catch(error){if(attempt===2)throw Error('Python teaching API failed to load: '+url.pathname+' ('+error.message+'). Reload the page and try again.');await new Promise(resolve=>setTimeout(resolve,500*(attempt+1)));}
+  }
+}
 async function handle(data){
   if(data.kind==='start'){
     postMessage({kind:'loading'});
+    const source=await teachingAPI();
     importScripts(INDEX+'pyodide.js');
     pyodide=await loadPyodide({indexURL:INDEX,stdout:output,stderr:output});
     for(let attempt=0;attempt<3;attempt++){
       try{await pyodide.loadPackage('numpy');pyodide.runPython('import numpy');break;}
       catch(error){if(attempt===2)throw new Error('NumPy download failed. Check the connection and press Run again. '+error);await new Promise(resolve=>setTimeout(resolve,500*(attempt+1)));}
     }
-    const response=await fetch(new URL('./compat.py',self.location.href));
-    if(!response.ok)throw new Error('Python teaching API could not load');
-    await pyodide.runPythonAsync(await response.text());
+    await pyodide.runPythonAsync(source);
     pyodide.globals.set('student_source',data.code);
     postMessage({kind:'executing'});
     pyodide.runPython('_run_student(student_source)');
