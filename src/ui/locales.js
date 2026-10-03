@@ -1127,14 +1127,14 @@ export const UI = {
     "O KineNest permite aprender robótica antes de lidar com instalações, workspaces e dependências.",
     "KineNest permette di studiare la robotica prima di affrontare installazioni, workspace e dipendenze."
   ],
-  "Write Python, inspect topics, process sensors and control a robot in one browser tab.": [
-    "Schrijf Python, inspecteer topics, verwerk sensoren en bestuur een robot in één browsertab.",
-    "Écrivez en Python, inspectez les topics, traitez les capteurs et commandez un robot dans un onglet.",
-    "Escribe Python, inspecciona topics, procesa sensores y controla un robot en una pestaña.",
-    "Python schreiben, Topics untersuchen, Sensordaten verarbeiten und einen Roboter steuern – in einem Browser-Tab.",
-    "Escreve Python, inspeciona topics, processa sensores e controla um robô num separador.",
-    "Scrivi Python, ispeziona i topic, elabora sensori e controlla un robot in una scheda del browser."
-  ],
+  "Write real Python and compile C++ in supported exercises. Inspect topics, process sensors and control a robot in one browser tab.": [
+  "Schrijf echte Python en compileer C++ in ondersteunde oefeningen. Inspecteer topics, verwerk sensoren en bestuur een robot in één browsertab.",
+  "Écrivez du Python réel et compilez du C++ dans les exercices compatibles. Inspectez les topics, traitez les capteurs et pilotez un robot dans un seul onglet.",
+  "Escribe Python real y compila C++ en los ejercicios compatibles. Inspecciona topics, procesa sensores y controla un robot en una pestaña.",
+  "Schreibe echtes Python und kompiliere C++ in unterstützten Übungen. Untersuche Topics, verarbeite Sensordaten und steuere einen Roboter in einem Browser-Tab.",
+  "Escreve Python real e compila C++ nos exercícios compatíveis. Inspeciona topics, processa sensores e controla um robô num separador.",
+  "Scrivi Python reale e compila C++ negli esercizi supportati. Esamina i topic, elabora i sensori e controlla un robot in una scheda del browser."
+],
   "KineNest is an independent open educational project created by Mario Malizia, with development assistance from ChatGPT by OpenAI.": [
     "KineNest is een onafhankelijk open onderwijsproject van Mario Malizia, met ontwikkelhulp van ChatGPT van OpenAI.",
     "KineNest est un projet éducatif ouvert et indépendant créé par Mario Malizia, avec l’aide au développement de ChatGPT d’OpenAI.",
