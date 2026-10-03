@@ -44,3 +44,17 @@ npm run test:cpp -- firefox --built
 ~~~
 
 The suite compiles hello-world, functional and class controllers, checks callbacks and obstacle avoidance, measures cold/warm loading, checks a compiler error, terminates an infinite loop and exercises Compare/Reset in the actual UI. Reference C++ programs live under tests/cpp and are excluded from production.
+
+## Visibility and deployment audit
+
+| Location | Production effect |
+| --- | --- |
+| src/exercises/programming.js | supported plus visibility: public exposes tested variants; experimental variants otherwise require the flag |
+| public/lessons/session-02-01-subscriber.json, session-02-04-avoidance.json | Both set supported: true and visibility: public; experimental remains a status label |
+| src/ui/code-workspace.js | Reads experimentalCpp once and passes it to the capability check |
+| src/ui/product.js | Carries an explicitly supplied developer flag across navigation; never adds it to ordinary URLs |
+| tests/cpp-ui.html, tests/compare.html | Ordinary URLs validate public execution and draft preservation |
+
+Historical VALIDATION.md entries describe the earlier gate. Capture tooling previously used the flag; it now uses ordinary URLs. No hidden server switch controls C++. The production build includes bridge.js, compat.hpp, toolchain.js, worker.js and vendor host/licences; large compiler binaries remain pinned remote downloads triggered by Run.
+
+On this pass, local public C++ was already working. The live site still served 13f0acc, where the older gate hid both modes without experimentalCpp=1. Chrome and Firefox probes confirmed both URL cases. Publishing the pending commits is required; broadening C++ parity remains deferred until that release is verified.
