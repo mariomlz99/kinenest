@@ -1343,14 +1343,14 @@ export const UI = {
     "Este exercício usa Python. O teu código C++ é preservado.",
     "Questo esercizio usa Python. Il codice C++ resta salvato."
   ],
-  "Experimental C++ · browser compilation.": [
-    "Experimentele C++ · compilatie in de browser.",
-    "C++ expérimental · compilation dans le navigateur.",
-    "C++ experimental · compilación en el navegador.",
-    "Experimentelles C++ · Kompilierung im Browser.",
-    "C++ experimental · compilação no navegador.",
-    "C++ sperimentale · compilazione nel browser."
-  ],
+  "Experimental C++ · first run downloads about 60 MB. Cached when available.": [
+  "Experimentele C++ · de eerste uitvoering downloadt ongeveer 60 MB. Cache indien beschikbaar.",
+  "C++ expérimental · le premier lancement télécharge environ 60 Mo. Cache si disponible.",
+  "C++ experimental · la primera ejecución descarga unos 60 MB. Caché si está disponible.",
+  "Experimentelles C++ · beim ersten Start werden etwa 60 MB geladen. Cache, wenn verfügbar.",
+  "C++ experimental · a primeira execução transfere cerca de 60 MB. Cache quando disponível.",
+  "C++ sperimentale · la prima esecuzione scarica circa 60 MB. Cache quando disponibile."
+],
   "C++ comparison draft. Execution is not available for this exercise.": [
     "C++-code ter vergelijking. Uitvoeren is voor deze oefening niet beschikbaar.",
     "Code C++ de comparaison. L’exécution n’est pas disponible pour cet exercice.",

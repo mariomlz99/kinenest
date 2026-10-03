@@ -19,3 +19,9 @@ body[data-session] main{padding-top:16px}.intro{display:grid;grid-template-colum
 #tf-vector{stroke:var(--frame-vector);color:var(--frame-vector)}
 :root[data-theme=light] .tree-edge{stroke:#567481}
 .relative-arrow{fill:var(--frame-vector)}
+
+:root[data-theme=light] #editor-help{color:#365362}
+@media(max-width:600px){
+  #python-code,#cpp-code,.code-pane textarea,.exercise-picker select,.tf-selectors select{font-size:16px}
+  .code-languages button,.frame-controls label,.tf-panel>label,.secondary-panel>summary,.tf-panel summary{min-height:44px}
+}
