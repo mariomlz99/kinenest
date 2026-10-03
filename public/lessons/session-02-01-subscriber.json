@@ -6,13 +6,13 @@
   "description": "A sensor publishes repeatedly. Subscribe to /scan and inspect the range samples arriving in your callback.",
   "steps": [
     "Inspect /scan with topic type and echo --once.",
-    "Create a LaserScan subscription and print len(msg.ranges) plus the forward reading.",
+    "Create a LaserScan subscription and print the number of beams and the forward range.",
     "Run it, observe repeated output, and inspect the subscription using ros2 topic info /scan."
   ],
   "hints": [
     "A subscription callback takes the received message as its argument.",
     "This 120-ray scan starts at −π; ray 60 points forward.",
-    "node.create_subscription(LaserScan, \"/scan\", receive, 10)"
+    "Python: node.create_subscription(LaserScan, \"/scan\", receive, 10) · C++: create_subscription<sensor_msgs::msg::LaserScan>(\"/scan\", 10, receive)"
   ],
   "checks": [
     {
@@ -24,72 +24,72 @@
   "translations": {
     "nl": {
       "title": "Je eerste subscriber",
-      "description": "Ontvang LaserScan-berichten via een Python-callback en bekijk de afstandsmetingen.",
+      "description": "Ontvang LaserScan-berichten via een callback en bekijk de afstandsmetingen.",
       "steps": [
         "Inspecteer /scan met ros2 topic type en echo --once.",
-        "Maak een subscription en print len(msg.ranges) en de voorwaartse meting.",
+        "Maak een LaserScan-subscription en print het aantal stralen en de afstand vooruit.",
         "Voer de code uit en controleer de subscription met ros2 topic info /scan."
       ],
       "hints": [
         "De callback ontvangt één bericht.",
         "Er zijn 120 stralen; straal 60 wijst vooruit.",
-        "Gebruik node.create_subscription(LaserScan, \"/scan\", receive, 10)."
+        "Python: node.create_subscription(LaserScan, \"/scan\", receive, 10) · C++: create_subscription<sensor_msgs::msg::LaserScan>(\"/scan\", 10, receive)"
       ]
     },
     "fr": {
       "title": "Votre premier abonnement",
-      "description": "Recevez des messages LaserScan dans un callback Python et observez les distances.",
+      "description": "Recevez des messages LaserScan dans un callback et observez les distances.",
       "steps": [
         "Inspectez /scan avec ros2 topic type et echo --once.",
-        "Créez un abonnement et affichez len(msg.ranges) et la distance devant.",
+        "Créez une subscription LaserScan et affichez le nombre de rayons et la distance devant.",
         "Exécutez le code et vérifiez avec ros2 topic info /scan."
       ],
       "hints": [
         "Le callback reçoit un message.",
         "Il y a 120 rayons ; le rayon 60 pointe devant.",
-        "Utilisez node.create_subscription(LaserScan, \"/scan\", receive, 10)."
+        "Python: node.create_subscription(LaserScan, \"/scan\", receive, 10) · C++: create_subscription<sensor_msgs::msg::LaserScan>(\"/scan\", 10, receive)"
       ]
     },
     "es": {
       "title": "Tu primer subscriber",
-      "description": "Suscríbete a /scan y lee los datos de LaserScan en un callback de Python.",
+      "description": "Suscríbete a /scan y lee los datos de LaserScan en un callback.",
       "steps": [
         "Inspecciona /scan con ros2 topic info y ros2 interface show sensor_msgs/msg/LaserScan.",
-        "Crea una suscripción y muestra len(msg.ranges) y la distancia frontal.",
+        "Crea una subscription LaserScan e imprime el número de rayos y la distancia frontal.",
         "Ejecuta el nodo, observa la salida repetida y consulta ros2 topic info /scan."
       ],
       "hints": [
         "El callback recibe el mensaje como argumento.",
         "Este scan de 120 rayos empieza en −π; el rayo 60 apunta hacia delante.",
-        "node.create_subscription(LaserScan, \"/scan\", receive, 10)"
+        "Python: node.create_subscription(LaserScan, \"/scan\", receive, 10) · C++: create_subscription<sensor_msgs::msg::LaserScan>(\"/scan\", 10, receive)"
       ]
     },
     "de": {
       "title": "Dein erster Subscriber",
-      "description": "Abonniere /scan und lies LaserScan-Daten in einem Python-Callback.",
+      "description": "Abonniere /scan und lies LaserScan-Daten in einem Callback.",
       "steps": [
         "Untersuche /scan mit ros2 topic info und ros2 interface show sensor_msgs/msg/LaserScan.",
-        "Erstelle eine Subscription und gib len(msg.ranges) sowie den Abstand nach vorne aus.",
+        "Erstelle eine LaserScan-Subscription und gib Strahlanzahl und Abstand nach vorne aus.",
         "Starte den Knoten, beobachte die Ausgabe und prüfe ros2 topic info /scan."
       ],
       "hints": [
         "Der Callback erhält die Nachricht als Argument.",
         "Der Scan hat 120 Strahlen ab −π; Strahl 60 zeigt nach vorne.",
-        "node.create_subscription(LaserScan, \"/scan\", receive, 10)"
+        "Python: node.create_subscription(LaserScan, \"/scan\", receive, 10) · C++: create_subscription<sensor_msgs::msg::LaserScan>(\"/scan\", 10, receive)"
       ]
     },
     "pt": {
       "title": "O primeiro subscriber",
-      "description": "Subscreve /scan e lê dados LaserScan num callback Python.",
+      "description": "Subscreve /scan e lê dados LaserScan num callback.",
       "steps": [
         "Inspeciona /scan com ros2 topic info e ros2 interface show sensor_msgs/msg/LaserScan.",
-        "Cria uma subscrição e mostra len(msg.ranges) e a distância frontal.",
+        "Cria uma subscription LaserScan e mostra o número de raios e a distância à frente.",
         "Executa o nó, observa a saída repetida e consulta ros2 topic info /scan."
       ],
       "hints": [
         "O callback recebe a mensagem como argumento.",
         "Este scan tem 120 raios a partir de −π; o raio 60 aponta em frente.",
-        "node.create_subscription(LaserScan, \"/scan\", receive, 10)"
+        "Python: node.create_subscription(LaserScan, \"/scan\", receive, 10) · C++: create_subscription<sensor_msgs::msg::LaserScan>(\"/scan\", 10, receive)"
       ]
     },
     "it": {
@@ -97,13 +97,13 @@
       "description": "Un sensore pubblica ripetutamente. Sottoscrivi /scan e leggi le distanze ricevute dal callback.",
       "steps": [
         "Ispeziona /scan con topic type ed echo --once.",
-        "Crea una subscription LaserScan e stampa len(msg.ranges) e la distanza frontale.",
+        "Crea una subscription LaserScan e stampa il numero di raggi e la distanza frontale.",
         "Esegui, osserva le stampe ripetute e controlla la subscription con ros2 topic info /scan."
       ],
       "hints": [
         "Il callback di una subscription riceve il messaggio come argomento.",
         "Questa scansione di 120 raggi parte da −π; il raggio 60 punta avanti.",
-        "node.create_subscription(LaserScan, \"/scan\", receive, 10)"
+        "Python: node.create_subscription(LaserScan, \"/scan\", receive, 10) · C++: create_subscription<sensor_msgs::msg::LaserScan>(\"/scan\", 10, receive)"
       ]
     }
   },

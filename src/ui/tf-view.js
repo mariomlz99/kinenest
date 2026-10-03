@@ -4,9 +4,9 @@ function svg(tag,attributes={},text){const el=document.createElementNS(NS,tag);f
 function value(el,n,unit='m'){el.dataset.value=String(n);const text=n.toFixed(3)+' '+unit;if(el.textContent!==text)el.textContent=text;}
 export function createTFView(runtime,session){
  if(![5,6].includes(session))return null;
- const world=document.querySelector('.world-panel'),map=document.getElementById('map');map.width=720;map.height=300;
+ const world=document.querySelector('.world-panel'),map=document.getElementById('map');map.width=720;map.height=400;
  const stage=document.createElement('div');stage.className='tf-stage';map.before(stage);stage.append(map);
- const spatial=svg('svg',{id:'tf-spatial',viewBox:'0 0 720 300',role:'img','aria-label':'Coordinate frames in the robot world','data-i18n-label':'Coordinate frames in the robot world'});stage.append(spatial);
+ const spatial=svg('svg',{id:'tf-spatial',viewBox:'0 0 720 400',role:'img','aria-label':'Coordinate frames in the robot world','data-i18n-label':'Coordinate frames in the robot world'});stage.append(spatial);
  const defs=svg('defs'),marker=svg('marker',{id:'relative-arrow',viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:6,markerHeight:6,orient:'auto-start-reverse'});marker.append(svg('path',{d:'M 0 0 L 10 5 L 0 10 z',fill:'currentColor'}));defs.append(marker);spatial.append(defs);
  const vector=svg('line',{id:'tf-vector','marker-end':'url(#relative-arrow)'});spatial.append(vector);
  const controls=document.createElement('fieldset');controls.className='frame-controls';controls.innerHTML='<legend>Frames</legend>';stage.after(controls);
@@ -30,7 +30,7 @@ export function createTFView(runtime,session){
  let projection;
  function update(){
   const snapshot=frameSnapshot(runtime);
-  for(const frame of snapshot.frames){const {group,rotated}=axes.get(frame.id);group.style.display=checks.get(frame.id).checked?'':'none';group.dataset.x=frame.x;group.dataset.y=frame.y;group.dataset.yaw=frame.yaw;if(projection)group.setAttribute('transform','translate('+projection.sx(frame.x)+' '+projection.sy(frame.y)+')');rotated.setAttribute('transform','rotate('+(-frame.yaw*180/Math.PI)+')');}
+  for(const frame of snapshot.frames){const {group,rotated}=axes.get(frame.id);group.style.display=checks.get(frame.id).checked?'':'none';group.dataset.x=frame.x;group.dataset.y=frame.y;group.dataset.yaw=frame.yaw;if(projection)group.setAttribute('transform','translate('+projection.sx(frame.x)+' '+projection.sy(frame.y)+') scale('+Math.min(2,720/Math.max(1,map.getBoundingClientRect().width))+')');rotated.setAttribute('transform','rotate('+(-frame.yaw*180/Math.PI)+')');}
   const relative=relativeValues(runtime,$('tf-target').value,$('tf-source').value);value($('tf-x'),relative.x);value($('tf-y'),relative.y);value($('tf-distance'),relative.distance);value($('tf-yaw'),relative.yaw,'rad / '+(relative.yaw*180/Math.PI).toFixed(1)+'°');value($('tf-bearing'),relative.bearing,'rad / '+(relative.bearing*180/Math.PI).toFixed(1)+'°');
   const selected=$('tf-selected').value,edge=snapshot.edges.find(e=>e.child_frame_id===selected);$('tf-parent').textContent=edge?.header.frame_id??'—';value($('tf-local-x'),edge?.transform.translation.x??0);value($('tf-local-y'),edge?.transform.translation.y??0);value($('tf-local-yaw'),edge?2*Math.atan2(edge.transform.rotation.z,edge.transform.rotation.w):0,'rad');
   for(const button of tree.querySelectorAll('[data-tree-frame]'))button.setAttribute('aria-pressed',String(button.dataset.treeFrame===selected));

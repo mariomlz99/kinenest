@@ -12,7 +12,7 @@ try{
  for(const lang of ['nl','fr','es','de','pt','it','en']){
   $('language').value=lang;$('language').dispatchEvent(new Event('change'));await wait(350);
   assert(d.documentElement.lang===lang,'Document language');assert($('python-code').value===program,'Python modified');assert(d.body.dataset.lessonId===lesson,'Exercise changed');
-  assert(d.documentElement.dataset.theme==='light'&&d.body.dataset.layout==='stack','Preferences changed');assert($('python-state').textContent.includes('callbacks ready'),'Worker restarted');
+  assert(d.documentElement.dataset.theme==='light'&&d.body.dataset.layout==='stack','Preferences changed');assert(!$('stop-python').disabled,'Worker stopped');
   const counts=$('python-output').textContent.trim().split(/\s+/).map(Number).filter(Number.isFinite);assert(counts.at(-1)>previous,'Callbacks stopped');assert(counts.filter(n=>n===1).length===1,'Python restarted');previous=counts.at(-1);
   assert($('mission-title').textContent!=='Read the robot pose'||lang==='en','Lesson translation absent');
   assert(d.querySelectorAll('#language option').length===7,'Language options');
