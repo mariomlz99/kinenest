@@ -1255,14 +1255,14 @@ export const UI = {
     "code publicou comandos de controlo",
     "code ha pubblicato comandi di controllo"
   ],
-  "Timer fired and code published at least 5 commands": [
-    "Timer actief en minstens 5 code-publicaties",
-    "Timer actif et au moins 5 publications code",
-    "Temporizador activo y al menos 5 comandos publicados",
-    "Timer aktiv und mindestens 5 Befehle veröffentlicht",
-    "Temporizador ativo e pelo menos 5 comandos publicados",
-    "Il timer è scattato e code ha pubblicato almeno 5 comandi"
-  ],
+  "Timer fired and code published at least 5 messages": [
+  "Timer actief en minstens 5 berichten gepubliceerd",
+  "Timer actif et au moins 5 messages publiés",
+  "Temporizador activo y al menos 5 mensajes publicados",
+  "Timer aktiv und mindestens 5 Nachrichten veröffentlicht",
+  "Temporizador ativo e pelo menos 5 mensagens publicadas",
+  "Il timer è scattato e il codice ha pubblicato almeno 5 messaggi"
+],
   "Subscriber received 3 String messages": [
     "code-subscriber ontving 3 String-berichten",
     "Le subscriber code a reçu 3 messages String",
