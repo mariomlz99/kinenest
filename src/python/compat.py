@@ -12,6 +12,10 @@ _futures = {}
 _counter = 0
 _current_frame = None
 _initialized = False
+_timers = {}
+_action_handles = {}
+_current_sample = None
+_tf_buffers = []
 
 def _send(kind, **values):
     emit_json(json.dumps(dict(kind=kind, **values)))
@@ -39,6 +43,23 @@ class Vector3:
 class Twist:
     def __init__(self):
         self.linear, self.angular = Vector3(), Vector3()
+
+class TargetInfo:
+    def __init__(self, visible=False, position='UNKNOWN', confidence=0.0):
+        self.visible, self.position, self.confidence = visible, position, confidence
+
+class String:
+    def __init__(self, data=''):
+        self.data = data
+
+class LaserScan:
+    pass
+
+class Odometry:
+    pass
+
+class TFMessage:
+    pass
 
 class Image:
     def __init__(self, metadata=None, data=b''):
@@ -104,13 +125,13 @@ class Future:
             self._callbacks.append(callback)
 
 class Publisher:
-    def __init__(self, node, topic):
-        self.node, self.topic = node, topic
+    def __init__(self, node, topic, message_type):
+        self.node, self.topic, self.message_type = node, topic, message_type
     def publish(self, msg):
-        if not isinstance(msg, Twist):
-            raise TypeError('This publisher expects Twist')
-        _send('publish', node=self.node, topic=self.topic, message={
-            'linear': vars(msg.linear), 'angular': vars(msg.angular)})
+        if not isinstance(msg, self.message_type):
+            raise TypeError('Wrong message type for publisher')
+        payload = vars(msg) if isinstance(msg, (String, TargetInfo)) else {'linear': vars(msg.linear), 'angular': vars(msg.angular)}
+        _send('publish', node=self.node, topic=self.topic, type=_type_name(self.message_type), message=payload)
 
 class Client:
     def __init__(self, node, name):
@@ -140,17 +161,36 @@ class Node:
         _nodes[self.name] = self
         _send('node', node=self.name)
     def create_subscription(self, message_type, topic, callback, qos):
-        if message_type is not Image or topic != '/camera/image_raw':
-            raise NotImplementedError('Session 3 Python subscriptions support Image on /camera/image_raw')
+        _type_name(message_type)
         key = _id()
         _subscriptions[key] = (self.name, callback)
-        _send('subscribe', node=self.name, topic=topic, id=key)
+        _send('subscribe', node=self.name, topic=topic, type=_type_name(message_type), id=key)
         return key
     def create_publisher(self, message_type, topic, qos):
-        if message_type is not Twist or topic != '/cmd_vel':
-            raise NotImplementedError('Session 3 publishes Twist on /cmd_vel')
-        _send('publisher', node=self.name, topic=topic)
-        return Publisher(self.name, topic)
+        if message_type not in (Twist, String, TargetInfo):
+            raise NotImplementedError('Publishers support Twist and String')
+        _send('publisher', node=self.name, topic=topic, type=_type_name(message_type))
+        return Publisher(self.name, topic, message_type)
+    def create_timer(self, period, callback):
+        key = _id()
+        _timers[key] = (self.name, callback)
+        _send('timer', node=self.name, id=key, period=float(period))
+        return types.SimpleNamespace(cancel=lambda: self.destroy_timer(key))
+    def destroy_timer(self, timer):
+        _timers.pop(timer, None)
+        _send('timer_cancel', id=timer)
+    def declare_parameter(self, name, value):
+        if not hasattr(self, '_parameters'):
+            self._parameters = {}
+        if name in self._parameters:
+            raise ValueError('Parameter already declared')
+        self._parameters[name] = value
+        _send('parameter_declare', node=self.name, name=name, value=value)
+        return types.SimpleNamespace(value=value)
+    def get_parameter(self, name):
+        value = self._parameters[name]
+        _send('parameter_read', node=self.name, name=name, value=value)
+        return types.SimpleNamespace(value=value)
     def create_client(self, service_type, name):
         if service_type is not Trigger or name != '/reset_robot':
             raise NotImplementedError('Session 3 supports Trigger on /reset_robot')
@@ -161,6 +201,8 @@ class Node:
     def destroy_node(self):
         for key in [k for k, (node, _) in _subscriptions.items() if node == self.name]:
             del _subscriptions[key]
+        for key in [k for k, (node, _) in _timers.items() if node == self.name]:
+            self.destroy_timer(key)
         _nodes.pop(self.name, None)
         _send('destroy', node=self.name)
 
@@ -221,7 +263,13 @@ _module('rclpy', init=init, shutdown=shutdown, ok=lambda: _initialized, spin=spi
 _module('rclpy.node', Node=Node)
 _module('rclpy.task', Future=Future)
 _module('sensor_msgs')
-_module('sensor_msgs.msg', Image=Image)
+_module('sensor_msgs.msg', Image=Image, LaserScan=LaserScan)
+_module('nav_msgs')
+_module('nav_msgs.msg', Odometry=Odometry)
+_module('std_msgs')
+_module('std_msgs.msg', String=String)
+_module('tf2_msgs')
+_module('tf2_msgs.msg', TFMessage=TFMessage)
 _module('geometry_msgs')
 _module('geometry_msgs.msg', Twist=Twist)
 _module('std_srvs')
@@ -260,3 +308,175 @@ def _service_response(key, payload):
     _send('response_received', success=future._result.success)
     for callback in future._callbacks:
         callback(future)
+
+# Shared course API: typed messages, simulation timers, parameters, actions and TF.
+def _type_name(cls):
+    table = {TargetInfo:'ros2learn_interfaces/msg/TargetInfo', Twist: 'geometry_msgs/msg/Twist', String: 'std_msgs/msg/String', Image: 'sensor_msgs/msg/Image', LaserScan: 'sensor_msgs/msg/LaserScan', Odometry: 'nav_msgs/msg/Odometry', TFMessage: 'tf2_msgs/msg/TFMessage'}
+    if cls not in table:
+        raise NotImplementedError('Message type not supported in this course')
+    return table[cls]
+
+def _object(value):
+    if isinstance(value, dict):
+        return types.SimpleNamespace(**{k: _object(v) for k, v in value.items()})
+    if isinstance(value, list):
+        return [_object(v) for v in value]
+    return float('inf') if value == 'Infinity' else value
+
+class _SensorMessage(types.SimpleNamespace):
+    def __getattribute__(self, name):
+        if name in ('ranges', 'angle_min', 'angle_increment'):
+            object.__getattribute__(self, '_access').add(name)
+        return super().__getattribute__(name)
+
+def _dispatch_message(key, payload, sample):
+    global _current_sample
+    if key not in _subscriptions:
+        return
+    data = json.loads(payload)
+    _current_sample = sample
+    try:
+        msg = _object(data)
+        access = set()
+        if 'ranges' in data:
+            msg = _SensorMessage(**vars(msg), _access=access)
+        _subscriptions[key][1](msg)
+        _send('message_processed', sample=sample, access=list(access))
+    finally:
+        _current_sample = None
+
+def _dispatch_timer(key):
+    if key in _timers:
+        _timers[key][1]()
+        _send('timer_processed')
+
+def report_range(distance):
+    _send('course_report', sample=_current_sample, report='range', values=[float(distance)])
+
+def report_pose(x, y, yaw):
+    _send('course_report', sample=_current_sample, report='pose', values=[float(x), float(y), float(yaw)])
+
+def report_transform(x, y):
+    _send('course_report', sample=_current_sample, report='transform', values=[float(x), float(y)])
+
+class DriveDistance:
+    class Goal:
+        def __init__(self):
+            self.distance = 0.0
+
+
+class ClientGoalHandle:
+    def __init__(self, key, accepted):
+        self.key, self.accepted = key, accepted
+        self._result_future = Future()
+    def get_result_async(self):
+        return self._result_future
+    def cancel_goal_async(self):
+        key = _id()
+        future = Future()
+        _futures[key] = future
+        _send('action_cancel', id=self.key, request=key)
+        return future
+
+class ActionClient:
+    def __init__(self, node, action_type, name):
+        if action_type is not DriveDistance or name != '/drive_distance':
+            raise NotImplementedError('This course provides /drive_distance with DriveDistance')
+        self.node, self.name = node, name
+        _send('action_client', node=node.name, name=name)
+    def wait_for_server(self, timeout_sec=None):
+        return True
+    def send_goal_async(self, goal, feedback_callback=None):
+        if not isinstance(goal, DriveDistance.Goal):
+            raise TypeError('Expected DriveDistance.Goal')
+        key = _id()
+        future = Future()
+        _futures[key] = future
+        _action_handles[key] = {'feedback': feedback_callback}
+        _send('action_goal', id=key, node=self.node.name, goal=vars(goal))
+        return future
+
+def _resolve(future, result):
+    future._done, future._result = True, result
+    for callback in future._callbacks:
+        callback(future)
+
+def _action_event(key, event, payload):
+    data = json.loads(payload)
+    state = _action_handles.get(key)
+    if event == 'accepted':
+        handle = ClientGoalHandle(key, data['accepted'])
+        state['handle'] = handle
+        _resolve(_futures.pop(key), handle)
+    elif event == 'feedback':
+        if state['feedback']:
+            state['feedback'](types.SimpleNamespace(feedback=_object(data)))
+            _send('action_observed', event=event)
+    elif event == 'result':
+        _resolve(state['handle']._result_future, _object(data))
+        _send('action_observed', event=event, status=data['status'])
+    elif event == 'cancel':
+        _resolve(_futures.pop(key), _object(data))
+
+class TransformException(Exception):
+    pass
+
+class Buffer:
+    def __init__(self):
+        self.transforms = {}
+    def lookup_transform(self, target_frame, source_frame, time):
+        import math
+        # Resolve a tiny tree in either direction; values map source into target.
+        edges = {}
+        for (parent, child), (x, y, angle) in self.transforms.items():
+            edges.setdefault(child, []).append((parent, x, y, angle))
+            edges.setdefault(parent, []).append((child, -math.cos(angle)*x-math.sin(angle)*y, math.sin(angle)*x-math.cos(angle)*y, -angle))
+        queue = [(source_frame, 0., 0., 0.)]
+        seen = set()
+        while queue:
+            frame, x, y, angle = queue.pop(0)
+            if frame == target_frame:
+                _send('tf_lookup', target=target_frame, source=source_frame)
+                return types.SimpleNamespace(header=types.SimpleNamespace(frame_id=target_frame), child_frame_id=source_frame, transform=types.SimpleNamespace(translation=types.SimpleNamespace(x=x, y=y, z=0.), rotation=types.SimpleNamespace(x=0., y=0., z=math.sin(angle/2), w=math.cos(angle/2))))
+            seen.add(frame)
+            for other, ex, ey, ea in edges.get(frame, []):
+                if other not in seen:
+                    queue.append((other, ex+math.cos(ea)*x-math.sin(ea)*y, ey+math.sin(ea)*x+math.cos(ea)*y, ea+angle))
+        raise TransformException('Transform not received yet or unknown frame')
+
+class TransformListener:
+    def __init__(self, buffer, node):
+        import math
+        def receive(msg):
+            for t in msg.transforms:
+                p, q = t.transform.translation, t.transform.rotation
+                buffer.transforms[(t.header.frame_id, t.child_frame_id)] = (p.x, p.y, 2*math.atan2(q.z, q.w))
+        self.subscription = node.create_subscription(TFMessage, '/tf', receive, 10)
+
+_module('rclpy.action', ActionClient=ActionClient)
+_module('rclpy.time', Time=lambda: None)
+_module('tf2_ros', Buffer=Buffer, TransformListener=TransformListener, TransformException=TransformException)
+_module('ros2learn_interfaces')
+_module('ros2learn_interfaces.action', DriveDistance=DriveDistance)
+sys.modules['ros2learn'].report_range = report_range
+sys.modules['ros2learn'].report_pose = report_pose
+sys.modules['ros2learn'].report_transform = report_transform
+
+def report_sectors(front, left, right):
+    _send('course_report', sample=_current_sample, report='sectors', values=[float(front), float(left), float(right)])
+sys.modules['ros2learn'].report_sectors = report_sectors
+
+def euler_from_quaternion(q):
+    import math
+    x, y, z, w = q
+    roll = math.atan2(2*(w*x+y*z), 1-2*(x*x+y*y))
+    pitch = math.asin(max(-1., min(1., 2*(w*y-z*x))))
+    yaw = math.atan2(2*(w*z+x*y), 1-2*(y*y+z*z))
+    return roll, pitch, yaw
+_module('tf_transformations', euler_from_quaternion=euler_from_quaternion)
+
+_module('ros2learn_interfaces.msg', TargetInfo=TargetInfo)
+
+def report_relative(x, y):
+    _send('course_report', sample=_current_sample, report='relative', values=[float(x), float(y)])
+sys.modules['ros2learn'].report_relative = report_relative

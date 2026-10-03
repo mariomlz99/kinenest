@@ -1,0 +1,7 @@
+<!doctype html><meta charset="utf-8"><pre id="result">RUNNING</pre><img src="/hold" alt=""><iframe src="../session-03.html"></iframe><script type="module">
+const f=document.querySelector('iframe'),wait=ms=>new Promise(r=>setTimeout(r,ms));let result;
+try{for(let i=0;i<300&&!f.contentDocument?.getElementById('run-python')?.disabled===false;i++)await wait(100);
+await wait(1000);const d=f.contentDocument;d.getElementById('python-code').value="import rclpy\nfrom sensor_msgs.msg import LaserScan\nrclpy.init()\nnode=rclpy.create_node('scan_reader')\ndef receive(msg):\n    print('SCAN', len(msg.ranges), msg.angle_min, msg.range_max)\nnode.create_subscription(LaserScan, '/scan', receive, 10)\nrclpy.spin(node)";d.getElementById('run-python').click();
+let passed=false;for(let i=0;i<900;i++){if(d.getElementById('python-output').textContent.includes('SCAN 120')){passed=true;break;}await wait(100);}
+if(!passed)throw Error(d.getElementById('python-output').textContent);d.getElementById('stop-python').click();result='PASS: simulator → 120-ray LaserScan → real Python callback → output';
+}catch(e){result='FAIL: '+e.message;}document.getElementById('result').textContent=result;await fetch('/done',{method:'POST',body:result});</script>
