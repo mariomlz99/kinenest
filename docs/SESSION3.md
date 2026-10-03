@@ -33,3 +33,7 @@ Native ES modules, workers, WebAssembly, typed arrays and Canvas; no student ins
 ## Source visibility
 
 Static Pages hosting cannot conceal client-side checks or hint text. The dist allowlist excludes tests and reference solutions; the public source repository still contains them. Public-source availability is deliberate and compatible with open-source teaching. Do not use the browser's completion badge as a trusted grade. For summative work, assess a fresh task and explanation separately; no server/account infrastructure is introduced here.
+
+## Teaching context
+
+The page includes optional callback-state and real-machine panels. Camera callbacks may store perception results as node state; this pattern is not enforced by grading. The real-machine panel illustrates ament_python package structure and colcon/source/ros2 run commands. The browser does not execute these build commands. Session 3 remains six camera/perception/service exercises, without parameters, actions or TF exercises.

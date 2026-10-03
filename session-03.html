@@ -8,5 +8,21 @@
 <div class="actions"><p id="status" role="status">Loading…</p><button id="reset" disabled>Reset lab</button><button id="check" class="primary" disabled>Check solution</button></div><section id="feedback" aria-live="polite" hidden></section>
 <div class="vision-grid"><section class="panel world-panel"><h2>Robot world</h2><canvas id="map" width="480" height="200" role="img" aria-label="Robot and targets viewed from above"></canvas><p id="pose"></p></section><section class="panel graph-panel"><h2>Live ROS graph</h2><pre id="graph" tabindex="0"></pre></section></div>
 <section class="terminal-workspace"><div class="terminal-toolbar"><h2>Shared ROS learning terminals</h2><button id="add-terminal" disabled>+ New terminal</button></div><p class="terminal-guide">Try <code>ros2 topic hz /camera/image_raw</code> or <code>ros2 service list</code>. Image echo shows a byte-count summary. Ctrl+C stops echo or hz.</p><div id="terminals"></div></section>
+<details class="about"><summary>Callbacks can update node state</summary><p>A callback can store its latest result on the node. Other callbacks or service logic can then use it without processing the same image again.</p><pre>self.target_visible = False
+self.target_position = 'UNKNOWN'
+
+# Inside image_callback, after processing pixels:
+self.target_visible = visible
+self.target_position = position</pre><p>Camera callback → updates node state → other node logic uses that state. This is an explanatory pattern, not a required solution.</p></details>
+<details class="about"><summary>On a real ROS 2 machine</summary><p>ROS2Learn runs the Python code directly in the browser. On a real ROS 2 system, the same node would normally be placed inside a ROS package and executed from a built workspace.</p><pre>camera_detector/
+├── package.xml
+├── setup.py
+├── setup.cfg
+└── camera_detector/
+    ├── __init__.py
+    └── detector.py</pre><p>A Python package uses ament_python and declares a console entry point named detector in setup.py. With that package inside ~/ros2_ws/src and its dependencies installed:</p><pre>cd ~/ros2_ws
+colcon build
+source install/setup.bash
+ros2 run camera_detector detector</pre><p>These are real-machine commands, not commands executed by the learning terminal. You do not need CMake for this Python package.</p></details>
 <details class="about"><summary>What is simulated? Python API and checker notes</summary><p>ROS2Learn is an educational ROS 2 simulator. Its Python API and CLI reproduce the ROS 2 concepts used in these lessons, but the browser environment is not a complete DDS-based ROS 2 installation.</p><p>Python and NumPy are real. rclpy, Image, Twist, Trigger and cv_bridge are small educational implementations. ROS2Learn provides a lightweight educational subset of OpenCV-compatible functions: cv2.inRange, countNonZero and moments (m00, m10, m01). No full OpenCV, HSV conversion or real camera is installed.</p><p>The 8 Hz camera renders synthetic RGB pixels from robot pose. Python receives only those pixels and Image metadata, not target coordinates. The checker helpers report your computed values: report_image_stats(shape, channel_means) and report_detection(visible, cx=None). These helpers are specific to this teaching environment. Detection checks change the visible scene and require several correct frames per scene.</p><p>rclpy.spin yields to the browser worker event loop; statements after spin are not resumed. Use asynchronous service calls with future.add_done_callback. Stop terminates the worker, so Python finally blocks are not guaranteed to run. Callback queues are bounded: a busy callback drops camera frames rather than accumulating them. Timers, Python service servers, DDS and ROS action servers are not implemented. The final challenge uses a Twist publisher, not the ROS action protocol.</p></details>
 <footer><a href="./public/third-party.html">Licences & notices</a> ROS2Learn · Session 3 <a href="./">Return to Lab 01</a></footer></main><noscript>Enable JavaScript to load the browser lab.</noscript></body></html>
