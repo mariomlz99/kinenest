@@ -4,6 +4,8 @@
         ├── package.xml
         ├── setup.py
         ├── setup.cfg
+        ├── resource/
+        │   └── camera_detector
         └── camera_detector/
             ├── __init__.py
             └── detector.py</pre><p>Use ament_python for a Python package. package.xml declares dependencies and metadata. setup.py packages the module and registers a console_scripts entry point such as detector = camera_detector.detector:main. setup.cfg installs scripts where ros2 run expects them. Put node creation and spinning inside main().</p><pre>cd ~/ros2_ws

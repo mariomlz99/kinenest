@@ -63,3 +63,5 @@ Shared transitions use the compact supplied logo, native CSS and sessionStorage 
 ExecutionHost loads adapter constructors from a registry and owns cancellation during asynchronous loading. It calls the existing run/stop methods; worker diagnostics and prepare/compile stages remain adapter-specific. RuntimeAdapter still owns endpoints, mailboxes and checking evidence. Adding a third adapter requires registering its factory and supported lesson variants, not duplicating the robot or checker. No Rust adapter or UI exists.
 
 Every production build writes build-info.json with Git commit, build time, asset version and dirty-worktree status. About shows the deployed identity and currently loaded asset version. Source previews can report unavailable metadata. The production smoke command requires an expected commit and rejects an older deployment before exercising it.
+
+Parameter fidelity: the educational runtime validates scalar JavaScript types. It does not distinguish native ROS integer and double parameter types; numeric values share one number type. Native ROS parameter descriptors, ranges and type rules are outside this subset.
