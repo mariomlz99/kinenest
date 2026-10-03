@@ -1,0 +1,24 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Spatial TF regression</title><img src="/hold" hidden alt=""><pre id="result">RUNNING</pre><iframe src="../session-05.html" title="Session 5" width="1440" height="1200"></iframe><script type="module">
+const frame=document.querySelector('iframe'),out=document.getElementById('result'),wait=ms=>new Promise(r=>setTimeout(r,ms));
+async function until(fn,seconds=30){for(let i=0;i<seconds*20;i++){if(fn())return;await wait(50);}throw Error('Timeout: '+frame.contentDocument?.getElementById('python-output')?.textContent);}
+const close=(a,b)=>{if(Math.abs(a-b)>1e-8)throw Error('Transform mismatch '+a+' vs '+b);};
+function assert(value,message){if(!value)throw Error(message);}
+try{
+ await until(()=>frame.contentDocument?.body?.dataset.lessonState==='ready');const d=frame.contentDocument,$=id=>d.getElementById(id);
+ $('lesson-select').selectedIndex=3;$('lesson-select').dispatchEvent(new Event('change'));await until(()=>d.body.dataset.lessonState==='ready');
+ const read=id=>{const g=d.querySelector('#tf-spatial [data-frame="'+id+'"]');return {x:Number(g.dataset.x),y:Number(g.dataset.y),yaw:Number(g.dataset.yaw),rotation:g.querySelector('.frame-axes').getAttribute('transform'),g};};
+ const command=text=>{$('command').value=text;$('terminal-form').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));};
+ const base0=read('base_link'),target0=read('target');command('ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.3}}"');await until(()=>Math.hypot(read('base_link').x-base0.x,read('base_link').y-base0.y)>.08);
+ command('ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist "{angular: {z: 0.6}}"');await until(()=>Math.abs(read('base_link').yaw-base0.yaw)>.3);command('ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist "{}"');await wait(250);
+ const base=read('base_link'),target=read('target');close(target.x,target0.x);close(target.y,target0.y);close(target.yaw,target0.yaw);assert(base.rotation!==base0.rotation,'Axes did not rotate');close(Number(base.rotation.slice(7,-1)),-base.yaw*180/Math.PI);
+ const laserCheck=d.querySelector('input[data-frame="laser_link"]');laserCheck.checked=true;laserCheck.dispatchEvent(new Event('change',{bubbles:true}));const laser=read('laser_link');assert(laser.g.style.display!=='none','Laser not visible');close(laser.x-base.x,.2*Math.cos(base.yaw));close(laser.y-base.y,.2*Math.sin(base.yaw));close(laser.yaw,base.yaw);close(read('camera_link').x,base.x);
+ const boot=d.querySelector('script[src*="session3-boot"]');const {Runtime}=await import(new URL('../runtime/graph.js',boot.src));const {lookup}=await import(new URL('../runtime/course.js',boot.src));const runtime=new Runtime();runtime.enableSession3();Object.assign(runtime.robot,{x:base.x,y:base.y,yaw:base.yaw});runtime.targetFrame=[target.x,target.y];const expected=lookup(runtime,'base_link','target');close(Number($('tf-x').dataset.value),expected.x);close(Number($('tf-y').dataset.value),expected.y);
+ $('tf-target').value='world';$('tf-target').dispatchEvent(new Event('change',{bubbles:true}));close(Number($('tf-x').dataset.value),target.x);close(read('target').x,target.x);
+ d.querySelector('[data-tree-frame="laser_link"]').dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true}));assert($('tf-selected').value==='laser_link','Keyboard frame selection');assert($('tf-parent').textContent==='base_link','Frame parent');close(Number($('tf-local-x').dataset.value),.2);
+ $('python-code').value='import rclpy, json, math\nfrom tf2_ros import Buffer, TransformListener, TransformException\nfrom rclpy.time import Time\nrclpy.init()\nnode = rclpy.create_node("tf_comparison")\nbuffer = Buffer()\nlistener = TransformListener(buffer, node)\ndef tick():\n    try:\n        t = buffer.lookup_transform("base_link", "target", Time()).transform\n        print("TF_SAMPLE", json.dumps([t.translation.x, t.translation.y, 2 * math.atan2(t.rotation.z, t.rotation.w)]))\n    except TransformException:\n        pass\nnode.create_timer(0.2, tick)\nrclpy.spin(node)';
+ $('run-python').click();await until(()=>$('python-output').textContent.includes('TF_SAMPLE'),120);const actual=JSON.parse($('python-output').textContent.match(/TF_SAMPLE (\[[^\n]+\])/)[1]);close(actual[0],Number($('tf-x').dataset.value));close(actual[1],Number($('tf-y').dataset.value));close(actual[2],Number($('tf-yaw').dataset.value));$('stop-python').click();
+ assert(d.querySelector('.camera-panel').tagName==='DETAILS'&&!d.querySelector('.camera-panel').open,'Camera clutter');assert(d.querySelector('#parameters').closest('details').hidden,'Unrelated parameters visible');
+ out.textContent='PASS: moving/rotating axes, sensor offset, fixed target, TF tree keyboard selection, runtime and real Python inspector agreement';
+}catch(error){out.textContent='FAIL: '+error.message;}
+await fetch('/done',{method:'POST',body:out.textContent});
+</script></html>

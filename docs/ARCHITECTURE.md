@@ -35,3 +35,9 @@ Session catalogs and JSON lessons specify text/translations, starter code, check
 ## CLI and lifecycle
 
 An explicit parser supports the documented ROS subset; it is not a shell or full YAML parser. TerminalSession owns one foreground publisher, echo, measurement or action goal. Stop/Close/Reset dispose its resources. Measurements use simulated time; bw reports estimated payload bytes rather than DDS traffic. All text output is escaped through textContent and bounded.
+
+## Spatial transforms and disclosure
+
+The TF inspector, spatial axes and SVG hierarchy use src/ui/tf-model.js and the published edges from runtime/course.js. The shared lookup composes those edges, as Python Buffer does; there is no separate visual pose model. Spatial labels retain actual origins, including coincident camera/base and world/odom frames. Sensor offsets rotate with base_link. Numeric data attributes support browser assertions without exporting application runtime globals.
+
+Session 5 defaults to world/base_link/target; exercise 5.3 selects base_link/laser_link. Source and target selectors follow lookup_transform(target_frame, source_frame) semantics. The dashed vector always connects base_link to the target. Panel disclosure follows session focus; it does not remove graph endpoints or CLI capabilities.

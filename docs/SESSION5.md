@@ -7,3 +7,7 @@ Odometry uses valid planar quaternions and odom/base_link frame IDs. tf_transfor
 Buffer and TransformListener compose/invert the latest received planar transforms. lookup_transform(target_frame, source_frame, Time()) expresses the source origin in the target frame. The browser uses a simplified latest-only time model, no history/interpolation, and periodically republishes every edge on /tf; it does not model /tf_static durability. A real machine distinguishes static and dynamic transform broadcasters. report_transform and report_relative are formative teaching helpers.
 
 The controller calculates distance and heading from target coordinates in base_link. Speeds are clamped. The safety extension uses scan callback state and a brief bypass phase to avoid oscillating at a block edge. It is not a planner and is intentionally demonstrated in a world where it can succeed. No Nav2, SLAM or PID package is included.
+
+## Visual workstation
+
+The world displays selected 2D coordinate axes, labelled x/y. The transform inspector expresses a selected source in a target frame and reports translation, yaw, distance and bearing. The hierarchy is an SVG generated from the runtime edges; keyboard or pointer selection reveals a frame’s parent and local transform. Camera and unrelated diagnostics remain secondary. Only current planar transforms are represented.

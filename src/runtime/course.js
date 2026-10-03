@@ -14,11 +14,22 @@ export function transforms(r){
   const transform=(parent,child,x,y,yaw)=>({header:{stamp:r.stamp(),frame_id:parent},child_frame_id:child,transform:{translation:{x,y,z:0},rotation:{x:0,y:0,z:Math.sin(yaw/2),w:Math.cos(yaw/2)}}});
   return {transforms:[transform('world','odom',0,0,0),transform('odom','base_link',r.robot.x,r.robot.y,r.robot.yaw),transform('base_link','laser_link',.2,0,0),transform('base_link','camera_link',0,0,0),transform('world','target',...(r.targetFrame??[5,0]),0)]};
 }
+// Compose the same published edges used by Python's Buffer and the TF views.
 export function lookup(r,target,source){
-  const frames={odom:[0,0,0],base_link:[r.robot.x,r.robot.y,r.robot.yaw],laser_link:[r.robot.x+.2*Math.cos(r.robot.yaw),r.robot.y+.2*Math.sin(r.robot.yaw),r.robot.yaw],camera_link:[r.robot.x,r.robot.y,r.robot.yaw],world:[0,0,0],target:[...(r.targetFrame??[5,0]),0]};
-  if(!frames[target]||!frames[source])throw Error('Known frames: world, odom, base_link, laser_link, camera_link, target');
-  const [tx,ty,ta]=frames[target],[sx,sy,sa]=frames[source],dx=sx-tx,dy=sy-ty;
-  return {x:Math.cos(ta)*dx+Math.sin(ta)*dy,y:-Math.sin(ta)*dx+Math.cos(ta)*dy,yaw:sa-ta};
+  const edges=new Map(),known=new Set();
+  const add=(from,to,x,y,yaw)=>{if(!edges.has(from))edges.set(from,[]);edges.get(from).push({to,x,y,yaw});};
+  for(const edge of transforms(r).transforms){
+    const parent=edge.header.frame_id,child=edge.child_frame_id,p=edge.transform.translation,q=edge.transform.rotation,a=2*Math.atan2(q.z,q.w);
+    known.add(parent);known.add(child);add(child,parent,p.x,p.y,a);
+    add(parent,child,-Math.cos(a)*p.x-Math.sin(a)*p.y,Math.sin(a)*p.x-Math.cos(a)*p.y,-a);
+  }
+  if(!known.has(target)||!known.has(source))throw Error('Known frames: '+[...known].join(', '));
+  const queue=[{to:source,x:0,y:0,yaw:0}],seen=new Set();
+  while(queue.length){const current=queue.shift();if(current.to===target)return {x:current.x,y:current.y,yaw:current.yaw};
+    if(seen.has(current.to))continue;seen.add(current.to);
+    for(const edge of edges.get(current.to)??[])if(!seen.has(edge.to))queue.push({to:edge.to,x:edge.x+Math.cos(edge.yaw)*current.x-Math.sin(edge.yaw)*current.y,y:edge.y+Math.sin(edge.yaw)*current.x+Math.cos(edge.yaw)*current.y,yaw:edge.yaw+current.yaw});
+  }
+  throw Error('Frames are disconnected');
 }
 export function declareParameter(r,node,name,value){
   if(!r.nodes.has(node))throw Error('Unknown node: '+node);

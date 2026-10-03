@@ -1204,5 +1204,103 @@ export const UI = {
     "Ejecuta el detector Python antes de comprobar.",
     "Starte den Python-Detektor vor der Prüfung.",
     "Executa o detetor Python antes de verificar."
+  ],
+  "Camera": [
+    "Camera",
+    "Caméra",
+    "Cámara",
+    "Kamera",
+    "Câmara"
+  ],
+  "Frames": [
+    "Frames",
+    "Repères",
+    "Marcos",
+    "Koordinatensysteme",
+    "Referenciais"
+  ],
+  "Transform inspector": [
+    "Transformatie-inspector",
+    "Inspecteur de transformations",
+    "Inspector de transformaciones",
+    "Transformationsinspektor",
+    "Inspetor de transformações"
+  ],
+  "Target frame": [
+    "Doelframe",
+    "Repère cible",
+    "Marco destino",
+    "Zielkoordinatensystem",
+    "Referencial de destino"
+  ],
+  "Source frame": [
+    "Bronframe",
+    "Repère source",
+    "Marco origen",
+    "Quellkoordinatensystem",
+    "Referencial de origem"
+  ],
+  "Express the source frame in the target frame: lookup_transform(target_frame, source_frame, ...).": [
+    "Druk het bronframe uit in het doelframe: lookup_transform(target_frame, source_frame, ...).",
+    "Exprimez le repère source dans le repère cible : lookup_transform(target_frame, source_frame, ...).",
+    "Expresa el marco origen en el marco destino: lookup_transform(target_frame, source_frame, ...).",
+    "Drücke das Quellkoordinatensystem im Zielkoordinatensystem aus: lookup_transform(target_frame, source_frame, ...).",
+    "Expressa o referencial de origem no referencial de destino: lookup_transform(target_frame, source_frame, ...)."
+  ],
+  "Relative target vector": [
+    "Relatieve doelvector",
+    "Vecteur relatif vers la cible",
+    "Vector relativo al objetivo",
+    "Relativer Zielvektor",
+    "Vetor relativo ao alvo"
+  ],
+  "TF hierarchy": [
+    "TF-hiërarchie",
+    "Hiérarchie TF",
+    "Jerarquía TF",
+    "TF-Hierarchie",
+    "Hierarquia TF"
+  ],
+  "Selected frame": [
+    "Geselecteerd frame",
+    "Repère sélectionné",
+    "Marco seleccionado",
+    "Ausgewähltes Koordinatensystem",
+    "Referencial selecionado"
+  ],
+  "Frame": [
+    "Frame",
+    "Repère",
+    "Marco",
+    "Koordinatensystem",
+    "Referencial"
+  ],
+  "Parent": [
+    "Ouderframe",
+    "Parent",
+    "Padre",
+    "Übergeordnet",
+    "Pai"
+  ],
+  "distance": [
+    "afstand",
+    "distance",
+    "distancia",
+    "Abstand",
+    "distância"
+  ],
+  "bearing": [
+    "richting",
+    "direction",
+    "dirección",
+    "Richtung",
+    "direção"
+  ],
+  "Latest 2D transforms only. Real tf2 also supports 3D transforms and time history.": [
+    "Alleen de laatste 2D-transformaties. Echte tf2 ondersteunt ook 3D en tijdhistoriek.",
+    "Dernières transformations 2D uniquement. tf2 réel gère aussi la 3D et l’historique temporel.",
+    "Solo transformaciones 2D actuales. tf2 real también admite 3D e historial temporal.",
+    "Nur aktuelle 2D-Transformationen. Echtes tf2 unterstützt auch 3D und Zeitverläufe.",
+    "Apenas transformações 2D atuais. tf2 real também suporta 3D e histórico temporal."
   ]
 };

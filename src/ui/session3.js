@@ -1,3 +1,5 @@
+import { createTFView } from './tf-view.js';
+import { arrangeSession } from './workstation.js';
 import { SESSIONS } from './product.js';
 import { Runtime } from '../runtime/graph.js';
 import { PythonBridge } from '../python/bridge.js';
@@ -12,6 +14,7 @@ import { inspectPixels } from '../simulator/camera.js';
 const $=id=>document.getElementById(id),runtime=new Runtime();runtime.enableSession3();
 const session=Number(location.pathname.match(/session-0([2-6])/)?.[1]??3);
 let catalog=[],selection=0;
+let tfView;
 let lesson,hints=0,epoch=0,testing=false,last=0,accumulator=0,lastFrame=-1,lastDetection=null;
 const drafts=new Map();
 const output=text=>{const pre=$('python-output');pre.textContent=(pre.textContent+text+'\n').slice(-24000);pre.scrollTop=pre.scrollHeight;};
@@ -21,7 +24,7 @@ async function json(name){const response=await fetch(new URL('../../public/lesso
 function reset(){
   epoch++;testing=false;python.stop();terminals.reset();runtime.reset();runtime.robot.x=lesson.startX??0;runtime.robot.y=lesson.startY??0;runtime.robot.yaw=lesson.startYaw??0;
   runtime.world=lesson.world??(session===2?structuredClone(TRAINING_WORLD):null);runtime.targets=lesson.targets;runtime.targetFrame=lesson.goal??[5,0];
-  hints=0;lastDetection=null;lastFrame=-1;last=0;accumulator=0;$('hints').replaceChildren();$('hint').textContent='Reveal next hint';$('hint').disabled=false;$('feedback').hidden=true;$('check').disabled=false;$('python-output').textContent='';$('detection').textContent='No student detection reported';$('status').textContent='Ready. Complete the TODOs and Run Python.';runtime.cameraFrame();
+  hints=0;lastDetection=null;lastFrame=-1;last=0;accumulator=0;$('hints').replaceChildren();$('hint').textContent='Reveal next hint';$('hint').disabled=false;$('feedback').hidden=true;$('check').disabled=false;$('python-output').textContent='';$('detection').textContent='No student detection reported';$('status').textContent='Ready. Complete the TODOs and Run Python.';runtime.cameraFrame();tfView?.setLesson(lesson);
 }
 async function selectLesson(id){
   const request=++selection;
@@ -87,14 +90,14 @@ function draw(){
     if($('overlay').checked&&lastDetection?.visible&&Number.isFinite(lastDetection.cx)&&runtime.frameId-lastDetection.frame<4){context.strokeStyle='#ffffff';context.beginPath();context.moveTo(lastDetection.cx-8,120);context.lineTo(lastDetection.cx+8,120);context.moveTo(lastDetection.cx,112);context.lineTo(lastDetection.cx,128);context.stroke();}
     $('camera-stats').textContent='RGB channel means: '+inspectPixels(image).means.map((v,i)=>'RGB'[i]+': '+v.toFixed(1)).join(' · ');
     const r=runtime.robot,ctx=$('map').getContext('2d'),world=runtime.world,bounds=world?.bounds??{minX:-2,maxX:8,minY:-4,maxY:4};
-    const scale=Math.min(440/(bounds.maxX-bounds.minX),180/(bounds.maxY-bounds.minY)),ox=(480-scale*(bounds.maxX-bounds.minX))/2,oy=(200-scale*(bounds.maxY-bounds.minY))/2;
-    const sx=x=>ox+(x-bounds.minX)*scale,sy=y=>200-oy-(y-bounds.minY)*scale;
-    ctx.fillStyle='#0b1b25';ctx.fillRect(0,0,480,200);ctx.strokeStyle='#517381';ctx.strokeRect(ox,oy,scale*(bounds.maxX-bounds.minX),scale*(bounds.maxY-bounds.minY));
+    const width=$('map').width,height=$('map').height,scale=Math.min((width-60)/(bounds.maxX-bounds.minX),(height-60)/(bounds.maxY-bounds.minY)),ox=(width-scale*(bounds.maxX-bounds.minX))/2,oy=(height-scale*(bounds.maxY-bounds.minY))/2;
+    const sx=x=>ox+(x-bounds.minX)*scale,sy=y=>height-oy-(y-bounds.minY)*scale;
+    ctx.fillStyle='#0b1b25';ctx.fillRect(0,0,width,height);ctx.strokeStyle='#517381';ctx.strokeRect(ox,oy,scale*(bounds.maxX-bounds.minX),scale*(bounds.maxY-bounds.minY));
     for(const o of world?.obstacles??[]){ctx.fillStyle='#899aa8';ctx.fillRect(sx(o.x),sy(o.y+o.h),o.w*scale,o.h*scale);}
     if($('show-rays').checked){const scan=runtime.scan();ctx.strokeStyle='#3b7969';ctx.beginPath();scan.ranges.forEach((d,i)=>{if(!Number.isFinite(d))return;const angle=r.yaw+scan.angle_min+i*scan.angle_increment,x=r.x+.2*Math.cos(r.yaw),y=r.y+.2*Math.sin(r.yaw);ctx.moveTo(sx(x),sy(y));ctx.lineTo(sx(x+d*Math.cos(angle)),sy(y+d*Math.sin(angle)));});ctx.stroke();}
     for(const t of runtime.targets??[{x:5,y:0,color:[235,45,45]},{x:6,y:-2,color:[40,85,230]}]){ctx.fillStyle='rgb('+(t.color??[235,45,45]).join(',')+')';ctx.fillRect(sx(t.x)-6,sy(t.y)-6,12,12);}
     if(lesson.goal){ctx.strokeStyle='#ffe490';ctx.beginPath();ctx.arc(sx(lesson.goal[0]),sy(lesson.goal[1]),8,0,Math.PI*2);ctx.stroke();}
-    ctx.save();ctx.translate(sx(r.x),sy(r.y));ctx.rotate(-r.yaw);ctx.fillStyle='#57ddbc';ctx.beginPath();ctx.moveTo(10,0);ctx.lineTo(-7,-6);ctx.lineTo(-7,6);ctx.closePath();ctx.fill();ctx.restore();
+    ctx.save();ctx.translate(sx(r.x),sy(r.y));ctx.rotate(-r.yaw);ctx.fillStyle='#57ddbc';ctx.beginPath();ctx.moveTo(10,0);ctx.lineTo(-7,-6);ctx.lineTo(-7,6);ctx.closePath();ctx.fill();ctx.restore();tfView?.draw({sx,sy,scale,width,height});
     $('tf-tree').textContent=transforms(runtime).transforms.map(t=>t.header.frame_id+' → '+t.child_frame_id).join('\n');
     $('parameters').textContent=[...runtime.parameters].map(([node,params])=>node+'\n'+[...params].map(([k,v])=>'  '+k+': '+v).join('\n')).join('\n')||'(no declared parameters)';
     $('action-progress').textContent=[...runtime.goals.values()].slice(-3).map(g=>'Goal '+g.id+' · '+({2:'executing',4:'succeeded',5:'cancelled',6:'aborted'}[g.status])+' · '+(g.result?.result.final_distance??(r.distance-g.start)).toFixed(2)+' / '+g.distance+' m').join('\n')||'(no goals)';
@@ -104,7 +107,7 @@ function draw(){
 }
 function frame(now){if(last)accumulator+=Math.min((now-last)/1000,.1);last=now;while(accumulator>=1/60){if(testing)runtime.robot.command(0,0);runtime.step(1/60);if(session!==3)observeCourse(runtime,lesson);accumulator-=1/60;}draw();requestAnimationFrame(frame);}
 document.addEventListener('visibilitychange',()=>{last=0;accumulator=0;});
-setupPreferences();
+setupPreferences();arrangeSession(session);tfView=createTFView(runtime,session);
 const names=Object.fromEntries(SESSIONS.map((name,i)=>[i+1,name]));
 document.querySelector('.intro .eyebrow').textContent='Python · 90 min';
 $('session-title').textContent=names[session];$('session-tag').textContent='SESSION 0'+session;

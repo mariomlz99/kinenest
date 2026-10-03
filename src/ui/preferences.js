@@ -7,13 +7,13 @@ export const language=()=>lang;
 export function translate(text){
   const prefix=text.match(/^[✓○] /)?.[0]??'';
   if(prefix)return prefix+translate(text.slice(prefix.length));
+  const key=originals.get(text);
+  if(key){const value=strings[key][LANGUAGES.indexOf(lang)-1];return lang==='en'||typeof value!=='string'?key:value;}
   for(const key of ['Session','Exercise','Distance travelled:','Reveal next hint']){
     if(text.startsWith(key+' '))return translate(key)+text.slice(key.length);
+    if(lang!=='en'&&text.startsWith(key.toUpperCase()+' '))return translate(key)+text.slice(key.length);
   }
-  const key=originals.get(text);
-  if(!key)return text;
-  const value=strings[key][LANGUAGES.indexOf(lang)-1];
-  return lang==='en'||typeof value!=='string'?key:value;
+  return text;
 }
 export function setupPreferences(){
   if(document.getElementById('preferences'))return;
