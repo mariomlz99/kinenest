@@ -38,3 +38,5 @@ Global Python execution is real Pyodide/NumPy. Stop terminates workers, clears e
 Diagnostics preserve actual Python errors. Common errors in the table should be investigated with graph, output, sensor and TF panels. The course intentionally does not teach native DDS/QoS/build machinery. No full-source pattern grading should be added.
 
 Alternate coverage: existing NumPy sectors and class/cv2 centroid; added early-turn1.8m reference variation passes both. More class/function/timer alternatives per exercise remain future test work. This audit does not claim exhaustive solution-space validation.
+
+Final added evidence: a class-based5.5controller uses the reverse TF lookup and explicitly inverts translation/rotation. It passes both browsers with different gains and stop tolerance. Shipped wrong-topic6.1 and wrong-frame6.2 starters fail in both; corrected references pass. See control-alternates evidence and tests/python/course/alternative-goal-inverse.py.

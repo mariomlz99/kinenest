@@ -1,0 +1,254 @@
+
+RUN scripts/check-course.mjs chrome --built
+
+Course acceptance: chrome / diagnostics
+Testing chrome at http://127.0.0.1:43105/ros2learn/tests/diagnostics.html
+Loaded /ros2learn/tests/diagnostics.html
+Loaded /ros2learn/session-02.html
+PASS: real Python syntax, message type, non-finite velocity, parameter, TF and service errors; drafts retained and corrected Run recovered
+
+Course acceptance: chrome / responsive
+Testing chrome at http://127.0.0.1:40823/ros2learn/tests/responsive.html
+Loaded /ros2learn/tests/responsive.html
+Loaded /ros2learn/index.html
+Loaded /ros2learn/session-02.html
+Loaded /ros2learn/session-03.html
+Loaded /ros2learn/session-04.html
+Loaded /ros2learn/session-05.html
+Loaded /ros2learn/session-06.html
+Loaded /ros2learn/about.html
+Loaded /ros2learn/licences.html
+Loaded /ros2learn/real-ros.html
+Loaded /ros2learn/session-02.html
+PASS: nine public pages at13widths, seven-language phone Compare, preserved drafts, readable editable text and help, touch targets, no overflow
+
+Course acceptance: chrome / footer
+Testing chrome at http://127.0.0.1:34827/ros2learn/tests/footer.html
+Loaded /ros2learn/tests/footer.html
+Loaded /ros2learn/index.html
+Loaded /ros2learn/session-02.html
+Loaded /ros2learn/session-03.html
+Loaded /ros2learn/session-04.html
+Loaded /ros2learn/session-05.html
+Loaded /ros2learn/session-06.html
+Loaded /ros2learn/about.html
+Loaded /ros2learn/licences.html
+Loaded /ros2learn/real-ros.html
+PASS: exact attribution and links on all nine public pages, preserved in translated UI, About build identity
+
+Course acceptance: chrome / brand-theme
+Testing chrome at http://127.0.0.1:42721/ros2learn/tests/brand-theme.html
+Loaded /ros2learn/tests/brand-theme.html
+Loaded /ros2learn/about.html
+PASS: explicit theme switches logo immediately, transparent background, preserved red/green axes, readable wordmark, final tagline and responsive About
+
+Course acceptance: chrome / theme-browser
+Testing chrome at http://127.0.0.1:45469/ros2learn/tests/theme-browser.html
+Loaded /ros2learn/tests/theme-browser.html
+Loaded /ros2learn/index.html
+Loaded /ros2learn/index.html
+Loaded /ros2learn/session-02.html
+Loaded /ros2learn/session-03.html
+Loaded /ros2learn/session-04.html
+Loaded /ros2learn/session-05.html
+Loaded /ros2learn/session-06.html
+PASS: white SVG/Canvas worlds in all six sessions, readable grids/TF, unchanged camera pixels and drafts, continuous robot motion, dark restore and persisted theme
+
+Course acceptance: chrome / transitions
+Testing chrome at http://127.0.0.1:40179/ros2learn/tests/transitions.html
+Loaded /ros2learn/tests/transitions.html
+Loaded /ros2learn/session-02.html
+Loaded /ros2learn/session-03.html
+Loaded /ros2learn/session-05.html
+PASS: one-second intercepted navigation, recognizable variants, duplicate prevention, reduced motion, skipped links, failure recovery, loaders and Back/Forward cleanup
+
+Course acceptance: chrome / compare
+Testing chrome at http://127.0.0.1:36745/ros2learn/tests/compare.html
+Loaded /ros2learn/tests/compare.html
+Loaded /ros2learn/session-02.html
+Loaded /ros2learn/session-02.html
+PASS: independent drafts, Compare, UI language, exercise fallback, preference and public supported modes
+
+Course acceptance: chrome / tf-browser
+Testing chrome at http://127.0.0.1:45053/ros2learn/tests/tf-browser.html
+Loaded /ros2learn/tests/tf-browser.html
+Loaded /ros2learn/session-05.html
+PASS: moving/rotating axes, sensor offset, fixed target, TF tree keyboard selection, runtime and real Python inspector agreement
+
+Course acceptance: chrome / localization
+Testing chrome at http://127.0.0.1:43847/ros2learn/tests/localization.html
+Loaded /ros2learn/tests/localization.html
+Loaded /ros2learn/session-05.html
+Loaded /ros2learn/index.html
+Loaded /ros2learn/session-03.html
+Loaded /ros2learn/session-05.html
+Loaded /ros2learn/session-06.html
+Loaded /ros2learn/real-ros.html
+Loaded /ros2learn/about.html
+PASS: seven languages, live Python/robot preservation, theme/layout, navigation and transition page
+
+Course acceptance: chrome / lesson-loading
+Testing chrome at http://127.0.0.1:38987/ros2learn/tests/lesson-loading.html
+Loaded /ros2learn/tests/lesson-loading.html
+Loaded /ros2learn/session-05.html
+PASS: delayed initial load, same-lesson reload, disabled Run, preserved draft and latest selection
+
+Course acceptance: chrome / browser
+Testing chrome at http://127.0.0.1:34855/ros2learn/tests/browser.html
+Loaded /ros2learn/tests/browser.html
+PASS: original lab and multiple terminals, live odometry/Twist, Ctrl+C, stop, close, reset
+
+Course acceptance: chrome / session2
+Testing chrome at http://127.0.0.1:40107/ros2learn/tests/session2.html
+Loaded /ros2learn/tests/session2.html
+Loaded /ros2learn/session-02.html
+PASS session-02-01-subscriber
+PASS session-02-02-callbacks
+PASS session-02-03-sectors
+PASS session-02-04-avoidance
+PASS alternate NumPy sector implementation
+PASS: course solutions, empty-program negative checks, theme and layout
+
+Course acceptance: chrome / session3
+Testing chrome at http://127.0.0.1:35497/ros2learn/tests/session3.html
+Loaded /ros2learn/tests/session3.html
+Loaded /ros2learn/session-03.html
+Harness started
+PASS exercise 1
+PASS exercise 2
+PASS exercise 3
+PASS exercise 4
+PASS exercise 5
+PASS exercise 6
+PASS: all six real-Pyodide exercises, alternative cv2 solution, hard-coded negative control, stop and reset
+
+Course acceptance: chrome / session4
+Testing chrome at http://127.0.0.1:33171/ros2learn/tests/session4.html
+Loaded /ros2learn/tests/session4.html
+Loaded /ros2learn/session-04.html
+PASS session-04-01-configure
+PASS session-04-02-tuning
+PASS session-04-03-custom
+PASS session-04-04-goal
+PASS session-04-05-feedback
+PASS session-04-06-cancel
+PASS: course solutions, empty-program negative checks, theme and layout
+
+Course acceptance: chrome / session5
+Testing chrome at http://127.0.0.1:37911/ros2learn/tests/session5.html
+Loaded /ros2learn/tests/session5.html
+Loaded /ros2learn/session-05.html
+PASS session-05-01-odometry
+PASS session-05-02-heading
+PASS session-05-03-frames
+PASS session-05-04-relative
+PASS session-05-05-goal
+PASS session-05-06-safety
+PASS: course solutions, empty-program negative checks, theme and layout
+
+Course acceptance: chrome / session6
+Testing chrome at http://127.0.0.1:42231/ros2learn/tests/session6.html
+Loaded /ros2learn/tests/session6.html
+Loaded /ros2learn/session-06.html
+PASS session-06-01-topic-debug
+PASS session-06-02-frame-debug
+PASS session-06-03-beacon
+PASS: course solutions, empty-program negative checks, theme and layout
+
+Course acceptance: chrome / string-type
+Testing chrome at http://127.0.0.1:44731/ros2learn/tests/string-type.html
+Loaded /ros2learn/tests/string-type.html
+Loaded /ros2learn/session-02.html
+PASS: String payload Infinity remains a Python string
+
+RUN scripts/check-cpp.mjs chrome --built
+Testing chrome at http://127.0.0.1:38357/ros2learn/tests/cpp-probe.html
+Loaded /ros2learn/tests/cpp-probe.html
+Loaded /ros2learn/session-02.html
+Loading C++ toolchain…
+Compiling C++…
+Linking WebAssembly…
+PASS: real browser C++ hello-world {"downloadBytes":60347928,"cacheBytes":0,"loadMs":4760.5,"compileMs":810.6999999880791,"linkMs":48.30000001192093,"peakLinearMemoryBytes":33685504,"moduleBytes":1314664,"programMemoryBytes":1114112,"filesystemMemoryBytes":10747904}
+Testing chrome at http://127.0.0.1:46471/ros2learn/tests/cpp-runtime.html
+Loaded /ros2learn/tests/cpp-runtime.html
+Loaded /ros2learn/session-02.html
+PASS compiled callback, graph and robot motion {"downloadBytes":60347928,"cacheBytes":0,"loadMs":1767.2000000029802,"compileMs":1618.5,"linkMs":39.900000005960464,"peakLinearMemoryBytes":49020928,"moduleBytes":321911,"programMemoryBytes":1114112,"filesystemMemoryBytes":9830400}
+PASS C++ class controller, timer and obstacle checker {"downloadBytes":0,"cacheBytes":60347928,"loadMs":114.5,"compileMs":1785.2000000029802,"linkMs":29.5,"peakLinearMemoryBytes":52101120,"moduleBytes":328991,"programMemoryBytes":1114112,"filesystemMemoryBytes":9830400}
+PASS compile error keeps source location
+PASS: real C++ callbacks, publisher, timer, avoidance checker, warm cache, compiler error, runaway Stop and Reset
+Testing chrome at http://127.0.0.1:38123/ros2learn/tests/cpp-ui.html
+Loaded /ros2learn/tests/cpp-ui.html
+Loaded /ros2learn/session-02.html
+PASS public C++ exercise 2.1
+PASS public C++ exercise 2.4
+PASS: ordinary URLs compile/run C++ exercises 2.1 and 2.4, shared checkers, Compare drafts, language/theme/layout, Reset and unsupported fallback
+
+RUN docs/review/tools/checker-probes.mjs chrome --expect-hardened
+{
+  "browser": "chrome",
+  "results": [
+    {
+      "id": "session-04-01-configure",
+      "status": "Not complete yet. Review the checks, output and hints.",
+      "output": "Loading numpy\nLoaded numpy\n",
+      "graph": "/drive_distance_server → /cmd_vel → /simulator\n/simulator → /odom → (no subscribers)\n/simulator → /scan → (no subscribers)\n/simulator → /tf → (no subscribers)\n/simulator → /camera/image_raw → (no subscribers)\n/student_controller → /review_noise → (no subscribers)\n\n(no client) ⇄ /reset_robot ⇄ /reset_server"
+    },
+    {
+      "id": "session-04-03-custom",
+      "status": "Not complete yet. Review the checks, output and hints.",
+      "output": "Loading numpy\nLoaded numpy\n",
+      "graph": "/drive_distance_server → /cmd_vel → /simulator\n/simulator → /odom → (no subscribers)\n/simulator → /scan → (no subscribers)\n/simulator → /tf → (no subscribers)\n/simulator → /camera/image_raw → (no subscribers)\n/student_controller → /review_wrong_target_topic → (no subscribers)\n\n(no client) ⇄ /reset_robot ⇄ /reset_server"
+    },
+    {
+      "id": "session-02-04-avoidance",
+      "status": "Exercise complete. Your code passed the behavioural checks.",
+      "output": "Loading numpy\nLoaded numpy\n",
+      "graph": "/drive_distance_server, /student_controller → /cmd_vel → /simulator\n/simulator → /odom → (no subscribers)\n/simulator → /scan → /student_controller\n/simulator → /tf → (no subscribers)\n/simulator → /camera/image_raw → (no subscribers)\n\n(no client) ⇄ /reset_robot ⇄ /reset_server"
+    },
+    {
+      "id": "session-06-03-beacon",
+      "status": "Not complete yet. Review the checks, output and hints.",
+      "output": "Loading numpy\nLoaded numpy\n",
+      "graph": "/drive_distance_server, /student_controller → /cmd_vel → /simulator\n/simulator → /odom → /student_controller\n/simulator → /scan → (no subscribers)\n/simulator → /tf → (no subscribers)\n/simulator → /camera/image_raw → /student_controller\n\n(no client) ⇄ /reset_robot ⇄ /reset_server"
+    }
+  ]
+}
+
+RUN docs/review/tools/mobile-actions.mjs chrome
+{
+  "browser": "chrome",
+  "viewport": [
+    390,
+    844
+  ],
+  "results": [
+    "Python page fetched no compiler",
+    "390px real C++ callback and checker pass",
+    "Stop remains operable",
+    "Compare stacks at390px",
+    "German controls cause no page overflow at390px",
+    "Theme and UI language preserve both drafts",
+    "Unsupported lesson hides C++",
+    "Returning restores C++ draft",
+    "Reset during C++ preparation leaves no endpoints",
+    "Python still runs after mobile C++ Reset"
+  ],
+  "rect": {
+    "a": {
+      "x": 37,
+      "y": 1211.9375,
+      "w": 301,
+      "h": 390
+    },
+    "c": {
+      "x": 37,
+      "y": 1645.9375,
+      "w": 301,
+      "h": 390
+    },
+    "overflow": false,
+    "python": "# mobile draft",
+    "cpp": "#include <rclcpp/rclcpp.hpp>\n#include <sensor_msgs/msg/laser_scan.hpp>\nint main() {\n  rclcpp::init();\n  auto node = std::make_shared<rclcpp::Node>(\"scan_reader\");\n  auto sub = node->create_subscription<sensor_msgs::msg::LaserScan>(\n    \"/scan\", 10, [node](sensor_msgs::msg::LaserScan::SharedPtr scan) {\n      RCLCPP_INFO(node->get_logger(), \"beams %zu front %.2f\", scan->ranges.size(), scan->ranges.at(scan->ranges.size()/2));\n    });\n  rclcpp::spin(node);\n}\n"
+  }
+}
+FINAL PASS

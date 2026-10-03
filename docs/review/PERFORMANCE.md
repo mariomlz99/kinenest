@@ -63,3 +63,5 @@ Both browsers executed a 1,000-line Python output burst. The output stayed at 24
 ## Boundaries
 
 Logs are bounded in UI and worker output is rate-limited. Latest-sample mailboxes prevent sensor backlog. Baseline tests exercise these mechanisms, but a successful desktop test does not establish low-memory iOS behavior. Compiler cache persistence is a browser policy, not a guarantee.
+
+Final implementation keeps compiler loading lazy and adds a seven-language inline first-run notice (~60 MB, cache when available). Final C++ acceptance repeats cold/warm measurements in evidence/final-chrome.log and final-firefox.log. Concurrent browser validation timings are observations, not a controlled speed comparison. No toolchain or sensor-rate change was made.

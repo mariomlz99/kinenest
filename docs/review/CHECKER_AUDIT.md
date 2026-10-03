@@ -26,3 +26,5 @@ These fixes establish endpoint/data-access contracts. They cannot prove causalit
 ## Coverage limits
 
 Reference, empty/reset and print-only negatives are not exhaustive faults. Wrong types, non-finite C++ JSON serialization, every wrong-frame variant, CDN interruption, huge pasted source and all timing races remain targeted follow-ups. Shared lifecycle tests cover infinite loops, repeated execution, stale cleanup and bounded output; do not multiply these claims into independent tests for every exercise.
+
+Final hardening: all three reproduced bypass programs now fail in Chrome and Firefox; the early1.8m obstacle alternate still passes. The reverse-lookup TF controller passes, and the two shipped debugging faults fail. New unit tests exercise endpoint/sensor contracts and Reset evidence; real-browser probes establish the end-to-end result.

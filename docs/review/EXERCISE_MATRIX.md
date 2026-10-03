@@ -2,7 +2,7 @@
 
 Frozen source: `8679ae1`. 26 exercises: one CLI lab in Session 1 and 25 Python exercises. Public executable C++ covers 2.1 and 2.4. All reference paths passed built-site Chrome and Firefox in the baseline rerun. This table records baseline coverage, not a claim that every adversarial variant has been executed.
 
-Checks are runtime evidence predicates, not source matching. `Empty` means Check on a fresh/reset exercise, not a comprehensive negative-program suite. Session 3 lacks uniform empty-program checks in its current harness. Mobile risk refers to editing/observation demands; no real phone has been tested.
+Checks are runtime evidence predicates, not source matching. `Empty` means Check on a fresh/reset exercise, not a comprehensive negative-program suite. Session 3 lacks uniform empty-program checks in its current harness. Mobile risk refers to editing/observation demands; no real phone has been tested. During this audit, all25Python exercises additionally rejected a real print-only program and Reset recovered in both browsers; the row negatives below describe the original baseline harness, not that added coverage.
 
 | Session | Exercise ID | Title / concept | Python | C++ | Checker | Sensors | Services / actions / TF | Alternate present | Negative control | Reference | Browser tested | Mobile risk / notes |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|

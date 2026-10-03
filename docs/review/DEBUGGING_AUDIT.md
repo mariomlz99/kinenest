@@ -23,3 +23,5 @@ Area: parameters; Session4; exercise4.1/4.2; languagePython; severitymedium; cat
 ## Additional executed finding DBG-05
 
 Area: publication diagnostics; sessions2–6; languagePython; severitymedium; categorybrowser/diagnostics; priorityP2; confidencehigh; implementationyes. Real Firefox publishes Twist.linear.x=NaN: JSON.parse fails before runtime validation, omitting the invalid field. Chrome emits a different parser message. Add finite-vector validation at the Python publisher boundary; retain host validation for all adapters. Test NaN/infinity plus correction. Risklow: only values already rejected by the runtime change diagnostic. Initial final-suite attempt stopped for this repair; no failed attempt is reported as a pass.
+
+Final executed coverage: Chrome and Firefox now test seven real Python fault inputs (syntax, wrong message type, NaN velocity, infinite velocity, missing parameter, unknown TF frame and unsupported service), preserved source, cleanup and corrected Run recovery. Shipped6.1/6.2fault programs are also rejected in both. This supersedes the corresponding unexecuted entries above, not the remaining network/cache/timing gaps.

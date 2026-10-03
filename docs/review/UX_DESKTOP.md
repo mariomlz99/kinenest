@@ -16,3 +16,5 @@ Compare retains both student drafts, clearly marks language controls, and uses o
 Editor recommendation: retain textarea this pass. CodeMirror is the smaller future candidate for syntax/line diagnostics, but must justify bytes, keyboard and mobile behavior. Monaco is not justified by current evidence. No framework/editor migration.
 
 Do not solve phone scrolling by hiding desktop causal context. A lecturer needs code, sensor and graph visible together; novices in Session 2 do not need every Session 6 tool open.
+
+Additional final visual finding LOC-01: the initial status “Python not loaded” remains English in German/Italian screenshots. Area shared execution status; all Python sessions; severitylow/categorycopy/priorityP2; confidencehigh; reproduction selectDE/IT before Run; impact incomplete UI localization; suggested change add the missing shared translation key and browser assertion; risklow; implementationdeferred. Seven-language key tests validate their declared key list, not every possible dynamic text node. Technical code/CLI stays English deliberately.

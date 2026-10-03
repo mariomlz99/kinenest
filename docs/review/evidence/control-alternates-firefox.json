@@ -1,0 +1,20 @@
+{
+  "browser": "firefox",
+  "results": [
+    {
+      "id": "session-05-05-goal",
+      "positive": true,
+      "status": "Exercise complete. Your code passed the behavioural checks."
+    },
+    {
+      "id": "session-06-01-topic-debug",
+      "positive": false,
+      "status": "Not complete yet. Review the checks, output and hints."
+    },
+    {
+      "id": "session-06-02-frame-debug",
+      "positive": false,
+      "status": "Not complete yet. Review the checks, output and hints."
+    }
+  ]
+}
