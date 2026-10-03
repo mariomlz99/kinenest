@@ -2,31 +2,55 @@
   {
     "id": "session-03-01-camera-subscriber",
     "title": "Your robot can see",
-    "number": "3.1"
+    "number": "3.1",
+    "translations": {
+      "nl": "Je robot kan zien",
+      "fr": "Votre robot peut voir"
+    }
   },
   {
     "id": "session-03-02-image-data",
     "title": "Images are data",
-    "number": "3.2"
+    "number": "3.2",
+    "translations": {
+      "nl": "Beelden zijn data",
+      "fr": "Les images sont des données"
+    }
   },
   {
     "id": "session-03-03-color-detection",
     "title": "Simple vision",
-    "number": "3.3"
+    "number": "3.3",
+    "translations": {
+      "nl": "Detecteer een rood object",
+      "fr": "Détecter un objet rouge"
+    }
   },
   {
     "id": "session-03-04-object-position",
     "title": "Left, center, or right?",
-    "number": "3.4"
+    "number": "3.4",
+    "translations": {
+      "nl": "Links, midden of rechts?",
+      "fr": "À gauche, au centre ou à droite ?"
+    }
   },
   {
     "id": "session-03-05-services",
     "title": "Ask another node to do something",
-    "number": "3.5"
+    "number": "3.5",
+    "translations": {
+      "nl": "Vraag een andere node iets te doen",
+      "fr": "Demander une opération à un autre nœud"
+    }
   },
   {
     "id": "session-03-06-target-challenge",
     "title": "Find the target",
-    "number": "3.6"
+    "number": "3.6",
+    "translations": {
+      "nl": "Vind het doel",
+      "fr": "Trouver la cible"
+    }
   }
 ]

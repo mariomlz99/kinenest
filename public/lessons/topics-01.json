@@ -26,5 +26,37 @@
       "type": "robot_moved",
       "distance": 1
     }
-  ]
+  ],
+  "translations": {
+    "nl": {
+      "title": "Ontdek het besturingstopic",
+      "description": "Ontdek welk topic de robot bestuurt. Publiceer een Twist en laat de robot minstens één meter rijden.",
+      "steps": [
+        "Bekijk de nodes met ros2 node list.",
+        "Bekijk topics, ontdek /cmd_vel en inspecteer het berichttype.",
+        "Publiceer een Twist met linear.x = 0.6, observeer de beweging en controleer de oplossing."
+      ],
+      "hints": [
+        "Welke opdracht toont alle topics?",
+        "Gebruik ros2 topic list en ros2 topic type /cmd_vel.",
+        "Bekijk de structuur met ros2 interface show geometry_msgs/msg/Twist.",
+        "Probeer ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0.6}}\"."
+      ]
+    },
+    "fr": {
+      "title": "Découvrir le topic de commande",
+      "description": "Trouvez le topic qui commande le robot. Publiez un Twist pour lui faire parcourir au moins un mètre.",
+      "steps": [
+        "Listez les nœuds avec ros2 node list.",
+        "Listez les topics, trouvez /cmd_vel et inspectez son type.",
+        "Publiez un Twist avec linear.x = 0.6, observez le mouvement puis vérifiez."
+      ],
+      "hints": [
+        "Quelle commande liste les topics ?",
+        "Utilisez ros2 topic list et ros2 topic type /cmd_vel.",
+        "Inspectez la structure avec ros2 interface show geometry_msgs/msg/Twist.",
+        "Essayez ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0.6}}\"."
+      ]
+    }
+  }
 }

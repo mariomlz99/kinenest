@@ -31,5 +31,35 @@
   "starterCode": "import rclpy\nimport numpy as np\nfrom rclpy.node import Node\nfrom sensor_msgs.msg import Image\nfrom cv_bridge import CvBridge\nfrom geometry_msgs.msg import Twist\nfrom ros2learn import report_detection, report_image_stats\n\nclass CameraReader(Node):\n    def __init__(self):\n        super().__init__('camera_reader')\n        self.publisher = self.create_publisher(Twist, '/cmd_vel', 10)\n        self.bridge = CvBridge()\n        self.subscription = self.create_subscription(\n            Image, '/camera/image_raw', self.image_callback, 10)\n\n    def image_callback(self, msg):\n        image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='rgb8')\n        # TODO: find the red target's centroid using the pixels.\n        # Positive angular.z turns left; negative turns right.\n        # Stop when the target is close to x = 160.\n        # Publish a Twist each callback and report_detection(visible, cx).\n        pass\n\nrclpy.init()\nnode = CameraReader()\nrclpy.spin(node)\n",
   "testScenes": false,
   "startYaw": -1.1,
-  "startX": 0
+  "startX": 0,
+  "translations": {
+    "nl": {
+      "title": "Vind het doel",
+      "description": "Draai de robot met beeldfeedback tot het rode doel in het midden staat en stop.",
+      "steps": [
+        "Ontvang camerabeelden en detecteer de rode pixels.",
+        "Bereken cx en publiceer angular.z op /cmd_vel.",
+        "Draai links voor een doel links, rechts voor een doel rechts en stop in het midden."
+      ],
+      "hints": [
+        "Positieve angular.z draait links.",
+        "Gebruik het verschil 160 − cx als stuurfout.",
+        "Beperk de snelheid en gebruik een kleine dode zone rond het midden."
+      ]
+    },
+    "fr": {
+      "title": "Trouver la cible",
+      "description": "Faites tourner le robot à partir des images jusqu’à centrer la cible rouge, puis arrêtez-le.",
+      "steps": [
+        "Recevez les images et détectez les pixels rouges.",
+        "Calculez cx et publiez angular.z sur /cmd_vel.",
+        "Tournez à gauche pour une cible à gauche, à droite pour une cible à droite et arrêtez au centre."
+      ],
+      "hints": [
+        "Une angular.z positive tourne à gauche.",
+        "Utilisez 160 − cx comme erreur de direction.",
+        "Limitez la vitesse et prévoyez une petite zone d’arrêt au centre."
+      ]
+    }
+  }
 }

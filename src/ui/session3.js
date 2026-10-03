@@ -2,9 +2,15 @@ import { Runtime } from '../runtime/graph.js';
 import { PythonBridge } from '../python/bridge.js';
 import { createTerminals } from './terminals.js';
 import { sessionChecks } from '../exercises/perception.js';
+import { courseChecks, observeCourse } from '../exercises/course.js';
+import { transforms } from '../runtime/course.js';
+import { TRAINING_WORLD } from '../simulator/lidar.js';
+import { setupPreferences, translate, language } from './preferences.js';
 import { inspectPixels } from '../simulator/camera.js';
 
 const $=id=>document.getElementById(id),runtime=new Runtime();runtime.enableSession3();
+const session=Number(location.pathname.match(/session-0([2-6])/)?.[1]??3);
+let catalog=[],selection=0;
 let lesson,hints=0,epoch=0,testing=false,last=0,accumulator=0,lastFrame=-1,lastDetection=null;
 const drafts=new Map();
 const output=text=>{const pre=$('python-output');pre.textContent=(pre.textContent+text+'\n').slice(-24000);pre.scrollTop=pre.scrollHeight;};
@@ -12,18 +18,26 @@ const python=new PythonBridge(runtime,{output,status:text=>{$('python-state').te
 const terminals=createTerminals(runtime,error=>{if(error)$('status').textContent='Review the terminal error.';});
 async function json(name){const response=await fetch(new URL('../../public/lessons/'+name,import.meta.url),{signal:AbortSignal.timeout(15000)});if(!response.ok)throw new Error('Lesson HTTP '+response.status);return response.json();}
 function reset(){
-  epoch++;testing=false;python.stop();terminals.reset();runtime.reset();runtime.robot.x=lesson.startX;runtime.robot.yaw=lesson.startYaw;
+  epoch++;testing=false;python.stop();terminals.reset();runtime.reset();runtime.robot.x=lesson.startX??0;runtime.robot.y=lesson.startY??0;runtime.robot.yaw=lesson.startYaw??0;
+  runtime.world=lesson.world??(session===2?structuredClone(TRAINING_WORLD):null);runtime.targets=lesson.targets;runtime.targetFrame=lesson.goal??[5,0];
   hints=0;lastDetection=null;lastFrame=-1;last=0;accumulator=0;$('hints').replaceChildren();$('hint').textContent='Reveal next hint';$('hint').disabled=false;$('feedback').hidden=true;$('check').disabled=false;$('python-output').textContent='';$('detection').textContent='No student detection reported';$('status').textContent='Ready. Complete the TODOs and Run Python.';runtime.cameraFrame();
 }
 async function selectLesson(id){
+  const request=++selection;
   if(lesson)drafts.set(lesson.id,$('python-code').value);
-  python.stop();const next=await json(id+'.json');lesson=next;reset();
-  $('lesson-number').textContent='EXERCISE '+lesson.number;$('mission-title').textContent=lesson.title;$('description').textContent=lesson.description;
-  $('steps').replaceChildren();for(const step of lesson.steps){const li=document.createElement('li');li.textContent=step;$('steps').append(li);}
+  python.stop();const next=await json(id+'.json');if(request!==selection)return;lesson=next;reset();
+  renderLesson();
   $('python-code').value=drafts.get(id)??lesson.starterCode;
   for(const id of ['run-python','restore-code','reset','check','hint'])$(id).disabled=false;
 }
-function showResults(){const results=sessionChecks(runtime,lesson);$('feedback').replaceChildren();for(const result of results){const p=document.createElement('p');p.className=result.passed?'pass':'fail';p.textContent=(result.passed?'✓ ':'○ ')+result.label;$('feedback').append(p);}$('feedback').hidden=false;$('status').textContent=results.every(r=>r.passed)?'Exercise complete. Your code passed the behavioural checks.':'Not complete yet. Review the checks, output and hints.';}
+function localLesson(){return {...lesson,...lesson.translations?.[language()]};}
+function renderLesson(){
+  if(!lesson)return;const text=localLesson();$('hint').disabled=hints>=text.hints.length;$('lesson-number').textContent='EXERCISE '+lesson.number;$('mission-title').textContent=text.title;$('description').textContent=text.description;
+  $('steps').replaceChildren();for(const step of text.steps){const li=document.createElement('li');li.textContent=step;$('steps').append(li);}
+  $('hints').replaceChildren();for(const hint of text.hints.slice(0,hints)){const p=document.createElement('p');p.textContent=hint;$('hints').append(p);}
+}
+window.addEventListener('languagechange',()=>{renderLesson();for(const option of $('lesson-select').options){const entry=catalog.find(e=>e.id===option.value);option.textContent=entry.number+' — '+(entry.translations?.[language()]??entry.title);}});
+function showResults(){const results=session===3?sessionChecks(runtime,lesson):courseChecks(runtime,lesson);$('feedback').replaceChildren();for(const result of results){const p=document.createElement('p');p.className=result.passed?'pass':'fail';p.textContent=(result.passed?'✓ ':'○ ')+result.label;$('feedback').append(p);}$('feedback').hidden=false;$('status').textContent=results.every(r=>r.passed)?'Exercise complete. Your code passed the behavioural checks.':'Not complete yet. Review the checks, output and hints.';}
 const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function testScenes(){
   if(!python.worker){$('status').textContent='Run your Python detector before checking.';return;}
@@ -46,7 +60,7 @@ $('stop-python').addEventListener('click',()=>{epoch++;testing=false;runtime.tes
 $('restore-code').addEventListener('click',()=>{$('python-code').value=lesson.starterCode;});
 $('reset').addEventListener('click',reset);
 $('check').addEventListener('click',()=>{if(lesson.testScenes)testScenes();else showResults();});
-$('hint').addEventListener('click',()=>{const p=document.createElement('p');p.textContent=lesson.hints[hints++];$('hints').append(p);$('hint').disabled=hints===lesson.hints.length;});
+$('hint').addEventListener('click',()=>{if(hints>=localLesson().hints.length)return;const p=document.createElement('p');p.textContent=localLesson().hints[hints++];$('hints').append(p);$('hint').disabled=hints===localLesson().hints.length;});
 let leaveEditor=false;$('python-code').addEventListener('keydown',event=>{if(event.key==='Escape'){leaveEditor=true;return;}if(event.key==='Tab'&&!event.shiftKey&&!leaveEditor){event.preventDefault();const el=event.target;el.setRangeText('    ',el.selectionStart,el.selectionEnd,'end');}leaveEditor=false;});
 function draw(){
   const image=runtime.camera;
@@ -56,14 +70,27 @@ function draw(){
     context.putImageData(new ImageData(rgba,320,240),0,0);
     if($('overlay').checked&&lastDetection?.visible&&Number.isFinite(lastDetection.cx)&&runtime.frameId-lastDetection.frame<4){context.strokeStyle='#ffffff';context.beginPath();context.moveTo(lastDetection.cx-8,120);context.lineTo(lastDetection.cx+8,120);context.moveTo(lastDetection.cx,112);context.lineTo(lastDetection.cx,128);context.stroke();}
     $('camera-stats').textContent='RGB channel means: '+inspectPixels(image).means.map((v,i)=>'RGB'[i]+': '+v.toFixed(1)).join(' · ');
-    const r=runtime.robot,ctx=$('map').getContext('2d');ctx.fillStyle='#0b1b25';ctx.fillRect(0,0,480,200);
-    for(const t of runtime.targets??[{x:5,y:0,color:[235,45,45]},{x:6,y:-2,color:[40,85,230]}]){ctx.fillStyle='rgb('+t.color.join(',')+')';ctx.fillRect(100+t.x*45-8,100-t.y*30-8,16,16);}
-    ctx.save();ctx.translate(100+r.x*45,100-r.y*30);ctx.rotate(-r.yaw);ctx.fillStyle='#57ddbc';ctx.beginPath();ctx.moveTo(15,0);ctx.lineTo(-10,-9);ctx.lineTo(-10,9);ctx.closePath();ctx.fill();ctx.restore();
-    $('pose').textContent='x '+r.x.toFixed(2)+' m · y '+r.y.toFixed(2)+' m · yaw '+r.yaw.toFixed(2)+' rad';
+    const r=runtime.robot,ctx=$('map').getContext('2d'),world=runtime.world,bounds=world?.bounds??{minX:-2,maxX:8,minY:-4,maxY:4};
+    const scale=Math.min(440/(bounds.maxX-bounds.minX),180/(bounds.maxY-bounds.minY)),ox=(480-scale*(bounds.maxX-bounds.minX))/2,oy=(200-scale*(bounds.maxY-bounds.minY))/2;
+    const sx=x=>ox+(x-bounds.minX)*scale,sy=y=>200-oy-(y-bounds.minY)*scale;
+    ctx.fillStyle='#0b1b25';ctx.fillRect(0,0,480,200);ctx.strokeStyle='#517381';ctx.strokeRect(ox,oy,scale*(bounds.maxX-bounds.minX),scale*(bounds.maxY-bounds.minY));
+    for(const o of world?.obstacles??[]){ctx.fillStyle='#899aa8';ctx.fillRect(sx(o.x),sy(o.y+o.h),o.w*scale,o.h*scale);}
+    if($('show-rays').checked){const scan=runtime.scan();ctx.strokeStyle='#3b7969';ctx.beginPath();scan.ranges.forEach((d,i)=>{if(!Number.isFinite(d))return;const angle=r.yaw+scan.angle_min+i*scan.angle_increment,x=r.x+.2*Math.cos(r.yaw),y=r.y+.2*Math.sin(r.yaw);ctx.moveTo(sx(x),sy(y));ctx.lineTo(sx(x+d*Math.cos(angle)),sy(y+d*Math.sin(angle)));});ctx.stroke();}
+    for(const t of runtime.targets??[{x:5,y:0,color:[235,45,45]},{x:6,y:-2,color:[40,85,230]}]){ctx.fillStyle='rgb('+(t.color??[235,45,45]).join(',')+')';ctx.fillRect(sx(t.x)-6,sy(t.y)-6,12,12);}
+    if(lesson.goal){ctx.strokeStyle='#ffe490';ctx.beginPath();ctx.arc(sx(lesson.goal[0]),sy(lesson.goal[1]),8,0,Math.PI*2);ctx.stroke();}
+    ctx.save();ctx.translate(sx(r.x),sy(r.y));ctx.rotate(-r.yaw);ctx.fillStyle='#57ddbc';ctx.beginPath();ctx.moveTo(10,0);ctx.lineTo(-7,-6);ctx.lineTo(-7,6);ctx.closePath();ctx.fill();ctx.restore();
+    $('tf-tree').textContent=transforms(runtime).transforms.map(t=>t.header.frame_id+' → '+t.child_frame_id).join('\n');
+    $('parameters').textContent=[...runtime.parameters].map(([node,params])=>node+'\n'+[...params].map(([k,v])=>'  '+k+': '+v).join('\n')).join('\n')||'(no declared parameters)';
+    $('action-progress').textContent=[...runtime.goals.values()].slice(-3).map(g=>'Goal '+g.id+' · '+({2:'executing',4:'succeeded',5:'cancelled',6:'aborted'}[g.status])+' · '+(g.result?.result.final_distance??(r.distance-g.start)).toFixed(2)+' / '+g.distance+' m').join('\n')||'(no goals)';
+    $('pose').textContent='x '+r.x.toFixed(2)+' m · y '+r.y.toFixed(2)+' m · yaw '+r.yaw.toFixed(2)+' rad · contacts '+runtime.collisions;
     $('graph').textContent=[...runtime.topics].filter(([,t])=>!t.placeholder).map(([name,t])=>[...t.publishers].join(', ')+' → '+name+' → '+([...t.subscribers].join(', ')||'(no subscribers)')).join('\n')+'\n\n'+[...runtime.services].map(([name,s])=>([...s.clients].join(', ')||'(no client)')+' ⇄ '+name+' ⇄ '+s.node).join('\n');
   }
 }
-function frame(now){if(last)accumulator+=Math.min((now-last)/1000,.1);last=now;while(accumulator>=1/60){if(testing)runtime.robot.command(0,0);runtime.step(1/60);accumulator-=1/60;}draw();requestAnimationFrame(frame);}
+function frame(now){if(last)accumulator+=Math.min((now-last)/1000,.1);last=now;while(accumulator>=1/60){if(testing)runtime.robot.command(0,0);runtime.step(1/60);if(session!==3)observeCourse(runtime,lesson);accumulator-=1/60;}draw();requestAnimationFrame(frame);}
 document.addEventListener('visibilitychange',()=>{last=0;accumulator=0;});
-const catalog=await json('session-03.json');for(const entry of catalog){const option=document.createElement('option');option.value=entry.id;option.textContent=entry.number+' — '+entry.title;$('lesson-select').append(option);}
+setupPreferences();
+const names={2:'Subscribers & LiDAR',3:'Perception & services',4:'Parameters & actions',5:'Odometry & frames',6:'Debugging & integration'};
+document.querySelector('.intro .eyebrow').textContent='Learn by experimenting';
+$('session-title').textContent=names[session];$('session-tag').textContent='SESSION 0'+session;
+catalog=await json('session-0'+session+'.json');for(const entry of catalog){const option=document.createElement('option');option.value=entry.id;option.textContent=entry.number+' — '+(entry.translations?.[language()]??entry.title);$('lesson-select').append(option);}
 $('lesson-select').disabled=false;await selectLesson(catalog[0].id);requestAnimationFrame(frame);

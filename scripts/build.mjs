@@ -9,5 +9,5 @@ await rm(dest,{recursive:true,force:true});await mkdir(new URL(assetPath,dest),{
 // An explicit allowlist: no tests, reference solutions, docs, Git metadata or tooling.
 for(const name of ['src','public'])await cp(new URL(name,root),new URL(assetPath+name,dest),{recursive:true});
 for(const file of ['LICENSE','NOTICE'])await cp(new URL(file,root),new URL(file,dest));
-for(const page of ['index.html','session-03.html']){const html=await readFile(new URL(page,root),'utf8');await writeFile(new URL(page,dest),html.replaceAll('./src/','./'+assetPath+'src/').replaceAll('./public/','./'+assetPath+'public/'));}
+for(const page of ['index.html','session-02.html','session-03.html','session-04.html','session-05.html','session-06.html','real-ros.html']){const html=await readFile(new URL(page,root),'utf8');await writeFile(new URL(page,dest),html.replaceAll('./src/','./'+assetPath+'src/').replaceAll('./public/','./'+assetPath+'public/'));}
 console.log('Static site ready in dist/ · asset version '+version);

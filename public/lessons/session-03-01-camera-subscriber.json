@@ -25,5 +25,35 @@
   "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom sensor_msgs.msg import Image\n\nclass CameraReader(Node):\n    def __init__(self):\n        super().__init__('camera_reader')\n        # TODO: create a subscription and keep it as self.subscription.\n\n    def image_callback(self, msg):\n        # TODO: print the width and height of each image.\n        pass\n\nrclpy.init()\nnode = CameraReader()\nrclpy.spin(node)\n",
   "testScenes": false,
   "startYaw": 0,
-  "startX": 0
+  "startX": 0,
+  "translations": {
+    "nl": {
+      "title": "Je robot kan zien",
+      "description": "Abonneer je op /camera/image_raw en print de afmetingen van elk ontvangen beeld.",
+      "steps": [
+        "Maak een Image-subscription op /camera/image_raw.",
+        "Lees msg.width en msg.height in de callback.",
+        "Voer uit en observeer herhaalde beeldberichten."
+      ],
+      "hints": [
+        "Een camera is ook een ROS-publisher.",
+        "Importeer Image uit sensor_msgs.msg.",
+        "Gebruik create_subscription(Image, \"/camera/image_raw\", self.image_callback, 10)."
+      ]
+    },
+    "fr": {
+      "title": "Votre robot peut voir",
+      "description": "Abonnez-vous à /camera/image_raw et affichez les dimensions de chaque image reçue.",
+      "steps": [
+        "Créez un abonnement Image à /camera/image_raw.",
+        "Lisez msg.width et msg.height dans le callback.",
+        "Exécutez et observez les messages répétés."
+      ],
+      "hints": [
+        "Une caméra est aussi un publisher ROS.",
+        "Importez Image depuis sensor_msgs.msg.",
+        "Utilisez create_subscription(Image, \"/camera/image_raw\", self.image_callback, 10)."
+      ]
+    }
+  }
 }

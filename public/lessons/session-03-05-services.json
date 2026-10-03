@@ -22,5 +22,35 @@
   "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom std_srvs.srv import Trigger\n\nclass ResetClient(Node):\n    def __init__(self):\n        super().__init__('reset_client')\n        # TODO: self.client = self.create_client(...)\n\n    def reset(self):\n        # TODO: request = Trigger.Request()\n        # Call asynchronously, then attach self.on_response to the future.\n        pass\n\n    def on_response(self, future):\n        response = future.result()\n        print(response.success, response.message)\n\nrclpy.init()\nnode = ResetClient()\nnode.reset()\nrclpy.spin(node)\n",
   "testScenes": false,
   "startYaw": 0,
-  "startX": 2
+  "startX": 2,
+  "translations": {
+    "nl": {
+      "title": "Vraag een andere node iets te doen",
+      "description": "Ontdek /reset_robot en ontvang het antwoord op een asynchrone Trigger-aanroep.",
+      "steps": [
+        "Gebruik ros2 service list en ros2 service type /reset_robot.",
+        "Maak een client en verstuur Trigger.Request met call_async.",
+        "Koppel een callback aan de future en bekijk het antwoord."
+      ],
+      "hints": [
+        "Een topic is een stroom; een service is een verzoek met antwoord.",
+        "Gebruik create_client(Trigger, \"/reset_robot\").",
+        "Gebruik future.add_done_callback en future.result()."
+      ]
+    },
+    "fr": {
+      "title": "Demander une opération à un autre nœud",
+      "description": "Découvrez /reset_robot et recevez la réponse à un appel Trigger asynchrone.",
+      "steps": [
+        "Utilisez ros2 service list et ros2 service type /reset_robot.",
+        "Créez un client et envoyez Trigger.Request avec call_async.",
+        "Attachez un callback au future et examinez la réponse."
+      ],
+      "hints": [
+        "Un topic est un flux ; un service est une requête avec réponse.",
+        "Utilisez create_client(Trigger, \"/reset_robot\").",
+        "Utilisez future.add_done_callback et future.result()."
+      ]
+    }
+  }
 }

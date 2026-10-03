@@ -28,5 +28,35 @@
   "starterCode": "import rclpy\nimport numpy as np\nfrom rclpy.node import Node\nfrom sensor_msgs.msg import Image\nfrom cv_bridge import CvBridge\nfrom ros2learn import report_detection, report_image_stats\n\nclass CameraReader(Node):\n    def __init__(self):\n        super().__init__('camera_reader')\n        self.bridge = CvBridge()\n        self.subscription = self.create_subscription(\n            Image, '/camera/image_raw', self.image_callback, 10)\n\n    def image_callback(self, msg):\n        image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='rgb8')\n        # TODO: print image.shape and calculate the three channel means.\n        # Send your calculated values to the checker:\n        # report_image_stats(image.shape, channel_means)\n        pass\n\nrclpy.init()\nnode = CameraReader()\nrclpy.spin(node)\n",
   "testScenes": false,
   "startYaw": 0,
-  "startX": 0
+  "startX": 0,
+  "translations": {
+    "nl": {
+      "title": "Beelden zijn data",
+      "description": "Zet het beeld om naar een echte NumPy-array en bereken de vorm en gemiddelde RGB-waarden.",
+      "steps": [
+        "Gebruik CvBridge.imgmsg_to_cv2 met rgb8.",
+        "Bekijk image.shape en het gemiddelde van elk kleurkanaal.",
+        "Geef shape en drie gemiddelden door met report_image_stats."
+      ],
+      "hints": [
+        "De vorm is hoogte × breedte × kanalen.",
+        "Rood is image[:, :, 0]; groen is kanaal 1 en blauw kanaal 2.",
+        "Gebruik mean() op elk kanaal."
+      ]
+    },
+    "fr": {
+      "title": "Les images sont des données",
+      "description": "Convertissez l’image en véritable tableau NumPy et calculez sa forme et les moyennes RGB.",
+      "steps": [
+        "Utilisez CvBridge.imgmsg_to_cv2 avec rgb8.",
+        "Examinez image.shape et la moyenne de chaque canal.",
+        "Rapportez la forme et les trois moyennes avec report_image_stats."
+      ],
+      "hints": [
+        "La forme est hauteur × largeur × canaux.",
+        "Le rouge est image[:, :, 0] ; vert et bleu sont les canaux 1 et 2.",
+        "Utilisez mean() sur chaque canal."
+      ]
+    }
+  }
 }

@@ -28,5 +28,35 @@
   "starterCode": "import rclpy\nimport numpy as np\nfrom rclpy.node import Node\nfrom sensor_msgs.msg import Image\nfrom cv_bridge import CvBridge\nfrom ros2learn import report_detection, report_image_stats\n\nclass CameraReader(Node):\n    def __init__(self):\n        super().__init__('camera_reader')\n        self.bridge = CvBridge()\n        self.subscription = self.create_subscription(\n            Image, '/camera/image_raw', self.image_callback, 10)\n\n    def image_callback(self, msg):\n        image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='rgb8')\n        # TODO: find red pixels, then their mean horizontal position.\n        # report_detection(visible, cx) where cx is a pixel coordinate,\n        # or None if no target was found.\n        pass\n\nrclpy.init()\nnode = CameraReader()\nrclpy.spin(node)\n",
   "testScenes": true,
   "startYaw": 0,
-  "startX": 0
+  "startX": 0,
+  "translations": {
+    "nl": {
+      "title": "Links, midden of rechts?",
+      "description": "Bereken de horizontale positie van het rode object uit de geselecteerde pixels.",
+      "steps": [
+        "Hergebruik het rode masker.",
+        "Gebruik np.where(mask) en bereken het gemiddelde van de x-coördinaten.",
+        "Geef zichtbaarheid en cx door met report_detection(visible, cx). Vergelijk met de overlay."
+      ],
+      "hints": [
+        "np.where geeft eerst y en daarna x.",
+        "Het gemiddelde van xs is het horizontale zwaartepunt.",
+        "Zonder doel rapporteer je False; vermijd het gemiddelde van een lege lijst."
+      ]
+    },
+    "fr": {
+      "title": "À gauche, au centre ou à droite ?",
+      "description": "Calculez la position horizontale de l’objet rouge à partir des pixels sélectionnés.",
+      "steps": [
+        "Réutilisez le masque rouge.",
+        "Utilisez np.where(mask) et calculez la moyenne des coordonnées x.",
+        "Rapportez visibilité et cx avec report_detection(visible, cx). Comparez avec la superposition."
+      ],
+      "hints": [
+        "np.where renvoie y puis x.",
+        "La moyenne de xs donne le centroïde horizontal.",
+        "Sans cible, rapportez False ; évitez la moyenne d’une liste vide."
+      ]
+    }
+  }
 }
