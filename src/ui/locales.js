@@ -1,6 +1,7 @@
 // Rows: NL, FR, ES, DE, PT, IT. Code and ROS identifiers stay English.
 export const LANGUAGES = ["en","nl","fr","es","de","pt","it"];
 export const UI = {
+  "Build information": ["Buildinformatie","Informations de compilation","Información de compilación","Build-Informationen","Informação da compilação","Informazioni sulla build"],
   "Run Python": [
     "Python uitvoeren",
     "Exécuter Python",

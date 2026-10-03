@@ -120,3 +120,5 @@ GitHub CLI is absent; the public Actions API confirms [run 37130011718](https://
 Public C++ gate: 45 unit tests and build pass. Complete C++ suites pass in Chrome and Firefox. The ordinary Session 2 URL now compiles/runs 2.1 and 2.4 and passes the shared checkers; language/theme/layout preserve both Compare drafts. Unsupported lessons remain Python-only and unfinished variants require the developer flag.
 
 Navigation: both browsers pass timing assertions for the 1,000 ms outgoing dwell and reduced-motion bypass, actual session navigation, duplicate destination prevention, no repeated variant, external/modified/hash links, failed/cancelled navigation cleanup and Back/Forward. Five animations now run for 850 ms; robot yaw makes one full rotation.
+
+Build identity and attribution: build-info.json records commit, UTC build time, product, asset version and dirty-worktree flag without paths or credentials. About compares deployed and loaded asset versions. Both browsers verified the exact English attribution and required links on all nine pages, including after UI-language changes. Build tests enforce the metadata schema, production allowlist and footer links.

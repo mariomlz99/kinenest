@@ -1,0 +1,12 @@
+<!doctype html><meta charset="utf-8"><img src="/hold" hidden alt=""><pre id="result">RUNNING</pre><iframe width="1400" height="1000"></iframe><script type="module">
+const frame=document.querySelector('iframe'),out=document.getElementById('result'),wait=ms=>new Promise(r=>setTimeout(r,ms));
+try{for(const page of ['index.html','session-02.html','session-03.html','session-04.html','session-05.html','session-06.html','about.html','licences.html','real-ros.html']){
+ frame.src='../'+page;await new Promise(resolve=>frame.onload=resolve);let d;
+ for(let i=0;i<150;i++){d=frame.contentDocument;if(d?.getElementById('language')&&d?.querySelector('footer .attribution'))break;await wait(50);}
+ const p=d.querySelector('footer .attribution'),text=p?.textContent.replace(/\s+/g,' ').trim();
+ if(text!=='Made with love in Belgium 🇧🇪 by Mario Malizia, an Italian soul, with development assistance from ChatGPT by OpenAI.')throw Error('Footer text: '+page+' '+text);
+ for(const [label,url]of [['Mario Malizia','https://www.linkedin.com/in/mario-malizia/'],['ChatGPT','https://chatgpt.com/'],['OpenAI','https://openai.com/']])if(![...p.querySelectorAll('a')].some(a=>a.textContent===label&&a.href===url))throw Error('Footer link '+page+' '+label);
+ const l=d.getElementById('language');l.value='it';l.dispatchEvent(new Event('change'));await wait(30);if(p.textContent.replace(/\s+/g,' ').trim()!==text||p.lang!=='en')throw Error('Attribution translation inconsistency');
+ if(page==='about.html'){for(let i=0;i<100&&!d.getElementById('build-info').textContent.includes('Commit:');i++)await wait(50);if(!d.getElementById('build-info').textContent.includes('Commit:'))throw Error('About build identity missing');}
+}out.textContent='PASS: exact attribution and links on all nine public pages, preserved in translated UI, About build identity';}catch(e){out.textContent='FAIL: '+e.message;}await fetch('/done',{method:'POST',body:out.textContent});
+</script>
