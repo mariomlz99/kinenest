@@ -20,7 +20,7 @@ No installation, account, backend, API key or paid service is required. The firs
 
 ![Session 5: live coordinate frames and transform inspector](docs/media/session-05.png)
 
-[Session 1](docs/media/session-01.png) · [Camera perception](docs/media/session-03.png) · [Debugging](docs/media/session-06.png). A short demonstration video is planned; see the [demo outline](docs/DEMO.md).
+[Session 1](docs/media/session-01.png) · [Camera perception](docs/media/session-03.png) · [Debugging](docs/media/session-06.png) · [Python/C++ comparison](docs/media/compare.png). A short demonstration video is planned; see the [demo outline](docs/DEMO.md).
 
 ## Six-session course
 
@@ -35,7 +35,7 @@ Each session is designed for approximately 90 minutes. Sessions 1–2 introduce 
 | 5 | Odometry & Frames | 5 core exercises + obstacle integration |
 | 6 | Debugging Challenge | 2 repairs + an integrated beacon mission |
 
-The UI and teaching material support English, Nederlands, Français, Español, Deutsch and Português. Code, ROS identifiers and technical output remain English. Switching language preserves code and running Python. Light/dark and split/stacked layouts are available. Course timings and translations still need classroom and native-speaker review.
+The UI and teaching material support English, Nederlands, Français, Español, Deutsch, Português and Italiano. Code, ROS identifiers and technical output remain English. Switching UI language preserves code and running programs. Light/dark and split/stacked layouts are available. Course timings and translations still need classroom and native-speaker review.
 
 ## For lecturers
 
@@ -48,6 +48,10 @@ Fork the repository, edit lesson JSON and enable Pages. See [AUTHORING.md](docs/
 Static HTML, CSS and JavaScript provide the workstation. Real Python and NumPy run in a Pyodide Web Worker. Educational message classes and robotics APIs connect student programs to the same graph used by the CLI. Canvas renders sensors and obstacles; SVG displays coordinate frames from actual runtime transforms.
 
 Camera: 320 × 240 at 8 Hz. LiDAR: 120 rays at 5 Hz. Odometry: ideal 2D pose at 5 Hz. Stop terminates the worker, including an infinite loop. Slow callbacks drop sensor frames instead of accumulating work. Output and terminal history are bounded.
+
+## Python and experimental C++
+
+Python supports the complete course. [Experimental C++](https://mariomlz99.github.io/ros2learn/session-02.html?experimentalCpp=1) supports the scan subscriber and obstacle-avoidance exercises (2.1 and 2.4). It compiles real C++ to WebAssembly locally and uses the same robot and checks. Python/C++/Compare preserves independent drafts. The toolchain downloads about 60 MB only when C++ runs; its age and limited API keep it experimental. See [support, measurements and reproduction](docs/CPP.md).
 
 ## Educational runtime and limitations
 
@@ -84,11 +88,11 @@ node scripts/check-browser.mjs chrome --built --suite=tf-browser
 
 ## Deployment
 
-GitHub repository Settings → Pages → Source: **GitHub Actions**. Pushes to main run tests, build and the complete Chrome suite before publishing dist/. Pull requests test without deploying.
+GitHub repository Settings → Pages → Source: **GitHub Actions**. Pushes to main run tests, build and the complete Chrome course and experimental C++ suites before publishing dist/. Pull requests test without deploying.
 
 Production contains static assets only. The allowlist excludes tests, reference programs, docs and private development artifacts. Content-versioned relative paths work under /ros2learn/ and other project prefixes. The existing personal website is a separate repository.
 
-The repository remains ros2learn for now. A later move to kinenest requires explicit approval; see [BRANDING.md](docs/BRANDING.md). Update the source URL in src/ui/product.js and documentation when migrating. No custom domain is configured.
+The repository remains ros2learn for now. A later move to kinenest requires explicit approval; see [BRANDING.md](docs/BRANDING.md). Update the source and site URLs in src/ui/product.js and documentation when migrating. No custom domain is configured.
 
 ## Authoring
 
@@ -96,8 +100,10 @@ Lesson catalogs and JSON files live in public/lessons/. They define tasks, start
 
 ## Licence and trademarks
 
-Original code and lessons are Apache-2.0: [LICENSE](LICENSE), [NOTICE](NOTICE). Pyodide, CPython and NumPy retain their own terms; see [third-party notices](licences.html).
+Original code and lessons are Apache-2.0: [LICENSE](LICENSE), [NOTICE](NOTICE). Pyodide, CPython, NumPy and the experimental compiler retain their own terms; see [third-party notices](licences.html).
 
 ROS is a trademark of Open Source Robotics Foundation, Inc. KineNest is an independent educational project and is not affiliated with or endorsed by Open Robotics.
 
 KineNest is a working name, not a claim of trademark clearance. The independent brand distinguishes the product from the technology taught; descriptive ROS 2 references and technical identifiers are retained.
+
+Created by [Mario Malizia](https://www.linkedin.com/in/mario-malizia/), with development assistance from [ChatGPT by OpenAI](https://openai.com/). No institutional or vendor endorsement is implied.

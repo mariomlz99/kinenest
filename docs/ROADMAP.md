@@ -2,7 +2,9 @@
 
 ## Now
 
-Complete six-session browser course: original CLI lab; four Session 2 exercises; six Session 3 exercises; six Session 4 exercises including optional cancellation; six Session 5 exercises including integration; three Session 6 debugging/challenge tasks. Real Python/NumPy, camera, ray-cast LiDAR, parameters, custom messages, action client/server, planar TF and control share one runtime. Static hosting, light/dark, EN/NL/FR/ES/DE/PT and split/stacked layouts are implemented.
+Complete six-session browser course: original CLI lab; four Session 2 exercises; six Session 3 exercises; six Session 4 exercises including optional cancellation; six Session 5 exercises including integration; three Session 6 debugging/challenge tasks. Real Python/NumPy, camera, ray-cast LiDAR, parameters, custom messages, action client/server, planar TF and control share one runtime. Static hosting, light/dark, EN/NL/FR/ES/DE/PT/IT and split/stacked layouts are implemented.
+
+Experimental C++ now compiles in-browser for exercises 2.1 and 2.4, with editable Compare drafts. It remains feature-gated; broader API parity and a modern toolchain require their own validation.
 
 ## Next
 
@@ -14,4 +16,4 @@ Improve the editor and consider movable/resizable panels after classroom feedbac
 
 ## Ideas
 
-A broader curriculum may follow the six-session course. Real ROS integration, RViz/Gazebo, C++/CMake execution and cloud runtimes remain separate future work. No backend, accounts, grades database or LMS integration is planned for this phase.
+A broader curriculum may follow the six-session course. Real ROS integration, RViz/Gazebo, native CMake execution and cloud runtimes remain separate future work. No backend, accounts, grades database or LMS integration is planned for this phase.

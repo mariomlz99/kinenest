@@ -14,7 +14,7 @@ Identity and shared navigation live in src/ui/product.js. The static build and b
 
 ## Repository migration
 
-The current GitHub repository and Pages path remain mariomlz99/ros2learn and /ros2learn/. A separately approved move to kinenest is recommended before broad promotion. Update PRODUCT.source, documentation URLs, package metadata and CI references when migrating; relative module/worker/lesson paths already support any project subpath. Verify Pages settings, redirects and existing links after the move. Do not rename the repository automatically.
+The current GitHub repository and Pages path remain mariomlz99/ros2learn and /ros2learn/. A separately approved move to kinenest is recommended before broad promotion. Update PRODUCT.source and PRODUCT.site, documentation URLs, package metadata and CI references when migrating; relative module/worker/lesson paths already support any project subpath. Verify Pages settings, redirects and existing links after the move. Do not rename the repository automatically.
 
 Technical legacy occurrences intentionally remain in ros2learn_interfaces, localStorage keys (to retain preferences), package metadata, test-profile prefixes, repository URLs and historical attribution. They are not public product branding. Original attribution in NOTICE is retained.
 

@@ -5,7 +5,7 @@ Fork the repository, edit lesson data, enable GitHub Pages and teach. Start by c
 ## Files
 
 - public/lessons/session-02.json through session-06.json: ordered catalogs with id, number, title and translated titles.
-- public/lessons/<id>.json: one exercise, including the Python starter string.
+- public/lessons/<id>.json: one exercise, including programming.python.starterCode and optional C++ starter code.
 - public/lessons/topics-01.json: Session 1 uses its smaller CLI lesson format.
 - tests/python/course/<id>.py: reference programs for Sessions 2, 4, 5 and 6. Session 3 references are tests/python/solution-1.py through solution-6.py.
 
@@ -29,7 +29,7 @@ This example uses the existing subscriber check. The callback must read ranges i
     "A subscription calls your function when a message arrives.",
     "This world uses 120 rays; index 60 points forward."
   ],
-  "starterCode": "import rclpy\nfrom sensor_msgs.msg import LaserScan\nrclpy.init()\nnode = rclpy.create_node('range_reader')\ndef receive(msg):\n    pass  # TODO: print the forward range\nnode.create_subscription(LaserScan, '/scan', receive, 10)\nrclpy.spin(node)\n",
+  "programming": {"python": {"supported": true, "starterCode": "import rclpy\nfrom sensor_msgs.msg import LaserScan\nrclpy.init()\nnode = rclpy.create_node('range_reader')\ndef receive(msg):\n    pass  # TODO: print the forward range\nnode.create_subscription(LaserScan, '/scan', receive, 10)\nrclpy.spin(node)\n"}, "cpp": {"supported": false, "starterCode": ""}},
   "checks": [{"type": "subscriber"}],
   "startX": 0,
   "startY": 0,
@@ -66,7 +66,7 @@ Choose existing behaviours from src/exercises/course.js or perception.js.
 | sectors | Correct front/left/right distances reported |
 | avoidance | Reaction, travel, elapsed time and no collisions |
 | configured / parameter | Parameter reads and live value changes |
-| custom | Three valid Python TargetInfo publications |
+| custom | Three valid TargetInfo publications |
 | action_result / action / cancel | Actual goal result, feedback or cancellation |
 | pose / transform / relative | Correct reported pose or TF calculation |
 | goal / integrated | Goal reached and stopped; optional scan safety |
@@ -81,14 +81,18 @@ Read the implementation for thresholds. report_pose, report_transform, report_re
 
 Use short tasks: concept, action, observation and check. Keep long context in a reference panel. Hints should progress from concept to API to partial syntax. Starter code and comments remain English. Follow [BRANDING.md](BRANDING.md); use KineNest as the product name and ROS 2 descriptively.
 
-## Six languages
+## Seven languages
 
-English lives at the top level. Add translations.nl, .fr, .es, .de and .pt, each containing only title, description, steps and hints. Preserve step and hint counts. Update translated catalog titles too. Never copy starter code, worlds or checks into a translation.
+English lives at the top level. Add translations.nl, .fr, .es, .de, .pt and .it, each containing only title, description, steps and hints. Preserve step and hint counts. Update translated catalog titles too. Never copy starter code, worlds or checks into a translation.
 
-Shared UI rows live in src/ui/locales.js, ordered NL, FR, ES, DE, PT. Required controls must be translated. An explicit {"fallback":"en"} is reserved for technical/legal reference text; it is not a substitute for translated lesson material. Python, command syntax, message types and frame IDs remain English.
+Shared UI rows live in src/ui/locales.js, ordered NL, FR, ES, DE, PT, IT. Required controls must be translated. An explicit {"fallback":"en"} is reserved for technical/legal reference text; it is not a substitute for translated lesson material. Python, command syntax, message types and frame IDs remain English.
 
 ## Validate
 
 Run npm test and npm run build. Add a valid reference program and, where useful, an alternate solution and a failing control. Run both complete browser suites before deployment. Check that an empty program fails, intended behaviour succeeds and Reset clears prior evidence. Slow or infinite student code must remain stoppable.
 
 Production excludes tests and reference programs. The public repository still exposes them, and client-side checks are inspectable. Use checks for practice; assess understanding through explanation or a fresh task.
+
+## Code variants
+
+Use programming.python and programming.cpp. Set supported only for a tested adapter/lesson pair; experimental: true hides C++ unless ?experimentalCpp=1. Keep world, ID, mission and checks shared. Tests and reference programs belong under tests/, never public/. Compare uses current drafts. The compatibility reader still accepts old starterCode, but new lessons should use programming. See [CPP.md](CPP.md) for the implemented C++ subset.

@@ -78,3 +78,17 @@ KineNest branding/localization: supplied-logo derivatives inspected, 26 Italian 
 Sensor stage: 41 unit tests pass, including distinct camera/LiDAR origins, rotated mounting transforms, capture-pose timestamps, same-stamp TF, bounded newest-sample delivery and Reset cleanup. Camera mount is now +0.10 m; LiDAR remains +0.20 m.
 
 Language-neutral stage: 43 unit tests and the full Chrome/Firefox Python course suites pass after extracting RuntimeAdapter and migrating starter data. Both browsers pass Compare-mode tests for independent drafts, UI-language changes, exercise fallback, retained programming preference and experimental-only visibility.
+
+## KineNest release candidate — 2026-10-03
+
+All 44 Node tests and the static build pass. Complete Chrome and Firefox course acceptance passes all six sessions, all 25 Python reference programs, alternate algorithms, negative controls, Stop/Reset, seven-language state preservation, TF numeric agreement, Compare drafts, navigation, reduced motion and Back/Forward cleanup. Tests ran the exact npm-script entry points using bundled Node v24.21.0 because npm is unavailable in the managed shell; CI uses Node 22.
+
+Both browsers also pass the separate experimental C++ suite: real hello-world compilation/execution, functional and class LaserScan callbacks, Twist publication, timers/logger, the shared obstacle-avoidance checker, cold/warm toolchain loading, source-location compiler diagnostics, infinite-loop Stop, Reset and actual Compare UI execution. Exercises 2.1 and 2.4 are feature-gated by experimentalCpp=1. Broader C++ course parity is not implemented. See CPP.md for sizes, timings, sampled linear memory and toolchain limitations.
+
+Validation found and corrected virtual include paths and the old toolchain's unsupported atomic/static guards. Single-threaded libc++ configuration now matches the worker execution model. A UI Reset assertion also exposed graph text waiting for the next frame; Reset now redraws immediately. Translating execution statuses required the language test to check continued callbacks and enabled Stop instead of searching for an English status phrase.
+
+Visual review covered 22 workstation combinations, including Sessions 1, 2, 3, 5 and 6; 1440 px desktop and 1100 px laptop; dark/light; Spanish, German, Portuguese and Italian; and Compare. All passed overflow, language and visible-brand audits. About, full logo and footer were inspected separately. Native keyboard selection of a language passed in Chrome. Reviewed screenshots are in docs/media. A duplicated light-theme flag and preview SVG MIME handling were fixed. TF axes/labels now retain readable screen size while their origins follow the actual transforms.
+
+The seven-language engineering/editorial review preserves technical identifiers and concise tasks; native-speaker and classroom validation remain separate. Edge and Safari are still best-effort, not independently tested. Legal notices and raw compiler/Python/CLI diagnostics retain their original language.
+
+Validated production asset version: 155e9188d07d. GitHub Pages publication is checked separately below.
