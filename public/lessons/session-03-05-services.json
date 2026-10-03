@@ -35,7 +35,8 @@
       "hints": [
         "Een topic is een stroom; een service is een verzoek met antwoord.",
         "Gebruik create_client(Trigger, \"/reset_robot\").",
-        "Gebruik future.add_done_callback en future.result()."
+        "Gebruik future.add_done_callback en future.result().",
+        "future = self.client.call_async(Trigger.Request()); future.add_done_callback(self.on_response)"
       ]
     },
     "fr": {
@@ -49,7 +50,53 @@
       "hints": [
         "Un topic est un flux ; un service est une requête avec réponse.",
         "Utilisez create_client(Trigger, \"/reset_robot\").",
-        "Utilisez future.add_done_callback et future.result()."
+        "Utilisez future.add_done_callback et future.result().",
+        "future = self.client.call_async(Trigger.Request()); future.add_done_callback(self.on_response)"
+      ]
+    },
+    "es": {
+      "title": "Llamar a un servicio",
+      "description": "Descubre /reset_robot, crea un cliente Trigger y recibe su respuesta. El robot empieza desplazado para mostrar el reinicio.",
+      "steps": [
+        "Descubre el servicio desde el terminal.",
+        "Crea el cliente y usa call_async con Trigger.Request vacío.",
+        "Añade un callback de finalización e inspecciona la respuesta."
+      ],
+      "hints": [
+        "Prueba ros2 service list y ros2 service type /reset_robot.",
+        "Un topic transmite mensajes; un servicio recibe una petición y devuelve una respuesta.",
+        "self.client = self.create_client(Trigger, \"/reset_robot\")",
+        "future = self.client.call_async(Trigger.Request()); future.add_done_callback(self.on_response)"
+      ]
+    },
+    "de": {
+      "title": "Einen Dienst aufrufen",
+      "description": "Finde /reset_robot, erstelle einen Trigger-Client und empfange die Antwort. Der Roboter startet versetzt, damit das Zurücksetzen sichtbar ist.",
+      "steps": [
+        "Finde den Dienst im Terminal.",
+        "Erstelle den Client und rufe call_async mit leerem Trigger.Request auf.",
+        "Registriere einen Abschluss-Callback und untersuche die Antwort."
+      ],
+      "hints": [
+        "Nutze ros2 service list und ros2 service type /reset_robot.",
+        "Ein Topic sendet Nachrichten; ein Dienst beantwortet eine Anfrage.",
+        "self.client = self.create_client(Trigger, \"/reset_robot\")",
+        "future = self.client.call_async(Trigger.Request()); future.add_done_callback(self.on_response)"
+      ]
+    },
+    "pt": {
+      "title": "Chamar um serviço",
+      "description": "Descobre /reset_robot, cria um cliente Trigger e recebe a resposta. O robô começa deslocado para tornar o reinício visível.",
+      "steps": [
+        "Descobre o serviço no terminal.",
+        "Cria o cliente e usa call_async com Trigger.Request vazio.",
+        "Adiciona um callback de conclusão e inspeciona a resposta."
+      ],
+      "hints": [
+        "Experimenta ros2 service list e ros2 service type /reset_robot.",
+        "Um topic transmite mensagens; um serviço responde a um pedido.",
+        "self.client = self.create_client(Trigger, \"/reset_robot\")",
+        "future = self.client.call_async(Trigger.Request()); future.add_done_callback(self.on_response)"
       ]
     }
   }

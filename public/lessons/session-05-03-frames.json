@@ -50,6 +50,48 @@
         "N’ajoutez pas simplement 0.2 à x : le décalage tourne avec le robot.",
         "Le buffer compose les liens ; seules les dernières transformations planes sont prises en charge."
       ]
+    },
+    "es": {
+      "title": "¿En qué marco?",
+      "description": "El láser está 0.2 m delante de base_link. Calcula su origen en odom, también con el robot girado.",
+      "steps": [
+        "Inspecciona ros2 topic echo /tf --once y la cadena odom → base_link → laser_link.",
+        "Crea Buffer y TransformListener. Consulta lookup_transform(\"odom\", \"laser_link\", Time()) desde un temporizador.",
+        "Informa de translation.x y translation.y con report_transform. target_frame indica dónde expresar el resultado."
+      ],
+      "hints": [
+        "Espera las transformaciones: captura TransformException al principio.",
+        "No sumes 0.2 directamente a x en odom; el desplazamiento gira con el robot.",
+        "El buffer compone los dos enlaces. Aquí solo hay transformaciones planas actuales."
+      ]
+    },
+    "de": {
+      "title": "Welches Koordinatensystem?",
+      "description": "Der Laser sitzt 0.2 m vor base_link. Bestimme seinen Ursprung in odom, auch bei gedrehtem Roboter.",
+      "steps": [
+        "Untersuche ros2 topic echo /tf --once und odom → base_link → laser_link.",
+        "Erstelle Buffer und TransformListener. Frage im Timer lookup_transform(\"odom\", \"laser_link\", Time()) ab.",
+        "Melde translation.x und translation.y mit report_transform. target_frame gibt das Bezugskoordinatensystem an."
+      ],
+      "hints": [
+        "Warte auf Transformationen: Fange anfangs TransformException ab.",
+        "Addiere nicht einfach 0.2 zu odom-x; der Sensorversatz dreht sich mit.",
+        "Der Buffer verknüpft beide Kanten. Hier sind nur aktuelle ebene Transformationen verfügbar."
+      ]
+    },
+    "pt": {
+      "title": "Qual é o referencial?",
+      "description": "O laser fica 0.2 m à frente de base_link. Calcula a sua origem em odom, incluindo com o robô rodado.",
+      "steps": [
+        "Inspeciona ros2 topic echo /tf --once e a cadeia odom → base_link → laser_link.",
+        "Cria Buffer e TransformListener. Consulta lookup_transform(\"odom\", \"laser_link\", Time()) num temporizador.",
+        "Comunica translation.x e translation.y com report_transform. target_frame indica onde expressar o resultado."
+      ],
+      "hints": [
+        "Espera pelas transformações: captura TransformException nos primeiros callbacks.",
+        "Não somes simplesmente 0.2 a x em odom; o deslocamento roda com o robô.",
+        "O buffer compõe os dois elos. Aqui só existem transformações planas atuais."
+      ]
     }
   }
 }

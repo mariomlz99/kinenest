@@ -50,6 +50,48 @@
         "Utilisez atan2(sin(delta), cos(delta)) pour normaliser l’angle.",
         "Ignorez les distances infinies ; un secteur vide donne infinity."
       ]
+    },
+    "es": {
+      "title": "Procesar sectores LiDAR",
+      "description": "Calcula las distancias frontal, izquierda y derecha a partir de los ángulos del scan.",
+      "steps": [
+        "Para el rayo i: angle = angle_min + i × angle_increment.",
+        "Busca la menor distancia finita en ±15° de frente (0), izquierda (+π/2) y derecha (−π/2).",
+        "Llama a report_sectors(front, left, right) con los resultados."
+      ],
+      "hints": [
+        "Los ángulos están en radianes; 15° = π/12.",
+        "Normaliza diferencias con atan2(sin(delta), cos(delta)).",
+        "Filtra distancias no finitas antes de min; un sector vacío puede devolver infinito."
+      ]
+    },
+    "de": {
+      "title": "LiDAR-Sektoren auswerten",
+      "description": "Berechne Abstände vorne, links und rechts aus den Scanwinkeln statt aus festen Indizes.",
+      "steps": [
+        "Für Strahl i gilt angle = angle_min + i × angle_increment.",
+        "Finde den kleinsten endlichen Abstand innerhalb ±15° um vorne (0), links (+π/2) und rechts (−π/2).",
+        "Melde die Ergebnisse mit report_sectors(front, left, right)."
+      ],
+      "hints": [
+        "Winkel sind im Bogenmaß; 15° = π/12.",
+        "Normalisiere Winkeldifferenzen mit atan2(sin(delta), cos(delta)).",
+        "Filtere nicht endliche Werte vor min; ein leerer Sektor kann unendlich liefern."
+      ]
+    },
+    "pt": {
+      "title": "Processar setores LiDAR",
+      "description": "Calcula as distâncias à frente, à esquerda e à direita usando os ângulos do scan.",
+      "steps": [
+        "Para o raio i: angle = angle_min + i × angle_increment.",
+        "Encontra a menor distância finita em ±15° de frente (0), esquerda (+π/2) e direita (−π/2).",
+        "Chama report_sectors(front, left, right) com os resultados."
+      ],
+      "hints": [
+        "Os ângulos estão em radianos; 15° = π/12.",
+        "Normaliza diferenças com atan2(sin(delta), cos(delta)).",
+        "Exclui valores não finitos antes de min; um setor vazio pode devolver infinito."
+      ]
     }
   }
 }

@@ -41,7 +41,8 @@
       "hints": [
         "De vorm is hoogte × breedte × kanalen.",
         "Rood is image[:, :, 0]; groen is kanaal 1 en blauw kanaal 2.",
-        "Gebruik mean() op elk kanaal."
+        "Gebruik mean() op elk kanaal.",
+        "report_image_stats(image.shape, [image[:, :, i].mean() for i in range(3)])"
       ]
     },
     "fr": {
@@ -55,7 +56,53 @@
       "hints": [
         "La forme est hauteur × largeur × canaux.",
         "Le rouge est image[:, :, 0] ; vert et bleu sont les canaux 1 et 2.",
-        "Utilisez mean() sur chaque canal."
+        "Utilisez mean() sur chaque canal.",
+        "report_image_stats(image.shape, [image[:, :, i].mean() for i in range(3)])"
+      ]
+    },
+    "es": {
+      "title": "Las imágenes son datos",
+      "description": "Convierte cada mensaje en un array NumPy, muestra su forma y calcula la media de cada canal.",
+      "steps": [
+        "Convierte Image con CvBridge.",
+        "Muestra image.shape y calcula las tres medias RGB.",
+        "Llama a report_image_stats con la forma y las tres medias."
+      ],
+      "hints": [
+        "Usa CvBridge.imgmsg_to_cv2 con desired_encoding=\"rgb8\".",
+        "La forma es altura × anchura × canales.",
+        "image[:, :, 0].mean() calcula la media del primer canal.",
+        "report_image_stats(image.shape, [image[:, :, i].mean() for i in range(3)])"
+      ]
+    },
+    "de": {
+      "title": "Bilder sind Daten",
+      "description": "Wandle jede Nachricht in ein NumPy-Array um. Gib die Form aus und berechne die drei Kanalmittelwerte.",
+      "steps": [
+        "Wandle Image mit CvBridge um.",
+        "Gib image.shape aus und berechne den Mittelwert jedes RGB-Kanals.",
+        "Rufe report_image_stats mit der Form und den drei Mittelwerten auf."
+      ],
+      "hints": [
+        "Nutze CvBridge.imgmsg_to_cv2 mit desired_encoding=\"rgb8\".",
+        "Die Form ist Höhe × Breite × Kanäle.",
+        "image[:, :, 0].mean() berechnet den ersten Kanalmittelwert.",
+        "report_image_stats(image.shape, [image[:, :, i].mean() for i in range(3)])"
+      ]
+    },
+    "pt": {
+      "title": "Imagens são dados",
+      "description": "Converte cada mensagem num array NumPy, mostra a forma e calcula a média de cada canal.",
+      "steps": [
+        "Converte Image com CvBridge.",
+        "Mostra image.shape e calcula as três médias RGB.",
+        "Chama report_image_stats com a forma e as três médias."
+      ],
+      "hints": [
+        "Usa CvBridge.imgmsg_to_cv2 com desired_encoding=\"rgb8\".",
+        "A forma é altura × largura × canais.",
+        "image[:, :, 0].mean() calcula a média do primeiro canal.",
+        "report_image_stats(image.shape, [image[:, :, i].mean() for i in range(3)])"
       ]
     }
   }

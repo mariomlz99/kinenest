@@ -56,6 +56,48 @@
         "Un timer est périodique ; un abonnement réagit aux messages.",
         "Créez les endpoints une fois puis utilisez rclpy.spin."
       ]
+    },
+    "es": {
+      "title": "Los callbacks reaccionan a eventos",
+      "description": "Guarda el último scan en el estado del nodo. Usa un temporizador para publicar un mensaje de estado.",
+      "steps": [
+        "Guarda la última distancia frontal al recibir un scan.",
+        "Publica esa distancia como String en /chatter cada 0.2 s. Suscríbete a /chatter y muestra los mensajes.",
+        "Observa ros2 topic hz /scan y ros2 topic echo /chatter en terminales separados. Explica qué callback actualiza el estado y cuál publica."
+      ],
+      "hints": [
+        "Conserva una variable o self.front entre callbacks.",
+        "Un temporizador se ejecuta periódicamente; una suscripción responde a mensajes.",
+        "Crea publishers y suscripciones una vez; rclpy.spin despacha los eventos."
+      ]
+    },
+    "de": {
+      "title": "Callbacks reagieren auf Ereignisse",
+      "description": "Speichere Scandaten im Knotenzustand. Veröffentliche den Zustand mit einem Timer.",
+      "steps": [
+        "Speichere bei jedem Scan den aktuellen Abstand nach vorne.",
+        "Sende den Abstand alle 0.2 s als String auf /chatter. Abonniere /chatter und gib die Nachrichten aus.",
+        "Beobachte ros2 topic hz /scan und ros2 topic echo /chatter getrennt. Welcher Callback aktualisiert den Zustand, welcher sendet?"
+      ],
+      "hints": [
+        "Bewahre eine Variable oder self.front zwischen Callbacks auf.",
+        "Timer laufen periodisch; Subscriptions reagieren auf Nachrichten.",
+        "Erstelle Publisher und Subscriptions einmal; rclpy.spin verteilt die Ereignisse."
+      ]
+    },
+    "pt": {
+      "title": "Callbacks reagem a eventos",
+      "description": "Guarda o último scan no estado do nó. Usa um temporizador para publicar esse estado.",
+      "steps": [
+        "Guarda a última distância frontal ao receber um scan.",
+        "Publica a distância como String em /chatter a cada 0.2 s. Subscreve /chatter e mostra as mensagens.",
+        "Observa ros2 topic hz /scan e ros2 topic echo /chatter em terminais separados. Explica qual callback atualiza o estado e qual publica."
+      ],
+      "hints": [
+        "Mantém uma variável ou self.front entre callbacks.",
+        "Um temporizador é periódico; uma subscrição reage a mensagens.",
+        "Cria publishers e subscrições uma vez; rclpy.spin distribui os eventos."
+      ]
     }
   }
 }

@@ -53,6 +53,48 @@
         "Relisez le paramètre à chaque callback du timer.",
         "Laissez Python actif pendant l’utilisation du terminal."
       ]
+    },
+    "es": {
+      "title": "Ajustar sin reiniciar",
+      "description": "Lee speed en cada callback del temporizador. Cámbialo desde el terminal mientras Python sigue ejecutándose.",
+      "steps": [
+        "Declara speed con valor inicial 0.2 en /student_controller.",
+        "Lee node.get_parameter(\"speed\").value dentro del temporizador, limita a 0–0.8 y publica Twist.",
+        "Usa ros2 param list, ros2 param get /student_controller speed y ros2 param set /student_controller speed 0.6. Observa el cambio y comprueba."
+      ],
+      "hints": [
+        "Los parámetros pertenecen a nodos, no a topics.",
+        "Leer solo al arrancar no aplica cambios posteriores.",
+        "Dentro de tick, consulta node.get_parameter(\"speed\").value en cada ejecución."
+      ]
+    },
+    "de": {
+      "title": "Ohne Neustart anpassen",
+      "description": "Lies speed in jedem Timer-Callback. Ändere den Wert im Terminal, während Python weiterläuft.",
+      "steps": [
+        "Deklariere speed mit Standardwert 0.2 auf /student_controller.",
+        "Lies node.get_parameter(\"speed\").value im Timer, begrenze auf 0–0.8 und sende Twist.",
+        "Nutze ros2 param list, ros2 param get /student_controller speed und ros2 param set /student_controller speed 0.6. Beobachte und prüfe die Änderung."
+      ],
+      "hints": [
+        "Parameter gehören zu Knoten, nicht zu Topics.",
+        "Einmaliges Lesen beim Start berücksichtigt spätere Änderungen nicht.",
+        "Lies node.get_parameter(\"speed\").value bei jedem Aufruf von tick."
+      ]
+    },
+    "pt": {
+      "title": "Ajustar sem reiniciar",
+      "description": "Lê speed em cada callback do temporizador. Altera-o no terminal enquanto Python continua a executar.",
+      "steps": [
+        "Declara speed com valor inicial 0.2 em /student_controller.",
+        "Lê node.get_parameter(\"speed\").value no temporizador, limita a 0–0.8 e publica Twist.",
+        "Usa ros2 param list, ros2 param get /student_controller speed e ros2 param set /student_controller speed 0.6. Observa a alteração e verifica."
+      ],
+      "hints": [
+        "Os parâmetros pertencem a nós, não a topics.",
+        "Ler apenas no arranque não aplica alterações posteriores.",
+        "Consulta node.get_parameter(\"speed\").value em cada execução de tick."
+      ]
     }
   }
 }

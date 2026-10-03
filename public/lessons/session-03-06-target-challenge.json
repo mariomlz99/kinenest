@@ -44,7 +44,8 @@
       "hints": [
         "Positieve angular.z draait links.",
         "Gebruik het verschil 160 − cx als stuurfout.",
-        "Beperk de snelheid en gebruik een kleine dode zone rond het midden."
+        "Beperk de snelheid en gebruik een kleine dode zone rond het midden.",
+        "Bij abs(160 - cx) < 10: publiceer angular.z = 0. Zonder rode pixels: draai langzaam om te zoeken."
       ]
     },
     "fr": {
@@ -58,7 +59,53 @@
       "hints": [
         "Une angular.z positive tourne à gauche.",
         "Utilisez 160 − cx comme erreur de direction.",
-        "Limitez la vitesse et prévoyez une petite zone d’arrêt au centre."
+        "Limitez la vitesse et prévoyez une petite zone d’arrêt au centre.",
+        "Si abs(160 - cx) < 10, publiez angular.z = 0. Sans pixels rouges, tournez lentement pour chercher."
+      ]
+    },
+    "es": {
+      "title": "Encontrar el objetivo",
+      "description": "Usa los píxeles para girar hasta centrar el objetivo rojo. Publica velocidad cero al centrarlo y comprueba tras detenerte.",
+      "steps": [
+        "Calcula el centroide rojo en cada callback de imagen.",
+        "Publica angular.z en /cmd_vel para girar hacia el objetivo.",
+        "Publica cero cuando esté centrado y comprueba después de parar."
+      ],
+      "hints": [
+        "Reutiliza máscara y centroide. El robot empieza mirando fuera del objetivo.",
+        "Objetivo a la izquierda: angular.z positivo; a la derecha: negativo.",
+        "Usa (160 - cx) / 160 y limita la velocidad angular a ±1 rad/s.",
+        "Si abs(160 - cx) < 10, publica angular.z = 0. Sin píxeles rojos, gira despacio para buscar."
+      ]
+    },
+    "de": {
+      "title": "Das Ziel finden",
+      "description": "Drehe anhand der Bildpixel, bis das rote Ziel mittig liegt. Sende dann Geschwindigkeit null und prüfe nach dem Anhalten.",
+      "steps": [
+        "Berechne den roten Schwerpunkt in jedem Bild-Callback.",
+        "Sende angular.z auf /cmd_vel, um zum Ziel zu drehen.",
+        "Sende null bei mittigem Ziel und prüfe nach dem Stillstand."
+      ],
+      "hints": [
+        "Nutze Maske und Schwerpunkt erneut. Der Roboter startet vom Ziel weggedreht.",
+        "Ziel links: angular.z positiv; rechts: negativ.",
+        "Nutze (160 - cx) / 160 und begrenze die Winkelgeschwindigkeit auf ±1 rad/s.",
+        "Bei abs(160 - cx) < 10 sende angular.z = 0. Ohne rote Pixel langsam suchen."
+      ]
+    },
+    "pt": {
+      "title": "Encontrar o alvo",
+      "description": "Usa os píxeis para rodar até centrar o alvo vermelho. Publica velocidade zero e verifica depois de parar.",
+      "steps": [
+        "Calcula o centroide vermelho em cada callback de imagem.",
+        "Publica angular.z em /cmd_vel para rodar em direção ao alvo.",
+        "Publica zero quando estiver centrado e verifica após parar."
+      ],
+      "hints": [
+        "Reutiliza máscara e centroide. O robô começa virado para fora do alvo.",
+        "Alvo à esquerda: angular.z positivo; à direita: negativo.",
+        "Usa (160 - cx) / 160 e limita a velocidade angular a ±1 rad/s.",
+        "Se abs(160 - cx) < 10, publica angular.z = 0. Sem píxeis vermelhos, roda devagar para procurar."
       ]
     }
   }

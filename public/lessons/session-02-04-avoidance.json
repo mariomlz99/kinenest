@@ -50,6 +50,48 @@
         "Réutilisez la fonction de secteur.",
         "Créez un nouveau Twist à chaque callback."
       ]
+    },
+    "es": {
+      "title": "Reaccionar a un obstáculo",
+      "description": "Avanza hacia el bloque, gira cuando esté cerca y continúa por espacio libre. Recorre 2 m sin colisiones.",
+      "steps": [
+        "Combina un subscriber de /scan y un publisher de /cmd_vel.",
+        "Si el sector frontal ±15° está a menos de 1.1 m, detente y gira a la izquierda a unos 0.9 rad/s; si no, avanza a unos 0.6 m/s.",
+        "Ejecuta al menos 8 s. Observa los rayos y explica el riesgo de un comando constante sin sensores."
+      ],
+      "hints": [
+        "La protección impide atravesar obstáculos, pero tocarlos hace fallar la comprobación.",
+        "Reutiliza el cálculo de sectores de 2.3.",
+        "Crea un Twist nuevo en cada callback para no conservar velocidades anteriores."
+      ]
+    },
+    "de": {
+      "title": "Auf Hindernisse reagieren",
+      "description": "Fahre zum Block, drehe bei geringem Abstand und fahre in freien Raum. Lege 2 m ohne Kollision zurück.",
+      "steps": [
+        "Kombiniere einen /scan-Subscriber mit einem /cmd_vel-Publisher.",
+        "Unter 1.1 m im vorderen ±15°-Sektor: Vorwärtsfahrt stoppen und mit etwa 0.9 rad/s links drehen. Sonst mit etwa 0.6 m/s fahren.",
+        "Mindestens 8 s laufen lassen. Beobachte Strahlen und Graph und erkläre das Risiko eines konstanten Befehls ohne Sensoren."
+      ],
+      "hints": [
+        "Der Kollisionsschutz verhindert Durchfahren; Berührungen lassen die Prüfung trotzdem scheitern.",
+        "Nutze die Sektorfunktion aus 2.3.",
+        "Erzeuge pro Callback einen neuen Twist, damit alte Geschwindigkeiten nicht erhalten bleiben."
+      ]
+    },
+    "pt": {
+      "title": "Reagir a um obstáculo",
+      "description": "Avança até ao bloco, roda quando estiver perto e continua por espaço livre. Percorre 2 m sem colisões.",
+      "steps": [
+        "Combina um subscriber de /scan com um publisher de /cmd_vel.",
+        "Se o setor frontal ±15° estiver a menos de 1.1 m, para e roda à esquerda a cerca de 0.9 rad/s; caso contrário, avança a cerca de 0.6 m/s.",
+        "Executa durante pelo menos 8 s. Observa os raios e explica o risco de um comando constante sem sensores."
+      ],
+      "hints": [
+        "A proteção impede atravessar obstáculos, mas tocar neles faz falhar a verificação.",
+        "Reutiliza o cálculo de setores de 2.3.",
+        "Cria um Twist novo em cada callback para não manter velocidades anteriores."
+      ]
     }
   }
 }

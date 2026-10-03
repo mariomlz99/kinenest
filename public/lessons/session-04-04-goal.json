@@ -50,6 +50,48 @@
         "send_goal_async fournit d’abord un goal handle.",
         "Attachez un callback à handle.get_result_async()."
       ]
+    },
+    "es": {
+      "title": "Enviar un objetivo de acción",
+      "description": "Pide a /drive_distance_server que avance un metro y recibe el resultado. El servidor mueve el robot simulado.",
+      "steps": [
+        "Usa ros2 action list, ros2 action type /drive_distance y ros2 interface show ros2learn_interfaces/action/DriveDistance.",
+        "Envía DriveDistance.Goal con distance = 1.0.",
+        "Tras aceptar el objetivo, usa get_result_async e inspecciona result.success y result.final_distance."
+      ],
+      "hints": [
+        "DriveDistance es una interfaz educativa propia, no una acción ROS estándar.",
+        "send_goal_async devuelve un manejador del objetivo, no el resultado final.",
+        "En el callback de aceptación: future.result().get_result_async().add_done_callback(on_result)."
+      ]
+    },
+    "de": {
+      "title": "Ein Aktionsziel senden",
+      "description": "Lass /drive_distance_server einen Meter fahren und empfange das Ergebnis. Der Server bewegt den simulierten Roboter.",
+      "steps": [
+        "Nutze ros2 action list, ros2 action type /drive_distance und ros2 interface show ros2learn_interfaces/action/DriveDistance.",
+        "Sende DriveDistance.Goal mit distance = 1.0.",
+        "Fordere nach Annahme get_result_async an und prüfe result.success sowie result.final_distance."
+      ],
+      "hints": [
+        "DriveDistance ist eine eigene Lehrschnittstelle, keine Standardaktion von ROS.",
+        "send_goal_async liefert ein Goal-Handle, nicht das Endergebnis.",
+        "Im Annahme-Callback: future.result().get_result_async().add_done_callback(on_result)."
+      ]
+    },
+    "pt": {
+      "title": "Enviar um objetivo de ação",
+      "description": "Pede a /drive_distance_server para avançar um metro e recebe o resultado. O servidor move o robô simulado.",
+      "steps": [
+        "Usa ros2 action list, ros2 action type /drive_distance e ros2 interface show ros2learn_interfaces/action/DriveDistance.",
+        "Envia DriveDistance.Goal com distance = 1.0.",
+        "Após a aceitação, usa get_result_async e inspeciona result.success e result.final_distance."
+      ],
+      "hints": [
+        "DriveDistance é uma interface educativa própria, não uma ação ROS padrão.",
+        "send_goal_async devolve um identificador do objetivo, não o resultado final.",
+        "No callback de aceitação: future.result().get_result_async().add_done_callback(on_result)."
+      ]
     }
   }
 }

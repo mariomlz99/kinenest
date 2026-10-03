@@ -50,6 +50,48 @@
         "Il y a 120 rayons ; le rayon 60 pointe devant.",
         "Utilisez node.create_subscription(LaserScan, \"/scan\", receive, 10)."
       ]
+    },
+    "es": {
+      "title": "Tu primer subscriber",
+      "description": "Suscríbete a /scan y lee los datos de LaserScan en un callback de Python.",
+      "steps": [
+        "Inspecciona /scan con ros2 topic info y ros2 interface show sensor_msgs/msg/LaserScan.",
+        "Crea una suscripción y muestra len(msg.ranges) y la distancia frontal.",
+        "Ejecuta el nodo, observa la salida repetida y consulta ros2 topic info /scan."
+      ],
+      "hints": [
+        "El callback recibe el mensaje como argumento.",
+        "Este scan de 120 rayos empieza en −π; el rayo 60 apunta hacia delante.",
+        "node.create_subscription(LaserScan, \"/scan\", receive, 10)"
+      ]
+    },
+    "de": {
+      "title": "Dein erster Subscriber",
+      "description": "Abonniere /scan und lies LaserScan-Daten in einem Python-Callback.",
+      "steps": [
+        "Untersuche /scan mit ros2 topic info und ros2 interface show sensor_msgs/msg/LaserScan.",
+        "Erstelle eine Subscription und gib len(msg.ranges) sowie den Abstand nach vorne aus.",
+        "Starte den Knoten, beobachte die Ausgabe und prüfe ros2 topic info /scan."
+      ],
+      "hints": [
+        "Der Callback erhält die Nachricht als Argument.",
+        "Der Scan hat 120 Strahlen ab −π; Strahl 60 zeigt nach vorne.",
+        "node.create_subscription(LaserScan, \"/scan\", receive, 10)"
+      ]
+    },
+    "pt": {
+      "title": "O primeiro subscriber",
+      "description": "Subscreve /scan e lê dados LaserScan num callback Python.",
+      "steps": [
+        "Inspeciona /scan com ros2 topic info e ros2 interface show sensor_msgs/msg/LaserScan.",
+        "Cria uma subscrição e mostra len(msg.ranges) e a distância frontal.",
+        "Executa o nó, observa a saída repetida e consulta ros2 topic info /scan."
+      ],
+      "hints": [
+        "O callback recebe a mensagem como argumento.",
+        "Este scan tem 120 raios a partir de −π; o raio 60 aponta em frente.",
+        "node.create_subscription(LaserScan, \"/scan\", receive, 10)"
+      ]
     }
   }
 }

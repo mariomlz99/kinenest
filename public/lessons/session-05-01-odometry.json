@@ -50,6 +50,48 @@
         "Pour le mouvement plan, 2 * atan2(q.z, q.w) convient.",
         "Yaw est mesuré en radians."
       ]
+    },
+    "es": {
+      "title": "Leer la pose del robot",
+      "description": "Lee posición y orientación desde Odometry. La pose es distinta del comando de velocidad.",
+      "steps": [
+        "Inspecciona /odom con ros2 topic echo /odom --field pose.pose.",
+        "Suscríbete en Python y calcula yaw a partir del cuaternión.",
+        "Llama a report_pose(x, y, yaw). Publica un Twist con --once en otro terminal y observa el cambio."
+      ],
+      "hints": [
+        "Posición: msg.pose.pose.position; orientación: msg.pose.pose.orientation.",
+        "En movimiento plano también sirve yaw = 2 * atan2(q.z, q.w).",
+        "La expresión general es atan2(2*(w*z+x*y), 1-2*(y*y+z*z))."
+      ]
+    },
+    "de": {
+      "title": "Die Roboterpose lesen",
+      "description": "Lies Position und Orientierung aus Odometry. Die Pose unterscheidet sich vom Geschwindigkeitsbefehl.",
+      "steps": [
+        "Untersuche /odom mit ros2 topic echo /odom --field pose.pose.",
+        "Abonniere in Python und berechne yaw aus dem Quaternion.",
+        "Melde report_pose(x, y, yaw). Sende einen Twist mit --once in einem anderen Terminal und beobachte die Änderung."
+      ],
+      "hints": [
+        "Position: msg.pose.pose.position; Orientierung: msg.pose.pose.orientation.",
+        "Für ebene Bewegung funktioniert auch yaw = 2 * atan2(q.z, q.w).",
+        "Allgemein gilt atan2(2*(w*z+x*y), 1-2*(y*y+z*z))."
+      ]
+    },
+    "pt": {
+      "title": "Ler a pose do robô",
+      "description": "Lê posição e orientação em Odometry. A pose é diferente do comando de velocidade.",
+      "steps": [
+        "Inspeciona /odom com ros2 topic echo /odom --field pose.pose.",
+        "Subscreve em Python e calcula yaw a partir do quaternião.",
+        "Chama report_pose(x, y, yaw). Publica um Twist com --once noutro terminal e observa as alterações."
+      ],
+      "hints": [
+        "Posição: msg.pose.pose.position; orientação: msg.pose.pose.orientation.",
+        "Para movimento plano também funciona yaw = 2 * atan2(q.z, q.w).",
+        "A expressão geral é atan2(2*(w*z+x*y), 1-2*(y*y+z*z))."
+      ]
     }
   }
 }

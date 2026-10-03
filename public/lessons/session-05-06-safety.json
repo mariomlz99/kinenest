@@ -74,6 +74,51 @@
         "Si bloqué : linear.x = 0 et angular.z = 0.8.",
         "Utilisez un compteur de 15 callbacks de 0.1 s ; avancez à 0.45 m/s pendant cette période lorsque le secteur est libre."
       ]
+    },
+    "es": {
+      "title": "Objetivo y seguridad LiDAR",
+      "description": "Combina control TF y un sector frontal LiDAR. Alcanza el objetivo sin tocar el bloque; no se usa planificación global.",
+      "steps": [
+        "Guarda la última distancia frontal en el estado del nodo.",
+        "Orienta con TF; si el sector está a menos de 0.8 m, deja de avanzar y gira a la izquierda.",
+        "Tras despejar el obstáculo, avanza unos 1.5 s antes de retomar el objetivo. Detente al llegar y discute los límites del método."
+      ],
+      "hints": [
+        "Usa ±30° para el sector de seguridad.",
+        "La seguridad tiene prioridad sobre el objetivo.",
+        "Mientras haya obstáculo, prueba linear.x = 0 y angular.z = 0.8.",
+        "Usa un contador de 15 callbacks: al despejarse, avanza a 0.45 m/s durante 15 períodos de 0.1 s antes de retomar TF."
+      ]
+    },
+    "de": {
+      "title": "Zielrichtung und Hindernisschutz",
+      "description": "Kombiniere TF-Regelung mit einem vorderen LiDAR-Sektor. Erreiche das Ziel ohne den Block zu berühren; kein globaler Planer.",
+      "steps": [
+        "Speichere den aktuellen Frontabstand im Knotenzustand.",
+        "Steuere mit TF; unter 0.8 m im Frontsektor stoppe die Vorwärtsfahrt und drehe links.",
+        "Fahre nach dem Freidrehen etwa 1.5 s vorwärts, bevor du wieder zum Ziel lenkst. Stoppe am Ziel und diskutiere die Grenzen."
+      ],
+      "hints": [
+        "Nutze ±30° für den Sicherheitssektor.",
+        "Hindernisschutz hat Vorrang vor Zielregelung.",
+        "Versuche bei Blockierung linear.x = 0 und angular.z = 0.8.",
+        "Setze einen Zähler auf 15: Nach dem Freidrehen 15 Timer-Callbacks von 0.1 s mit 0.45 m/s fahren, dann TF fortsetzen."
+      ]
+    },
+    "pt": {
+      "title": "Objetivo e segurança LiDAR",
+      "description": "Combina controlo TF e um setor frontal LiDAR. Alcança o alvo sem tocar no bloco; não há planeamento global.",
+      "steps": [
+        "Guarda a última distância frontal no estado do nó.",
+        "Orienta com TF; abaixo de 0.8 m no setor, para o avanço e roda à esquerda.",
+        "Depois de libertar o caminho, avança cerca de 1.5 s antes de retomar o alvo. Para ao chegar e discute os limites."
+      ],
+      "hints": [
+        "Usa ±30° para o setor de segurança.",
+        "A segurança tem prioridade sobre o objetivo.",
+        "Enquanto bloqueado, experimenta linear.x = 0 e angular.z = 0.8.",
+        "Usa um contador de 15 callbacks: ao libertar, avança a 0.45 m/s durante 15 períodos de 0.1 s antes de retomar TF."
+      ]
     }
   }
 }

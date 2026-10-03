@@ -50,6 +50,48 @@
         "roll, pitch, yaw = euler_from_quaternion([...]).",
         "Un yaw positif tourne dans le sens antihoraire."
       ]
+    },
+    "es": {
+      "title": "Posición y orientación",
+      "description": "Obtén yaw con una función de cuaterniones. Compara una traslación con un giro del robot.",
+      "steps": [
+        "Importa euler_from_quaternion de tf_transformations.",
+        "Pasa [q.x, q.y, q.z, q.w]; el tercer valor devuelto es yaw en radianes.",
+        "Informa con report_pose y compara con el mundo. Prueba un Twist solo angular desde el terminal."
+      ],
+      "hints": [
+        "El orden del cuaternión es x, y, z, w.",
+        "roll, pitch, yaw = euler_from_quaternion([...])",
+        "Un yaw positivo gira en sentido antihorario."
+      ]
+    },
+    "de": {
+      "title": "Position und Orientierung",
+      "description": "Berechne yaw mit einer Quaternion-Hilfsfunktion. Vergleiche Drehen und Verschieben des Roboters.",
+      "steps": [
+        "Importiere euler_from_quaternion aus tf_transformations.",
+        "Übergib [q.x, q.y, q.z, q.w]; der dritte Rückgabewert ist yaw im Bogenmaß.",
+        "Melde report_pose und vergleiche die Weltansicht. Sende einen rein rotatorischen Twist im Terminal."
+      ],
+      "hints": [
+        "Die Reihenfolge ist x, y, z, w.",
+        "roll, pitch, yaw = euler_from_quaternion([...])",
+        "Positives yaw dreht gegen den Uhrzeigersinn."
+      ]
+    },
+    "pt": {
+      "title": "Posição e orientação",
+      "description": "Obtém yaw com uma função de quaterniões. Compara a translação com a rotação do robô.",
+      "steps": [
+        "Importa euler_from_quaternion de tf_transformations.",
+        "Passa [q.x, q.y, q.z, q.w]; o terceiro valor devolvido é yaw em radianos.",
+        "Usa report_pose e compara com o mundo. Experimenta um Twist apenas angular no terminal."
+      ],
+      "hints": [
+        "A ordem é x, y, z, w.",
+        "roll, pitch, yaw = euler_from_quaternion([...])",
+        "Um yaw positivo roda no sentido contrário ao dos ponteiros do relógio."
+      ]
     }
   }
 }

@@ -83,6 +83,48 @@
         "Le callback du scan mémorise la distance ; celui de l’image décide du mouvement.",
         "Invisible : cherchez. Décalée : tournez. Libre et centrée : avancez. Proche : arrêtez."
       ]
+    },
+    "es": {
+      "title": "Reto final: encontrar la baliza roja",
+      "description": "Centra la baliza con la cámara y usa LiDAR para parar a distancia segura. Combina dos callbacks y un publisher.",
+      "steps": [
+        "Guarda el último sector frontal del scan en el nodo.",
+        "Detecta píxeles rojos y su centroide en cada imagen. Gira hacia la baliza y avanza solo si está centrada y el scan permite avanzar.",
+        "Detente a 0.55–1.10 m de la superficie, mantén la baliza centrada y comprueba. Explica el grafo desde los terminales."
+      ],
+      "hints": [
+        "angular.z positivo gira a la izquierda. Un centroide a la izquierda requiere giro positivo.",
+        "El scan actualiza la distancia; el callback de imagen decide el movimiento.",
+        "Sin objetivo: busca girando. Descentrado: gira. Centrado y lejos: avanza. Centrado y cerca: publica cero."
+      ]
+    },
+    "de": {
+      "title": "Abschlussaufgabe: rote Bake finden",
+      "description": "Zentriere die Bake mit der Kamera und stoppe mit LiDAR im sicheren Abstand. Kombiniere zwei Callbacks und einen Publisher.",
+      "steps": [
+        "Speichere den aktuellen Frontsektor des Scans im Knoten.",
+        "Erkenne rote Pixel und ihren Schwerpunkt. Drehe zur Bake und fahre nur bei mittigem Bild und freiem Scan.",
+        "Stoppe 0.55–1.10 m vor der Oberfläche, halte die Bake mittig und prüfe. Erkläre Graph und Steuerung im Terminal."
+      ],
+      "hints": [
+        "Positives angular.z dreht links. Ein Schwerpunkt links braucht positive Drehung.",
+        "Scan aktualisiert den Abstand; der Bild-Callback entscheidet über Bewegung.",
+        "Kein Ziel: suchen. Nicht mittig: drehen. Mittig und weit: fahren. Mittig und nah: null senden."
+      ]
+    },
+    "pt": {
+      "title": "Desafio final: encontrar a baliza vermelha",
+      "description": "Centra a baliza com a câmara e usa LiDAR para parar a uma distância segura. Combina dois callbacks e um publisher.",
+      "steps": [
+        "Guarda o último setor frontal do scan no nó.",
+        "Deteta píxeis vermelhos e o centroide em cada imagem. Roda para a baliza; avança apenas se estiver centrada e o scan permitir.",
+        "Para a 0.55–1.10 m da superfície, mantém a baliza centrada e verifica. Explica o grafo e o controlo nos terminais."
+      ],
+      "hints": [
+        "angular.z positivo roda à esquerda. Um centroide à esquerda requer rotação positiva.",
+        "O scan atualiza a distância; o callback de imagem decide o movimento.",
+        "Sem alvo: procura. Descentrado: roda. Centrado e longe: avança. Centrado e perto: publica zero."
+      ]
     }
   }
 }

@@ -50,6 +50,48 @@
         "declare_parameter fournit la valeur par défaut.",
         "Lisez get_parameter(\"speed\").value dans le timer."
       ]
+    },
+    "es": {
+      "title": "Configurar un nodo",
+      "description": "Declara un parámetro speed y úsalo en un controlador con temporizador. Cada parámetro pertenece a un nodo.",
+      "steps": [
+        "Declara speed = 0.2.",
+        "Lee su valor en el temporizador, limítalo a 0–0.8 y publica /cmd_vel.",
+        "Inspecciona ros2 param list y ros2 param get /student_controller speed."
+      ],
+      "hints": [
+        "declare_parameter define un valor inicial.",
+        "get_parameter(\"speed\").value lee el valor actual.",
+        "El temporizador mantiene el envío de comandos."
+      ]
+    },
+    "de": {
+      "title": "Einen Knoten konfigurieren",
+      "description": "Deklariere speed und nutze den Parameter in einem Timer-Controller. Ein Parameter gehört zu einem Knoten.",
+      "steps": [
+        "Deklariere speed = 0.2.",
+        "Lies den Wert im Timer, begrenze ihn auf 0–0.8 und sende /cmd_vel.",
+        "Untersuche ros2 param list und ros2 param get /student_controller speed."
+      ],
+      "hints": [
+        "declare_parameter setzt einen Standardwert.",
+        "get_parameter(\"speed\").value liest den aktuellen Wert.",
+        "Ein Timer sorgt für regelmäßige Befehle."
+      ]
+    },
+    "pt": {
+      "title": "Configurar um nó",
+      "description": "Declara o parâmetro speed e usa-o num controlador com temporizador. Um parâmetro pertence a um nó.",
+      "steps": [
+        "Declara speed = 0.2.",
+        "Lê o valor no temporizador, limita-o a 0–0.8 e publica /cmd_vel.",
+        "Inspeciona ros2 param list e ros2 param get /student_controller speed."
+      ],
+      "hints": [
+        "declare_parameter define um valor inicial.",
+        "get_parameter(\"speed\").value lê o valor atual.",
+        "O temporizador mantém o envio de comandos."
+      ]
     }
   }
 }

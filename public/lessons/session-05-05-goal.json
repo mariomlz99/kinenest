@@ -55,6 +55,48 @@
         "Essayez une correction bornée de 2*angle.",
         "Avancez seulement si abs(angle) < 0.3 et ralentissez près de la cible."
       ]
+    },
+    "es": {
+      "title": "Control en bucle cerrado con TF",
+      "description": "Alcanza (1, 1) usando la posición relativa. Recalcula, gira, avanza y para; evita conducir durante un tiempo fijo.",
+      "steps": [
+        "Consulta target en base_link dentro de un temporizador.",
+        "Calcula distance = hypot(x,y) y angle = atan2(y,x). Gira y avanza cuando estés alineado.",
+        "Limita angular.z a ±1.5 y linear.x a 0–0.7. Publica cero si distance < 0.07 m."
+      ],
+      "hints": [
+        "Las coordenadas ya son relativas al robot: atan2(y,x) es el error angular.",
+        "Prueba una velocidad angular proporcional a 2*angle, limitada.",
+        "Avanza solo si abs(angle) < 0.3 y reduce la velocidad cerca del objetivo."
+      ]
+    },
+    "de": {
+      "title": "Mit TF regeln",
+      "description": "Erreiche (1, 1) anhand der relativen Position. Berechne laufend neu, drehe, fahre und stoppe.",
+      "steps": [
+        "Frage target in base_link in einem Timer ab.",
+        "Berechne distance = hypot(x,y) und angle = atan2(y,x). Drehe zum Ziel und fahre erst bei Ausrichtung.",
+        "Begrenze angular.z auf ±1.5 und linear.x auf 0–0.7. Sende null bei distance < 0.07 m."
+      ],
+      "hints": [
+        "Die Koordinaten sind roboterrelativ; atan2(y,x) ist der Winkelfehler.",
+        "Nutze etwa 2*angle als begrenzte Winkelgeschwindigkeit.",
+        "Fahre nur bei abs(angle) < 0.3 und werde nahe am Ziel langsamer."
+      ]
+    },
+    "pt": {
+      "title": "Controlo em malha fechada com TF",
+      "description": "Alcança (1, 1) usando a posição relativa. Recalcula, roda, avança e para; evita conduzir por um tempo fixo.",
+      "steps": [
+        "Consulta target em base_link num temporizador.",
+        "Calcula distance = hypot(x,y) e angle = atan2(y,x). Roda e avança quando estiveres alinhado.",
+        "Limita angular.z a ±1.5 e linear.x a 0–0.7. Publica zero se distance < 0.07 m."
+      ],
+      "hints": [
+        "As coordenadas já são relativas ao robô: atan2(y,x) é o erro angular.",
+        "Experimenta 2*angle como velocidade angular, com limites.",
+        "Avança só se abs(angle) < 0.3 e abranda perto do alvo."
+      ]
     }
   }
 }

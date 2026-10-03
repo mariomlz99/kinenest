@@ -5,7 +5,10 @@
     "number": "6.1",
     "translations": {
       "nl": "De robot hoort niets",
-      "fr": "Le robot n’entend rien"
+      "fr": "Le robot n’entend rien",
+      "es": "El robot no recibe comandos",
+      "de": "Der Roboter empfängt nichts",
+      "pt": "O robô não recebe comandos"
     }
   },
   {
@@ -14,7 +17,10 @@
     "number": "6.2",
     "translations": {
       "nl": "Juiste getallen, verkeerd frame",
-      "fr": "Bons nombres, mauvais repère"
+      "fr": "Bons nombres, mauvais repère",
+      "es": "Números correctos, marco incorrecto",
+      "de": "Richtige Zahlen, falscher Bezug",
+      "pt": "Números certos, referencial errado"
     }
   },
   {
@@ -23,7 +29,10 @@
     "number": "6.3",
     "translations": {
       "nl": "Eindmissie: vind het rode baken",
-      "fr": "Mission finale : trouver la balise rouge"
+      "fr": "Mission finale : trouver la balise rouge",
+      "es": "Reto final: encontrar la baliza roja",
+      "de": "Abschlussaufgabe: rote Bake finden",
+      "pt": "Desafio final: encontrar a baliza vermelha"
     }
   }
 ]

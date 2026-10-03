@@ -55,6 +55,48 @@
         "Le contrôleur suppose +x devant et +y à gauche du robot.",
         "Demandez target dans base_link."
       ]
+    },
+    "es": {
+      "title": "Números correctos, marco incorrecto",
+      "description": "El controlador gira en la dirección equivocada. TF devuelve coordenadas válidas en un marco inadecuado para controlar.",
+      "steps": [
+        "Inspecciona el árbol TF e identifica el marco que necesita atan2(y, x).",
+        "Corrige la consulta, alcanza el objetivo y detente.",
+        "Explica por qué las coordenadas del mundo no son directamente un error angular relativo al robot."
+      ],
+      "hints": [
+        "Revisa el primer argumento de lookup_transform.",
+        "El controlador supone +x delante y +y a la izquierda del robot.",
+        "Solicita target en base_link."
+      ]
+    },
+    "de": {
+      "title": "Richtige Zahlen, falscher Bezug",
+      "description": "Der Controller dreht in die falsche Richtung. TF liefert gültige Koordinaten im falschen Bezugssystem.",
+      "steps": [
+        "Prüfe den TF-Baum und den Bezug, den atan2(y, x) benötigt.",
+        "Korrigiere die Abfrage, erreiche das Ziel und stoppe.",
+        "Erkläre, warum Weltkoordinaten nicht direkt als roboterrelativer Winkelfehler dienen."
+      ],
+      "hints": [
+        "Prüfe das erste Argument von lookup_transform.",
+        "Der Controller erwartet +x nach vorne und +y links vom Roboter.",
+        "Frage target in base_link ab."
+      ]
+    },
+    "pt": {
+      "title": "Números certos, referencial errado",
+      "description": "O controlador roda na direção errada. TF devolve coordenadas válidas num referencial inadequado para controlar.",
+      "steps": [
+        "Inspeciona a árvore TF e identifica o referencial de que atan2(y, x) precisa.",
+        "Corrige a consulta, alcança o alvo e para.",
+        "Explica porque coordenadas do mundo não são diretamente um erro angular relativo ao robô."
+      ],
+      "hints": [
+        "Revê o primeiro argumento de lookup_transform.",
+        "O controlador assume +x em frente e +y à esquerda do robô.",
+        "Pede target em base_link."
+      ]
     }
   }
 }

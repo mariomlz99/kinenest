@@ -55,6 +55,48 @@
         "odom fournit des coordonnées alignées sur le monde, pas sur le robot.",
         "Utilisez lookup_transform(\"base_link\", \"target\", Time())."
       ]
+    },
+    "es": {
+      "title": "Objetivo relativo al robot",
+      "description": "Consulta target en base_link: x positivo es delante, y positivo es izquierda. Las coordenadas cambian al girar.",
+      "steps": [
+        "Inspecciona el árbol TF con world, odom, base_link, sensores y target.",
+        "Consulta target usando base_link como target_frame.",
+        "Llama a report_relative con translation.x y translation.y y compara con el objetivo visible."
+      ],
+      "hints": [
+        "lookup_transform(target_frame, source_frame, Time()) expresa source en target_frame.",
+        "Usar odom daría coordenadas alineadas con el mundo, no con el robot.",
+        "lookup_transform(\"base_link\", \"target\", Time())"
+      ]
+    },
+    "de": {
+      "title": "Das Ziel relativ zum Roboter",
+      "description": "Frage target in base_link ab: positives x ist vorne, positives y links. Die Werte ändern sich beim Drehen.",
+      "steps": [
+        "Untersuche den TF-Baum mit world, odom, base_link, Sensoren und target.",
+        "Frage target mit base_link als target_frame ab.",
+        "Melde translation.x und translation.y mit report_relative und vergleiche die Zielmarkierung."
+      ],
+      "hints": [
+        "lookup_transform(target_frame, source_frame, Time()) drückt source in target_frame aus.",
+        "Mit odom wären die Koordinaten weltorientiert, nicht roboterrelativ.",
+        "lookup_transform(\"base_link\", \"target\", Time())"
+      ]
+    },
+    "pt": {
+      "title": "Alvo relativo ao robô",
+      "description": "Consulta target em base_link: x positivo é em frente, y positivo é à esquerda. As coordenadas mudam ao rodar.",
+      "steps": [
+        "Inspeciona a árvore TF com world, odom, base_link, sensores e target.",
+        "Consulta target usando base_link como target_frame.",
+        "Chama report_relative com translation.x e translation.y e compara com o alvo visível."
+      ],
+      "hints": [
+        "lookup_transform(target_frame, source_frame, Time()) expressa source em target_frame.",
+        "Usar odom daria coordenadas alinhadas com o mundo, não com o robô.",
+        "lookup_transform(\"base_link\", \"target\", Time())"
+      ]
     }
   }
 }

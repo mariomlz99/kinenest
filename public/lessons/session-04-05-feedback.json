@@ -50,6 +50,48 @@
         "Lisez le champ feedback de l’objet reçu.",
         "Le résultat final reste un future distinct."
       ]
+    },
+    "es": {
+      "title": "Seguir el progreso de una acción",
+      "description": "Añade un callback de feedback para observar el movimiento antes del resultado final.",
+      "steps": [
+        "Reutiliza 4.4 y añade feedback_callback al enviar el objetivo.",
+        "Muestra msg.feedback.distance_travelled durante el movimiento.",
+        "Después de detener Python, prueba el objetivo equivalente por CLI con --feedback."
+      ],
+      "hints": [
+        "El feedback describe el progreso intermedio de un objetivo.",
+        "La distancia está dentro de msg.feedback.distance_travelled.",
+        "Solicita el resultado final al manejador del objetivo aceptado."
+      ]
+    },
+    "de": {
+      "title": "Aktionsfortschritt verfolgen",
+      "description": "Beobachte die Bewegung mit einem Feedback-Callback, bevor das Endergebnis vorliegt.",
+      "steps": [
+        "Ergänze 4.4 um feedback_callback beim Senden des Ziels.",
+        "Gib während der Fahrt msg.feedback.distance_travelled aus.",
+        "Stoppe Python und teste das entsprechende CLI-Ziel mit --feedback."
+      ],
+      "hints": [
+        "Feedback beschreibt den Zwischenstand eines Ziels.",
+        "Der Wert steht unter msg.feedback.distance_travelled.",
+        "Das Endergebnis wird weiterhin über das angenommene Goal-Handle angefordert."
+      ]
+    },
+    "pt": {
+      "title": "Acompanhar o progresso da ação",
+      "description": "Adiciona um callback de feedback para observar o movimento antes do resultado final.",
+      "steps": [
+        "Reutiliza 4.4 e adiciona feedback_callback ao enviar o objetivo.",
+        "Mostra msg.feedback.distance_travelled durante o movimento.",
+        "Depois de parar Python, experimenta o objetivo equivalente na CLI com --feedback."
+      ],
+      "hints": [
+        "O feedback descreve o progresso intermédio de um objetivo.",
+        "A distância está em msg.feedback.distance_travelled.",
+        "Pede o resultado final ao identificador do objetivo aceite."
+      ]
     }
   }
 }

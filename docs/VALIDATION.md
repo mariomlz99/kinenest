@@ -52,3 +52,5 @@ The complete corrected Chrome production run passed: delayed-loading regression,
 ## KineCourse workstation baseline — 2026-10-03
 
 Starting revision fb86743: clean working tree; 32 unit tests and static build passed. Full Chrome and Firefox production suites passed all six sessions before changes. Branding/copy changes retain lesson IDs, Python programs and runtime behaviour. The original CLI browser regression and the new independent-brand/emoji checks pass after rebranding.
+
+Six-language stage: 35 unit tests pass, including every lesson/catalog translation and required UI rows. Chrome and Firefox language regressions pass with running Python and continued robot motion; switching EN/NL/FR/ES/DE/PT preserves source, selected lesson, theme and layout. Existing Dutch/French Session 1 steps and Session 3 hints were made complete. Legal notices and low-level Python/CLI diagnostics intentionally retain English; reference-page teaching prose is translated. Native-speaker editorial review remains separate from engineering validation.

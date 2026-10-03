@@ -38,7 +38,8 @@
       "hints": [
         "Een camera is ook een ROS-publisher.",
         "Importeer Image uit sensor_msgs.msg.",
-        "Gebruik create_subscription(Image, \"/camera/image_raw\", self.image_callback, 10)."
+        "Gebruik create_subscription(Image, \"/camera/image_raw\", self.image_callback, 10).",
+        "In de callback: print(f\"Image: {msg.width} x {msg.height}\")"
       ]
     },
     "fr": {
@@ -52,7 +53,53 @@
       "hints": [
         "Une caméra est aussi un publisher ROS.",
         "Importez Image depuis sensor_msgs.msg.",
-        "Utilisez create_subscription(Image, \"/camera/image_raw\", self.image_callback, 10)."
+        "Utilisez create_subscription(Image, \"/camera/image_raw\", self.image_callback, 10).",
+        "Dans le callback : print(f\"Image: {msg.width} x {msg.height}\")"
+      ]
+    },
+    "es": {
+      "title": "Subscriber de cámara",
+      "description": "Suscríbete a /camera/image_raw y muestra la anchura y altura de cada imagen.",
+      "steps": [
+        "Inspecciona /camera/image_raw con ros2 topic info.",
+        "Suscríbete a Image y muestra msg.width y msg.height en el callback.",
+        "Ejecuta el nodo y comprueba la salida repetida."
+      ],
+      "hints": [
+        "La cámara es otro publisher. Usa ros2 topic list y ros2 topic info /camera/image_raw.",
+        "Crea una suscripción Image con self.image_callback y profundidad de cola 10.",
+        "self.subscription = self.create_subscription(Image, \"/camera/image_raw\", self.image_callback, 10)",
+        "En el callback: print(f\"Image: {msg.width} x {msg.height}\")"
+      ]
+    },
+    "de": {
+      "title": "Kamera-Subscriber",
+      "description": "Abonniere /camera/image_raw und gib Breite und Höhe jedes Bildes aus.",
+      "steps": [
+        "Untersuche /camera/image_raw mit ros2 topic info.",
+        "Abonniere Image und gib msg.width und msg.height im Callback aus.",
+        "Starte den Knoten und prüfe die wiederholte Ausgabe."
+      ],
+      "hints": [
+        "Die Kamera ist ein weiterer Publisher. Nutze ros2 topic list und ros2 topic info /camera/image_raw.",
+        "Erstelle eine Image-Subscription mit self.image_callback und Warteschlangentiefe 10.",
+        "self.subscription = self.create_subscription(Image, \"/camera/image_raw\", self.image_callback, 10)",
+        "Im Callback: print(f\"Image: {msg.width} x {msg.height}\")"
+      ]
+    },
+    "pt": {
+      "title": "Subscriber da câmara",
+      "description": "Subscreve /camera/image_raw e mostra a largura e a altura de cada imagem.",
+      "steps": [
+        "Inspeciona /camera/image_raw com ros2 topic info.",
+        "Subscreve Image e mostra msg.width e msg.height no callback.",
+        "Executa o nó e verifica a saída repetida."
+      ],
+      "hints": [
+        "A câmara é outro publisher. Usa ros2 topic list e ros2 topic info /camera/image_raw.",
+        "Cria uma subscrição Image com self.image_callback e profundidade de fila 10.",
+        "self.subscription = self.create_subscription(Image, \"/camera/image_raw\", self.image_callback, 10)",
+        "No callback: print(f\"Image: {msg.width} x {msg.height}\")"
       ]
     }
   }

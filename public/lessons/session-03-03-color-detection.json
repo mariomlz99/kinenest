@@ -41,7 +41,8 @@
       "hints": [
         "Rood heeft een hoge waarde in kanaal 0.",
         "Probeer rood > 180, groen < 100 en blauw < 100.",
-        "Meer dan 500 geselecteerde pixels duidt op het rode doel."
+        "Meer dan 500 geselecteerde pixels duidt op het rode doel.",
+        "visible = mask.sum() > 500; report_detection(visible)"
       ]
     },
     "fr": {
@@ -55,7 +56,53 @@
       "hints": [
         "Le rouge a une valeur élevée dans le canal 0.",
         "Essayez rouge > 180, vert < 100 et bleu < 100.",
-        "Plus de 500 pixels sélectionnés indique la cible rouge."
+        "Plus de 500 pixels sélectionnés indique la cible rouge.",
+        "visible = mask.sum() > 500; report_detection(visible)"
+      ]
+    },
+    "es": {
+      "title": "Detectar píxeles rojos",
+      "description": "Detecta un objeto rojo a partir de píxeles RGB. Informa con report_detection(visible); la comprobación usa cuatro escenas.",
+      "steps": [
+        "Convierte cada imagen en un array RGB.",
+        "Crea una máscara roja e indica si contiene más de 500 píxeles.",
+        "Comprueba el detector en cuatro escenas distintas."
+      ],
+      "hints": [
+        "El rojo debe ser alto; verde y azul, bajos.",
+        "Separa canales con image[:, :, 0], image[:, :, 1], image[:, :, 2].",
+        "mask = (image[:, :, 0] > 180) & (image[:, :, 1] < 100) & (image[:, :, 2] < 100)",
+        "visible = mask.sum() > 500; report_detection(visible). También sirven cv2.inRange y countNonZero."
+      ]
+    },
+    "de": {
+      "title": "Rote Pixel erkennen",
+      "description": "Erkenne ein rotes Objekt anhand von RGB-Pixeln. Melde report_detection(visible); die Prüfung nutzt vier Szenen.",
+      "steps": [
+        "Wandle jedes Bild in ein RGB-Array um.",
+        "Erzeuge eine Rotmaske und prüfe, ob mehr als 500 Pixel passen.",
+        "Prüfe den Detektor in vier unterschiedlichen Szenen."
+      ],
+      "hints": [
+        "Rot soll hoch, Grün und Blau sollen niedrig sein.",
+        "Trenne die Kanäle mit image[:, :, 0], image[:, :, 1], image[:, :, 2].",
+        "mask = (image[:, :, 0] > 180) & (image[:, :, 1] < 100) & (image[:, :, 2] < 100)",
+        "visible = mask.sum() > 500; report_detection(visible). Auch cv2.inRange und countNonZero sind möglich."
+      ]
+    },
+    "pt": {
+      "title": "Detetar píxeis vermelhos",
+      "description": "Deteta um objeto vermelho pelos píxeis RGB. Usa report_detection(visible); a verificação apresenta quatro cenas.",
+      "steps": [
+        "Converte cada imagem num array RGB.",
+        "Cria uma máscara vermelha e indica se contém mais de 500 píxeis.",
+        "Verifica o detetor em quatro cenas diferentes."
+      ],
+      "hints": [
+        "O vermelho deve ser alto; verde e azul, baixos.",
+        "Separa canais com image[:, :, 0], image[:, :, 1], image[:, :, 2].",
+        "mask = (image[:, :, 0] > 180) & (image[:, :, 1] < 100) & (image[:, :, 2] < 100)",
+        "visible = mask.sum() > 500; report_detection(visible). Também podes usar cv2.inRange e countNonZero."
       ]
     }
   }

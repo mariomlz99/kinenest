@@ -67,6 +67,48 @@
         "Examinez node info /student_controller.",
         "Le simulateur écoute /cmd_vel."
       ]
+    },
+    "es": {
+      "title": "El robot no recibe comandos",
+      "description": "El controlador publica pero el robot no se mueve. Diagnostica el grafo antes de editar.",
+      "steps": [
+        "Ejecuta el programa y consulta ros2 node list, ros2 topic list -t y ros2 topic info /cmd_vel.",
+        "Compara el topic del publisher con la suscripción del simulador. Corrige la diferencia.",
+        "Deja que el controlador evite el bloque y explica qué datos revelaron el fallo."
+      ],
+      "hints": [
+        "Un nombre válido puede ser el topic equivocado.",
+        "Usa ros2 node info /student_controller para ver sus publishers.",
+        "El simulador escucha /cmd_vel."
+      ]
+    },
+    "de": {
+      "title": "Der Roboter empfängt nichts",
+      "description": "Der Controller veröffentlicht, aber der Roboter bewegt sich nicht. Untersuche den Graphen vor dem Code.",
+      "steps": [
+        "Starte das Programm und prüfe ros2 node list, ros2 topic list -t und ros2 topic info /cmd_vel.",
+        "Vergleiche Publisher-Topic und Simulator-Subscription. Korrigiere die Abweichung.",
+        "Lass den reparierten Controller dem Block ausweichen. Welche Beobachtung zeigte den Fehler?"
+      ],
+      "hints": [
+        "Ein gültiger Name kann trotzdem das falsche Topic sein.",
+        "ros2 node info /student_controller zeigt die Publisher.",
+        "Der Simulator hört auf /cmd_vel."
+      ]
+    },
+    "pt": {
+      "title": "O robô não recebe comandos",
+      "description": "O controlador publica mas o robô não se move. Diagnostica o grafo antes de editar.",
+      "steps": [
+        "Executa o programa e consulta ros2 node list, ros2 topic list -t e ros2 topic info /cmd_vel.",
+        "Compara o topic do publisher com a subscrição do simulador. Corrige a diferença.",
+        "Deixa o controlador reparado evitar o bloco. Explica que dados revelaram a falha."
+      ],
+      "hints": [
+        "Um nome válido pode ser o topic errado.",
+        "Usa ros2 node info /student_controller para ver os publishers.",
+        "O simulador escuta /cmd_vel."
+      ]
     }
   }
 }

@@ -51,6 +51,48 @@
         "Utilisez un booléen pour éviter les répétitions.",
         "handle.cancel_goal_async() envoie la demande."
       ]
+    },
+    "es": {
+      "title": "Opcional: cancelar un objetivo",
+      "description": "Envía un objetivo de dos metros. Cancélalo después de recibir más de 0.3 m de progreso y espera el resultado.",
+      "steps": [
+        "Conserva el manejador del objetivo aceptado.",
+        "Desde feedback, cancela una sola vez cuando distance_travelled supere 0.3.",
+        "Comprueba el resultado: status 5 significa cancelado. El robot debe parar antes de dos metros."
+      ],
+      "hints": [
+        "Cancelar envía una petición; observa también el resultado final.",
+        "Usa un booleano para no cancelar en cada callback.",
+        "handle.cancel_goal_async() solicita la cancelación; conserva el callback del resultado."
+      ]
+    },
+    "de": {
+      "title": "Optional: ein Ziel abbrechen",
+      "description": "Sende ein Zwei-Meter-Ziel. Brich es nach mehr als 0.3 m Feedback ab und warte auf das Ergebnis.",
+      "steps": [
+        "Bewahre das angenommene Goal-Handle auf.",
+        "Fordere im Feedback-Callback einmalig den Abbruch an, sobald distance_travelled größer als 0.3 ist.",
+        "Prüfe das Endergebnis: status 5 bedeutet abgebrochen. Der Roboter muss vor zwei Metern stoppen."
+      ],
+      "hints": [
+        "Abbruch ist eine Anfrage; beobachte auch das Endergebnis.",
+        "Verhindere wiederholte Anfragen mit einer booleschen Variable.",
+        "handle.cancel_goal_async() fordert den Abbruch an; behalte den Ergebnis-Callback."
+      ]
+    },
+    "pt": {
+      "title": "Opcional: cancelar um objetivo",
+      "description": "Envia um objetivo de dois metros. Cancela após mais de 0.3 m de progresso e espera o resultado.",
+      "steps": [
+        "Guarda o identificador do objetivo aceite.",
+        "No callback de feedback, cancela uma só vez quando distance_travelled ultrapassar 0.3.",
+        "Inspeciona o resultado: status 5 significa cancelado. O robô deve parar antes dos dois metros."
+      ],
+      "hints": [
+        "Cancelar envia um pedido; observa também o resultado final.",
+        "Usa um booleano para não cancelar em cada callback.",
+        "handle.cancel_goal_async() pede o cancelamento; mantém o callback do resultado."
+      ]
     }
   }
 }

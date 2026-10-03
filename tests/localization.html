@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Language preservation</title><img src="/hold" hidden alt=""><pre id="result">RUNNING</pre><iframe src="../session-05.html" title="Session 5" width="1440" height="1100"></iframe><script type="module">
+const frame=document.querySelector('iframe'),out=document.getElementById('result'),wait=ms=>new Promise(r=>setTimeout(r,ms));
+async function until(fn){for(let i=0;i<900;i++){if(fn())return;await wait(100);}throw Error('Timeout: '+frame.contentDocument?.getElementById('python-output')?.textContent);}
+function assert(value,message){if(!value)throw Error(message);}
+try{
+ await until(()=>frame.contentDocument?.body.dataset.lessonState==='ready');
+ const d=frame.contentDocument,$=id=>d.getElementById(id),lesson=d.body.dataset.lessonId;
+ const program='import rclpy\nfrom geometry_msgs.msg import Twist\nrclpy.init()\nnode = rclpy.create_node("language_test")\npub = node.create_publisher(Twist, "/cmd_vel", 10)\ncount = 0\ndef tick():\n    global count\n    count += 1\n    print(count)\n    msg = Twist()\n    msg.linear.x = 0.1\n    pub.publish(msg)\nnode.create_timer(0.2, tick)\nrclpy.spin(node)';
+ $('python-code').value=program;$('run-python').click();await until(()=>$('python-state').textContent.includes('callbacks ready'));
+ $('theme').click();$('layout').value='stack';$('layout').dispatchEvent(new Event('change'));
+ const initialPose=$('pose').textContent;let previous=0;
+ for(const lang of ['nl','fr','es','de','pt','en']){
+  $('language').value=lang;$('language').dispatchEvent(new Event('change'));await wait(350);
+  assert(d.documentElement.lang===lang,'Document language');assert($('python-code').value===program,'Python modified');assert(d.body.dataset.lessonId===lesson,'Exercise changed');
+  assert(d.documentElement.dataset.theme==='light'&&d.body.dataset.layout==='stack','Preferences changed');assert($('python-state').textContent.includes('callbacks ready'),'Worker restarted');
+  const counts=$('python-output').textContent.trim().split(/\s+/).map(Number).filter(Number.isFinite);assert(counts.at(-1)>previous,'Callbacks stopped');assert(counts.filter(n=>n===1).length===1,'Python restarted');previous=counts.at(-1);
+  assert($('mission-title').textContent!=='Read the robot pose'||lang==='en','Lesson translation absent');
+  assert(d.querySelectorAll('#language option').length===6,'Language options');
+ }
+ assert($('pose').textContent!==initialPose,'Robot stopped moving');$('stop-python').click();
+ for(const page of ['index.html','session-03.html','session-05.html','session-06.html','real-ros.html']){
+  frame.src='../'+page;await until(()=>frame.contentDocument?.querySelector('#language')&&frame.contentWindow.location.pathname.endsWith(page));
+  const doc=frame.contentDocument;
+  if(page!=='real-ros.html')await until(()=>doc.getElementById('mission-title').textContent!=='Loading lesson…'&&!doc.getElementById('check').disabled);
+  for(const lang of ['en','nl','fr','es','de','pt']){const control=doc.getElementById('language');control.value=lang;control.dispatchEvent(new Event('change'));await wait(50);assert(doc.documentElement.lang===lang,'Page language');assert(!/ROS2Learn|Lab 01/.test(doc.body.textContent),'Legacy branding');}
+ }
+ out.textContent='PASS: six languages, live Python/robot preservation, theme/layout, navigation and transition page';
+}catch(error){out.textContent='FAIL: '+error.message;}
+await fetch('/done',{method:'POST',body:out.textContent});
+</script></html>

@@ -5,7 +5,10 @@
     "number": "4.1",
     "translations": {
       "nl": "Configureer je node",
-      "fr": "Configurer votre nœud"
+      "fr": "Configurer votre nœud",
+      "es": "Configurar un nodo",
+      "de": "Einen Knoten konfigurieren",
+      "pt": "Configurar um nó"
     }
   },
   {
@@ -14,7 +17,10 @@
     "number": "4.2",
     "translations": {
       "nl": "Bijregelen zonder herschrijven",
-      "fr": "Ajuster sans réécrire"
+      "fr": "Ajuster sans réécrire",
+      "es": "Ajustar sin reiniciar",
+      "de": "Ohne Neustart anpassen",
+      "pt": "Ajustar sem reiniciar"
     }
   },
   {
@@ -23,7 +29,10 @@
     "number": "4.3",
     "translations": {
       "nl": "Publiceer een eigen bericht",
-      "fr": "Publier un message personnalisé"
+      "fr": "Publier un message personnalisé",
+      "es": "Publicar un mensaje propio",
+      "de": "Eigene Nachrichten senden",
+      "pt": "Publicar uma mensagem própria"
     }
   },
   {
@@ -32,7 +41,10 @@
     "number": "4.4",
     "translations": {
       "nl": "Verstuur een actiedoel",
-      "fr": "Envoyer un objectif d’action"
+      "fr": "Envoyer un objectif d’action",
+      "es": "Enviar un objetivo de acción",
+      "de": "Ein Aktionsziel senden",
+      "pt": "Enviar um objetivo de ação"
     }
   },
   {
@@ -41,7 +53,10 @@
     "number": "4.5",
     "translations": {
       "nl": "Volg de voortgang",
-      "fr": "Suivre la progression"
+      "fr": "Suivre la progression",
+      "es": "Seguir el progreso de una acción",
+      "de": "Aktionsfortschritt verfolgen",
+      "pt": "Acompanhar o progresso da ação"
     }
   },
   {
@@ -50,7 +65,10 @@
     "number": "4.6",
     "translations": {
       "nl": "Optioneel: annuleer een doel",
-      "fr": "Optionnel : annuler un objectif"
+      "fr": "Optionnel : annuler un objectif",
+      "es": "Opcional: cancelar un objetivo",
+      "de": "Optional: ein Ziel abbrechen",
+      "pt": "Opcional: cancelar um objetivo"
     }
   }
 ]

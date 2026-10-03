@@ -5,7 +5,10 @@
     "number": "5.1",
     "translations": {
       "nl": "Lees de robotpose",
-      "fr": "Lire la pose du robot"
+      "fr": "Lire la pose du robot",
+      "es": "Leer la pose del robot",
+      "de": "Die Roboterpose lesen",
+      "pt": "Ler a pose do robô"
     }
   },
   {
@@ -14,7 +17,10 @@
     "number": "5.2",
     "translations": {
       "nl": "Positie plus oriëntatie",
-      "fr": "Position et orientation"
+      "fr": "Position et orientation",
+      "es": "Posición y orientación",
+      "de": "Position und Orientierung",
+      "pt": "Posição e orientação"
     }
   },
   {
@@ -23,7 +29,10 @@
     "number": "5.3",
     "translations": {
       "nl": "In welk coördinatenstelsel?",
-      "fr": "Dans quel repère ?"
+      "fr": "Dans quel repère ?",
+      "es": "¿En qué marco?",
+      "de": "Welches Koordinatensystem?",
+      "pt": "Qual é o referencial?"
     }
   },
   {
@@ -32,7 +41,10 @@
     "number": "5.4",
     "translations": {
       "nl": "Waar is het doel ten opzichte van mij?",
-      "fr": "Où est la cible par rapport à moi ?"
+      "fr": "Où est la cible par rapport à moi ?",
+      "es": "Objetivo relativo al robot",
+      "de": "Das Ziel relativ zum Roboter",
+      "pt": "Alvo relativo ao robô"
     }
   },
   {
@@ -41,7 +53,10 @@
     "number": "5.5",
     "translations": {
       "nl": "Sluit de regellus met TF",
-      "fr": "Fermer la boucle avec TF"
+      "fr": "Fermer la boucle avec TF",
+      "es": "Control en bucle cerrado con TF",
+      "de": "Mit TF regeln",
+      "pt": "Controlo em malha fechada com TF"
     }
   },
   {
@@ -50,7 +65,10 @@
     "number": "5.6",
     "translations": {
       "nl": "Doelrichting en obstakelveiligheid",
-      "fr": "Direction de la cible et sécurité"
+      "fr": "Direction de la cible et sécurité",
+      "es": "Objetivo y seguridad LiDAR",
+      "de": "Zielrichtung und Hindernisschutz",
+      "pt": "Objetivo e segurança LiDAR"
     }
   }
 ]
