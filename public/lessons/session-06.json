@@ -1,0 +1,29 @@
+[
+  {
+    "id": "session-06-01-topic-debug",
+    "title": "The robot hears nothing",
+    "number": "6.1",
+    "translations": {
+      "nl": "De robot hoort niets",
+      "fr": "Le robot n’entend rien"
+    }
+  },
+  {
+    "id": "session-06-02-frame-debug",
+    "title": "Correct numbers, wrong frame",
+    "number": "6.2",
+    "translations": {
+      "nl": "Juiste getallen, verkeerd frame",
+      "fr": "Bons nombres, mauvais repère"
+    }
+  },
+  {
+    "id": "session-06-03-beacon",
+    "title": "Final mission: find the red beacon",
+    "number": "6.3",
+    "translations": {
+      "nl": "Eindmissie: vind het rode baken",
+      "fr": "Mission finale : trouver la balise rouge"
+    }
+  }
+]

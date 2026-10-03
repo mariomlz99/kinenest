@@ -1,0 +1,60 @@
+{
+  "id": "session-06-02-frame-debug",
+  "session": 6,
+  "number": "6.2",
+  "title": "Correct numbers, wrong frame",
+  "description": "This controller keeps turning toward the wrong direction. Its TF query returns valid coordinates, but they are in the wrong frame for the steering calculation.",
+  "steps": [
+    "Inspect the TF tree and identify the frame needed by atan2(y, x).",
+    "Repair the lookup, then reach the target and stop.",
+    "Explain why world-aligned coordinates cannot directly be used as a robot-relative heading error."
+  ],
+  "hints": [
+    "Look at the first argument of lookup_transform.",
+    "The heading controller assumes +x forward and +y left of the robot.",
+    "Request the target in base_link."
+  ],
+  "starterCode": "import rclpy\nfrom rclpy.node import Node\nimport math\nfrom geometry_msgs.msg import Twist\nfrom tf2_ros import Buffer, TransformListener, TransformException\nfrom rclpy.time import Time\n\nrclpy.init()\nnode = Node('student_controller')\n\nbuffer = Buffer()\nlistener = TransformListener(buffer, node)\npublisher = node.create_publisher(Twist, '/cmd_vel', 10)\ndef tick():\n    try:\n        p = buffer.lookup_transform('odom', 'target', Time()).transform.translation\n    except TransformException:\n        return\n    distance = math.hypot(p.x, p.y)\n    angle = math.atan2(p.y, p.x)\n    cmd = Twist()\n    if distance > 0.07:\n        cmd.angular.z = max(-1.5, min(1.5, 2*angle))\n        cmd.linear.x = min(0.7, distance) if abs(angle) < 0.3 else 0.0\n    publisher.publish(cmd)\nnode.create_timer(0.1, tick)\nrclpy.spin(node)\n",
+  "checks": [
+    {
+      "type": "goal"
+    }
+  ],
+  "startX": 0,
+  "startYaw": -0.7,
+  "goal": [
+    1,
+    1
+  ],
+  "targets": [],
+  "translations": {
+    "nl": {
+      "title": "Juiste getallen, verkeerd frame",
+      "description": "De TF-query werkt, maar levert coördinaten in het verkeerde stelsel voor de stuurregeling.",
+      "steps": [
+        "Bekijk welk frame atan2(y,x) nodig heeft.",
+        "Herstel de query en bereik het doel.",
+        "Leg uit waarom wereldcoördinaten niet direct een robotrelatieve koersfout geven."
+      ],
+      "hints": [
+        "Controleer het eerste argument van lookup_transform.",
+        "De regelaar verwacht +x vooruit en +y links van de robot.",
+        "Vraag target in base_link."
+      ]
+    },
+    "fr": {
+      "title": "Bons nombres, mauvais repère",
+      "description": "La requête TF fonctionne mais renvoie des coordonnées dans le mauvais repère pour la commande.",
+      "steps": [
+        "Identifiez le repère nécessaire à atan2(y,x).",
+        "Corrigez la requête et atteignez la cible.",
+        "Expliquez pourquoi les coordonnées du monde ne donnent pas directement l’erreur de cap du robot."
+      ],
+      "hints": [
+        "Vérifiez le premier argument de lookup_transform.",
+        "Le contrôleur suppose +x devant et +y à gauche du robot.",
+        "Demandez target dans base_link."
+      ]
+    }
+  }
+}
