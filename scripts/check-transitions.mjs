@@ -41,7 +41,7 @@ async function navigate(from,to,{variant,theme='dark',capture=false,calm=false}=
 try{
  if(browser==='chrome')await b.command('Emulation.setDeviceMetricsOverride',{width:1440,height:1100,deviceScaleFactor:1,mobile:false});
  else{const tree=await b.command('browsingContext.getTree',{});await b.command('browsingContext.setViewport',{context:tree.contexts[0].context,viewport:{width:1440,height:1100}});}
- for(const [from,to]of [['index.html','session-02.html'],['session-02.html','session-03.html'],['session-05.html','session-06.html'],['about.html','']])await navigate(from,to);
+ for(const [from,to]of [['index.html','session-02.html'],['session-02.html','session-03.html'],['session-03.html','session-05.html'],['session-05.html','session-06.html'],['about.html','']])await navigate(from,to);
  for(const [variant,theme]of [['lidar-sweep','dark'],['tf-rotate','light'],['robot-yaw','dark'],['orbit-ring','light'],['sensor-pulse','dark']])await navigate('index.html','session-02.html',{variant,theme,capture:true});
  await navigate('about.html','',{calm:true});
  // Back/Forward must clear overlays, including bfcache pageshow.

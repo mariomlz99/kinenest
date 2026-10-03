@@ -164,3 +164,5 @@ Deleted generated dist and ran a clean baseline using the package scripts' exact
 Public GitHub Pages build-info still identifies 8679ae1. kinenest.com has no A record in this workstation's DNS response (ENODATA), and HTTPS build-info cannot be fetched. No domain deployment is claimed.
 
 Transition diagnosis: under a deliberately delayed 2-second transitions.css request, the first click appends an unstyled element at y=2390px, position static, animation none at 100ms. Navigation still occurs after one second. Normal cached CSS renders correctly. This reproduces a first-click CSS race; it does not establish the maintainer's exact network/browser conditions.
+
+Final release candidate bdcf92a was validated in a clean worktree: 49/49 unit tests; full Python and C++ Chrome/Firefox; visible transitions; root-path smoke; actual local Workers routing and Python/C++ smoke all PASS. Responsive capture: 200 cases, zero page overflow. See [release report](RELEASE_KINENEST_COM.md). Domain deployment remains pending.

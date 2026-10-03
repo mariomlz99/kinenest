@@ -1,7 +1,7 @@
 {
-  "browser": "chrome",
-  "base": "http://127.0.0.1:45755/",
-  "delayedStylesheetMs": 600,
+  "browser": "firefox",
+  "base": "http://127.0.0.1:8792/",
+  "delayedStylesheetMs": 0,
   "results": [
     {
       "from": "index.html",
@@ -10,50 +10,50 @@
       "forcedVariant": null,
       "reducedMotion": false,
       "prevented": true,
-      "elapsed": 1010.7000000029802,
+      "elapsed": 1015,
       "samples": [
         {
-          "elapsed": 101.20000000298023,
-          "variant": "lidar-sweep",
+          "elapsed": 101,
+          "variant": "sensor-pulse",
           "position": "fixed",
           "opacity": "1",
           "zIndex": "1000",
           "background": "rgb(8, 20, 29)",
           "pageBackground": "rgb(8, 20, 29)",
-          "width": 1425,
+          "width": 1428,
           "height": 1100,
           "viewport": [
-            1425,
+            1428,
             1100
           ],
           "animations": [
             {
-              "name": "kn-sweep",
-              "transform": "matrix(0.910701, -0.413065, 0.413065, 0.910701, 0, 0)",
-              "opacity": "0.239721"
+              "name": "kn-pulse",
+              "transform": "matrix(0.632712, 0, 0, 0.632712, 0, 0)",
+              "opacity": "0.675152"
             }
           ],
           "image": true
         },
         {
-          "elapsed": 452.6000000089407,
-          "variant": "lidar-sweep",
+          "elapsed": 451,
+          "variant": "sensor-pulse",
           "position": "fixed",
           "opacity": "1",
           "zIndex": "1000",
           "background": "rgb(8, 20, 29)",
           "pageBackground": "rgb(8, 20, 29)",
-          "width": 1425,
+          "width": 1428,
           "height": 1100,
           "viewport": [
-            1425,
+            1428,
             1100
           ],
           "animations": [
             {
-              "name": "kn-sweep",
-              "transform": "matrix(0.999891, 0.0147356, -0.0147356, 0.999891, 0, 0)",
-              "opacity": "0.999268"
+              "name": "kn-pulse",
+              "transform": "matrix(0.917989, 0, 0, 0.917989, 0, 0)",
+              "opacity": "0.244544"
             }
           ],
           "image": true
@@ -67,50 +67,107 @@
       "forcedVariant": null,
       "reducedMotion": false,
       "prevented": true,
-      "elapsed": 1008.1000000089407,
+      "elapsed": 1023,
       "samples": [
         {
-          "elapsed": 100.70000000298023,
-          "variant": "sensor-pulse",
+          "elapsed": 102,
+          "variant": "lidar-sweep",
           "position": "fixed",
           "opacity": "1",
           "zIndex": "1000",
           "background": "rgb(8, 20, 29)",
           "pageBackground": "rgb(8, 20, 29)",
-          "width": 1425,
+          "width": 1428,
           "height": 1100,
           "viewport": [
-            1425,
+            1428,
             1100
           ],
           "animations": [
             {
-              "name": "kn-pulse",
-              "transform": "matrix(0.633505, 0, 0, 0.633505, 0, 0)",
-              "opacity": "0.673954"
+              "name": "kn-sweep",
+              "transform": "matrix(0.916143, -0.400853, 0.400853, 0.916143, 0, 0)",
+              "opacity": "0.290859"
             }
           ],
           "image": true
         },
         {
-          "elapsed": 450.90000000596046,
-          "variant": "sensor-pulse",
+          "elapsed": 452,
+          "variant": "lidar-sweep",
           "position": "fixed",
           "opacity": "1",
           "zIndex": "1000",
           "background": "rgb(8, 20, 29)",
           "pageBackground": "rgb(8, 20, 29)",
-          "width": 1425,
+          "width": 1428,
           "height": 1100,
           "viewport": [
-            1425,
+            1428,
             1100
           ],
           "animations": [
             {
-              "name": "kn-pulse",
-              "transform": "matrix(0.929316, 0, 0, 0.929316, 0, 0)",
-              "opacity": "0.227447"
+              "name": "kn-sweep",
+              "transform": "matrix(0.999057, 0.0434085, -0.0434085, 0.999057, 0, 0)",
+              "opacity": "0.993515"
+            }
+          ],
+          "image": true
+        }
+      ]
+    },
+    {
+      "from": "session-03.html",
+      "to": "session-05.html",
+      "theme": "dark",
+      "forcedVariant": null,
+      "reducedMotion": false,
+      "prevented": true,
+      "elapsed": 1018,
+      "samples": [
+        {
+          "elapsed": 102,
+          "variant": "tf-rotate",
+          "position": "fixed",
+          "opacity": "1",
+          "zIndex": "1000",
+          "background": "rgb(8, 20, 29)",
+          "pageBackground": "rgb(8, 20, 29)",
+          "width": 1428,
+          "height": 1100,
+          "viewport": [
+            1428,
+            1100
+          ],
+          "animations": [
+            {
+              "name": "kn-rotate",
+              "transform": "matrix(-0.992827, -0.119562, 0.119562, -0.992827, 0, 0)",
+              "opacity": "1"
+            }
+          ],
+          "image": true
+        },
+        {
+          "elapsed": 452,
+          "variant": "tf-rotate",
+          "position": "fixed",
+          "opacity": "1",
+          "zIndex": "1000",
+          "background": "rgb(8, 20, 29)",
+          "pageBackground": "rgb(8, 20, 29)",
+          "width": 1428,
+          "height": 1100,
+          "viewport": [
+            1428,
+            1100
+          ],
+          "animations": [
+            {
+              "name": "kn-rotate",
+              "transform": "matrix(0.99425, 0.107085, -0.107085, 0.99425, 0, 0)",
+              "opacity": "1"
             }
           ],
           "image": true
@@ -124,50 +181,50 @@
       "forcedVariant": null,
       "reducedMotion": false,
       "prevented": true,
-      "elapsed": 1012.2000000029802,
+      "elapsed": 1044,
       "samples": [
         {
-          "elapsed": 100.70000000298023,
-          "variant": "orbit-ring",
+          "elapsed": 100,
+          "variant": "lidar-sweep",
           "position": "fixed",
           "opacity": "1",
           "zIndex": "1000",
           "background": "rgb(8, 20, 29)",
           "pageBackground": "rgb(8, 20, 29)",
-          "width": 1425,
+          "width": 1428,
           "height": 1100,
           "viewport": [
-            1425,
+            1428,
             1100
           ],
           "animations": [
             {
-              "name": "kn-rotate",
-              "transform": "matrix(-0.881102, -0.472926, 0.472926, -0.881102, 0, 0)",
-              "opacity": "1"
+              "name": "kn-sweep",
+              "transform": "matrix(0.913239, -0.407425, 0.407425, 0.913239, 0, 0)",
+              "opacity": "0.263371"
             }
           ],
           "image": true
         },
         {
-          "elapsed": 450.6000000089407,
-          "variant": "orbit-ring",
+          "elapsed": 451,
+          "variant": "lidar-sweep",
           "position": "fixed",
           "opacity": "1",
           "zIndex": "1000",
           "background": "rgb(8, 20, 29)",
           "pageBackground": "rgb(8, 20, 29)",
-          "width": 1425,
+          "width": 1428,
           "height": 1100,
           "viewport": [
-            1425,
+            1428,
             1100
           ],
           "animations": [
             {
-              "name": "kn-rotate",
-              "transform": "matrix(0.998092, -0.0617503, 0.0617503, 0.998092, 0, 0)",
-              "opacity": "1"
+              "name": "kn-sweep",
+              "transform": "matrix(0.999887, 0.0150629, -0.0150629, 0.999887, 0, 0)",
+              "opacity": "0.999235"
             }
           ],
           "image": true
@@ -181,49 +238,49 @@
       "forcedVariant": null,
       "reducedMotion": false,
       "prevented": true,
-      "elapsed": 1012.0999999940395,
+      "elapsed": 1021,
       "samples": [
         {
-          "elapsed": 100.69999998807907,
+          "elapsed": 114,
           "variant": "robot-yaw",
           "position": "fixed",
           "opacity": "1",
           "zIndex": "1000",
           "background": "rgb(8, 20, 29)",
           "pageBackground": "rgb(8, 20, 29)",
-          "width": 1425,
+          "width": 1428,
           "height": 1100,
           "viewport": [
-            1425,
+            1428,
             1100
           ],
           "animations": [
             {
               "name": "kn-yaw",
-              "transform": "matrix(0.992926, 0.118731, -0.118731, 0.992926, 0, 0)",
+              "transform": "matrix(0.983521, 0.180792, -0.180792, 0.983521, 0, 0)",
               "opacity": "1"
             }
           ],
           "image": true
         },
         {
-          "elapsed": 451,
+          "elapsed": 452,
           "variant": "robot-yaw",
           "position": "fixed",
           "opacity": "1",
           "zIndex": "1000",
           "background": "rgb(8, 20, 29)",
           "pageBackground": "rgb(8, 20, 29)",
-          "width": 1425,
+          "width": 1428,
           "height": 1100,
           "viewport": [
-            1425,
+            1428,
             1100
           ],
           "animations": [
             {
               "name": "kn-yaw",
-              "transform": "matrix(-0.994383, -0.105838, 0.105838, -0.994383, 0, 0)",
+              "transform": "matrix(-0.989625, -0.143674, 0.143674, -0.989625, 0, 0)",
               "opacity": "1"
             }
           ],
@@ -238,50 +295,50 @@
       "forcedVariant": "lidar-sweep",
       "reducedMotion": false,
       "prevented": true,
-      "elapsed": 1007.8999999910593,
+      "elapsed": 1030,
       "samples": [
         {
-          "elapsed": 100.59999999403954,
+          "elapsed": 104,
           "variant": "lidar-sweep",
           "position": "fixed",
           "opacity": "1",
           "zIndex": "1000",
           "background": "rgb(8, 20, 29)",
           "pageBackground": "rgb(8, 20, 29)",
-          "width": 1425,
+          "width": 1428,
           "height": 1100,
           "viewport": [
-            1425,
+            1428,
             1100
           ],
           "animations": [
             {
               "name": "kn-sweep",
-              "transform": "matrix(0.913172, -0.407575, 0.407575, 0.913172, 0, 0)",
-              "opacity": "0.262742"
+              "transform": "matrix(0.913233, -0.407437, 0.407437, 0.913233, 0, 0)",
+              "opacity": "0.263319"
             }
           ],
           "image": true
         },
         {
-          "elapsed": 450.5,
+          "elapsed": 453,
           "variant": "lidar-sweep",
           "position": "fixed",
           "opacity": "1",
           "zIndex": "1000",
           "background": "rgb(8, 20, 29)",
           "pageBackground": "rgb(8, 20, 29)",
-          "width": 1425,
+          "width": 1428,
           "height": 1100,
           "viewport": [
-            1425,
+            1428,
             1100
           ],
           "animations": [
             {
               "name": "kn-sweep",
-              "transform": "matrix(0.999891, 0.0147709, -0.0147709, 0.999891, 0, 0)",
-              "opacity": "0.999265"
+              "transform": "matrix(0.999888, 0.0149893, -0.0149893, 0.999888, 0, 0)",
+              "opacity": "0.999243"
             }
           ],
           "image": true
@@ -295,49 +352,49 @@
       "forcedVariant": "tf-rotate",
       "reducedMotion": false,
       "prevented": true,
-      "elapsed": 1014.4000000059605,
+      "elapsed": 1017,
       "samples": [
         {
-          "elapsed": 101.20000000298023,
+          "elapsed": 105,
           "variant": "tf-rotate",
           "position": "fixed",
           "opacity": "1",
           "zIndex": "1000",
           "background": "rgb(240, 245, 247)",
           "pageBackground": "rgb(240, 245, 247)",
-          "width": 1425,
+          "width": 1428,
           "height": 1100,
           "viewport": [
-            1425,
+            1428,
             1100
           ],
           "animations": [
             {
               "name": "kn-rotate",
-              "transform": "matrix(-0.997139, -0.0755892, 0.0755892, -0.997139, 0, 0)",
+              "transform": "matrix(-0.993077, -0.117462, 0.117462, -0.993077, 0, 0)",
               "opacity": "1"
             }
           ],
           "image": true
         },
         {
-          "elapsed": 451,
+          "elapsed": 452,
           "variant": "tf-rotate",
           "position": "fixed",
           "opacity": "1",
           "zIndex": "1000",
           "background": "rgb(240, 245, 247)",
           "pageBackground": "rgb(240, 245, 247)",
-          "width": 1425,
+          "width": 1428,
           "height": 1100,
           "viewport": [
-            1425,
+            1428,
             1100
           ],
           "animations": [
             {
               "name": "kn-rotate",
-              "transform": "matrix(0.949916, -0.312506, 0.312506, 0.949916, 0, 0)",
+              "transform": "matrix(0.995072, 0.0991572, -0.0991572, 0.995072, 0, 0)",
               "opacity": "1"
             }
           ],
@@ -352,49 +409,49 @@
       "forcedVariant": "robot-yaw",
       "reducedMotion": false,
       "prevented": true,
-      "elapsed": 1014.0999999940395,
+      "elapsed": 1020,
       "samples": [
         {
-          "elapsed": 100.8999999910593,
+          "elapsed": 104,
           "variant": "robot-yaw",
           "position": "fixed",
           "opacity": "1",
           "zIndex": "1000",
           "background": "rgb(8, 20, 29)",
           "pageBackground": "rgb(8, 20, 29)",
-          "width": 1425,
+          "width": 1428,
           "height": 1100,
           "viewport": [
-            1425,
+            1428,
             1100
           ],
           "animations": [
             {
               "name": "kn-yaw",
-              "transform": "matrix(0.992914, 0.118832, -0.118832, 0.992914, 0, 0)",
+              "transform": "matrix(0.993161, 0.116756, -0.116756, 0.993161, 0, 0)",
               "opacity": "1"
             }
           ],
           "image": true
         },
         {
-          "elapsed": 450.8999999910593,
+          "elapsed": 451,
           "variant": "robot-yaw",
           "position": "fixed",
           "opacity": "1",
           "zIndex": "1000",
           "background": "rgb(8, 20, 29)",
           "pageBackground": "rgb(8, 20, 29)",
-          "width": 1425,
+          "width": 1428,
           "height": 1100,
           "viewport": [
-            1425,
+            1428,
             1100
           ],
           "animations": [
             {
               "name": "kn-yaw",
-              "transform": "matrix(-0.994457, -0.105141, 0.105141, -0.994457, 0, 0)",
+              "transform": "matrix(-0.994628, -0.10351, 0.10351, -0.994628, 0, 0)",
               "opacity": "1"
             }
           ],
@@ -409,49 +466,49 @@
       "forcedVariant": "orbit-ring",
       "reducedMotion": false,
       "prevented": true,
-      "elapsed": 1008.5,
+      "elapsed": 1018,
       "samples": [
         {
-          "elapsed": 100.8999999910593,
+          "elapsed": 102,
           "variant": "orbit-ring",
           "position": "fixed",
           "opacity": "1",
           "zIndex": "1000",
           "background": "rgb(240, 245, 247)",
           "pageBackground": "rgb(240, 245, 247)",
-          "width": 1425,
+          "width": 1428,
           "height": 1100,
           "viewport": [
-            1425,
+            1428,
             1100
           ],
           "animations": [
             {
               "name": "kn-rotate",
-              "transform": "matrix(-0.881001, -0.473115, 0.473115, -0.881001, 0, 0)",
+              "transform": "matrix(-0.815151, -0.579248, 0.579248, -0.815151, 0, 0)",
               "opacity": "1"
             }
           ],
           "image": true
         },
         {
-          "elapsed": 450.8999999910593,
+          "elapsed": 451,
           "variant": "orbit-ring",
           "position": "fixed",
           "opacity": "1",
           "zIndex": "1000",
           "background": "rgb(240, 245, 247)",
           "pageBackground": "rgb(240, 245, 247)",
-          "width": 1425,
+          "width": 1428,
           "height": 1100,
           "viewport": [
-            1425,
+            1428,
             1100
           ],
           "animations": [
             {
               "name": "kn-rotate",
-              "transform": "matrix(0.998105, -0.0615363, 0.0615363, 0.998105, 0, 0)",
+              "transform": "matrix(0.998271, 0.0587804, -0.0587804, 0.998271, 0, 0)",
               "opacity": "1"
             }
           ],
@@ -466,50 +523,50 @@
       "forcedVariant": "sensor-pulse",
       "reducedMotion": false,
       "prevented": true,
-      "elapsed": 1007.7999999970198,
+      "elapsed": 1025,
       "samples": [
         {
-          "elapsed": 101.5,
+          "elapsed": 104,
           "variant": "sensor-pulse",
           "position": "fixed",
           "opacity": "1",
           "zIndex": "1000",
           "background": "rgb(8, 20, 29)",
           "pageBackground": "rgb(8, 20, 29)",
-          "width": 1425,
+          "width": 1428,
           "height": 1100,
           "viewport": [
-            1425,
+            1428,
             1100
           ],
           "animations": [
             {
               "name": "kn-pulse",
-              "transform": "matrix(0.617414, 0, 0, 0.617414, 0, 0)",
-              "opacity": "0.698244"
+              "transform": "matrix(0.632956, 0, 0, 0.632956, 0, 0)",
+              "opacity": "0.674784"
             }
           ],
           "image": true
         },
         {
-          "elapsed": 451.5,
+          "elapsed": 452,
           "variant": "sensor-pulse",
           "position": "fixed",
           "opacity": "1",
           "zIndex": "1000",
           "background": "rgb(8, 20, 29)",
           "pageBackground": "rgb(8, 20, 29)",
-          "width": 1425,
+          "width": 1428,
           "height": 1100,
           "viewport": [
-            1425,
+            1428,
             1100
           ],
           "animations": [
             {
               "name": "kn-pulse",
-              "transform": "matrix(0.907253, 0, 0, 0.907253, 0, 0)",
-              "opacity": "0.26075"
+              "transform": "matrix(0.918086, 0, 0, 0.918086, 0, 0)",
+              "opacity": "0.244398"
             }
           ],
           "image": true
@@ -523,7 +580,7 @@
       "forcedVariant": null,
       "reducedMotion": true,
       "prevented": true,
-      "elapsed": 9.299999997019768,
+      "elapsed": 13,
       "samples": []
     }
   ],
