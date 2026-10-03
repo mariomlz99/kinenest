@@ -23,6 +23,8 @@ jobs:
       - run: npm run build
       - name: Test all six sessions in Chrome against the static build
         run: npm run test:chrome -- --built
+      - name: Test experimental browser C++ against the static build
+        run: npm run test:cpp -- chrome --built
       - uses: actions/upload-pages-artifact@v3
         if: github.event_name != 'pull_request'
         with:
