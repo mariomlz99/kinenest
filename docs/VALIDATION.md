@@ -107,3 +107,5 @@ All 44 unit tests and the static build pass (asset version 56c72703b2a8). The ne
 Captured 22 workstation views at desktop/laptop sizes; inspected light Session 1, light Session 2 LiDAR/Compare and light Session 5 TF. The updated Session 5 screenshot is in docs/media. Full course acceptance and publication results follow below.
 
 Full Chrome and Firefox course acceptance passed with this build: all 25 Python reference exercises, alternate solutions, negative controls, Stop/Reset, translations, Compare, TF, transitions and the added world-theme regression. No suite was skipped or retried.
+
+Publication of the theme follow-up remains pending: noninteractive HTTPS push again failed because no GitHub username/credential is available in this session. Production was last verified at 155e9188d07d; the validated theme build is 56c72703b2a8. The two local commits are ready for the maintainer’s authenticated git push origin main.
