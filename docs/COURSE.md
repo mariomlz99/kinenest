@@ -1,39 +1,22 @@
-# Course scope: six sessions of 90 minutes
+# Six sessions × 90 minutes
 
-The course teaches the ROS 2 mental model through browser experiments. Sessions 1 and 2 are introductory. Avoid turning the syllabus into a survey of every robotics tool. RViz, Gazebo, middleware internals, deep learning and deployment infrastructure are not required.
+Sessions 1–2 are introductory. The core is Python-first and browser-only. Finish and evaluate this course before broadening the platform.
 
-| Session | Focus | Teaching outcome | Implementation status |
-| --- | --- | --- | --- |
-| 1 | Graph, CLI, cmd_vel | Discover nodes/topics, publish a Twist, observe the robot and echo messages in another terminal | Implemented |
-| 2 | Callbacks, LiDAR, pub/sub | Explain a callback and react to a simple range measurement | Planned; introductory |
-| 3 | Camera, data processing, services | Process image pixels, compute a detection and use request/response | Six exercises implemented |
-| 4 | Parameters, interfaces, actions | Configure behaviour, inspect data contracts and distinguish long-running goals from services | Future work |
-| 5 | Odometry, TF, integrated control | Relate reported motion and reference frames to a simple controller | Future work; odometry exists as infrastructure |
-| 6 | Proposed: integrated challenge and debugging | Combine previous ideas and explain/debug the system | Proposal for lecturer approval; no new major concept |
+| Session | Focus | Material |
+| --- | --- | --- |
+| 1 | Graph, CLI, topics, messages, cmd_vel | Original CLI lab plus multi-terminal experiments |
+| 2 | Subscribers, callbacks, LiDAR and reactive pub/sub | Four exercises; see SESSION2.md |
+| 3 | Camera, NumPy, perception, services | Original six exercises; see SESSION3.md |
+| 4 | Parameters, custom interfaces, actions | Five core exercises plus optional cancellation; see SESSION4.md |
+| 5 | Odometry, heading, TF, relative control | Five core exercises plus obstacle integration; see SESSION5.md |
+| 6 | Debugging, integration and explanation | Two repairs and a camera/LiDAR beacon challenge; see SESSION6.md |
 
-## General 90-minute rhythm
+All materials above are implemented. Teaching pace still requires classroom validation; exercise counts are not a claim that every cohort can finish all extensions in 90 minutes. Reserve explanation and discussion time. For Session 1, demonstrate discovery, inspect message fields, then have pairs publish/echo/hz, deliberately break topic/type names, reset and explain the graph. Do not spend its full 90 minutes on typing a single solution.
 
-Use roughly 15 minutes for explanation and demonstration, 55 minutes for guided practice, 15 minutes for an integrated task, and 5 minutes for discussion. Adjust to the group; progressive hints and extension tasks should absorb differences in pace. Available commands are a reference, not a requirement to teach every flag.
+Keep Session 3 focused: no parameter/action/TF exercises are added there. NumPy is primary; cv2 helpers are optional. Its callback-state and real-machine sidebars are explanatory, not new assessed tasks.
 
-## Session 3 pacing
+The UI and lesson text support EN/NL/FR; Python, ROS identifiers, commands and terminal output remain English. Translation does not change lesson IDs, starter programs, world state or check behaviour. Light/dark and split/stacked preferences are local to the browser.
 
-- 10 minutes: camera topics, message dimensions and callback demonstration.
-- 10 minutes: exercise 3.1, receive images.
-- 10 minutes: exercise 3.2, array shape and RGB channel means.
-- 15 minutes: exercise 3.3, colour detection.
-- 10 minutes: exercise 3.4, centroid and left/center/right.
-- 15 minutes: exercise 3.5, service request and response.
-- 15 minutes: exercise 3.6, target-centering challenge; extension if the class needs more time on fundamentals.
-- 5 minutes: discussion and connection to the next session.
+The real-ROS transition explains ament_python, package.xml, setup.py/setup.cfg, colcon and sourcing a workspace. CMake appears only as context for custom interfaces/ament_cmake or future C++; the browser never executes it.
 
-The core path uses NumPy. cv2 helpers are optional alternatives, not a second computer-vision syllabus. Student-created service servers, complex executor/future behaviour and ROS action servers are deferred. A brief service example can introduce call_async and its completion callback without a deep concurrency lecture.
-
-## Teaching and assessment boundaries
-
-Keep explanations honest about the simulator. Practice checks accept different algorithms and source structures, but are not a secure grading mechanism. Students can inspect the static client and public source repository. Assess understanding through a fresh task, explanation or debugging discussion when needed. Do not add tracking/accounts solely for this short course.
-
-The next implementation priority is a focused Session 2 after lecturer review of the current material, followed by Sessions 4 and 5. The presence of supporting odometry or range data does not mean the corresponding future lesson is already authored.
-
-## Scope beyond this course
-
-The project may grow beyond these six sessions later. Finish the core course and gather classroom feedback before adding a broader curriculum or infrastructure. Keep reusable lesson data and runtime modules without implementing speculative features.
+Use checks for practice, not secure grading. Accept different algorithms; ask students to explain a fresh debugging or control task for assessment. No accounts, grade database, LMS, backend, native ROS, Gazebo or RViz are introduced.

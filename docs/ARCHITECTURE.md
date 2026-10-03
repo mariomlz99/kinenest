@@ -1,41 +1,37 @@
 # Architecture
 
-## Static delivery
+## Static delivery and UI
 
-Native JavaScript modules, CSS, SVG and JSON. No frontend framework. Session 3 loads Pyodide and NumPy only when Python runs. Build publishes an allowlist under a content-versioned asset directory; relative URLs support project paths. The personal website is separate.
+Native JavaScript modules, CSS, Canvas/SVG and JSON. Seven static entry pages reuse the workstation UI for Sessions 2–6. GitHub Pages serves an allowlisted dist with content-versioned src/public directories. All module, lesson and worker URLs remain relative to those directories. Reference answers/tests are excluded.
 
-## Runtime
+The preferences module switches light/dark, split/stacked layout and EN/NL/FR. JSON carries translated lesson titles/descriptions/steps/hints. Shared UI translations are separate from code. Language changes do not reset the simulator or modify Python. Code drafts stay in memory per lesson; preferences alone use localStorage.
 
-Runtime owns Robot, node/topic endpoint sets and assessment evidence. Runtime.publish validates before mutation; CLI and Python use this same API. /simulator subscribes to /cmd_vel; /odom publishes ideal odometry at 5 Hz; /scan produces 36 synthetic range readings at 5 Hz. A temporary CLI publisher exits on completion. Python nodes are registered for their actual lifetime; /student_controller is not falsely listed before creation.
+## Runtime and geometry
 
-## Simulator
+Runtime owns the graph, Robot, simulation time, event listeners and evidence. CLI and Python call the same validated publication/service/parameter/action APIs. Sensor endpoints exist only when enabled. Dynamic message topics are typed and removed when no endpoints remain. Node lifetimes follow Python/terminal lifetimes.
 
-State: x/y/yaw, velocities, remaining hold time and cumulative path distance, in SI units. Exact constant-twist integration uses fixed 1/60 s steps. Each command replaces the previous velocity and lasts two simulated seconds. Hidden-tab time is paused; frame time is capped against large jumps. Speed limits and timeout are teaching-world policies. No collision physics. Synthetic range readings approximate visible targets. Camera follows robot; trail history is bounded. Distance is cumulative path length including reverse travel. Rotation alone cannot pass.
+Fixed-step (maximum 1/60 s) exact constant-twist integration drives x/y/yaw. Valid axes are linear.x and angular.z. Commands have a two-second watchdog. Camera renders 320 × 240 RGB at 8 Hz. LaserScan uses 120 deterministic ray/AABB intersections at 5 Hz; laser_link is 0.2 m ahead of the robot. A 0.18 m circular footprint collision guard rejects intersecting translation and records a contact. There is no dynamics, friction or rigid-body engine. Odometry has valid quaternions and zero covariance in this ideal model.
 
-## CLI
+## Python and bounded transport
 
-Explicit grammar, not a shell. Common Humble/Jazzy syntax; publication supports --once and continuous rates. Parser quotes bare flow-mapping keys then uses JSON.parse, never eval. Runtime rejects invalid fields/types, nonzero unsupported axes and out-of-range values. Omitted components default to zero. No full YAML or DDS emulation. Output uses textContent.
+A dedicated worker loads pinned Pyodide 0.28.3 and NumPy 2.2.5. NumPy downloads have bounded retries. Python modules are educational definitions executed by actual CPython. Typed subscriptions receive image bytes or nested ROS-shaped objects. Sensor/timer queues allow one in-flight callback each; callbacks acknowledge completion. Watchdogs stop long-running initial code/callbacks. Stop terminates the worker, cleans graph endpoints/jobs/goals, and invalidates stale messages. Hidden-tab time pauses.
 
-## Lessons and checks
+spin yields to worker events; statements after spin do not resume. Node subclasses and functional callbacks both work. Camera bridge returns genuine ndarray values. LaserScan access is tracked for formative evidence. No regex interpretation or source matching is used. The optional cv2 layer implements only inRange/countNonZero/moments.
 
-JSON requires id/title/description, steps, hints and checks. Loader validates check types and positive distance thresholds. topic_discovered records listing, inspection or valid targeted publication: interaction evidence, not proof of understanding. twist_published requires a valid publication. robot_moved checks cumulative travel. No source matching. Session 3 adds data-driven camera, perception, service and control checks; see SESSION3.md.
+## Course services, parameters and actions
 
-## UI and reset
+/reset_robot (Trigger) cancels motion goals and resets pose while preserving subscriptions. Full lab Reset also clears graph/evidence and restores the lesson world; starter code is restored only by its explicit button.
 
-Semantic controls, keyboard history, progressive hints and live feedback. Reset restores runtime, hints, terminal/history, trail and feedback. Session 3 includes a Python editor; drafts are kept in memory for the current page session. Loading errors disable the lab and show a useful message.
+Scalar parameters are stored per node and sent to its worker when CLI updates occur. The node reads its current value in callbacks. /drive_distance_server implements a bounded single-active-goal DriveDistance server. Physical distance drives feedback/results; actual Twist commands appear on /cmd_vel. Collision aborts, cancellation stops, reset cancels. The worker receives asynchronous goal, feedback and result events. This is not a general executor/action-server framework.
 
-## Python bridge
+## TF
 
-Implemented for Session 3: real Pyodide in a cancellable worker, NumPy, educational rclpy/Image/Twist/Trigger/CvBridge APIs and Runtime.publish. Generation checks reject stale worker messages. CLI and Python share one graph. See SESSION3.md for protocol and assessment details.
+The published tree is world → odom → base_link, base_link → laser_link/camera_link, world → target. The Python Buffer composes/inverts received transforms. Only latest planar transforms are supported, all sent periodically on /tf. There is no TF history, interpolation or /tf_static durability simulation. The visual tree is drawn from the same published state.
 
-## Shared topic subscriptions and terminal processes
+## Lessons and checking
 
-Runtime.subscribe registers a callback and a named subscriber node, returning an idempotent unsubscribe function. Runtime.emit delivers separate message copies, without replay. Runtime.step advances robot physics and emits odometry at deterministic 0.2-second simulation boundaries, including while stationary. The app now advances Runtime.step instead of Robot.step. Odometry contains ROS-shaped header, child_frame_id, PoseWithCovariance and TwistWithCovariance. Timestamps use simulation time, orientation is a quaternion and covariance is zero for the ideal model.
+Session catalogs and JSON lessons specify text/translations, starter code, checks, initial pose, optional rectangular world, camera targets and goal. Lab 01 retains its original loader/checker. Perception checks use actual pixels and varied scenes. Course checks use callback/data access, computed reports, parameter reads/command changes, accepted goals/results, TF queries, motion, stop duration and collision counts. Reports communicate computed values without forcing a particular algorithm. These are formative, client-side checks, not secure proof of understanding.
 
-TerminalSession owns command history and at most one foreground command. It delegates one-shot commands to execute, validates command flags and field paths, and manages subscriptions or publication jobs until interrupted or --once completes. Stopping unregisters the subscriber node. The UI creates independent panels without duplicating simulation state. Reset stops sessions before resetting Runtime; captured subscription maps make stale cleanup harmless after reset. No background polling timer is needed per terminal.
+## CLI and lifecycle
 
-Terminals are shared infrastructure for Lab 01 and Session 3. No DDS, QoS negotiation or cross-tab networking is provided.
-
-## CLI compatibility coverage
-
-The installed Jazzy CLI help was used to check basic command families. Nodes, topics, interfaces and services use one shared dispatcher in all labs. Continuous publishers use simulation-clock jobs and register actual publisher nodes. Echo and measurements own subscriptions until stopped; dynamic String/Twist topics disappear when their final endpoint is removed. Measurements use simulated time; bandwidth explicitly reports estimated payload bytes, not a fabricated DDS measurement. Scan is a simple 36-ray model: empty space in Lab 01 and circular approximations of camera targets in Session 3.
+An explicit parser supports the documented ROS subset; it is not a shell or full YAML parser. TerminalSession owns one foreground publisher, echo, measurement or action goal. Stop/Close/Reset dispose its resources. Measurements use simulated time; bw reports estimated payload bytes rather than DDS traffic. All text output is escaped through textContent and bounded.

@@ -2,7 +2,7 @@
 
 ## Six exercises
 
-3.1 subscribes to Image and accesses dimensions. 3.2 converts to NumPy and reports shape/channel means. 3.3 detects red pixels. 3.4 computes their horizontal centroid. 3.5 creates a Trigger client and receives the reset response. 3.6 rotates a robot until the target is centered and stops. Lessons and starter programs are JSON under public/lessons. No Session 2 is invented or required by the implementation.
+3.1 subscribes to Image and accesses dimensions. 3.2 converts to NumPy and reports shape/channel means. 3.3 detects red pixels. 3.4 computes their horizontal centroid. 3.5 creates a Trigger client and receives the reset response. 3.6 rotates a robot until the target is centered and stops. Lessons and starter programs are JSON under public/lessons. Session 2 now supplies the subscriber/callback foundation before this session.
 
 ## Runtime and camera
 
@@ -14,7 +14,7 @@ Image fields: width, height, encoding, step, is_bigendian, header, data. CvBridg
 
 Pyodide 0.28.3 and its NumPy 2.2.5 package load from a pinned jsDelivr URL. Python runs in a worker, with a bounded one-frame-in-flight policy per subscription. Slow callbacks drop frames. UI output is bounded and rate-limited. The initial download has a timeout, user execution and callbacks have watchdogs, and Stop terminates the worker without requiring SharedArrayBuffer or cross-origin isolation headers. Old worker messages are ignored after replacement. Reset and lesson changes stop Python before restoring the graph; Reset preserves code and Restore starter code explicitly replaces it.
 
-Supported rclpy subset: init, shutdown, ok, create_node, Node, create_subscription for camera Image, create_publisher for Twist, create_client for Trigger, get_logger, destroy_node and spin. spin yields the worker to incoming callbacks; execution after spin is not resumed. Stop terminates the worker and does not promise finally-block execution. General executors, timers, Python service servers, QoS negotiation, ROS actions and arbitrary ROS packages are outside this release.
+Supported rclpy subset: init, shutdown, ok, create_node, Node, create_subscription for camera Image, create_publisher for Twist, create_client for Trigger, get_logger, destroy_node and spin. spin yields the worker to incoming callbacks; execution after spin is not resumed. Stop terminates the worker and does not promise finally-block execution. General executors, Python service servers, QoS negotiation and arbitrary ROS packages are outside this release. Other sessions use the shared simulation timers and limited action client; they are not added to the Session 3 curriculum.
 
 Service calls use call_async and Future.add_done_callback/result/done. The request and response cross the worker boundary; responses arrive asynchronously. /reset_robot resets robot pose/velocity while preserving nodes, camera subscriptions and lesson evidence. Full Reset clears the whole lab. Synchronous client.call explicitly raises an unsupported-operation error.
 

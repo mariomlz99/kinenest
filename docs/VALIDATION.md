@@ -24,3 +24,17 @@ Eleven Node tests pass, including fan-out, no replay, odometry timing/pose, echo
 - Pages CI now tests real Python in Chrome before deployment. The test and initial student Python load need access to the pinned Pyodide CDN.
 
 No RViz/Gazebo, native OpenCV, backend, accounts, Session 2, Python service servers or ROS action protocol are included. Production does not contain reference-solution files; the public source repository does contain acceptance-test programs. The checker is formative, not tamper-proof.
+
+## Full course workstation — 2026-10-03
+
+32 Node tests pass. Added deterministic 120-ray rectangular LiDAR and collision tests, parameter mutations/types, custom message validation, physical action feedback/completion/cancellation, CLI ownership cleanup, TF composition/inversion, reset cancellation, translated catalog/reference-program coverage and production allowlist checks.
+
+All 25 Python reference exercises have passed in Chrome and Firefox with real Pyodide/NumPy. Session 3 retains its alternate cv2/direct-buffer solution, constant-detector negative test and running-infinite-loop Stop test. New course suites reject empty programs; Session 2 additionally accepts a NumPy-vectorized sector implementation. Language and theme/layout tests preserve student code. The original Lab 01 multi-terminal regression passes in both browsers.
+
+Testing exposed and corrected a missing report-helper call in one reference program and a goal/obstacle oscillation in the initial safety controller. The final safety example uses short-lived avoidance state before resuming target steering. A transient NumPy CDN failure led to bounded retry and an explicit download error. These are recorded as fixes, not assumed browser incompatibilities.
+
+Inspected the Dutch light-theme 1440-pixel workstation screenshot. A full run of npm run test:chrome -- --built and npm run test:firefox -- --built exercises each session on the production project path. CI runs the complete Chrome course suite before Pages deployment. Edge is not installed in this environment; Edge and Safari remain independently unverified. No classroom timing study or native-language editorial review has yet been performed.
+
+The complete Firefox production run passed all sessions. A combined Chrome run encountered a transient fetch failure after individual suites had passed; the worker now fetches its local teaching API before loading Pyodide and retries failed fetches with a bounded timeout and an explicit path/error. The final Chrome run was repeated after this loader fix.
+
+Final full Chrome production run passed all six sessions after the loader fix. A targeted real-Python regression also verifies that the String payload "Infinity" stays text while non-finite LaserScan ranges decode as floats. Shared translation lookup uses a precomputed map to keep frequent visual updates inexpensive.

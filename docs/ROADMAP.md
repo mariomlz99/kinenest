@@ -2,20 +2,16 @@
 
 ## Now
 
-Lab 01 with a shared multi-terminal CLI, live odometry/range messages and behavioural checks. Session 3 with six real-Python/Pyodide/NumPy exercises, camera perception, asynchronous service clients and vision-driven control. Static Pages builds with versioned assets and Apache-2.0 licensing. Finish lecturer acceptance before widening scope.
-
-## Course constraint
-
-Six 90-minute sessions, with the first two introductory. Follow docs/COURSE.md. Session 4 covers parameters/interfaces/actions; Session 5 covers odometry/TF/integrated control. Session 6 is proposed as consolidation, pending lecturer approval.
+Complete six-session browser course: original CLI lab; four Session 2 exercises; six Session 3 exercises; six Session 4 exercises including optional cancellation; six Session 5 exercises including integration; three Session 6 debugging/challenge tasks. Real Python/NumPy, camera, ray-cast LiDAR, parameters, custom messages, action client/server, planar TF and control share one runtime. Static hosting, light/dark, EN/NL/FR and split/stacked layouts are implemented.
 
 ## Next
 
-Session 2 remains to be authored. Extend Python subscriptions/timers only when its lessons require them. Validate transfer to a real ROS 2 environment in the course. Resolve the public-facing name before wider promotion: ROS2Learn already names an unrelated 2019 research project and includes a ROS trademark.
+Lecturer review and classroom trials. Measure completion times, clarity and transfer to real ROS. Have native speakers review tutorial translations. Test Edge and Safari independently. Resolve the public-facing name before broader promotion; KineCourse is a preliminary candidate, not a cleared trademark.
 
 ## Later
 
-Optional student-written service servers, parameters and ROS action concepts. Improve editor ergonomics and accessibility based on classroom feedback.
+Improve the editor and consider movable/resizable panels after classroom feedback. Add lessons only when a teaching need is clear. Student-written servers and deeper execution semantics need a separate focused design.
 
 ## Ideas
 
-Future optional RViz/Gazebo integration needs a separate design; it is not part of this browser-only release. No cloud runtime, accounts or backend is introduced.
+A broader curriculum may follow the six-session course. Real ROS integration, RViz/Gazebo, C++/CMake execution and cloud runtimes remain separate future work. No backend, accounts, grades database or LMS integration is planned for this phase.
