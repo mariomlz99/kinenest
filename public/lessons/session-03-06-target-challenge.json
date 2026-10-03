@@ -4,9 +4,9 @@
   "number": "3.6",
   "description": "Use camera pixels to rotate until the red target is centered. Keep publishing zero velocity once centered; Check solution after the robot has stopped.",
   "steps": [
-    "Read the mission and complete the Python TODOs.",
-    "Run Python; observe the camera, output and shared graph.",
-    "Use progressive hints if needed, then Check solution."
+    "Calculate the red-pixel centroid in each image callback.",
+    "Publish angular.z on /cmd_vel to turn toward the target.",
+    "Publish zero when centered and check after the robot stops."
   ],
   "hints": [
     "Reuse your mask and centroid calculation. The robot starts facing away from the target.",
@@ -34,12 +34,12 @@
   "startX": 0,
   "translations": {
     "nl": {
-      "title": "Vind het doel",
+      "title": "Het doel vinden",
       "description": "Draai de robot met beeldfeedback tot het rode doel in het midden staat en stop.",
       "steps": [
-        "Ontvang camerabeelden en detecteer de rode pixels.",
-        "Bereken cx en publiceer angular.z op /cmd_vel.",
-        "Draai links voor een doel links, rechts voor een doel rechts en stop in het midden."
+        "Bereken het zwaartepunt van rode pixels in elke image-callback.",
+        "Publiceer angular.z op /cmd_vel om naar het doel te draaien.",
+        "Publiceer nul als het doel in het midden staat en controleer na het stoppen."
       ],
       "hints": [
         "Positieve angular.z draait links.",
@@ -51,9 +51,9 @@
       "title": "Trouver la cible",
       "description": "Faites tourner le robot à partir des images jusqu’à centrer la cible rouge, puis arrêtez-le.",
       "steps": [
-        "Recevez les images et détectez les pixels rouges.",
-        "Calculez cx et publiez angular.z sur /cmd_vel.",
-        "Tournez à gauche pour une cible à gauche, à droite pour une cible à droite et arrêtez au centre."
+        "Calculez le centroïde rouge dans chaque callback image.",
+        "Publiez angular.z sur /cmd_vel pour tourner vers la cible.",
+        "Publiez zéro lorsque la cible est centrée, puis vérifiez après l’arrêt."
       ],
       "hints": [
         "Une angular.z positive tourne à gauche.",

@@ -11,9 +11,9 @@ export default {
     "Camera-callback → werkt de nodetoestand bij → andere logica gebruikt die toestand. Dit is een voorbeeldpatroon, geen verplichte oplossing.",
     "Callback caméra → met à jour l’état du nœud → d’autres traitements utilisent cet état. Ce schéma est explicatif, pas une solution imposée."
   ],
-  "ROS2Learn runs the Python code directly in the browser. On a real ROS 2 system, the same node would normally be placed inside a ROS package and executed from a built workspace.": [
-    "ROS2Learn voert Python rechtstreeks in de browser uit. Op een echt ROS 2-systeem staat dezelfde node normaal in een ROS-package en wordt hij vanuit een gebouwde workspace uitgevoerd.",
-    "ROS2Learn exécute Python directement dans le navigateur. Sur un vrai système ROS 2, le même nœud se trouve normalement dans un package ROS et s’exécute depuis un workspace construit."
+  "KineCourse runs the Python code directly in the browser. On a real ROS 2 system, the same node would normally be placed inside a ROS package and executed from a built workspace.": [
+    "KineCourse voert Python rechtstreeks in de browser uit. Op een echt ROS 2-systeem staat dezelfde node normaal in een ROS-package en wordt hij vanuit een gebouwde workspace uitgevoerd.",
+    "KineCourse exécute Python directement dans le navigateur. Sur un vrai système ROS 2, le même nœud se trouve normalement dans un package ROS et s’exécute depuis un workspace construit."
   ],
   "A Python package uses ament_python and declares a console entry point named detector in setup.py. With that package inside ~/ros2_ws/src and its dependencies installed:": [
     "Een Python-package gebruikt ament_python en declareert een console-entrypoint detector in setup.py. Met het package in ~/ros2_ws/src en de afhankelijkheden geïnstalleerd:",
@@ -27,9 +27,9 @@ export default {
     "Wat is gesimuleerd? Python-API en controles",
     "Qu’est-ce qui est simulé ? API Python et vérifications"
   ],
-  "ROS2Learn is an educational ROS 2 simulator. Its Python API and CLI reproduce the ROS 2 concepts used in these lessons, but the browser environment is not a complete DDS-based ROS 2 installation.": [
-    "ROS2Learn is een educatieve ROS 2-simulator. De Python-API en CLI bootsen de concepten uit deze lessen na, maar de browser is geen volledige ROS 2-installatie op basis van DDS.",
-    "ROS2Learn est un simulateur pédagogique ROS 2. Son API Python et sa CLI reproduisent les concepts utilisés dans ces cours, mais le navigateur n’est pas une installation ROS 2 complète basée sur DDS."
+  "KineCourse is an educational ROS 2 simulator. Its Python API and CLI reproduce the ROS 2 concepts used in these lessons, but the browser environment is not a complete DDS-based ROS 2 installation.": [
+    "KineCourse is een educatieve ROS 2-simulator. De Python-API en CLI bootsen de concepten uit deze lessen na, maar de browser is geen volledige ROS 2-installatie op basis van DDS.",
+    "KineCourse est un simulateur pédagogique ROS 2. Son API Python et sa CLI reproduisent les concepts utilisés dans ces cours, mais le navigateur n’est pas une installation ROS 2 complète basée sur DDS."
   ],
   "Nodes, topics & motion": [
     "Nodes, topics en beweging",
@@ -63,9 +63,9 @@ export default {
     "Alle hints getoond",
     "Tous les indices affichés"
   ],
-  "From ROS2Learn to real ROS 2": [
-    "Van ROS2Learn naar echte ROS 2",
-    "De ROS2Learn à ROS 2 réel"
+  "From KineCourse to real ROS 2": [
+    "Van KineCourse naar echte ROS 2",
+    "De KineCourse à ROS 2 réel"
   ],
   "A Python workspace": [
     "Een Python-workspace",
@@ -219,7 +219,7 @@ export default {
     "Doel gecentreerd en robot stil voor 8 camerabeelden",
     "Cible centrée et robot arrêté pendant 8 images"
   ],
-  "Python and NumPy are real. rclpy, Image, Twist, Trigger and cv_bridge are small educational implementations. ROS2Learn provides a lightweight educational subset of OpenCV-compatible functions: cv2.inRange, countNonZero and moments (m00, m10, m01). No full OpenCV, HSV conversion or real camera is installed.": [
+  "Python and NumPy are real. rclpy, Image, Twist, Trigger and cv_bridge are small educational implementations. KineCourse provides a lightweight educational subset of OpenCV-compatible functions: cv2.inRange, countNonZero and moments (m00, m10, m01). No full OpenCV, HSV conversion or real camera is installed.": [
     "Python en NumPy zijn echt. rclpy, Image, Twist, Trigger en cv_bridge zijn kleine onderwijsimplementaties. De beperkte cv2-helper biedt inRange, countNonZero en moments (m00, m10, m01), geen volledige OpenCV, HSV-conversie of echte camera.",
     "Python et NumPy sont réels. rclpy, Image, Twist, Trigger et cv_bridge sont de petites implémentations pédagogiques. Le helper cv2 limité propose inRange, countNonZero et moments (m00, m10, m01), sans OpenCV complet, conversion HSV ni caméra réelle."
   ],

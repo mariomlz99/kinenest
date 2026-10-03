@@ -30,7 +30,7 @@ The published tree is world → odom → base_link, base_link → laser_link/cam
 
 ## Lessons and checking
 
-Session catalogs and JSON lessons specify text/translations, starter code, checks, initial pose, optional rectangular world, camera targets and goal. Lab 01 retains its original loader/checker. Perception checks use actual pixels and varied scenes. Course checks use callback/data access, computed reports, parameter reads/command changes, accepted goals/results, TF queries, motion, stop duration and collision counts. Reports communicate computed values without forcing a particular algorithm. These are formative, client-side checks, not secure proof of understanding.
+Session catalogs and JSON lessons specify text/translations, starter code, checks, initial pose, optional rectangular world, camera targets and goal. Session 1 retains its original loader/checker. Perception checks use actual pixels and varied scenes. Course checks use callback/data access, computed reports, parameter reads/command changes, accepted goals/results, TF queries, motion, stop duration and collision counts. Reports communicate computed values without forcing a particular algorithm. These are formative, client-side checks, not secure proof of understanding.
 
 ## CLI and lifecycle
 

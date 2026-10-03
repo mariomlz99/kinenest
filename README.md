@@ -1,4 +1,4 @@
-# ROS2Learn
+# KineCourse
 
 Learn the ROS 2 mental model in your browser. A static university teaching workstation: no student installation, accounts or backend.
 
@@ -36,7 +36,7 @@ Maintainer tests/build require Node 22+, with no npm dependencies:
 
 Browser acceptance runs every session with real Pyodide/NumPy solutions, alternate solutions and negative controls. Chrome/Firefox must be installed for these maintainer tests. The runner starts only a temporary local test server. The production site consists entirely of static assets. Edge/Safari have not been independently verified.
 
-For one suite: node scripts/check-browser.mjs chrome --built --suite=session2 . Valid suites include browser (Lab 01), session2 through session6. Pyodide downloads require internet. Each suite has a bounded timeout and cleanup.
+For one suite: node scripts/check-browser.mjs chrome --built --suite=session2 . Valid suites include browser (Session 1), session2 through session6. Pyodide downloads require internet. Each suite has a bounded timeout and cleanup.
 
 ## Deployment
 
@@ -76,7 +76,7 @@ Topics exist according to actual endpoints, without per-lesson command filtering
 
 ## Simulation and limitations
 
-ROS2Learn reproduces the ROS 2 concepts and APIs used in these lessons, but it is not a complete DDS-based ROS 2 installation.
+KineCourse reproduces the ROS 2 concepts and APIs used in these lessons, but it is not a complete DDS-based ROS 2 installation.
 
 Python and NumPy run for real in a cancellable Pyodide worker. rclpy, cv_bridge, limited cv2, messages, TF and actions are educational compatibility layers. Camera: 320 × 240 RGB at 8 Hz. LiDAR: 120 rays at 5 Hz against rectangular obstacles and world boundaries where a lesson supplies them. Odometry: 5 Hz ideal pose/velocity with valid quaternions. No-return rays are infinite; covariance is zero. Time pauses when the page is hidden. Slow Python callbacks drop sensor samples rather than building an unbounded queue. Stop terminates even infinite loops; finally blocks are not guaranteed to run.
 
@@ -92,4 +92,4 @@ Checks observe messages, callbacks, reports and motion, not source-code strings.
 
 Original code and lessons use Apache-2.0; see LICENSE and NOTICE. Third-party licences remain applicable; see public/third-party.html. This project is independent of Open Robotics.
 
-A rename is under consideration, with **KineCourse** as a preliminary candidate. No name, domain or trademark clearance is claimed and no repository rename has been made. See docs/NAMING.md.
+KineCourse is the working public name; no trademark clearance is claimed. See docs/BRANDING.md.

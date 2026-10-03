@@ -4,9 +4,9 @@
   "number": "3.4",
   "description": "Find the horizontal centroid of red pixels. Print LEFT, CENTER or RIGHT and report_detection(visible, cx).",
   "steps": [
-    "Read the mission and complete the Python TODOs.",
-    "Run Python; observe the camera, output and shared graph.",
-    "Use progressive hints if needed, then Check solution."
+    "Find the red pixels with a mask.",
+    "Calculate their horizontal centroid and print LEFT, CENTER or RIGHT.",
+    "Call report_detection(visible, cx), then check on varied scenes."
   ],
   "hints": [
     "Build a red-pixel mask first.",
@@ -34,9 +34,9 @@
       "title": "Links, midden of rechts?",
       "description": "Bereken de horizontale positie van het rode object uit de geselecteerde pixels.",
       "steps": [
-        "Hergebruik het rode masker.",
-        "Gebruik np.where(mask) en bereken het gemiddelde van de x-coördinaten.",
-        "Geef zichtbaarheid en cx door met report_detection(visible, cx). Vergelijk met de overlay."
+        "Vind de rode pixels met een masker.",
+        "Bereken hun horizontale zwaartepunt en print LEFT, CENTER of RIGHT.",
+        "Roep report_detection(visible, cx) aan en test op verschillende scènes."
       ],
       "hints": [
         "np.where geeft eerst y en daarna x.",
@@ -48,9 +48,9 @@
       "title": "À gauche, au centre ou à droite ?",
       "description": "Calculez la position horizontale de l’objet rouge à partir des pixels sélectionnés.",
       "steps": [
-        "Réutilisez le masque rouge.",
-        "Utilisez np.where(mask) et calculez la moyenne des coordonnées x.",
-        "Rapportez visibilité et cx avec report_detection(visible, cx). Comparez avec la superposition."
+        "Trouvez les pixels rouges avec un masque.",
+        "Calculez leur centroïde horizontal et affichez LEFT, CENTER ou RIGHT.",
+        "Appelez report_detection(visible, cx), puis testez sur plusieurs scènes."
       ],
       "hints": [
         "np.where renvoie y puis x.",

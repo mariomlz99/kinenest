@@ -1,3 +1,4 @@
+import { SESSIONS } from './product.js';
 import { Runtime } from '../runtime/graph.js';
 import { PythonBridge } from '../python/bridge.js';
 import { createTerminals } from './terminals.js';
@@ -104,8 +105,8 @@ function draw(){
 function frame(now){if(last)accumulator+=Math.min((now-last)/1000,.1);last=now;while(accumulator>=1/60){if(testing)runtime.robot.command(0,0);runtime.step(1/60);if(session!==3)observeCourse(runtime,lesson);accumulator-=1/60;}draw();requestAnimationFrame(frame);}
 document.addEventListener('visibilitychange',()=>{last=0;accumulator=0;});
 setupPreferences();
-const names={2:'Subscribers & LiDAR',3:'Perception & services',4:'Parameters & actions',5:'Odometry & frames',6:'Debugging & integration'};
-document.querySelector('.intro .eyebrow').textContent='Learn by experimenting';
+const names=Object.fromEntries(SESSIONS.map((name,i)=>[i+1,name]));
+document.querySelector('.intro .eyebrow').textContent='Python · 90 min';
 $('session-title').textContent=names[session];$('session-tag').textContent='SESSION 0'+session;
 catalog=await json('session-0'+session+'.json');for(const entry of catalog){const option=document.createElement('option');option.value=entry.id;option.textContent=entry.number+' — '+(entry.translations?.[language()]??entry.title);$('lesson-select').append(option);}
 await selectLesson(catalog[0].id);requestAnimationFrame(frame);

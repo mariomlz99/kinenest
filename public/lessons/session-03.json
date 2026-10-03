@@ -1,11 +1,11 @@
 [
   {
     "id": "session-03-01-camera-subscriber",
-    "title": "Your robot can see",
+    "title": "Camera subscriber",
     "number": "3.1",
     "translations": {
-      "nl": "Je robot kan zien",
-      "fr": "Votre robot peut voir"
+      "nl": "Camera-subscriber",
+      "fr": "Subscriber caméra"
     }
   },
   {
@@ -19,11 +19,11 @@
   },
   {
     "id": "session-03-03-color-detection",
-    "title": "Simple vision",
+    "title": "Detect red pixels",
     "number": "3.3",
     "translations": {
-      "nl": "Detecteer een rood object",
-      "fr": "Détecter un objet rouge"
+      "nl": "Rode pixels detecteren",
+      "fr": "Détecter les pixels rouges"
     }
   },
   {
@@ -37,11 +37,11 @@
   },
   {
     "id": "session-03-05-services",
-    "title": "Ask another node to do something",
+    "title": "Call a service",
     "number": "3.5",
     "translations": {
-      "nl": "Vraag een andere node iets te doen",
-      "fr": "Demander une opération à un autre nœud"
+      "nl": "Een service aanroepen",
+      "fr": "Appeler un service"
     }
   },
   {
@@ -49,7 +49,7 @@
     "title": "Find the target",
     "number": "3.6",
     "translations": {
-      "nl": "Vind het doel",
+      "nl": "Het doel vinden",
       "fr": "Trouver la cible"
     }
   }

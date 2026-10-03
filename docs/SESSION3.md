@@ -6,7 +6,7 @@
 
 ## Runtime and camera
 
-Session 3 enables /camera/image_raw (sensor_msgs/msg/Image), /reset_server and /reset_robot (std_srvs/srv/Trigger) in the existing Runtime. Lab 01 keeps its original graph. The camera uses a small pinhole projection and RGB rasteriser; movement changes projection, size and visibility. Canvas displays the resulting pixels. No target coordinates are attached to the Python Image. Default targets include red and blue blocks; assessment also uses green distractors and absent/red states.
+Session 3 enables /camera/image_raw (sensor_msgs/msg/Image), /reset_server and /reset_robot (std_srvs/srv/Trigger) in the existing Runtime. Session 1 keeps its original graph. The camera uses a small pinhole projection and RGB rasteriser; movement changes projection, size and visibility. Canvas displays the resulting pixels. No target coordinates are attached to the Python Image. Default targets include red and blue blocks; assessment also uses green distractors and absent/red states.
 
 Image fields: width, height, encoding, step, is_bigendian, header, data. CvBridge.imgmsg_to_cv2 accepts rgb8, bgr8 and passthrough. Its return value is a genuine NumPy ndarray, not a JavaScript emulation. NumPy indexing, means, masks, sums and where work normally. The educational cv2 implements inRange, countNonZero and moments with m00/m10/m01 only; no HSV conversion, contours or native OpenCV is provided.
 

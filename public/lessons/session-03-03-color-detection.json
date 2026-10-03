@@ -1,12 +1,12 @@
 {
   "id": "session-03-03-color-detection",
-  "title": "Simple vision",
+  "title": "Detect red pixels",
   "number": "3.3",
   "description": "Detect a red object from RGB pixels. Report your boolean using report_detection(visible), then Check solution tests four varied scenes.",
   "steps": [
-    "Read the mission and complete the Python TODOs.",
-    "Run Python; observe the camera, output and shared graph.",
-    "Use progressive hints if needed, then Check solution."
+    "Convert each image to an RGB array.",
+    "Build a red-pixel mask and report whether more than 500 pixels match.",
+    "Check solution tests your detector on four different scenes."
   ],
   "hints": [
     "RGB images have three channels. Red should be high; green and blue should be low.",
@@ -31,12 +31,12 @@
   "startX": 0,
   "translations": {
     "nl": {
-      "title": "Detecteer een rood object",
+      "title": "Rode pixels detecteren",
       "description": "Verwerk echte pixels om te beslissen of er een rood object zichtbaar is. De controle varieert de scène.",
       "steps": [
-        "Converteer het Image-bericht naar RGB.",
-        "Maak een masker met hoog rood en laag groen/blauw; tel de pixels.",
-        "Gebruik report_detection(visible) en controleer terwijl Python draait."
+        "Converteer elk beeld naar een RGB-array.",
+        "Maak een masker voor rode pixels en rapporteer of er meer dan 500 overeenkomen.",
+        "De controle test je detector op vier verschillende scènes."
       ],
       "hints": [
         "Rood heeft een hoge waarde in kanaal 0.",
@@ -45,12 +45,12 @@
       ]
     },
     "fr": {
-      "title": "Détecter un objet rouge",
+      "title": "Détecter les pixels rouges",
       "description": "Traitez les pixels réels pour décider si un objet rouge est visible. La vérification varie la scène.",
       "steps": [
-        "Convertissez le message Image en RGB.",
-        "Créez un masque : rouge élevé, vert et bleu faibles ; comptez les pixels.",
-        "Utilisez report_detection(visible) puis vérifiez pendant l’exécution."
+        "Convertissez chaque image en tableau RGB.",
+        "Créez un masque rouge et signalez si plus de 500 pixels correspondent.",
+        "La vérification teste votre détecteur sur quatre scènes différentes."
       ],
       "hints": [
         "Le rouge a une valeur élevée dans le canal 0.",

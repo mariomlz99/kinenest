@@ -48,3 +48,7 @@ Lesson controls now stay disabled until the selected lesson has finished loading
 The Node.js 20 deprecation warning and Ubuntu migration notice were separate from the failed browser test. CI now uses checkout/setup-node v7 and pins ubuntu-24.04; the application test Node version remains 22. GitHub-hosted deployment verification still requires pushing the fix.
 
 The complete corrected Chrome production run passed: delayed-loading regression, original CLI lab, all 25 Python reference exercises across Sessions 2–6, alternate solutions, negative controls, Stop/Reset, theme/language/layout and String payload regression. No browser suite was skipped or retried in this run.
+
+## KineCourse workstation baseline — 2026-10-03
+
+Starting revision fb86743: clean working tree; 32 unit tests and static build passed. Full Chrome and Firefox production suites passed all six sessions before changes. Branding/copy changes retain lesson IDs, Python programs and runtime behaviour. The original CLI browser regression and the new independent-brand/emoji checks pass after rebranding.

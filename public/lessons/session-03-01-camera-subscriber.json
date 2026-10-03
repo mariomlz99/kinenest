@@ -1,12 +1,12 @@
 {
   "id": "session-03-01-camera-subscriber",
-  "title": "Your robot can see",
+  "title": "Camera subscriber",
   "number": "3.1",
   "description": "Subscribe to /camera/image_raw and print the width and height of each received image.",
   "steps": [
-    "Read the mission and complete the Python TODOs.",
-    "Run Python; observe the camera, output and shared graph.",
-    "Use progressive hints if needed, then Check solution."
+    "Inspect /camera/image_raw with ros2 topic info.",
+    "Subscribe to Image and print msg.width and msg.height in the callback.",
+    "Run the node and check the repeated output."
   ],
   "hints": [
     "A camera is another publisher. Use ros2 topic list and ros2 topic info /camera/image_raw.",
@@ -28,12 +28,12 @@
   "startX": 0,
   "translations": {
     "nl": {
-      "title": "Je robot kan zien",
+      "title": "Camera-subscriber",
       "description": "Abonneer je op /camera/image_raw en print de afmetingen van elk ontvangen beeld.",
       "steps": [
-        "Maak een Image-subscription op /camera/image_raw.",
-        "Lees msg.width en msg.height in de callback.",
-        "Voer uit en observeer herhaalde beeldberichten."
+        "Inspecteer /camera/image_raw met ros2 topic info.",
+        "Abonneer op Image en print msg.width en msg.height in de callback.",
+        "Voer de node uit en controleer de herhaalde uitvoer."
       ],
       "hints": [
         "Een camera is ook een ROS-publisher.",
@@ -42,12 +42,12 @@
       ]
     },
     "fr": {
-      "title": "Votre robot peut voir",
+      "title": "Subscriber caméra",
       "description": "Abonnez-vous à /camera/image_raw et affichez les dimensions de chaque image reçue.",
       "steps": [
-        "Créez un abonnement Image à /camera/image_raw.",
-        "Lisez msg.width et msg.height dans le callback.",
-        "Exécutez et observez les messages répétés."
+        "Inspectez /camera/image_raw avec ros2 topic info.",
+        "Abonnez-vous à Image et affichez msg.width et msg.height dans le callback.",
+        "Exécutez le nœud et vérifiez les sorties répétées."
       ],
       "hints": [
         "Une caméra est aussi un publisher ROS.",

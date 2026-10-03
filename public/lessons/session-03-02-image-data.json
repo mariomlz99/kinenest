@@ -4,9 +4,9 @@
   "number": "3.2",
   "description": "Convert each message to a real NumPy array, print its shape and report the three channel means.",
   "steps": [
-    "Read the mission and complete the Python TODOs.",
-    "Run Python; observe the camera, output and shared graph.",
-    "Use progressive hints if needed, then Check solution."
+    "Convert the Image message with CvBridge.",
+    "Print image.shape and calculate the mean of each RGB channel.",
+    "Call report_image_stats with the shape and three means."
   ],
   "hints": [
     "Use CvBridge.imgmsg_to_cv2 with desired_encoding=\"rgb8\".",
@@ -34,9 +34,9 @@
       "title": "Beelden zijn data",
       "description": "Zet het beeld om naar een echte NumPy-array en bereken de vorm en gemiddelde RGB-waarden.",
       "steps": [
-        "Gebruik CvBridge.imgmsg_to_cv2 met rgb8.",
-        "Bekijk image.shape en het gemiddelde van elk kleurkanaal.",
-        "Geef shape en drie gemiddelden door met report_image_stats."
+        "Converteer het Image-bericht met CvBridge.",
+        "Print image.shape en bereken het gemiddelde van elk RGB-kanaal.",
+        "Roep report_image_stats aan met de vorm en drie gemiddelden."
       ],
       "hints": [
         "De vorm is hoogte × breedte × kanalen.",
@@ -48,9 +48,9 @@
       "title": "Les images sont des données",
       "description": "Convertissez l’image en véritable tableau NumPy et calculez sa forme et les moyennes RGB.",
       "steps": [
-        "Utilisez CvBridge.imgmsg_to_cv2 avec rgb8.",
-        "Examinez image.shape et la moyenne de chaque canal.",
-        "Rapportez la forme et les trois moyennes avec report_image_stats."
+        "Convertissez le message Image avec CvBridge.",
+        "Affichez image.shape et calculez la moyenne de chaque canal RGB.",
+        "Appelez report_image_stats avec la forme et les trois moyennes."
       ],
       "hints": [
         "La forme est hauteur × largeur × canaux.",

@@ -1,6 +1,6 @@
 {
   "id": "session-03-05-services",
-  "title": "Ask another node to do something",
+  "title": "Call a service",
   "number": "3.5",
   "description": "Discover /reset_robot, then create a Python Trigger client and receive its response. The robot starts displaced so you can see the reset.",
   "steps": [
@@ -25,7 +25,7 @@
   "startX": 2,
   "translations": {
     "nl": {
-      "title": "Vraag een andere node iets te doen",
+      "title": "Een service aanroepen",
       "description": "Ontdek /reset_robot en ontvang het antwoord op een asynchrone Trigger-aanroep.",
       "steps": [
         "Gebruik ros2 service list en ros2 service type /reset_robot.",
@@ -39,7 +39,7 @@
       ]
     },
     "fr": {
-      "title": "Demander une opération à un autre nœud",
+      "title": "Appeler un service",
       "description": "Découvrez /reset_robot et recevez la réponse à un appel Trigger asynchrone.",
       "steps": [
         "Utilisez ros2 service list et ros2 service type /reset_robot.",
