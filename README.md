@@ -61,7 +61,7 @@ The C++ toolchain downloads about 60 MB on first use, and again if its cache is 
 
 KineNest is not a full robot middleware installation. Python, NumPy, the C++ compiler and student algorithms are real; the rclpy/rclcpp-shaped APIs, messages, services, parameters, actions, TF, cv_bridge, limited cv2 and the CLI are educational implementations.
 
-No DDS, QoS negotiation, TF history, native OpenCV, Gazebo, RViz, Nav2, SLAM or native package builds. TF is planar and latest-only. The two-second velocity timeout is a simulator controller policy. Each tab has a separate world. See [architecture](docs/ARCHITECTURE.md) and the [About page](https://mariomlz99.github.io/ros2learn/about.html).
+No DDS, QoS negotiation, TF history, native OpenCV, Gazebo, RViz, Nav2, SLAM or native package builds. TF is planar and latest-only. The two-second velocity timeout is a simulator controller policy. Each tab has a separate world. See [architecture](docs/ARCHITECTURE.md) and the [About page](https://kinenest.com/about.html).
 
 Checks observe behaviour and accept different solutions. They are formative, not tamper-proof grading. Reference programs are excluded from the production build but remain visible in this public repository. Browser source cannot securely hide answers or checkers.
 
@@ -70,7 +70,7 @@ Checks observe behaviour and accept different solutions. They are formative, not
 Students need only a browser. Maintainers need Node 22+ for tests/build and Python 3 for the simple preview server. The pinned Wrangler development dependency is used only for Cloudflare deployment and local routing checks.
 
 ~~~bash
-git clone https://github.com/mariomlz99/ros2learn.git
+git clone https://github.com/mariomlz99/kinenest.git
 cd ros2learn
 npm ci
 npm run dev
@@ -99,13 +99,13 @@ GitHub repository Settings → Pages → Source: **GitHub Actions**. Pushes to m
 
 Production contains static assets only. The allowlist excludes tests, reference programs, docs and private development artifacts. Content-versioned relative paths work under /ros2learn/ and other project prefixes. The existing personal website is a separate repository.
 
-Cloudflare Workers Static Assets is prepared in wrangler.jsonc, serving dist/ with no application Worker. See the [exact build, preview and release steps](docs/CLOUDFLARE_RELEASE.md). The existing kinenest.com deployment is live and the GitHub Pages site remains a fallback. This candidate does not change the production Worker, DNS, custom domains or repository identity. Its separate branch preview must pass release checks and maintainer review before production changes.
+Cloudflare Workers Static Assets is prepared in wrangler.jsonc, serving dist/ with no application Worker. See the [exact build, preview and release steps](docs/CLOUDFLARE_RELEASE.md). The existing kinenest.com deployment is live and the GitHub Pages site remains a fallback. The existing static Worker and domain binding remain in place. After the repository rename, verify or reconnect Workers Builds to the renamed GitHub repository before relying on automatic deployments.
 
 To verify a deployed commit with the same checks used after Pages publishes:
 
 ~~~bash
-npm run test:deployed -- chrome --url=https://mariomlz99.github.io/ros2learn/ --commit=<full-git-sha>
-npm run test:deployed -- firefox --url=https://mariomlz99.github.io/ros2learn/ --commit=<full-git-sha>
+npm run test:deployed -- chrome --url=https://kinenest.com/ --commit=<full-git-sha>
+npm run test:deployed -- firefox --url=https://kinenest.com/ --commit=<full-git-sha>
 ~~~
 
 The command waits for build-info.json to identify that commit, then runs public C++ exercises 2.1/2.4, a real Python subscriber, attribution and navigation checks. About → Build information shows deployed and loaded asset versions. Optional middleware work is isolated in [experiments/rmw-wasm](experiments/rmw-wasm/README.md), outside the Pages bundle.

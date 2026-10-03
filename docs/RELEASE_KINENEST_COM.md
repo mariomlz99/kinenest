@@ -104,7 +104,7 @@ verified. Safari/iOS and physical mobile devices remain independently untested.
 
 Date: 4 October 2026 (Europe/Brussels).
 
-**Status: application release candidate validated; kinenest.com release is not complete.** The maintainer is preparing the first Cloudflare deployment. No temporary Workers URL or custom-domain deployment has yet been verified.
+**Status: kinenest.com verified in Chrome and Firefox; repository/canonical cutover and www/HTTP routing are being finalized.** The domain serves the tested 63bb5ff build over valid HTTPS. This report does not yet claim a completed identity migration.
 
 ## Revisions
 
@@ -119,8 +119,8 @@ Date: 4 October 2026 (Europe/Brussels).
 | Final pre-rename SHA | Not established; rename waits for verified replacement hosting |
 | Canonical repository currently | mariomlz99/ros2learn |
 | Target repository | mariomlz99/kinenest |
-| Cloudflare deployment SHA | Pending first deployment and build-info verification |
-| Target public URL | https://kinenest.com/ — not yet verified |
+| Cloudflare deployment SHA | 63bb5ff8c2dfb3d234fe87bcc0144b400f9245ff |
+| Verified public URL | https://kinenest.com/ |
 
 The candidate was tested in a clean detached worktree. Its build-info reports dirty: false. The original checkout's pre-existing untracked files much, otherwise and provide were preserved.
 
@@ -183,11 +183,26 @@ Configuration, exact dashboard commands and validation steps are in [CLOUDFLARE_
 
 The working GitHub Pages site is retained. Repository rename is delayed because GitHub does not redirect project-page URLs after a rename. After a temporary Workers URL passes both browsers, attach and verify kinenest.com, then coordinate repository/source/canonical migration. Do not advertise the domain as live or tag the initial domain release before that verification.
 
+## Verified Cloudflare Worker deployment
+
+Verified https://kinenest.malizia-mario99.workers.dev/ on 4 October 2026 (Europe/Brussels). Build identity: commit `63bb5ff8c2dfb3d234fe87bcc0144b400f9245ff`, builtAt `2026-10-03T23:31:04.711Z`, assetVersion `784328576e05`, dirty `false`. This matches the tested application assets. [Main CI](https://github.com/mariomlz99/ros2learn/actions/runs/37161362560) is fully green, including GitHub Pages publication and deployed-site checks.
+
+Both Chrome and Firefox passed `check-deployed.mjs` against the actual Worker URL: real C++ 2.1/2.4 with shared behavioral checks, real Python, no compiler requests at Python-only startup, all nine public-page footers, correct support/attribution links, and immediate light/dark About-logo switching. Root and explicit HTML routes return 200; unknown paths, tests and private review documentation return 404.
+
+Both browsers also passed `check-transitions.mjs` against that host: 1→2, 2→3, 3→5, 5→6, About→1, all five deterministic variants, rendered-state samples, changing animation state, reduced motion and history cleanup. Observed ordinary dwell was 1033–1097 ms; reduced-motion dwell was 30–31 ms. Light TF and dark LiDAR captures were visually inspected. Captures and JSON results are retained outside production in `.release-artifacts/remote-worker-transitions/` beside the checkout.
+
+This is a deployed-host smoke check, not a second full-course run on Cloudflare. Complete course and C++ suites passed locally and in CI for the same application version. No custom-domain success is claimed.
+
+## Verified apex-domain deployment
+
+The maintainer attached kinenest.com to the static Worker. Direct HTTPS requests now succeed with normal certificate verification and build-info matches `63bb5ff8c2dfb3d234fe87bcc0144b400f9245ff`, assetVersion `784328576e05`, dirty `false`. Chrome and Firefox passed real Python/C++ 2.1/2.4, nine-page footer checks, light/dark About logos, all five transition variants, first navigation, history and reduced motion on https://kinenest.com/. Ordinary navigation measured 1026–1079 ms; reduced motion 26–31 ms. Full-course testing remains the green CI result for the same application version.
+
+The identity-cutover branch updates source links, canonical/social URLs, README and private package metadata. Runtime interface names and localStorage keys stay compatible. Wrangler explicitly retains the verified apex custom domain and the workers.dev fallback. The www redirect and HTTP-to-HTTPS enforcement remain pending external verification; no success is inferred from the dashboard alone.
+
 ## Remaining release blockers and rollback
 
-- Temporary workers.dev URL must be deployed by the authenticated maintainer and tested.
-- kinenest.com and www must be attached, with valid HTTPS and a path/query-preserving www → apex redirect.
-- Domain build-info, Python/C++, visible navigation and nine-page smoke must pass.
+- Verify the path/query-preserving www → apex redirect and HTTP → HTTPS enforcement.
+- Reverify domain build-info, Python/C++, visible navigation and public metadata after identity cutover.
 - Existing repository must then be renamed, source/canonical metadata updated and revalidated.
 - Domain release tag remains uncreated.
 

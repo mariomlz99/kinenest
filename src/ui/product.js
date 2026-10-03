@@ -4,10 +4,10 @@ export const PRODUCT = Object.freeze({
   name: 'KineNest',
   tagline: 'A safe place to learn robotics by making things move.',
   description: 'Free, open-source browser robotics exercises with real Python and browser-compiled C++, shared sensors, simulation and behavioral checks.',
-  source: 'https://github.com/mariomlz99/ros2learn',
+  source: 'https://github.com/mariomlz99/kinenest',
   support: 'https://buymeacoffee.com/mariomlz99',
   contact: 'hello@kinenest.com',
-  site: 'https://mariomlz99.github.io/ros2learn/',
+  site: 'https://kinenest.com/',
   socialImage: 'public/assets/brand/social-preview.png',
   institutionalBranding: Object.freeze({enabled:false,logos:[]})
 });
