@@ -1,0 +1,55 @@
+{
+  "id": "session-04-05-feedback",
+  "session": 4,
+  "number": "4.5",
+  "title": "Follow action feedback",
+  "description": "Add a feedback callback to observe motion before the final result arrives. Topic, service and action now have distinct roles.",
+  "steps": [
+    "Reuse 4.4 and attach feedback_callback when sending the goal.",
+    "Print msg.feedback.distance_travelled as the robot moves.",
+    "Try the equivalent CLI goal with --feedback after stopping Python."
+  ],
+  "hints": [
+    "Feedback is a stream of intermediate progress associated with a goal.",
+    "The feedback callback gets an envelope: msg.feedback.distance_travelled.",
+    "The final result is still requested from the accepted goal handle."
+  ],
+  "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom rclpy.action import ActionClient\nfrom ros2learn_interfaces.action import DriveDistance\n\nrclpy.init()\nnode = Node('student_controller')\n\nclient = ActionClient(node, DriveDistance, '/drive_distance')\ndef feedback(msg):\n    # TODO: print msg.feedback.distance_travelled\n    pass\ndef on_result(future):\n    # TODO: inspect status and result\n    pass\ndef accepted(future):\n    # TODO: check handle.accepted, request result and attach on_result\n    pass\n# TODO: create goal and send it with feedback_callback=feedback\nrclpy.spin(node)\n",
+  "checks": [
+    {
+      "type": "action"
+    }
+  ],
+  "startX": 0,
+  "startYaw": 0,
+  "translations": {
+    "nl": {
+      "title": "Volg de voortgang",
+      "description": "Ontvang feedback tijdens de beweging, vóór het eindresultaat.",
+      "steps": [
+        "Hergebruik 4.4 en voeg feedback_callback toe.",
+        "Print msg.feedback.distance_travelled.",
+        "Probeer na Stop Python ook een CLI-doel met --feedback."
+      ],
+      "hints": [
+        "Feedback hoort bij een lopend doel.",
+        "Lees het feedback-veld van het ontvangen object.",
+        "Het eindresultaat blijft een aparte future."
+      ]
+    },
+    "fr": {
+      "title": "Suivre la progression",
+      "description": "Recevez du feedback pendant le déplacement, avant le résultat final.",
+      "steps": [
+        "Réutilisez 4.4 et ajoutez feedback_callback.",
+        "Affichez msg.feedback.distance_travelled.",
+        "Après Stop Python, essayez un objectif CLI avec --feedback."
+      ],
+      "hints": [
+        "Le feedback appartient à un objectif actif.",
+        "Lisez le champ feedback de l’objet reçu.",
+        "Le résultat final reste un future distinct."
+      ]
+    }
+  }
+}

@@ -1,0 +1,56 @@
+[
+  {
+    "id": "session-04-01-configure",
+    "title": "Configure your node",
+    "number": "4.1",
+    "translations": {
+      "nl": "Configureer je node",
+      "fr": "Configurer votre nœud"
+    }
+  },
+  {
+    "id": "session-04-02-tuning",
+    "title": "Tune without restarting",
+    "number": "4.2",
+    "translations": {
+      "nl": "Bijregelen zonder herschrijven",
+      "fr": "Ajuster sans réécrire"
+    }
+  },
+  {
+    "id": "session-04-03-custom",
+    "title": "Publish a custom message",
+    "number": "4.3",
+    "translations": {
+      "nl": "Publiceer een eigen bericht",
+      "fr": "Publier un message personnalisé"
+    }
+  },
+  {
+    "id": "session-04-04-goal",
+    "title": "Send an action goal",
+    "number": "4.4",
+    "translations": {
+      "nl": "Verstuur een actiedoel",
+      "fr": "Envoyer un objectif d’action"
+    }
+  },
+  {
+    "id": "session-04-05-feedback",
+    "title": "Follow action feedback",
+    "number": "4.5",
+    "translations": {
+      "nl": "Volg de voortgang",
+      "fr": "Suivre la progression"
+    }
+  },
+  {
+    "id": "session-04-06-cancel",
+    "title": "Optional: cancel a goal",
+    "number": "4.6",
+    "translations": {
+      "nl": "Optioneel: annuleer een doel",
+      "fr": "Optionnel : annuler un objectif"
+    }
+  }
+]

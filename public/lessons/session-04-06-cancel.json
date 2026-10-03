@@ -1,0 +1,56 @@
+{
+  "id": "session-04-06-cancel",
+  "session": 4,
+  "number": "4.6",
+  "title": "Optional: cancel a goal",
+  "description": "Send a two-metre goal, then cancel it after feedback reports more than 0.3 m. Wait for cancellation to finish.",
+  "steps": [
+    "Reuse the previous action client and retain its accepted goal handle.",
+    "In the feedback callback, cancel once when distance_travelled exceeds 0.3.",
+    "Inspect the final result: status 5 means cancelled. The robot should stop before completing two metres."
+  ],
+  "hints": [
+    "Cancelling is a request; observe the final action result too.",
+    "Use a boolean to avoid sending the cancellation on every feedback event.",
+    "handle.cancel_goal_async() requests cancellation; keep the result callback from the previous lab."
+  ],
+  "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom rclpy.action import ActionClient\nfrom ros2learn_interfaces.action import DriveDistance\n\nrclpy.init()\nnode = Node('student_controller')\n\n# TODO: adapt the previous exercise: retain the goal handle,\n# send a 2 m goal, cancel once after 0.3 m of feedback,\n# and receive its final result.\nrclpy.spin(node)\n",
+  "checks": [
+    {
+      "type": "cancel"
+    }
+  ],
+  "startX": 0,
+  "startYaw": 0,
+  "optional": true,
+  "translations": {
+    "nl": {
+      "title": "Optioneel: annuleer een doel",
+      "description": "Verstuur een doel van 2 m en annuleer na meer dan 0.3 m voortgang.",
+      "steps": [
+        "Bewaar de geaccepteerde goal handle.",
+        "Annuleer één keer vanuit de feedback-callback.",
+        "Wacht op het eindresultaat met status 5 en een stilstaande robot."
+      ],
+      "hints": [
+        "Annuleren is een verzoek; controleer ook het resultaat.",
+        "Gebruik een boolean om herhaling te voorkomen.",
+        "handle.cancel_goal_async() verstuurt het verzoek."
+      ]
+    },
+    "fr": {
+      "title": "Optionnel : annuler un objectif",
+      "description": "Envoyez un objectif de 2 m et annulez après plus de 0.3 m de progression.",
+      "steps": [
+        "Conservez le goal handle accepté.",
+        "Annulez une seule fois depuis le callback de feedback.",
+        "Attendez le résultat final avec status 5 et un robot arrêté."
+      ],
+      "hints": [
+        "L’annulation est une requête ; vérifiez aussi le résultat.",
+        "Utilisez un booléen pour éviter les répétitions.",
+        "handle.cancel_goal_async() envoie la demande."
+      ]
+    }
+  }
+}

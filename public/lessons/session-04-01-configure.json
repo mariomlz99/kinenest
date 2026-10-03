@@ -1,0 +1,55 @@
+{
+  "id": "session-04-01-configure",
+  "session": 4,
+  "number": "4.1",
+  "title": "Configure your node",
+  "description": "Declare a speed parameter and use its value in a timer-driven controller. A parameter belongs to one node.",
+  "steps": [
+    "Declare speed = 0.2.",
+    "Read it inside a timer, clamp to 0–0.8, and publish /cmd_vel.",
+    "Inspect ros2 param list and ros2 param get /student_controller speed."
+  ],
+  "hints": [
+    "declare_parameter supplies a default.",
+    "get_parameter(\"speed\").value reads the current value.",
+    "A timer keeps the robot receiving commands."
+  ],
+  "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom geometry_msgs.msg import Twist\n\nrclpy.init()\nnode = Node('student_controller')\n\n# TODO: declare the speed parameter\npublisher = node.create_publisher(Twist, '/cmd_vel', 10)\ndef tick():\n    # TODO: read speed, clamp, publish\n    pass\nnode.create_timer(0.2, tick)\nrclpy.spin(node)\n",
+  "checks": [
+    {
+      "type": "configured"
+    }
+  ],
+  "startX": 0,
+  "startYaw": 0,
+  "translations": {
+    "nl": {
+      "title": "Configureer je node",
+      "description": "Declareer speed en gebruik de waarde in een timer die de robot aanstuurt.",
+      "steps": [
+        "Declareer speed = 0.2.",
+        "Lees de actuele waarde, beperk tot 0–0.8 en publiceer een Twist.",
+        "Inspecteer ros2 param list en ros2 param get /student_controller speed."
+      ],
+      "hints": [
+        "Parameters horen bij een node.",
+        "declare_parameter geeft de standaardwaarde.",
+        "Lees get_parameter(\"speed\").value in de timer."
+      ]
+    },
+    "fr": {
+      "title": "Configurer votre nœud",
+      "description": "Déclarez speed et utilisez sa valeur dans un timer qui commande le robot.",
+      "steps": [
+        "Déclarez speed = 0.2.",
+        "Lisez la valeur, limitez-la à 0–0.8 et publiez un Twist.",
+        "Inspectez ros2 param list et ros2 param get /student_controller speed."
+      ],
+      "hints": [
+        "Les paramètres appartiennent à un nœud.",
+        "declare_parameter fournit la valeur par défaut.",
+        "Lisez get_parameter(\"speed\").value dans le timer."
+      ]
+    }
+  }
+}

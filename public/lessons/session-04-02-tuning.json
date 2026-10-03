@@ -1,0 +1,58 @@
+{
+  "id": "session-04-02-tuning",
+  "session": 4,
+  "number": "4.2",
+  "title": "Tune without restarting",
+  "description": "Declare a speed parameter and read it on every timer callback. Change it live from a terminal while Python keeps running.",
+  "steps": [
+    "Declare speed with default 0.2 on /student_controller.",
+    "Read node.get_parameter(\"speed\").value inside the timer, clamp it to 0–0.8, and publish Twist.",
+    "While running: ros2 param list; ros2 param get /student_controller speed; ros2 param set /student_controller speed 0.6. Observe the change, then check."
+  ],
+  "hints": [
+    "Parameters belong to nodes, not topics.",
+    "Reading once during startup will not apply later updates to your controller.",
+    "Keep the timer running; use node.get_parameter(\"speed\").value inside tick."
+  ],
+  "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom geometry_msgs.msg import Twist\n\nrclpy.init()\nnode = Node('student_controller')\n\n# TODO: declare the speed parameter\npublisher = node.create_publisher(Twist, '/cmd_vel', 10)\ndef tick():\n    # TODO: read speed, clamp, publish\n    pass\nnode.create_timer(0.2, tick)\nrclpy.spin(node)\n",
+  "checks": [
+    {
+      "type": "parameter"
+    },
+    {
+      "type": "timer"
+    }
+  ],
+  "startX": 0,
+  "startYaw": 0,
+  "translations": {
+    "nl": {
+      "title": "Bijregelen zonder herschrijven",
+      "description": "Verander de snelheid via de terminal terwijl Python blijft draaien.",
+      "steps": [
+        "Gebruik een speed-parameter in de timer.",
+        "Voer ros2 param set /student_controller speed 0.6 uit.",
+        "Observeer de verandering en controleer de oplossing."
+      ],
+      "hints": [
+        "Een waarde die je alleen bij de start leest, verandert je regelaar niet automatisch.",
+        "Lees de parameter bij elke timer-callback.",
+        "Laat Python lopen terwijl je de terminal gebruikt."
+      ]
+    },
+    "fr": {
+      "title": "Ajuster sans réécrire",
+      "description": "Modifiez la vitesse depuis le terminal pendant que Python continue.",
+      "steps": [
+        "Utilisez un paramètre speed dans le timer.",
+        "Exécutez ros2 param set /student_controller speed 0.6.",
+        "Observez le changement puis vérifiez la solution."
+      ],
+      "hints": [
+        "Lire uniquement au démarrage ne met pas le contrôleur à jour.",
+        "Relisez le paramètre à chaque callback du timer.",
+        "Laissez Python actif pendant l’utilisation du terminal."
+      ]
+    }
+  }
+}

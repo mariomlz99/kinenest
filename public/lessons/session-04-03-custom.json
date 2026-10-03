@@ -1,0 +1,55 @@
+{
+  "id": "session-04-03-custom",
+  "session": 4,
+  "number": "4.3",
+  "title": "Publish a custom message",
+  "description": "A named interface makes a message contract explicit. Publish TargetInfo: visibility, position label and confidence.",
+  "steps": [
+    "Inspect ros2 interface show ros2learn_interfaces/msg/TargetInfo.",
+    "Publish at least three valid messages on /target_info from Python. Confidence must be between 0 and 1.",
+    "Echo /target_info in a terminal. Change one field and explain why a Twist cannot be published on that same typed topic."
+  ],
+  "hints": [
+    "Import TargetInfo from ros2learn_interfaces.msg.",
+    "The class is supplied directly in the browser; no interface generator is running.",
+    "TargetInfo(visible=True, position=\"LEFT\", confidence=0.8)"
+  ],
+  "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom ros2learn_interfaces.msg import TargetInfo\n\nrclpy.init()\nnode = Node('student_controller')\n\n# TODO: create a TargetInfo publisher for /target_info\n# TODO: publish your status from a timer\nrclpy.spin(node)\n",
+  "checks": [
+    {
+      "type": "custom"
+    }
+  ],
+  "startX": 0,
+  "startYaw": 0,
+  "translations": {
+    "nl": {
+      "title": "Publiceer een eigen bericht",
+      "description": "TargetInfo beschrijft zichtbaarheid, positie en betrouwbaarheid met benoemde velden.",
+      "steps": [
+        "Inspecteer ros2 interface show ros2learn_interfaces/msg/TargetInfo.",
+        "Publiceer minstens drie berichten op /target_info met confidence tussen 0 en 1.",
+        "Gebruik echo en leg uit waarom Twist niet op hetzelfde getypeerde topic past."
+      ],
+      "hints": [
+        "Importeer TargetInfo uit ros2learn_interfaces.msg.",
+        "De browser levert de klasse rechtstreeks, zonder interfacegenerator.",
+        "Gebruik TargetInfo(visible=True, position=\"LEFT\", confidence=0.8)."
+      ]
+    },
+    "fr": {
+      "title": "Publier un message personnalisé",
+      "description": "TargetInfo décrit la visibilité, la position et la confiance avec des champs nommés.",
+      "steps": [
+        "Inspectez ros2 interface show ros2learn_interfaces/msg/TargetInfo.",
+        "Publiez au moins trois messages sur /target_info, avec confidence entre 0 et 1.",
+        "Utilisez echo et expliquez pourquoi Twist ne convient pas au même topic typé."
+      ],
+      "hints": [
+        "Importez TargetInfo depuis ros2learn_interfaces.msg.",
+        "Le navigateur fournit directement la classe, sans générateur d’interfaces.",
+        "Utilisez TargetInfo(visible=True, position=\"LEFT\", confidence=0.8)."
+      ]
+    }
+  }
+}

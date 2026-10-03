@@ -1,0 +1,55 @@
+{
+  "id": "session-04-04-goal",
+  "session": 4,
+  "number": "4.4",
+  "title": "Send an action goal",
+  "description": "Ask /drive_distance_server to move one metre and receive its final result. The server controls the actual simulated robot.",
+  "steps": [
+    "Use action list, action type /drive_distance and interface show ros2learn_interfaces/action/DriveDistance.",
+    "Send DriveDistance.Goal with distance = 1.0.",
+    "When accepted, request get_result_async and inspect result.success and result.final_distance."
+  ],
+  "hints": [
+    "DriveDistance is our educational custom interface, not a standard ROS action.",
+    "send_goal_async resolves to a goal handle, not directly to the final result.",
+    "In the accepted callback: future.result().get_result_async().add_done_callback(on_result)."
+  ],
+  "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom rclpy.action import ActionClient\nfrom ros2learn_interfaces.action import DriveDistance\n\nrclpy.init()\nnode = Node('student_controller')\n\nclient = ActionClient(node, DriveDistance, '/drive_distance')\ndef feedback(msg):\n    # TODO: print msg.feedback.distance_travelled\n    pass\ndef on_result(future):\n    # TODO: inspect status and result\n    pass\ndef accepted(future):\n    # TODO: check handle.accepted, request result and attach on_result\n    pass\n# TODO: create goal and send it with feedback_callback=feedback\nrclpy.spin(node)\n",
+  "checks": [
+    {
+      "type": "action_result"
+    }
+  ],
+  "startX": 0,
+  "startYaw": 0,
+  "translations": {
+    "nl": {
+      "title": "Verstuur een actiedoel",
+      "description": "Vraag /drive_distance_server om één meter te rijden en ontvang het eindresultaat.",
+      "steps": [
+        "Ontdek /drive_distance met action list, type en interface show.",
+        "Verstuur DriveDistance.Goal met distance = 1.0.",
+        "Vraag get_result_async op de geaccepteerde handle en bekijk success en final_distance."
+      ],
+      "hints": [
+        "Dit is een eigen educatieve interface.",
+        "send_goal_async levert eerst een goal handle.",
+        "Koppel een callback aan handle.get_result_async()."
+      ]
+    },
+    "fr": {
+      "title": "Envoyer un objectif d’action",
+      "description": "Demandez à /drive_distance_server de parcourir un mètre et recevez le résultat final.",
+      "steps": [
+        "Découvrez /drive_distance avec action list, type et interface show.",
+        "Envoyez DriveDistance.Goal avec distance = 1.0.",
+        "Appelez get_result_async sur le handle accepté et examinez success et final_distance."
+      ],
+      "hints": [
+        "Il s’agit d’une interface pédagogique personnalisée.",
+        "send_goal_async fournit d’abord un goal handle.",
+        "Attachez un callback à handle.get_result_async()."
+      ]
+    }
+  }
+}
