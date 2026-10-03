@@ -6,6 +6,8 @@ try{for(const page of ['index.html','session-02.html','session-03.html','session
  const p=d.querySelector('footer .attribution'),text=p?.textContent.replace(/\s+/g,' ').trim();
  if(text!=='Made with love in Belgium 🇧🇪 by Mario Malizia, an Italian soul, with development assistance from ChatGPT by OpenAI.')throw Error('Footer text: '+page+' '+text);
  for(const [label,url]of [['Mario Malizia','https://www.linkedin.com/in/mario-malizia/'],['ChatGPT','https://chatgpt.com/'],['OpenAI','https://openai.com/']])if(![...p.querySelectorAll('a')].some(a=>a.textContent===label&&a.href===url))throw Error('Footer link '+page+' '+label);
+ const support=d.querySelector('footer a.support-link');if(support?.href!=='https://buymeacoffee.com/mariomlz99'||support.target!=='_blank'||!['noopener','noreferrer'].every(x=>support.relList.contains(x))||!support.querySelector('svg'))throw Error('Support link '+page);
+ if([...d.scripts].some(s=>/buymeacoffee/i.test(s.src)))throw Error('Support widget loaded');
  const l=d.getElementById('language');l.value='it';l.dispatchEvent(new Event('change'));await wait(30);if(p.textContent.replace(/\s+/g,' ').trim()!==text||p.lang!=='en')throw Error('Attribution translation inconsistency');
  if(page==='about.html'){for(let i=0;i<100&&!d.getElementById('build-info').textContent.includes('Commit:');i++)await wait(50);if(!d.getElementById('build-info').textContent.includes('Commit:'))throw Error('About build identity missing');}
 }out.textContent='PASS: exact attribution and links on all nine public pages, preserved in translated UI, About build identity';}catch(e){out.textContent='FAIL: '+e.message;}await fetch('/done',{method:'POST',body:out.textContent});

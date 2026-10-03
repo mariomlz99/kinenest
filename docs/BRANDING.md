@@ -2,7 +2,7 @@
 
 Product name: **KineNest**. Working name; no trademark clearance is claimed.
 
-Tagline: Learn robotics by making things move.
+Tagline: A safe place to learn robotics by making things move.
 
 Tone: technical, concise, academic, approachable. Use functional panel labels and direct tasks. Avoid generated-sounding enthusiasm, decorative emoji, unverified superlatives, competitor marketing and official-looking ROS branding. Language flags may supplement text labels.
 
@@ -25,3 +25,7 @@ Creator: Mario Malizia. Attribution: development assistance from ChatGPT by Open
 UI languages: EN NL FR ES DE PT IT. Keep small flags with full language names. The Belgium flag is also allowed in the understated footer; other decorative emoji are excluded.
 
 The maintainer supplied logo.png. scripts/brand-assets.py derives the full image, transparent robot icon, favicon and social card without modifying the original. The source hash and crop are recorded in public/assets/brand/source.json. The Py and C++ marks are original text badges, not claimed official language logos.
+
+The final tagline refers to repeatable learning and easy Reset, not a safety certification. About explains Kine (kinematics/motion) and Nest (a place to begin). Transparent light/dark logo derivatives follow the application data-theme; robot, axes and teal Nest retain the supplied artwork. Only the dark Kine wordmark and the newly typeset tagline use light ink. The reproducible Pillow pipeline uses system DejaVu Sans for the new tagline; no font file is bundled. The original source is read-only. The header icon and favicon remain unchanged.
+
+Support is optional: a plain external link to PRODUCT.support with noopener/noreferrer, accompanied by an original monochrome cup SVG. No Buy Me a Coffee logo, widget, tracker, access gate or tax-deductibility claim is included.

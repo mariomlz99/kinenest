@@ -13,3 +13,6 @@ Experimental C++: adapted shared.js by Ben Smith (binji/wasm-clang), Apache-2.0.
 Clang/LLVM and the sysroot retain their upstream licences, including LLVM
 exceptions and component notices. See src/cpp/vendor/LICENSE* and licences.html.
 Language badges (Py, C++) are original text artwork under Apache-2.0.
+
+The monochrome support cup is original KineNest SVG artwork, Apache-2.0.
+No Buy Me a Coffee brand asset or widget is included.

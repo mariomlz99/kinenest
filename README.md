@@ -1,6 +1,6 @@
 # KineNest
 
-Learn robotics by making things move.
+A safe place to learn robotics by making things move.
 
 <img src="public/assets/brand/kinenest-logo.png" alt="KineNest logo" width="320">
 
@@ -114,5 +114,7 @@ Original code and lessons are Apache-2.0: [LICENSE](LICENSE), [NOTICE](NOTICE). 
 ROS is a trademark of Open Source Robotics Foundation, Inc. KineNest is an independent educational project and is not affiliated with or endorsed by Open Robotics.
 
 KineNest is a working name, not a claim of trademark clearance. The independent brand distinguishes the product from the technology taught; descriptive ROS 2 references and technical identifiers are retained.
+
+Optional contributions support development and maintenance: [Support KineNest](https://buymeacoffee.com/mariomlz99). All lessons and features remain free.
 
 Created by [Mario Malizia](https://www.linkedin.com/in/mario-malizia/), with development assistance from [ChatGPT by OpenAI](https://openai.com/). No institutional or vendor endorsement is implied.

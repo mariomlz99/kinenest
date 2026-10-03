@@ -11,5 +11,15 @@
     880,
     755
   ],
-  "pipeline": "scripts/brand-assets.py"
+  "pipeline": "scripts/brand-assets.py",
+  "tagline": "A safe place to learn robotics by making things move.",
+  "themes": [
+    "light",
+    "dark"
+  ],
+  "logoSize": [
+    960,
+    888
+  ],
+  "taglineFont": "DejaVu Sans, 42 px before resizing"
 }

@@ -62,3 +62,6 @@ body:not([data-session]) main{padding-top:16px}body:not([data-session]) .intro{m
 .robot-heading{stroke:var(--world-heading)}
 #trail{stroke:var(--world-robot)}
 #map{background:var(--world-background)}
+
+/* The logo follows the explicit application theme, including manual overrides. */
+.brand-full img{display:block;width:100%;height:auto}.brand-full .logo-light{display:none}[data-theme="light"] .brand-full .logo-light{display:block}[data-theme="light"] .brand-full .logo-dark{display:none}.reference-page .brand-full{width:min(340px,40%)}.support-link{display:inline-flex;align-items:center;gap:5px}.support-link svg{flex:none;width:17px;height:17px}footer nav{display:flex;flex-wrap:wrap;gap:6px 14px}@media(max-width:800px){.reference-page .brand-full{width:min(300px,100%)}}

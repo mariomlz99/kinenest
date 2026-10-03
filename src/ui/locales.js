@@ -1,6 +1,13 @@
 // Rows: NL, FR, ES, DE, PT, IT. Code and ROS identifiers stay English.
 export const LANGUAGES = ["en","nl","fr","es","de","pt","it"];
 export const UI = {
+  "A safe place to learn robotics by making things move.": ["Een veilige plek om robotica te leren door dingen te laten bewegen.","Un espace sûr pour apprendre la robotique en mettant les choses en mouvement.","Un lugar seguro para aprender robótica poniendo las cosas en movimiento.","Ein sicherer Ort, um Robotik zu lernen und Dinge in Bewegung zu bringen.","Um espaço seguro para aprender robótica ao pôr as coisas em movimento.","Un luogo sicuro per imparare la robotica mettendo le cose in movimento."],
+  "Why KineNest?": ["Waarom KineNest?","Pourquoi KineNest ?","¿Por qué KineNest?","Warum KineNest?","Porquê KineNest?","Perché KineNest?"],
+  "“Kine” comes from kinematics and motion. “Nest” is a place to begin, experiment and learn before moving to real robots.": ["“Kine” komt van kinematica en beweging. “Nest” is een plek om te beginnen, te experimenteren en te leren vóór je met echte robots werkt.","« Kine » vient de la cinématique et du mouvement. « Nest » est un lieu pour débuter, expérimenter et apprendre avant de passer aux robots réels.","«Kine» viene de cinemática y movimiento. «Nest» es un lugar para empezar, experimentar y aprender antes de trabajar con robots reales.","„Kine“ steht für Kinematik und Bewegung. „Nest“ ist ein Ort zum Anfangen, Experimentieren und Lernen, bevor es an echte Roboter geht.","«Kine» vem de cinemática e movimento. «Nest» é um lugar para começar, experimentar e aprender antes de trabalhar com robôs reais.","“Kine” deriva da cinematica e movimento. “Nest” è un luogo per iniziare, sperimentare e imparare prima di passare ai robot reali."],
+  "Support": ["Steun","Soutien","Apoyo","Unterstützung","Apoio","Supporto"],
+  "Support KineNest": ["Steun KineNest","Soutenir KineNest","Apoyar KineNest","KineNest unterstützen","Apoiar o KineNest","Sostieni KineNest"],
+  "KineNest is free and open source. Optional contributions help support development and maintenance.": ["KineNest is gratis en open source. Vrijwillige bijdragen ondersteunen de ontwikkeling en het onderhoud.","KineNest est gratuit et open source. Les contributions facultatives soutiennent le développement et la maintenance.","KineNest es gratuito y de código abierto. Las contribuciones opcionales ayudan a mantener y desarrollar el proyecto.","KineNest ist kostenlos und quelloffen. Freiwillige Beiträge unterstützen Entwicklung und Wartung.","O KineNest é gratuito e de código aberto. Contribuições opcionais ajudam a apoiar o desenvolvimento e a manutenção.","KineNest è gratuito e open source. I contributi facoltativi sostengono lo sviluppo e la manutenzione."],
+  "No account or application backend. No analytics. Preferences stay in your browser. Runtime assets download only when needed.": ["Geen account of applicatiebackend. Geen analytics. Voorkeuren blijven in je browser. Runtimebestanden worden alleen gedownload wanneer nodig.","Aucun compte ni serveur applicatif. Aucun suivi analytique. Les préférences restent dans le navigateur. Les fichiers d’exécution se téléchargent uniquement au besoin.","Sin cuenta ni servidor de aplicación. Sin analítica. Las preferencias quedan en tu navegador. Los archivos de ejecución se descargan solo cuando hacen falta.","Kein Konto, Anwendungsserver oder Tracking. Einstellungen bleiben im Browser. Laufzeitdateien werden nur bei Bedarf geladen.","Sem conta, servidor de aplicação ou análise de utilização. As preferências ficam no navegador. Os ficheiros de execução são descarregados apenas quando necessários.","Nessun account, backend applicativo o analytics. Le preferenze restano nel browser. I file di esecuzione vengono scaricati solo quando servono."],
   "Build information": ["Buildinformatie","Informations de compilation","Información de compilación","Build-Informationen","Informação da compilação","Informazioni sulla build"],
   "Run Python": [
     "Python uitvoeren",
@@ -1087,14 +1094,6 @@ export const UI = {
     "Vom Browser zum echten Roboter",
     "Do navegador a um robô real",
     "Dal browser a un robot reale"
-  ],
-  "Learn robotics by making things move.": [
-    "Leer robotica door dingen te laten bewegen.",
-    "Apprenez la robotique en faisant bouger les choses.",
-    "Aprende robótica haciendo que las cosas se muevan.",
-    "Robotik lernen, indem du Dinge bewegst.",
-    "Aprende robótica pondo as coisas em movimento.",
-    "Impara la robotica facendo muovere le cose."
   ],
   "Made with love in Belgium 🇧🇪 by": [
     "Met liefde gemaakt in België 🇧🇪 door",
