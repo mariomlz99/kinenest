@@ -321,7 +321,7 @@ def _object(value):
         return types.SimpleNamespace(**{k: _object(v) for k, v in value.items()})
     if isinstance(value, list):
         return [_object(v) for v in value]
-    return float('inf') if value == 'Infinity' else value
+    return value
 
 class _SensorMessage(types.SimpleNamespace):
     def __getattribute__(self, name):
@@ -334,6 +334,8 @@ def _dispatch_message(key, payload, sample):
     if key not in _subscriptions:
         return
     data = json.loads(payload)
+    if 'ranges' in data:
+        data['ranges'] = [float('inf') if v == 'Infinity' else v for v in data['ranges']]
     _current_sample = sample
     try:
         msg = _object(data)
