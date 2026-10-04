@@ -113,8 +113,110 @@
       "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom geometry_msgs.msg import Twist\n\nrclpy.init()\nnode = Node('student_controller')\n\n# TODO: declare the speed parameter\npublisher = node.create_publisher(Twist, '/cmd_vel', 10)\ndef tick():\n    # TODO: read speed, clamp, publish\n    pass\nnode.create_timer(0.2, tick)\nrclpy.spin(node)\n"
     },
     "cpp": {
-      "supported": false,
-      "starterCode": ""
+      "supported": true,
+      "experimental": true,
+      "starterCode": "#include <rclcpp/rclcpp.hpp>\n#include <geometry_msgs/msg/twist.hpp>\n#include <algorithm>\n\nclass Driver : public rclcpp::Node {\npublic:\n  Driver() : Node(\"student_controller\") {\n    // TODO: declare speed with default 0.2.\n    publisher_ = create_publisher<geometry_msgs::msg::Twist>(\"/cmd_vel\", 10);\n    timer_ = create_wall_timer(std::chrono::milliseconds(200), [this]() {\n      // TODO: read the current speed parameter.\n      // TODO: limit speed to 0.0–0.8 and publish a Twist.\n    });\n  }\nprivate:\n  rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr publisher_;\n  rclcpp::TimerBase::SharedPtr timer_;\n};\nint main(int argc, char **argv) {\n  rclcpp::init(argc, argv);\n  rclcpp::spin(std::make_shared<Driver>());\n}\n",
+      "content": {
+        "title": "Configure your node",
+        "description": "Declare a speed parameter and use its value in a timer-driven controller. A parameter belongs to one node. The browser runtime uses one numeric type; native ROS 2 distinguishes integer and double parameters.",
+        "steps": [
+          "Declare speed = 0.2.",
+          "Read it inside a timer, clamp to 0–0.8, and publish /cmd_vel.",
+          "Inspect ros2 param list and ros2 param get /student_controller speed."
+        ],
+        "hints": [
+          "A parameter belongs to its node. Declare its default once in the constructor.",
+          "Use declare_parameter<double>(\"speed\", 0.2); read get_parameter(\"speed\").as_double() inside the timer.",
+          "Clamp the value to 0.0–0.8 and assign it to command.linear.x before publishing."
+        ],
+        "translations": {
+          "nl": {
+            "title": "Configureer je node",
+            "description": "Declareer speed en gebruik de waarde in een timer die de robot aanstuurt. De browserruntime gebruikt één numeriek type; native ROS 2 onderscheidt integer- en double-parameters.",
+            "steps": [
+              "Declareer speed = 0.2.",
+              "Lees de actuele waarde, beperk tot 0–0.8 en publiceer een Twist.",
+              "Inspecteer ros2 param list en ros2 param get /student_controller speed."
+            ],
+            "hints": [
+              "Een parameter hoort bij zijn node. Declareer de standaardwaarde eenmaal in de constructor.",
+              "Gebruik declare_parameter<double>(\"speed\", 0.2); lees get_parameter(\"speed\").as_double() in de timer.",
+              "Beperk de waarde tot 0.0–0.8 en wijs die toe aan command.linear.x vóór het publiceren."
+            ]
+          },
+          "fr": {
+            "title": "Configurer votre nœud",
+            "description": "Déclarez speed et utilisez sa valeur dans un timer qui commande le robot. Le runtime du navigateur utilise un seul type numérique ; ROS 2 natif distingue les paramètres integer et double.",
+            "steps": [
+              "Déclarez speed = 0.2.",
+              "Lisez la valeur, limitez-la à 0–0.8 et publiez un Twist.",
+              "Inspectez ros2 param list et ros2 param get /student_controller speed."
+            ],
+            "hints": [
+              "Un paramètre appartient à son node. Déclarez sa valeur par défaut une fois dans le constructeur.",
+              "Utilisez declare_parameter<double>(\"speed\", 0.2) ; lisez get_parameter(\"speed\").as_double() dans le timer.",
+              "Limitez la valeur à 0.0–0.8 et affectez-la à command.linear.x avant de publier."
+            ]
+          },
+          "es": {
+            "title": "Configurar un nodo",
+            "description": "Declara un parámetro speed y úsalo en un controlador con temporizador. Cada parámetro pertenece a un nodo. El runtime del navegador usa un único tipo numérico; ROS 2 nativo distingue parámetros integer y double.",
+            "steps": [
+              "Declara speed = 0.2.",
+              "Lee su valor en el temporizador, limítalo a 0–0.8 y publica /cmd_vel.",
+              "Inspecciona ros2 param list y ros2 param get /student_controller speed."
+            ],
+            "hints": [
+              "Un parámetro pertenece a su nodo. Declara el valor inicial una vez en el constructor.",
+              "Usa declare_parameter<double>(\"speed\", 0.2); lee get_parameter(\"speed\").as_double() dentro del temporizador.",
+              "Limita el valor a 0.0–0.8 y asígnalo a command.linear.x antes de publicar."
+            ]
+          },
+          "de": {
+            "title": "Einen Knoten konfigurieren",
+            "description": "Deklariere speed und nutze den Parameter in einem Timer-Controller. Ein Parameter gehört zu einem Knoten. Die Browser-Laufzeit nutzt einen Zahlentyp; natives ROS 2 unterscheidet Integer- und Double-Parameter.",
+            "steps": [
+              "Deklariere speed = 0.2.",
+              "Lies den Wert im Timer, begrenze ihn auf 0–0.8 und sende /cmd_vel.",
+              "Untersuche ros2 param list und ros2 param get /student_controller speed."
+            ],
+            "hints": [
+              "Ein Parameter gehört zu seinem Knoten. Deklariere den Standardwert einmal im Konstruktor.",
+              "Nutze declare_parameter<double>(\"speed\", 0.2); lies get_parameter(\"speed\").as_double() im Timer.",
+              "Begrenze den Wert auf 0.0–0.8 und weise ihn vor dem Senden command.linear.x zu."
+            ]
+          },
+          "pt": {
+            "title": "Configurar um nó",
+            "description": "Declara o parâmetro speed e usa-o num controlador com temporizador. Um parâmetro pertence a um nó. O runtime do navegador usa um único tipo numérico; ROS 2 nativo distingue parâmetros integer e double.",
+            "steps": [
+              "Declara speed = 0.2.",
+              "Lê o valor no temporizador, limita-o a 0–0.8 e publica /cmd_vel.",
+              "Inspeciona ros2 param list e ros2 param get /student_controller speed."
+            ],
+            "hints": [
+              "Um parâmetro pertence ao seu nó. Declara o valor inicial uma vez no construtor.",
+              "Usa declare_parameter<double>(\"speed\", 0.2); lê get_parameter(\"speed\").as_double() dentro do temporizador.",
+              "Limita o valor a 0.0–0.8 e atribui-o a command.linear.x antes de publicar."
+            ]
+          },
+          "it": {
+            "title": "Configurare il nodo",
+            "description": "Dichiara un parametro speed e usalo in un controllore con timer. Un parametro appartiene a un nodo. Il runtime del browser usa un solo tipo numerico; ROS 2 nativo distingue parametri integer e double.",
+            "steps": [
+              "Dichiara speed = 0.2.",
+              "Leggilo nel timer, limitalo a 0–0.8 e pubblica su /cmd_vel.",
+              "Ispeziona ros2 param list e ros2 param get /student_controller speed."
+            ],
+            "hints": [
+              "Un parametro appartiene al suo nodo. Dichiara il valore iniziale una volta nel costruttore.",
+              "Usa declare_parameter<double>(\"speed\", 0.2); leggi get_parameter(\"speed\").as_double() nel timer.",
+              "Limita il valore a 0.0–0.8 e assegnalo a command.linear.x prima di pubblicare."
+            ]
+          }
+        }
+      },
+      "visibility": "public"
     }
   }
 }

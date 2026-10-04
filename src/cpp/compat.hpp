@@ -13,6 +13,7 @@
 #include <cmath>
 #include <array>
 #include <cstdint>
+#include <limits>
 
 extern "C" {
 __attribute__((import_module("kinenest"),import_name("emit"))) void kn_emit(const char*,int);
@@ -20,6 +21,7 @@ __attribute__((import_module("kinenest"),import_name("spin"))) void kn_spin();
 __attribute__((import_module("kinenest"),import_name("range_access"))) void kn_range_access();
 __attribute__((import_module("kinenest"),import_name("image_access"))) void kn_image_access(int,int);
 __attribute__((import_module("kinenest"),import_name("fail"))) void kn_fail(const char*,int);
+__attribute__((import_module("kinenest"),import_name("field_kind"))) int kn_field_kind(const char*,int);
 __attribute__((import_module("kinenest"),import_name("field_bool"))) int kn_field_bool(const char*,int);
 __attribute__((import_module("kinenest"),import_name("field_number"))) double kn_field_number(const char*,int);
 __attribute__((import_module("kinenest"),import_name("field_string_size"))) int kn_field_string_size(const char*,int);
@@ -115,6 +117,11 @@ struct Trigger {
  struct Response{using SharedPtr=std::shared_ptr<Response>;bool success=false;std::string message;};
 };
 }}
+
+namespace ros2learn_interfaces {namespace msg {
+struct TargetInfo{using SharedPtr=std::shared_ptr<TargetInfo>;using ConstSharedPtr=std::shared_ptr<const TargetInfo>;bool visible=false;std::string position;float confidence=0;};
+}}
+
 namespace sensor_msgs {namespace msg {
 struct Image{using SharedPtr=std::shared_ptr<Image>;using ConstSharedPtr=std::shared_ptr<const Image>;kinenest::Header header;kinenest::ImageField<uint32_t> height,width;std::string encoding="rgb8";uint8_t is_bigendian=0;uint32_t step=0;kinenest::ImageBytes data;};
 struct LaserScan{using SharedPtr=std::shared_ptr<LaserScan>;using ConstSharedPtr=std::shared_ptr<const LaserScan>;kinenest::Header header;float angle_min=0,angle_max=0,angle_increment=0,time_increment=0,scan_time=.2,range_min=.05,range_max=10;kinenest::Ranges ranges;std::vector<float> intensities;};
@@ -130,6 +137,17 @@ template<> struct ServiceTraits<std_srvs::srv::Trigger>{
 };
 inline std::map<int,std::function<void()>> service_responses;
 template<class T> struct MessageTraits;
+
+template<> struct MessageTraits<ros2learn_interfaces::msg::TargetInfo>{
+ static const char* type(){return "ros2learn_interfaces/msg/TargetInfo";}
+ static ros2learn_interfaces::msg::TargetInfo decode(){
+  ros2learn_interfaces::msg::TargetInfo msg;msg.visible=field_bool("visible");msg.position=field_string("position");msg.confidence=field_number("confidence");return msg;
+ }
+ static std::string encode(const ros2learn_interfaces::msg::TargetInfo& msg){
+  return std::string("{\"visible\":")+(msg.visible?"true":"false")+",\"position\":"+quote(msg.position)+",\"confidence\":"+number(msg.confidence,"TargetInfo.confidence")+"}";
+ }
+};
+
 template<> struct MessageTraits<std_msgs::msg::String>{
  static const char* type(){return "std_msgs/msg/String";}
  static std_msgs::msg::String decode(){std_msgs::msg::String msg;msg.data=field_string("data");return msg;}
@@ -215,13 +233,76 @@ public:
  void cancel(){kinenest::timers.erase(id_);kinenest::emit("{\"kind\":\"timer_cancel\",\"id\":"+std::to_string(id_)+"}");}
  ~TimerBase(){cancel();}
 };
+
+class Parameter {
+ enum Kind{Boolean,Number,String};Kind kind_=Number;double number_=0;bool bool_=false;std::string string_;
+public:
+ Parameter()=default;
+ template<class T> explicit Parameter(T value){
+  if constexpr(std::is_same<T,bool>::value){kind_=Boolean;bool_=value;}
+  else if constexpr(std::is_arithmetic<T>::value){
+   // Validate the original integer before converting to the JS-number transport.
+   if constexpr(std::is_integral<T>::value){
+    constexpr int64_t safe=9007199254740991LL;
+    if constexpr(std::is_signed<T>::value){if(value<-safe||value>safe)kinenest::fail("Integer parameter exceeds the JavaScript safe integer range [-9007199254740991, 9007199254740991]");}
+    else if(value>static_cast<uint64_t>(safe))kinenest::fail("Integer parameter exceeds the JavaScript safe integer range [0, 9007199254740991]");
+   }
+   kind_=Number;number_=value;if(!std::isfinite(number_))kinenest::fail("Parameter must be finite");
+  }
+  else {kind_=String;string_=value;}
+ }
+ double as_double()const{if(kind_!=Number)kinenest::fail("Parameter is not numeric");return number_;}
+ int64_t as_int()const{const double v=as_double();if(std::trunc(v)!=v||v<-9007199254740991.0||v>9007199254740991.0)kinenest::fail("Parameter is not an exactly representable integer");return static_cast<int64_t>(v);}
+ bool as_bool()const{if(kind_!=Boolean)kinenest::fail("Parameter is not boolean");return bool_;}
+ std::string as_string()const{if(kind_!=String)kinenest::fail("Parameter is not a string");return string_;}
+ template<class T>T value()const{
+  if constexpr(std::is_same<T,bool>::value)return as_bool();
+  else if constexpr(std::is_integral<T>::value){
+   const int64_t value=as_int();
+   const double wide=static_cast<double>(value);
+   if(wide<static_cast<double>(std::numeric_limits<T>::lowest())||wide>static_cast<double>(std::numeric_limits<T>::max()))kinenest::fail("Parameter integer does not fit the requested C++ type");
+   return static_cast<T>(value);
+  }
+  else if constexpr(std::is_floating_point<T>::value){
+   const double value=as_double();
+   const double wide=static_cast<double>(value);
+   if(wide<static_cast<double>(std::numeric_limits<T>::lowest())||wide>static_cast<double>(std::numeric_limits<T>::max()))kinenest::fail("Parameter number does not fit the requested C++ type");
+   return static_cast<T>(value);
+  }
+  else return as_string();
+ }
+ std::string json()const{if(kind_==Boolean)return bool_?"true":"false";if(kind_==Number)return kinenest::number(number_,"Parameter");return kinenest::quote(string_);}
+ static Parameter incoming(const std::string& path){
+  switch(kn_field_kind(path.data(),path.size())){
+   case 1:return Parameter(kinenest::field_bool(path));
+   case 2:return Parameter(kinenest::field_number(path));
+   case 3:return Parameter(kinenest::field_string(path));
+   default:kinenest::fail("Parameter must be a scalar");return Parameter();
+  }
+ }
+};
+inline std::map<std::string,std::map<std::string,Parameter>> parameters;
+
 class Node:public std::enable_shared_from_this<Node> {
  std::string name_;
 public:
  using SharedPtr=std::shared_ptr<Node>;
  explicit Node(std::string name):name_(name.size()&&name[0]=='/'?name:"/"+name){kinenest::emit("{\"kind\":\"node\",\"node\":"+kinenest::quote(name_)+"}");}
- virtual ~Node(){kinenest::emit("{\"kind\":\"destroy\",\"node\":"+kinenest::quote(name_)+"}");}
+ virtual ~Node(){parameters.erase(name_);kinenest::emit("{\"kind\":\"destroy\",\"node\":"+kinenest::quote(name_)+"}");}
  Logger get_logger()const{return Logger(name_);}const char* get_name()const{return name_.c_str();}
+
+ template<class T> T declare_parameter(const std::string& name,T value){
+  auto& params=parameters[name_];if(params.count(name))kinenest::fail("Parameter already declared: "+name);
+  Parameter parameter(value);params.emplace(name,parameter);
+  kinenest::emit("{\"kind\":\"parameter_declare\",\"node\":"+kinenest::quote(name_)+",\"name\":"+kinenest::quote(name)+",\"value\":"+parameter.json()+"}");return value;
+ }
+ Parameter get_parameter(const std::string& name)const{
+  auto node=parameters.find(name_);if(node==parameters.end()||!node->second.count(name))kinenest::fail("Parameter not declared: "+name);
+  const auto parameter=node->second.at(name);
+  kinenest::emit("{\"kind\":\"parameter_read\",\"node\":"+kinenest::quote(name_)+",\"name\":"+kinenest::quote(name)+",\"value\":"+parameter.json()+"}");return parameter;
+ }
+ template<class T> bool get_parameter(const std::string& name,T& value)const{value=get_parameter(name).template value<T>();return true;}
+
  template<class T> typename Client<T>::SharedPtr create_client(const std::string& name){return std::make_shared<Client<T>>(name_,name);}
  template<class T> typename Publisher<T>::SharedPtr create_publisher(const std::string& topic,int){return std::make_shared<Publisher<T>>(name_,topic);}
  template<class T,class Callback> typename Subscription<T>::SharedPtr create_subscription(const std::string& topic,int,Callback callback){
@@ -272,4 +353,10 @@ extern "C" __attribute__((export_name("kn_receive_image"))) void kn_receive_imag
 extern "C" __attribute__((export_name("kn_service_response"))) void kn_service_response(int id){
  auto found=kinenest::service_responses.find(id);if(found==kinenest::service_responses.end())return;
  auto invoke=std::move(found->second);kinenest::service_responses.erase(found);invoke();
+}
+
+extern "C" __attribute__((export_name("kn_parameter_update"))) void kn_parameter_update(){
+ const auto node=kinenest::field_string("node"),name=kinenest::field_string("name");
+ auto found=rclcpp::parameters.find(node);if(found==rclcpp::parameters.end()||!found->second.count(name))return;
+ found->second[name]=rclcpp::Parameter::incoming("value");
 }
