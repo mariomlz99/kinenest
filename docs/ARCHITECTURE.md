@@ -2,13 +2,13 @@
 
 ## Static delivery and UI
 
-Native JavaScript modules, CSS, Canvas/SVG and JSON. Seven static entry pages reuse the workstation UI for Sessions 2–6. GitHub Pages serves an allowlisted dist with content-versioned src/public directories. All module, lesson and worker URLs remain relative to those directories. Reference answers/tests are excluded.
+Native JavaScript modules, CSS, Canvas/SVG and JSON. Ten public static pages include the welcome page, Sessions 1–6 and reference pages. Sessions 2–6 reuse the workstation UI. Cloudflare Workers Static Assets and the GitHub Pages fallback serve an allowlisted dist with content-versioned src/public directories. All module, lesson and worker URLs remain relative to those directories. Reference answers/tests are excluded.
 
 The preferences module switches light/dark, split/stacked layout and EN/NL/FR/ES/DE/PT/IT. JSON carries translated lesson titles/descriptions/steps/hints. Shared UI translations are separate from code. Language changes do not reset the simulator or modify Python. Code drafts stay in memory per lesson; preferences alone use localStorage.
 
 ## Runtime and geometry
 
-Runtime owns the graph, Robot, simulation time, event listeners and evidence. CLI and Python call the same validated publication/service/parameter/action APIs. Sensor endpoints exist only when enabled. Dynamic message topics are typed and removed when no endpoints remain. Node lifetimes follow Python/terminal lifetimes.
+Runtime owns the graph, Robot, simulation time, event listeners and evidence. CLI, Python and C++ call the same validated publication/service/parameter/action APIs. Sensor endpoints exist only when enabled. Dynamic message topics are typed and removed when no endpoints remain. Node lifetimes follow program/terminal lifetimes.
 
 Fixed-step (maximum 1/60 s) exact constant-twist integration drives x/y/yaw. Valid axes are linear.x and angular.z. Commands have a two-second watchdog. Camera renders 320 × 240 RGB at 8 Hz. LaserScan uses 120 deterministic ray/AABB intersections at 5 Hz; laser_link is 0.2 m ahead of the robot. A 0.18 m circular footprint collision guard rejects intersecting translation and records a contact. There is no dynamics, friction or rigid-body engine. Odometry has valid quaternions and zero covariance in this ideal model.
 
@@ -94,3 +94,9 @@ Without JavaScript, the cover stays hidden and a noscript explanation remains.
 The welcome page lives at `/` and `index.html`; Session 1 lives at
 `session-01.html`. Session detection uses explicit session paths. Brand links
 return to the welcome page, and course navigation includes all six sessions.
+
+## C++ sensor provenance and failure recovery
+
+Camera pixels cross the worker boundary as transferable binary data, followed by one copy into owned WASM storage. Laser and Image buffers expose vector-shaped access, including const/reverse iterators and explicit std::vector copies. The wrapper records the originating sample, so reading a retained old buffer cannot credit a newer callback. Ordinary C++ code and algorithms remain compiled; no source inspection determines evidence. Range/sector reports require actual ranges access in the same processed sample for both languages. These are formative checks, not a security boundary against deliberate use of internal bridge imports.
+
+Toolchain cache responses are size-checked before use. An incomplete cached asset is discarded and fetched again; cache lookup/write failures fall back to ordinary pinned downloads. Only complete assets enter the cache. Network failures identify the asset and suggest retrying while preserving the editor draft. The first-run download notice is acknowledged locally on explicit C++ Run; it does not promise permanent caching or trigger any preload.

@@ -1,6 +1,6 @@
 # Experimental browser C++
 
-Open session-02.html. On the cpp-parity candidate, tested exercises 2.1–2.4, 3.1–3.6, 4.1–4.6, 5.1–5.6 and 6.1–6.2 offer Python, C++ and Compare by default, with an Experimental label. Future implemented variants can remain developer-gated by ?experimentalCpp=1. The normal course remains Python-first. Compare contains editable student drafts; it does not insert answers. Only the selected program runs at a time.
+Open session-02.html. On the cpp-parity candidate, tested exercises 2.1–2.4, 3.1–3.6, 4.1–4.6, 5.1–5.6 and 6.1–6.3 offer Python, C++ and Compare by default, with an Experimental label. Future implemented variants can remain developer-gated by ?experimentalCpp=1. The normal course remains Python-first. Compare contains editable student drafts; it does not insert answers. Only the selected program runs at a time.
 
 ## Implemented
 
@@ -41,7 +41,7 @@ npm test
 npm run build
 npm run test:cpp -- chrome --built
 npm run test:cpp -- firefox --built
-npm run test:cpp-course -- chrome --built --wave=7
+npm run test:cpp-course -- chrome --built --wave=9
 npm run test:cpp-course -- firefox --built --wave=7
 ~~~
 
@@ -52,7 +52,7 @@ The suite compiles hello-world, functional and class controllers, checks callbac
 | Location | Production effect |
 | --- | --- |
 | src/exercises/programming.js | supported plus visibility: public exposes tested variants; experimental variants otherwise require the flag |
-| public/lessons/*.json | Twenty-four browser-tested variants set supported: true and visibility: public; experimental remains a status label |
+| public/lessons/*.json | Twenty-five browser-tested variants set supported: true and visibility: public; experimental remains a status label |
 | src/ui/code-workspace.js | Reads experimentalCpp once and passes it to the capability check |
 | src/ui/product.js | Carries an explicitly supplied developer flag across navigation; never adds it to ordinary URLs |
 | tests/cpp-ui.html, tests/compare.html | Ordinary URLs validate public execution and draft preservation |
@@ -61,7 +61,7 @@ Historical VALIDATION.md entries describe the earlier gate. Capture tooling prev
 
 Historical visibility diagnosis: local public C++ was already working. The live site still served 13f0acc, where the older gate hid both modes without experimentalCpp=1. Chrome and Firefox probes confirmed both URL cases. That gate diagnosis preceded this parity implementation. It is not the current production SHA.
 
-The current stacked cpp-parity branch completes Sessions 2–5 and debugging 6.1–6.2. Beacon integration remains the final gated exercise. Each new executable variant needs a real compiler run, behavioural success and failure cases, Stop/Reset and both browsers. Rust, native package builds and Session 7 remain deferred.
+The stacked cpp-parity candidate includes all 25 coding exercises in Sessions 2–6. Session 1 remains language-neutral CLI/graph work. This is branch availability, not a claim that production has been updated. Each new executable variant needs a real compiler run, behavioural success and failure cases, Stop/Reset and both browsers. Rust, native package builds and Session 7 remain deferred.
 
 ## Public-release remeasurement
 
@@ -82,3 +82,38 @@ Fresh browser profiles define cold; concurrent workstation activity and network 
 ## Parity Wave 1 — 4 October 2026
 
 Five references (2.1–2.4, 6.1), five negatives, three alternates, Unicode String round-trip, compiler-error recovery, three non-finite values and runaway/Stop-during-load passed Chrome and Firefox: 19 cases per browser. Shared Python checkers are unchanged. New C++ wording/hints use all seven UI languages; Python content is retained. See [wave evidence](cpp-parity/WAVE_1.md). Public availability here describes the branch candidate, not an automatic production deployment.
+
+## Course support and compatibility contract
+
+| Session | Coding exercises | C++ concept/API |
+| --- | --- | --- |
+| 2 | 2.1–2.4 | LaserScan callbacks, String state/timers, sectors, avoidance |
+| 3 | 3.1–3.6 | Image buffers, detection/centroid, Trigger client, visual control |
+| 4 | 4.1–4.6 | Scalar/live parameters, TargetInfo, DriveDistance result/feedback/cancel |
+| 5 | 5.1–5.6 | Odometry, quaternion yaw, latest-planar TF and bounded controllers |
+| 6 | 6.1–6.3 | Topic/frame debugging and camera/LiDAR beacon docking |
+
+Exercise 3.2 deliberately differs by language: Python uses real NumPy; C++ reads an owned contiguous RGB byte buffer with row stride and channel indexing. No native OpenCV is needed. Other tasks share their world, robot and behavioral checks. Starter scaffolding is provided; Compare never inserts reference answers. Drafts survive language/theme/layout changes within the page; they are not a cross-reload draft storage feature.
+
+| Type | Student publication | Subscription/use |
+| --- | --- | --- |
+| String, Twist, TargetInfo | Yes | Yes |
+| LaserScan, Image, Odometry | No | Simulator sensor subscriptions |
+| TFMessage | No | Published transform snapshots |
+| TransformStamped | No standalone endpoint | Buffer lookup result/nested TF value |
+
+Implemented message headers include std_msgs/String, geometry_msgs/Twist and TransformStamped, sensor_msgs/LaserScan and Image, nav_msgs/Odometry, tf2_msgs/TFMessage and ros2learn_interfaces/TargetInfo. Trigger is the service subset; DriveDistance is the action subset. This generated-like educational interface package retains its legacy technical identifier for compatibility. It does not run rosidl in the browser.
+
+LaserScan.ranges and Image.data are vector-shaped tracked buffers, not exact native ROS allocator-specialized vector types. Indexing, data(), const/reverse iteration, ordinary std::vector copies and references are supported. Copying/reading records the originating sample; a retained old buffer cannot credit a new callback. Image width/height are convertible tracked scalar fields; cast to a numeric type when a generic template needs identical argument types. Low-level educational instrumentation remains inspectable and is not secure grading.
+
+Native C++ transfer uses ament_cmake/rclcpp, normal ROS message headers and generated interfaces. KineNest-specific report helpers are checker hooks, not native rclcpp APIs. C++ uses actual algorithms and a real compiler, while transport/executor/TF APIs remain an educational subset without DDS or arbitrary packages.
+
+## Full course release gate
+
+Run npm run test:cpp-course -- chrome --built and the Firefox equivalent. The default Wave 9 checks 25 references, 25 negatives, 19 alternate solutions, API/error recovery cases and runaway termination, and writes per-case JSON including compile/run/check evidence, duration and metrics. Earlier focused waves cannot claim full parity. The separate cpp-parity-ui harness exercises all 25 public language controls and drafts; cpp-buffer-probe validates buffer provenance in both languages, cpp-network validates real network/cache recovery, and cpp-camera-stress measures actual slow WASM callbacks and Stop during processing.
+
+The first explicit C++ Run acknowledges the local download notice. Compiler assets remain fully lazy. A failed or truncated cached download is refetched; storage failures are optional. Cold/warm measurements depend on hardware/network and must identify their build. A fresh worker is created per Run; warm cache reuse is not a persistent compiler instance.
+
+## Full-course candidate measurements, 4 October 2026
+
+Both browsers passed 112/112 cases on asset `6ad7e489683f`, including all 25 references and negatives. Cold/warm loads were 1.836/0.121 s in Chrome and 3.562/0.485 s in Firefox; reference compile medians were 2.493/2.180 s. The largest module was 406,541 bytes. Full suites took 639.742/711.067 s while running concurrently. See [WAVE_9_CPP.md](cpp-parity/WAVE_9_CPP.md) for precise metric scope, memory, camera observations and machine-readable reports. These results do not claim that the pending branch preview or production has been validated.
