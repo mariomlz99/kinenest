@@ -23,6 +23,8 @@ export function setupPreferences(){
   const controls=document.createElement('div');controls.id='preferences';
   controls.innerHTML='<label class="language-control"><span class="sr-only">Language</span><span id="language-current" aria-hidden="true"></span><select id="language" aria-label="Language"><option value="en">🇬🇧 EN · English</option><option value="nl">🇳🇱 NL · Nederlands</option><option value="fr">🇫🇷 FR · Français</option><option value="es">🇪🇸 ES · Español</option><option value="de">🇩🇪 DE · Deutsch</option><option value="pt">🇵🇹 PT · Português</option><option value="it">🇮🇹 IT · Italiano</option></select></label><button id="theme" type="button">Light</button><label><span class="sr-only">Layout</span><select id="layout" aria-label="Layout"><option value="split">Workbench</option><option value="stack">Stacked</option></select></label>';
   document.querySelector('header').append(controls);
+  // The welcome page has no workstation panels to rearrange.
+  if(document.querySelector('.welcome-page'))controls.querySelector('#layout').closest('label').hidden=true;
   let theme='dark',layout='split';try{theme=localStorage.getItem('ros2learn-theme')||theme;layout=localStorage.getItem('ros2learn-layout')||layout;}catch{}
   const save=(key,value)=>{try{localStorage.setItem('ros2learn-'+key,value);}catch{}};
   const applyTheme=()=>{const previous=document.documentElement.dataset.theme;document.documentElement.dataset.theme=theme;document.getElementById('theme').textContent=theme==='dark'?translate('Light'):translate('Dark');if(previous!==theme)window.dispatchEvent(new Event('themechange'));};applyTheme();
