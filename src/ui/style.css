@@ -88,3 +88,5 @@ header{gap:14px 24px}.brand{flex:1 1 28rem;min-width:0;white-space:normal;letter
 @media(max-width:600px){body:not([data-session]) .welcome-page{padding-top:8px}.welcome-page .welcome{padding-top:0}.welcome-page .welcome p{margin-top:8px;margin-bottom:8px}}
 
 footer .footer-contact{flex-basis:100%;margin:0;line-height:1.6}footer .footer-contact a{white-space:nowrap}
+
+.session-nav .nav-home{padding-inline:12px}
