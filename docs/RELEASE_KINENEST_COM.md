@@ -56,15 +56,27 @@ content and the noscript explanation remain visible.
 
 ### Candidate validation status
 
-51 unit tests pass. The expanded 360-case responsive matrix passes in both
-browsers with no page overflow. Actual local Workers routing passes all ten
+51 unit tests pass. The original expanded 360-case responsive matrix passed locally. CI then
+exposed a German Session 5 heading overflow with wider system fonts; it was
+reproduced with DejaVu Sans (342 px document at a 305 px client width), fixed
+with a shrinkable grid and wrapping heading, and added as case 361. The final
+361-case matrix passes Chrome and Firefox locally with no page overflow. Actual local Workers routing passes all ten
 pages, root rewrite, assets and real 404s. Visual captures cover welcome
 light/dark, small German/Italian layouts, Python/C++/Compare, camera, TF,
 debugging, About and footer. Full six-session Python, hardened checker alternatives/negative controls, real
 C++ 2.1/2.4 and all five outgoing transitions pass Chrome and Firefox.
 Destination readiness, failure/watchdog recovery and actual reduced-motion
 preferences also pass in both browsers.
-Root-domain smoke will be repeated against the final commit identity.
+Root-domain smoke passed both browsers on exact candidate e5610be, including
+real Python, real C++ 2.1/2.4, ten footers and navigation. The live Cloudflare
+preview also passed those checks, all five outgoing variants, destination
+readiness/history/reduced motion, and all 25 Python exercises plus Session 1 CLI
+in Chrome. The subsequent heading-only fix is commit 83845a3; final CI and
+preview checks remain required for that revision.
+
+Live timing tests now measure the navigation request separately from pagehide.
+A remote Firefox response delay had been incorrectly counted as intentional
+reduced-motion dwell. Both browsers pass the corrected test.
 
 One intermediate local Chrome run was invalidated by a unit build test
 regenerating dist while the browser was loading it. The complete course was
@@ -74,13 +86,16 @@ responsive matrix rerun in both browsers.
 
 ### Deployment gate and remaining work
 
-Cloudflare CLI authentication is unavailable on this workstation as of this
-pass. The candidate includes `previews: {}` for an isolated static branch
-preview. Do not deploy it to the regular workers.dev hostname: that would also
-change the already-live apex. See [preview steps](CLOUDFLARE_RELEASE.md#boot-experience-preview-4-october-2026).
+Cloudflare Git integration created the isolated branch preview automatically;
+local CLI authentication is unnecessary. [PR #3](https://github.com/mariomlz99/ros2learn/pull/3)
+remains unmerged. The [preview](https://boot-experience-kinenest.malizia-mario99.workers.dev/)
+was verified at e5610be3015ed006b7f3b8665eff6a8211469624, builtAt
+2026-10-04T00:30:13.769Z, assetVersion 2e1b5b1aeacc. Its immutable URL is
+https://2356df70-kinenest.malizia-mario99.workers.dev/.
+Production still served 63bb5ff at that check. Do not publish to the regular
+workers.dev hostname before approval: it also updates the apex.
 
-After a branch preview exists, verify its exact build-info, run deployed
-Python/C++ and destination tests, then ask Mario to review landing → Session 1,
+After the final heading-fix CI/preview checks, ask Mario to review landing → Session 1,
 Session 1 → 2 and Session 2 → 3. No manual approval has been inferred from the
 earlier approval of the old site. The new presentation is not yet production
 verified. Safari/iOS and physical mobile devices remain independently untested.
