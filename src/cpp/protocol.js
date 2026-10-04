@@ -30,6 +30,12 @@ export function numberField(payload, path) {
   return value;
 }
 
+export function arrayLength(payload, path) {
+  const value=readField(payload,path);
+  if(!Array.isArray(value)&&!(ArrayBuffer.isView(value)&&!(value instanceof DataView)))throw new Error('C++ message field '+path+' must be an array');
+  return value.length;
+}
+
 export function boolField(payload,path) {
   const value=readField(payload,path);
   if(typeof value!=='boolean')throw new Error('C++ message field '+path+' must be a boolean');

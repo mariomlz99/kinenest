@@ -445,6 +445,8 @@ class Buffer:
         for (parent, child), (x, y, angle) in self.transforms.items():
             edges.setdefault(child, []).append((parent, x, y, angle))
             edges.setdefault(parent, []).append((child, -math.cos(angle)*x-math.sin(angle)*y, math.sin(angle)*x-math.cos(angle)*y, -angle))
+        if target_frame not in edges or source_frame not in edges:
+            raise TransformException('Transform not received yet or unknown frame')
         queue = [(source_frame, 0., 0., 0.)]
         seen = set()
         while queue:

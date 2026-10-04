@@ -1,5 +1,5 @@
 import {loadToolchain} from './toolchain.js';
-import {numberField,stringField,boolField,readField,associateReport} from './protocol.js';
+import {numberField,stringField,boolField,arrayLength,readField,associateReport} from './protocol.js';
 let app,tool,rangeAccess=false,chain=Promise.resolve(),stdout='',outputCount=0,outputSince=0;
 let currentPayload=null,currentSample=null,currentFrame=null,failed=false;
 const subscriptions=new Map(),decoder=new TextDecoder(),encoder=new TextEncoder();
@@ -21,12 +21,13 @@ async function handle(data){
   tool=await loadToolchain({output,stage:text=>postMessage({kind:'stage',text})});
   const response=await fetch(new URL('./compat.hpp',import.meta.url),{signal:AbortSignal.timeout(15000)});if(!response.ok)throw Error('C++ compatibility header: HTTP '+response.status);const header=await response.text();
   const headers={'/include/kinenest.hpp':header};
-  for(const path of ['rclcpp/rclcpp.hpp','geometry_msgs/msg/twist.hpp','sensor_msgs/msg/laser_scan.hpp','sensor_msgs/msg/image.hpp','std_msgs/msg/string.hpp','kinenest/reports.hpp','std_srvs/srv/trigger.hpp','ros2learn_interfaces/msg/target_info.hpp','nav_msgs/msg/odometry.hpp','geometry_msgs/msg/quaternion.hpp','tf2/utils.h','tf2/utils.hpp'])headers['/include/'+path]='#include <kinenest.hpp>';
+  for(const path of ['rclcpp/rclcpp.hpp','geometry_msgs/msg/twist.hpp','sensor_msgs/msg/laser_scan.hpp','sensor_msgs/msg/image.hpp','std_msgs/msg/string.hpp','kinenest/reports.hpp','std_srvs/srv/trigger.hpp','ros2learn_interfaces/msg/target_info.hpp','nav_msgs/msg/odometry.hpp','geometry_msgs/msg/quaternion.hpp','tf2/utils.h','tf2/utils.hpp','tf2/time.h','tf2/time.hpp','tf2_ros/buffer.h','tf2_ros/buffer.hpp','tf2_ros/transform_listener.h','tf2_ros/transform_listener.hpp','geometry_msgs/msg/transform_stamped.hpp','tf2_msgs/msg/tf_message.hpp'])headers['/include/'+path]='#include <kinenest.hpp>';
   const module=await tool.compile(data.code,headers);
   const imports={kinenest:{
    image_access:(frame,field)=>{if(frame===currentFrame){const name={1:'width',2:'height',3:'data'}[field];if(name)imageAccess.add(name);}},
    emit,spin:()=>{throw SPIN;},range_access:()=>{rangeAccess=true;},
    fail:(ptr,length)=>{throw Error(textAt(ptr,length));},
+   field_length:(ptr,length)=>arrayLength(currentPayload,textAt(ptr,length)),
    field_kind:(ptr,length)=>({boolean:1,number:2,string:3}[typeof readField(currentPayload,textAt(ptr,length))]??0),
    field_bool:(ptr,length)=>boolField(currentPayload,textAt(ptr,length))?1:0,
    field_number:(ptr,length)=>numberField(currentPayload,textAt(ptr,length)),

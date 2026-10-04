@@ -21,6 +21,7 @@ __attribute__((import_module("kinenest"),import_name("spin"))) void kn_spin();
 __attribute__((import_module("kinenest"),import_name("range_access"))) void kn_range_access();
 __attribute__((import_module("kinenest"),import_name("image_access"))) void kn_image_access(int,int);
 __attribute__((import_module("kinenest"),import_name("fail"))) void kn_fail(const char*,int);
+__attribute__((import_module("kinenest"),import_name("field_length"))) int kn_field_length(const char*,int);
 __attribute__((import_module("kinenest"),import_name("field_kind"))) int kn_field_kind(const char*,int);
 __attribute__((import_module("kinenest"),import_name("field_bool"))) int kn_field_bool(const char*,int);
 __attribute__((import_module("kinenest"),import_name("field_number"))) double kn_field_number(const char*,int);
@@ -137,6 +138,16 @@ inline double getYaw(const geometry_msgs::msg::Quaternion& q){
 namespace std_msgs {namespace msg {
 struct String{using SharedPtr=std::shared_ptr<String>;using ConstSharedPtr=std::shared_ptr<const String>;std::string data;};
 }}
+
+namespace geometry_msgs {namespace msg {
+struct Transform{Vector3 translation;Quaternion rotation;};
+struct TransformStamped{using SharedPtr=std::shared_ptr<TransformStamped>;kinenest::Header header;std::string child_frame_id;Transform transform;};
+}}
+namespace tf2_msgs {namespace msg {
+struct TFMessage{using SharedPtr=std::shared_ptr<TFMessage>;using ConstSharedPtr=std::shared_ptr<const TFMessage>;std::vector<geometry_msgs::msg::TransformStamped> transforms;};
+}}
+namespace tf2 {struct TimePoint{};inline constexpr TimePoint TimePointZero{};}
+
 namespace std_srvs {namespace srv {
 struct Trigger {
  struct Request{using SharedPtr=std::shared_ptr<Request>;};
@@ -191,6 +202,21 @@ template<> struct MessageTraits<nav_msgs::msg::Odometry>{
 inline void report_pose(double x,double y,double yaw){
  emit("{\"kind\":\"course_report\",\"report\":\"pose\",\"values\":["+number(x,"Pose.x")+","+number(y,"Pose.y")+","+number(yaw,"Pose.yaw")+"]}");
 }
+
+
+template<> struct MessageTraits<tf2_msgs::msg::TFMessage>{
+ static const char* type(){return "tf2_msgs/msg/TFMessage";}
+ static tf2_msgs::msg::TFMessage decode(){
+  tf2_msgs::msg::TFMessage m;const std::string path="transforms";const int count=kn_field_length(path.data(),path.size());
+  for(int i=0;i<count;i++){
+   const auto p=path+"."+std::to_string(i);geometry_msgs::msg::TransformStamped t;
+   t.header=header_field(p+".header");t.child_frame_id=field_string(p+".child_frame_id");
+   t.transform.translation=vector_field(p+".transform.translation");t.transform.rotation=quaternion_field(p+".transform.rotation");m.transforms.push_back(t);
+  }return m;
+ }
+};
+inline void report_transform(double x,double y){emit("{\"kind\":\"course_report\",\"report\":\"transform\",\"values\":["+number(x)+","+number(y)+"]}");}
+inline void report_relative(double x,double y){emit("{\"kind\":\"course_report\",\"report\":\"relative\",\"values\":["+number(x)+","+number(y)+"]}");}
 
 template<> struct MessageTraits<std_msgs::msg::String>{
  static const char* type(){return "std_msgs/msg/String";}
@@ -327,12 +353,15 @@ public:
 };
 inline std::map<std::string,std::map<std::string,Parameter>> parameters;
 
+class Clock {public:using SharedPtr=std::shared_ptr<Clock>;};
 class Node:public std::enable_shared_from_this<Node> {
  std::string name_;
+ Clock::SharedPtr clock_=std::make_shared<Clock>();
 public:
  using SharedPtr=std::shared_ptr<Node>;
  explicit Node(std::string name):name_(name.size()&&name[0]=='/'?name:"/"+name){kinenest::emit("{\"kind\":\"node\",\"node\":"+kinenest::quote(name_)+"}");}
  virtual ~Node(){parameters.erase(name_);kinenest::emit("{\"kind\":\"destroy\",\"node\":"+kinenest::quote(name_)+"}");}
+ Clock::SharedPtr get_clock()const{return clock_;}
  Logger get_logger()const{return Logger(name_);}const char* get_name()const{return name_.c_str();}
 
  template<class T> T declare_parameter(const std::string& name,T value){
@@ -403,4 +432,49 @@ extern "C" __attribute__((export_name("kn_parameter_update"))) void kn_parameter
  const auto node=kinenest::field_string("node"),name=kinenest::field_string("name");
  auto found=rclcpp::parameters.find(node);if(found==rclcpp::parameters.end()||!found->second.count(name))return;
  found->second[name]=rclcpp::Parameter::incoming("value");
+}
+
+// Latest planar snapshots of the published /tf edges; no history or native tf2.
+namespace tf2_ros {
+class Buffer {
+ std::vector<geometry_msgs::msg::TransformStamped> transforms_;
+ struct Edge{std::string frame;double x=0,y=0,yaw=0;};
+ bool find(const std::string& target,const std::string& source,Edge& result)const{
+  std::map<std::string,std::vector<Edge>> edges;
+  for(const auto& t:transforms_){
+   const auto parent=t.header.frame_id,child=t.child_frame_id;
+   const auto p=t.transform.translation;const double a=tf2::getYaw(t.transform.rotation),c=std::cos(a),s=std::sin(a);
+   edges[child].push_back({parent,p.x,p.y,a});
+   edges[parent].push_back({child,-c*p.x-s*p.y,s*p.x-c*p.y,-a});
+  }
+  if(!edges.count(target)||!edges.count(source))return false;
+  std::vector<Edge> queue{{source,0,0,0}};std::map<std::string,bool> visited;
+  for(size_t i=0;i<queue.size();i++){
+   const auto current=queue[i];if(current.frame==target){result=current;return true;}
+   if(visited[current.frame])continue;visited[current.frame]=true;
+   for(const auto& edge:edges[current.frame])if(!visited[edge.frame]){
+    const double c=std::cos(edge.yaw),s=std::sin(edge.yaw);
+    queue.push_back({edge.frame,edge.x+c*current.x-s*current.y,edge.y+s*current.x+c*current.y,edge.yaw+current.yaw});
+   }
+  }return false;
+ }
+public:
+ Buffer()=default;explicit Buffer(rclcpp::Clock::SharedPtr){}
+ void setSnapshot(const tf2_msgs::msg::TFMessage& value){transforms_=value.transforms;}
+ bool canTransform(const std::string& target,const std::string& source,tf2::TimePoint = tf2::TimePointZero)const{Edge value;return find(target,source,value);}
+ geometry_msgs::msg::TransformStamped lookupTransform(const std::string& target,const std::string& source,tf2::TimePoint = tf2::TimePointZero)const{
+  Edge value;if(!find(target,source,value))kinenest::fail("TF lookup failed: "+source+" -> "+target+". Check frame names and canTransform().");
+  geometry_msgs::msg::TransformStamped result;result.header.frame_id=target;result.child_frame_id=source;
+  if(!transforms_.empty())result.header.stamp=transforms_[0].header.stamp;
+  result.transform.translation={value.x,value.y,0};result.transform.rotation={0,0,std::sin(value.yaw/2),std::cos(value.yaw/2)};
+  kinenest::emit("{\"kind\":\"tf_lookup\",\"target\":"+kinenest::quote(target)+",\"source\":"+kinenest::quote(source)+"}");return result;
+ }
+};
+class TransformListener {
+ rclcpp::Subscription<tf2_msgs::msg::TFMessage>::SharedPtr subscription_;
+public:
+ TransformListener(Buffer& buffer,rclcpp::Node::SharedPtr node){
+  subscription_=node->create_subscription<tf2_msgs::msg::TFMessage>("/tf",10,[&buffer](tf2_msgs::msg::TFMessage::SharedPtr msg){buffer.setSnapshot(*msg);});
+ }
+};
 }

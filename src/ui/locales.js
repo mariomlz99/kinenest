@@ -983,13 +983,13 @@ export const UI = {
     "Referencial de origem",
     "Riferimento sorgente"
   ],
-  "Express the source frame in the target frame: lookup_transform(target_frame, source_frame, ...).": [
-    "Druk het bronframe uit in het doelframe: lookup_transform(target_frame, source_frame, ...).",
-    "Exprimez le repère source dans le repère cible : lookup_transform(target_frame, source_frame, ...).",
-    "Expresa el marco origen en el marco destino: lookup_transform(target_frame, source_frame, ...).",
-    "Drücke das Quellkoordinatensystem im Zielkoordinatensystem aus: lookup_transform(target_frame, source_frame, ...).",
-    "Expressa o referencial de origem no referencial de destino: lookup_transform(target_frame, source_frame, ...).",
-    "Esprimi il riferimento sorgente in quello di destinazione: lookup_transform(target_frame, source_frame, ...)."
+  "Express the source frame in the target frame: Python: lookup_transform(target_frame, source_frame, ...); C++: lookupTransform(target_frame, source_frame, ...).": [
+    "Druk het bronframe uit in het doelframe: Python: lookup_transform(target_frame, source_frame, ...); C++: lookupTransform(target_frame, source_frame, ...).",
+    "Exprimez le repère source dans le repère cible : Python: lookup_transform(target_frame, source_frame, ...); C++: lookupTransform(target_frame, source_frame, ...).",
+    "Expresa el marco origen en el marco destino: Python: lookup_transform(target_frame, source_frame, ...); C++: lookupTransform(target_frame, source_frame, ...).",
+    "Drücke das Quellkoordinatensystem im Zielkoordinatensystem aus: Python: lookup_transform(target_frame, source_frame, ...); C++: lookupTransform(target_frame, source_frame, ...).",
+    "Expressa o referencial de origem no referencial de destino: Python: lookup_transform(target_frame, source_frame, ...); C++: lookupTransform(target_frame, source_frame, ...).",
+    "Esprimi il riferimento sorgente in quello di destinazione: Python: lookup_transform(target_frame, source_frame, ...); C++: lookupTransform(target_frame, source_frame, ...)."
   ],
   "Relative target vector": [
     "Relatieve doelvector",

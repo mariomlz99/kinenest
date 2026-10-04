@@ -26,7 +26,7 @@ Scalar parameters are stored per node and sent to its worker when CLI updates oc
 
 ## TF
 
-The published tree is world → odom → base_link, base_link → laser_link/camera_link, world → target. The Python Buffer composes/inverts received transforms. Only latest planar transforms are supported, all sent periodically on /tf. There is no TF history, interpolation or /tf_static durability simulation. The visual tree is drawn from the same published state.
+The published tree is world → odom → base_link, base_link → laser_link/camera_link, world → target. The Python Buffer and educational C++ tf2_ros::Buffer compose/invert received transforms. Only latest planar transforms are supported, all sent periodically on /tf. There is no TF history, interpolation or /tf_static durability simulation. The visual tree is drawn from the same published state.
 
 ## Lessons and checking
 
@@ -38,7 +38,7 @@ An explicit parser supports the documented ROS subset; it is not a shell or full
 
 ## Spatial transforms and disclosure
 
-The TF inspector, spatial axes and SVG hierarchy use src/ui/tf-model.js and the published edges from runtime/course.js. The shared lookup composes those edges, as Python Buffer does; there is no separate visual pose model. Spatial labels retain actual origins, including distinct camera/laser mounts and coincident world/odom frames. Sensor offsets rotate with base_link. Numeric data attributes support browser assertions without exporting application runtime globals.
+The TF inspector, spatial axes and SVG hierarchy use src/ui/tf-model.js and the published edges from runtime/course.js. The shared lookup composes those edges, as both language buffers do; there is no separate visual pose model. Spatial labels retain actual origins, including distinct camera/laser mounts and coincident world/odom frames. Sensor offsets rotate with base_link. Numeric data attributes support browser assertions without exporting application runtime globals.
 
 Session 5 defaults to world/base_link/target; exercise 5.3 selects base_link/laser_link. Source and target selectors follow lookup_transform(target_frame, source_frame) semantics. The dashed vector always connects base_link to the target. Panel disclosure follows session focus; it does not remove graph endpoints or CLI capabilities.
 
@@ -50,11 +50,11 @@ src/simulator/sensors.js is the shared mounting configuration: laser_link at (+0
 
 RuntimeAdapter owns graph endpoints, sensor mailboxes, parameters/actions, evidence and cleanup. PythonBridge supplies a Pyodide worker; the experimental C++ adapter supplies a compiled WebAssembly worker. Both use the same typed event protocol and runtime. Checkers count code publications and processed samples, independently of the execution language.
 
-Lessons now use programming.python/cpp with supported, starterCode and an optional experimental flag. World, task, ID and checks stay shared. DraftStore keeps separate code per exercise and language. Compare renders the actual editable drafts; switching views or UI language does not restart execution. Tested exercises 2.1 and 2.4 expose C++ publicly with an Experimental label. Future supported variants can remain gated by ?experimentalCpp=1; unsupported variants never expose execution. Unsupported exercises fall back to Python without deleting the C++ draft.
+Lessons now use programming.python/cpp with supported, starterCode and an optional experimental flag. World, task, ID and checks stay shared. DraftStore keeps separate code per exercise and language. Compare renders the actual editable drafts; switching views or UI language does not restart execution. Public availability is enabled per exercise only after its Chrome and Firefox acceptance passes; CPP.md records the current branch matrix. Future supported variants can remain gated by ?experimentalCpp=1; unsupported variants never expose execution. Unsupported exercises fall back to Python without deleting the C++ draft.
 
 ## Experimental C++ and navigation
 
-The C++ adapter compiles a single translation unit through a pinned WebAssembly Clang/LLD worker, then supplies explicit kinenest imports for endpoint events, publishing and callback dispatch. LaserScan arrays cross the shared latest-sample mailbox and are copied into module memory for each callback. The real compiler and C++ algorithms run locally. Toolchain assets are lazy and cached separately; see CPP.md for limits, measurements and provenance.
+The C++ adapter compiles a single translation unit through a pinned WebAssembly Clang/LLD worker, then supplies explicit kinenest imports for endpoint events, publishing and callback dispatch. LaserScan arrays cross the shared latest-sample mailbox and are copied into module memory for each callback. Image payloads use a transferred Uint8Array and one copy into a message-owned WASM vector; they are never serialized as JSON integer arrays. Small messages use deterministic typed fields with strict own-property traversal. Trigger requests use request IDs and asynchronous response dispatch; callbacks see an already-completed response object, not a blocking future. Parameter updates are pinned to the active worker and node; typed reads reject invalid narrowing. Odometry and TF decode the same nested published messages used by Python. TF carries latest planar edge snapshots, with no time history. The real compiler and C++ algorithms run locally. Toolchain assets are lazy and cached separately; see CPP.md for limits, measurements and provenance.
 
 Shared transitions use the compact supplied logo, native CSS and sessionStorage no-repeat selection. Eligible internal links prevent default navigation and show one 850 ms animation within a deliberate 1,000 ms outgoing dwell. Reduced motion navigates immediately. Duplicate clicks retain the first destination; pagehide/pageshow, navigation exceptions and a five-second safety deadline clear overlays. Destination pages do not add another dwell. A separate inline indicator follows actual runtime loading/compilation stages. Reduced motion disables rotational effects.
 

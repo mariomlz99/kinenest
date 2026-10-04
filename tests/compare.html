@@ -28,13 +28,16 @@ try{
  assert(!d.querySelector('[data-code-language="cpp"]').hidden,'Tested debugging C++ missing');select('cpp');
  py.value='# debugging Python draft';cpp.value='// debugging C++ draft';
  await choose('session-06-02-frame-debug');
- assert(d.querySelector('[data-code-language="python"]').getAttribute('aria-pressed')==='true','Unsupported fallback');
- assert(d.querySelector('[data-code-language="cpp"]').hidden&&d.querySelector('[data-code-language="compare"]').hidden,'Unsupported C++ visible');
- assert(!$('python-code').closest('[data-code-pane]').hidden&&!$('run-python').disabled,'Unsupported exercise must keep Python usable');
+ for(const mode of ['python','cpp','compare'])assert(!d.querySelector('[data-code-language="'+mode+'"]').hidden,'Missing public frame-debug mode '+mode);
+ assert(d.querySelector('[data-code-language="cpp"]').getAttribute('aria-pressed')==='true','Frame-debug exercise lost preferred C++');
+ py.value='# frame-debug Python draft';cpp.value='// frame-debug C++ draft';select('compare');
+ assert(!py.closest('[data-code-pane]').hidden&&!cpp.closest('[data-code-pane]').hidden,'Frame-debug Compare panes');select('cpp');
  await choose('session-06-01-topic-debug');
- assert(cpp.value==='// debugging C++ draft'&&py.value==='# debugging Python draft','Unsupported round trip lost drafts');
- assert(d.querySelector('[data-code-language="cpp"]').getAttribute('aria-pressed')==='true','Unsupported fallback lost preference');
- out.textContent='PASS: independent drafts, Compare layout, UI language, public supported exercise preference and Session 6 unsupported fallback';
+ assert(cpp.value==='// debugging C++ draft'&&py.value==='# debugging Python draft','Supported round trip lost topic-debug drafts');
+ assert(d.querySelector('[data-code-language="cpp"]').getAttribute('aria-pressed')==='true','Supported round trip lost preference');
+ await choose('session-06-02-frame-debug');
+ assert(cpp.value==='// frame-debug C++ draft'&&py.value==='# frame-debug Python draft','Supported round trip lost frame-debug drafts');
+ out.textContent='PASS: independent drafts, Compare layout, UI language, public supported exercise preference and Session 6 draft round trips';
 }catch(e){out.textContent='FAIL: '+e.message;}
 await fetch('/done',{method:'POST',body:out.textContent});
 </script>

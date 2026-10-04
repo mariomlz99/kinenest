@@ -31,12 +31,15 @@ try{
  }
  d.querySelector('[data-code-language="cpp"]').click();
  await choose('session-06-02-frame-debug');
- assert(d.querySelector('[data-code-language="cpp"]').hidden&&d.querySelector('[data-code-language="compare"]').hidden,'Unsupported modes visible');
- assert(d.querySelector('[data-code-language="python"]').getAttribute('aria-pressed')==='true'&&!$('run-python').disabled,'Unsupported exercise Python fallback failed');
+ for(const mode of ['python','cpp','compare'])assert(!d.querySelector('[data-code-language="'+mode+'"]').hidden,'Missing public frame-debug mode '+mode);
+ assert(d.querySelector('[data-code-language="cpp"]').getAttribute('aria-pressed')==='true'&&!$('run-cpp').disabled,'Frame-debug exercise lost preferred C++');
+ $('cpp-code').value='// retained frame-debug draft';$('python-code').value='# retained frame-debug draft';
  await choose('session-06-01-topic-debug');
- assert($('cpp-code').value===debugSource&&$('python-code').value==='# retained draft','Unsupported round trip lost drafts');
- assert(d.querySelector('[data-code-language="cpp"]').getAttribute('aria-pressed')==='true','Unsupported round trip lost language preference');
- out.textContent='PASS: ordinary URLs compile/run C++ 2.1–2.4 and 6.1, shared checkers, Compare drafts, language/theme/layout, Reset and 6.2 unsupported fallback';
+ assert($('cpp-code').value===debugSource&&$('python-code').value==='# retained draft','Supported round trip lost topic-debug drafts');
+ assert(d.querySelector('[data-code-language="cpp"]').getAttribute('aria-pressed')==='true','Supported round trip lost language preference');
+ await choose('session-06-02-frame-debug');
+ assert($('cpp-code').value==='// retained frame-debug draft'&&$('python-code').value==='# retained frame-debug draft','Supported round trip lost frame-debug drafts');
+ out.textContent='PASS: ordinary URLs compile/run C++ 2.1–2.4 and 6.1, shared checkers, Compare drafts, language/theme/layout, Reset and public 6.2 draft round trip';
 }catch(e){out.textContent='FAIL: '+e.message;}
 await fetch('/done',{method:'POST',body:out.textContent});
 </script>

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readField, numberField, stringField, boolField, associateReport} from '../src/cpp/protocol.js';
+import {readField, numberField, stringField, boolField, arrayLength, associateReport} from '../src/cpp/protocol.js';
 
 test('C++ field access preserves nested values, arrays, UTF-8 text and sensor Infinity', () => {
   const payload = {
@@ -21,6 +21,11 @@ test('C++ field access preserves nested values, arrays, UTF-8 text and sensor In
   assert.equal(stringField(payload, 'data'), 'caffè 🤖');
   assert.equal(stringField(payload, 'empty'), '');
   assert.deepEqual(readField(payload, 'transforms'), payload.transforms);
+  assert.equal(arrayLength(payload, 'transforms'),1);
+  assert.equal(arrayLength(payload, 'ranges'),3);
+  assert.throws(()=>arrayLength(payload,'data'),/must be an array/);
+  assert.throws(()=>arrayLength({v:{length:100}},'v'),/must be an array/);
+  assert.throws(()=>arrayLength({v:new DataView(new ArrayBuffer(4))},'v'),/must be an array/);
 });
 
 test('C++ field access rejects missing, inherited and malformed fields without coercion', () => {

@@ -79,7 +79,7 @@ async function record(id, kind, action) {
 }
 
 try {
-  assert(['1', '2', '3', '4', '5'].includes(wave), 'Only Waves 1–5 are implemented in this runner; full 25-exercise acceptance is not claimed.');
+  assert(['1', '2', '3', '4', '5', '6'].includes(wave), 'Only Waves 1–6 are implemented in this runner; full 25-exercise acceptance is not claimed.');
   const html = await (await request('../session-02.html')).text();
   const path = new DOMParser().parseFromString(html, 'text/html')
     .querySelector('script[src$="session3-boot.js"]').getAttribute('src').replace('ui/session3-boot.js', '');
@@ -130,7 +130,12 @@ try {
   if (Number(wave) >= 5) {
     for (const id of ['session-05-01-odometry', 'session-05-02-heading']) { ids.push(id); alternates.add(id); }
   }
-  const newest = id => Number(wave) === 5 ? ['session-05-01-odometry', 'session-05-02-heading'].includes(id) : Number(wave) === 4 ? id.startsWith('session-04-') : Number(wave) === 3 ? id === 'session-03-05-services' : Number(wave) === 2 ? id.startsWith('session-03-') : ['session-02-02-callbacks', 'session-02-03-sectors', 'session-06-01-topic-debug'].includes(id);
+  const wave6Ids = ['session-05-03-frames', 'session-05-04-relative', 'session-05-05-goal', 'session-05-06-safety', 'session-06-02-frame-debug'];
+  if (Number(wave) >= 6) {
+    ids.push(...wave6Ids);
+    for (const id of ['session-05-04-relative', 'session-05-05-goal', 'session-06-02-frame-debug']) alternates.add(id);
+  }
+  const newest = id => Number(wave) === 6 ? wave6Ids.includes(id) : Number(wave) === 5 ? ['session-05-01-odometry', 'session-05-02-heading'].includes(id) : Number(wave) === 4 ? id.startsWith('session-04-') : Number(wave) === 3 ? id === 'session-03-05-services' : Number(wave) === 2 ? id.startsWith('session-03-') : ['session-02-02-callbacks', 'session-02-03-sectors', 'session-06-01-topic-debug'].includes(id);
   ids.sort((a, b) => Number(newest(b)) - Number(newest(a)));
   availableExercises = ids.length;
   const selectedIds = focus ? ids.filter(newest) : ids;
@@ -481,6 +486,108 @@ try {
       await until(() => state.includes('callbacks ready'));
       running = true;
       await until(() => checks().every(check => check.passed), 10);
+      result.compile = 'error-then-recovered'; result.run = 'passed'; result.check = 'passed';
+    });
+  }
+
+  if (includeApi(6)) {
+    await record('TF API', 'cpp-python-inspector-numerical-agreement', async result => {
+      const {transforms, lookup} = await import('../' + path + 'runtime/course.js');
+      const {relativeValues} = await import('../' + path + 'ui/tf-model.js');
+      const {PythonBridge} = await import('../' + path + 'python/bridge.js');
+      const frames = ['world', 'odom', 'base_link', 'laser_link', 'camera_link', 'target'];
+      const poses = [[0, 0, 0], [1.25, -0.75, 0.6], [-2, 3, -1.2], [0.2, -0.3, Math.PI],
+        [0.2, -0.3, -Math.PI], [4, -2, Math.PI / 2], [-3, -1, -Math.PI / 2], [0.001, -0.002, 2.9]];
+      const cppRows = new Map();
+      let python = null, pythonOutput = '', pythonState = '';
+      async function poll(condition, seconds = 120) {
+        const deadline = performance.now() + seconds * 1000;
+        while (performance.now() < deadline) {
+          if (condition()) return;
+          if (python && !python.worker) throw new Error('Python TF probe stopped: ' + pythonOutput);
+          if (!python && !bridge.worker) throw new Error('C++ TF probe stopped: ' + output);
+          await wait(25);
+        }
+        throw new Error('TF probe timeout: ' + (python ? pythonState + '\n' + pythonOutput : state + '\n' + output));
+      }
+      try {
+        for (const language of ['cpp', 'python']) {
+          await setup('session-05-03-frames');
+          if (language === 'cpp') {
+            bridge.run(await (await request('./cpp/tf-numerical.cpp')).text());
+            await until(() => state.includes('callbacks ready'));
+          } else {
+            python = new PythonBridge(runtime, {output: value => { pythonOutput += value + '\n'; }, status: value => { pythonState = value; }});
+            python.run(await (await request('./cpp/tf-numerical.py')).text());
+            await poll(() => pythonState.includes('callbacks ready'));
+          }
+          for (const [index, [x, y, yaw]] of poses.entries()) {
+            // Preserve the production 40-lines/second output cap: each pose
+            // deliberately emits 36 numeric rows, then allows its window to reset.
+            if (index > 0) await wait(1100);
+            output = ''; pythonOutput = '';
+            runtime.robot.x = x; runtime.robot.y = y; runtime.robot.yaw = yaw;
+            runtime.targetFrame = [5 - index * 0.3, index * 0.4 - 1];
+            runtime.time = 10 + index;
+            // Both real workers receive the exact published edge snapshot, then
+            // a separate command on their FIFO worker transport. No hidden pose API.
+            runtime.emit('/tf', transforms(runtime));
+            runtime.emit('/tf_case', {data: String(index)});
+            await poll(() => (language === 'cpp' ? output : pythonOutput).split('\n').filter(line => line.startsWith('TFROW ')).length === 36, 15);
+            const rows = (language === 'cpp' ? output : pythonOutput).split('\n').filter(line => line.startsWith('TFROW '));
+            for (const row of rows) {
+              const [, pose, targetIndex, sourceIndex, rawX, rawY, rawYaw, parent, child] = row.trim().split(/\s+/);
+              const target = frames[Number(targetIndex)], source = frames[Number(sourceIndex)];
+              const actual = [Number(rawX), Number(rawY), Number(rawYaw)];
+              const shared = lookup(runtime, target, source), inspector = relativeValues(runtime, target, source);
+              assert(Number(pose) === index && parent === target && child === source, language + ' changed TF frame identity');
+              const equal = (a, b) => Number.isFinite(a[0]) && Number.isFinite(a[1]) && Number.isFinite(a[2]) &&
+                Math.abs(a[0] - b[0]) < 1e-9 && Math.abs(a[1] - b[1]) < 1e-9 &&
+                Math.abs(Math.atan2(Math.sin(a[2] - b[2]), Math.cos(a[2] - b[2]))) < 1e-9;
+              assert(equal(actual, [shared.x, shared.y, shared.yaw]), language + ' disagreed with shared TF: ' + row);
+              assert(equal(actual, [inspector.x, inspector.y, inspector.yaw]), language + ' disagreed with inspector TF: ' + row);
+              const key = index + ':' + targetIndex + ':' + sourceIndex;
+              if (language === 'cpp') cppRows.set(key, actual);
+              else assert(equal(actual, cppRows.get(key)), 'Python and C++ TF disagree: ' + key);
+            }
+          }
+          assert(runtime.course.tf === poses.length * 36, language + ' TF evidence does not match successful lookups');
+          if (python) { python.stop(); python = null; }
+          else bridge.stop();
+        }
+        result.compile = 'passed'; result.run = 'passed'; result.check = 'passed';
+        result.numericalAgreement = {poses: poses.length, pairsPerPose: 36, pairsPerLanguage: cppRows.size,
+          languages: ['real C++ WASM', 'real Python'], comparedWith: ['shared Runtime lookup', 'TF inspector relativeValues'], tolerance: 1e-9};
+      } finally { python?.stop(); }
+    });
+    await record('TF API', 'unknown-identity-disconnected-and-snapshot-replacement', async result => {
+      bridge.run('#include <rclcpp/rclcpp.hpp>\n#include <tf2_ros/buffer.h>\nint main(){tf2_ros::Buffer b;std::printf("GUARD_EMPTY %d\\n",b.canTransform("ghost","ghost"));tf2_msgs::msg::TFMessage m;geometry_msgs::msg::TransformStamped a;a.header.frame_id="world";a.child_frame_id="odom";a.transform.rotation.w=1;m.transforms.push_back(a);a.header.frame_id="island";a.child_frame_id="moon";m.transforms.push_back(a);b.setSnapshot(m);std::printf("GUARD_KNOWN %d %d %d\\n",b.canTransform("odom","odom"),b.canTransform("ghost","ghost"),b.canTransform("world","moon"));auto t=b.lookupTransform("odom","odom");std::printf("IDENTITY %.17g %.17g %.17g\\n",t.transform.translation.x,t.transform.translation.y,t.transform.rotation.w);b.setSnapshot(tf2_msgs::msg::TFMessage{});std::printf("GUARD_REPLACED %d\\n",b.canTransform("odom","odom"));std::fflush(stdout);}');
+      await until(() => state.includes('callbacks ready'));
+      assert(output.includes('GUARD_EMPTY 0') && output.includes('GUARD_KNOWN 1 0 0') && output.includes('IDENTITY 0 0 1') && output.includes('GUARD_REPLACED 0'), 'TF frame guards/snapshot semantics failed: ' + output);
+      assert(runtime.course.tf === 1, 'canTransform or failed guards incorrectly credited successful lookup');
+      result.compile = 'passed'; result.run = 'passed'; result.check = 'passed';
+    });
+    await record('TF API', 'unknown-lookup-runtime-error-recovery', async result => {
+      bridge.run('#include <tf2_ros/buffer.h>\nint main(){tf2_ros::Buffer b;b.lookupTransform("ghost","ghost",tf2::TimePointZero);}');
+      await until(() => !bridge.worker, 120, true);
+      assert(output.includes('TF lookup failed: ghost -> ghost') && output.includes('canTransform'), 'Unknown identity lookup lacked actionable error: ' + output);
+      assert(runtime.course.tf === 0, 'Failed lookup credited evidence');
+      result.diagnostic = output.slice(-3000); output = '';
+      await setup('session-05-03-frames');
+      bridge.run(await (await request('./cpp/course/session-05-03-frames.cpp')).text());
+      await until(() => state.includes('callbacks ready')); running = true;
+      await until(() => checks().every(check => check.passed), 15);
+      result.compile = 'passed'; result.run = 'error-then-recovered'; result.check = 'passed';
+    });
+    await record('TF API', 'compile-error-recovery', async result => {
+      bridge.run('#include <geometry_msgs/msg/transform_stamped.hpp>\nint main(){geometry_msgs::msg::TransformStamped t;t.transform.translaton.x=1;}');
+      await until(() => !bridge.worker, 120, true);
+      assert(output.includes('controller.cpp:') && output.includes('translaton'), 'TF diagnostic lost filename/field');
+      result.diagnostic = output.slice(-3000); output = '';
+      await setup('session-05-03-frames');
+      bridge.run(await (await request('./cpp/course/session-05-03-frames.cpp')).text());
+      await until(() => state.includes('callbacks ready')); running = true;
+      await until(() => checks().every(check => check.passed), 15);
       result.compile = 'error-then-recovered'; result.run = 'passed'; result.check = 'passed';
     });
   }
