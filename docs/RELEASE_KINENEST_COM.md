@@ -1,5 +1,15 @@
 # KineNest release hardening and domain handoff
 
+## 4 October 2026 — current release state
+
+This section supersedes older candidate and pre-domain status statements below. PR #3 merged as `64e31f8021b2247aa05c15572954baa1275320f7`. The C++ parity branch was rebased onto that main, passed complete Chrome/Firefox PR CI and live preview acceptance, and PR #4 merged as `f6eff164c231ee0c3e973a890ccc5280bfabe9ca`. Cloudflare Workers Builds published the same tested application asset `71f28e8ff533` to `https://kinenest.com/`; its build-info identifies the merge commit with `dirty: false`. Deployed smoke in both browsers passed real Python, C++ 2.1/2.4, ten-page footer and one-second navigation. Full 25-exercise C++ and Python acceptance passed the byte-identical branch preview and PR CI.
+
+The existing GitHub repository was renamed to `mariomlz99/kinenest` without replacing its history. The old `https://mariomlz99.github.io/ros2learn/` project-page URL currently returns 404; the apex domain remains healthy. Cloudflare continued to build a new branch preview after the rename, confirming that the Git connection survived. PR #2 now contains the final source/canonical identity and a translated Home link beside the session numbers. Its branch preview at `https://domain-release-kinenest.malizia-mario99.workers.dev/` reports `d325b5a3301734df21cf9ffb0ecaa609fcc2be39`; actual deployed smoke and translated Home → Welcome → Session 1 passed Chrome and Firefox. The PR's full browser CI and final merge are pending at this snapshot.
+
+Routing still needs an external Cloudflare adjustment: `www.kinenest.com` has no DNS record (ENOTFOUND), and `http://kinenest.com/` currently responds 200 instead of redirecting to HTTPS. The apex HTTPS certificate and application work. Cloudflare dashboard authentication is unavailable in this workspace; the maintainer has been asked to correct and report these settings. Safari/iOS and physical-device validation remain deferred.
+
+---
+
 ## Welcome and destination-boot pass — 4 October 2026
 
 This section supersedes the initial-attachment checklist below for the current

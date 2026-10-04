@@ -71,7 +71,7 @@ Students need only a browser. Maintainers need Node 22+ for tests/build and Pyth
 
 ~~~bash
 git clone https://github.com/mariomlz99/kinenest.git
-cd ros2learn
+cd kinenest
 npm ci
 npm run dev
 ~~~
@@ -97,9 +97,9 @@ node scripts/check-browser.mjs chrome --built --suite=tf-browser
 
 GitHub repository Settings → Pages → Source: **GitHub Actions**. Pushes to main run tests, build and complete Chrome and Firefox course/C++ suites, visible-transition and root-path acceptance before publishing dist/. Pull requests test without deploying.
 
-Production contains static assets only. The allowlist excludes tests, reference programs, docs and private development artifacts. Content-versioned relative paths work under /ros2learn/ and other project prefixes. The existing personal website is a separate repository.
+Production contains static assets only. The allowlist excludes tests, reference programs, docs and private development artifacts. Content-versioned relative paths work at the root domain and under project prefixes. The existing personal website is a separate repository.
 
-Cloudflare Workers Static Assets is prepared in wrangler.jsonc, serving dist/ with no application Worker. See the [exact build, preview and release steps](docs/CLOUDFLARE_RELEASE.md). The existing kinenest.com deployment is live and the GitHub Pages site remains a fallback. The existing static Worker and domain binding remain in place. After the repository rename, verify or reconnect Workers Builds to the renamed GitHub repository before relying on automatic deployments.
+Cloudflare Workers Static Assets is prepared in wrangler.jsonc, serving dist/ with no application Worker. See the [exact build, preview and release steps](docs/CLOUDFLARE_RELEASE.md). The kinenest.com deployment is live on the existing static Worker and domain binding. Workers Builds is connected to the renamed repository and creates branch previews. The retired /ros2learn/ GitHub Pages URL does not redirect after a repository rename; use kinenest.com as the public site.
 
 To verify a deployed commit with the same checks used after Pages publishes:
 

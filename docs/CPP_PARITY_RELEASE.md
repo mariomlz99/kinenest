@@ -1,11 +1,11 @@
 # C++ parity release candidate
 
-Status: all 25 coding exercises passed local and live-preview Chrome/Firefox acceptance; seven-role independent review complete. CI passed all required jobs. Awaiting maintainer review; not merged or deployed to production.
+Status (4 October 2026): all 25 coding exercises passed local and live-preview Chrome/Firefox acceptance. PR #3 and parity PR #4 merged into main; kinenest.com serves parity merge f6eff164c231ee0c3e973a890ccc5280bfabe9ca with tested application asset 71f28e8ff533. Chrome and Firefox deployed smoke passed. The separate identity/Home PR #2 is under validation.
 
 ## Identity and isolation
 
 - Starting SHA: `96986c86223c575a1acb2f3525f5728bd5fddf6d` (PR #3, `boot-experience`).
-- Branch: `cpp-parity`, stacked from that open PR. C++ commits do not enter PR #3.
+- Branch: `cpp-parity`, originally stacked from PR #3; rebased onto its merge commit before PR #4. C++ commits did not enter PR #3.
 - Local acceptance asset: `6ad7e489683f`, built from `e282d52f555a4b3521c390a3903cef4bbfb54879` with the Wave 9 changes present (`dirty: true`). The later commits record those same changes; the final clean candidate identity is recorded above.
 - Clean tested source candidate: 5c7d93254d18182f9ee9f095ae895f27c1773962; clean application asset: 71f28e8ff533. Final follow-up commits contain only review documentation/evidence and the live Firefox test-profile correction (633be43); no application changes after this freeze.
 - Production/domain/Worker routing settings are unchanged.
@@ -71,17 +71,17 @@ Clean local candidate additionally passed 64 unit tests, both legacy C++ suites,
 
 The outgoing overlay was already present; the inherited PR fixes destination first-paint/layout rearrangement by applying saved theme early and covering the static shell until branding, lesson, layout and initial translation declare readiness. Outgoing dwell is 1,000 ms (animation about 850 ms); incoming reveal is 160 ms with no artificial readiness delay. Reduced motion skips the outgoing dwell; history/direct entry/failure recovery passed. Delayed test fixtures make the first-paint cover observable; application initialization itself is not artificially delayed.
 
-CI run: https://github.com/mariomlz99/ros2learn/actions/runs/37200950076 — SUCCESS on source 5c7d93254d18182f9ee9f095ae895f27c1773962. Unit/build/Workers routing and complete Chrome/Firefox jobs passed, including Python, 112-case C++, provenance, network/cache, output/cancellation, all-exercise UI/Compare, slow camera, transitions, first paint and root-domain smoke. Production deployment jobs were skipped by the branch gate. [Machine-readable CI result](cpp-parity/results/ci-37200950076.json).
+Candidate CI run: https://github.com/mariomlz99/kinenest/actions/runs/37200950076 — SUCCESS on source 5c7d93254d18182f9ee9f095ae895f27c1773962. Unit/build/Workers routing and complete Chrome/Firefox jobs passed, including Python, 112-case C++, provenance, network/cache, output/cancellation, all-exercise UI/Compare, slow camera, transitions, first paint and root-domain smoke. Production deployment jobs were skipped by the branch gate. [Machine-readable CI result](cpp-parity/results/ci-37200950076.json).
 
 ## Independent review and remaining limitations
 
 Seven role reports and explicit trade-off decisions: [review synthesis](cpp-parity/review/SYNTHESIS.md). No established P0/P1. Nonblocking findings include a member-callback hint, Compare output/restore labels, legacy Python sensor-callback TF-report behavior, formative-checker limitations, graph endpoint lifetime and automatic timeout coverage for service/action-only callbacks. These are disclosed, not claimed fixed. Browser references and alternates do not prove every possible student program.
 
-Safari/iOS and physical-device behavior remain unverified. Rust, native package builds, Session 7 and production rmw_wasm remain deferred. Rollback remains production source 63bb5ff8c2dfb3d234fe87bcc0144b400f9245ff (asset 784328576e05); neither apex nor default Worker was updated. Wave commits remain individually scoped.
+Safari/iOS and physical-device behavior remain unverified. Rust, native package builds, Session 7 and production rmw_wasm remain deferred. Pre-parity rollback source was 64e31f8021b2247aa05c15572954baa1275320f7 (asset c194fa54403a). The apex and default Worker now serve the merged parity asset 71f28e8ff533. Wave commits remain individually scoped.
 
 ## Maintainer gate
 
-PR #3 remains open. No parity PR against main has been opened and neither branch was merged. Please review the actual preview, especially 2.2, 3.3, 3.5, 4.2, 4.5, 5.3, 5.5 and 6.3, plus landing → Session 1 → 2 → 3. After explicit teaching/visual approval and PR #3 merge, rebase cpp-parity onto main and repeat required gates before opening/merging the parity PR. CI success alone is not merge authorization.
+PR #3 merged as 64e31f8021b2247aa05c15572954baa1275320f7. The rebased parity branch head 1a53d2a29b7e34c5b5b721e9d85d7fcd4c5760cf passed full [Chrome/Firefox PR CI](https://github.com/mariomlz99/kinenest/actions/runs/37205869088) and actual branch-preview course/transition checks; [PR #4](https://github.com/mariomlz99/kinenest/pull/4) merged as f6eff164c231ee0c3e973a890ccc5280bfabe9ca. kinenest.com build-info matches that merge and asset 71f28e8ff533. The deployed smoke passed both browsers, including real C++ 2.1/2.4 and Python. Full 25-exercise C++ acceptance ran against the byte-identical branch preview, not separately against the apex. Safari/iOS and physical mobile remain unverified.
 
 ## Implementation and validation commits
 
@@ -118,4 +118,4 @@ The review/evidence commit containing this report follows these commits. The fin
 
 After test-runner and report commits, preview source 2317e739562d033ac18b639f315a9b33cfc92788 was verified with dirty false and asset 71f28e8ff533. Rebuilding that clean branch produced a byte-identical dist to tested 5c7d932, excluding build-info.json: sorted path/content SHA-256 digest a5560ba50f5d171ed5bfbc09a555d20bd90b5736a9134c314071c9fb92b9a2e0. The final CI-result documentation commit does not change application files; its exact SHA is supplied in the handoff and preview build-info. No duplicate full run is claimed for documentation-only commits.
 
-READY FOR MAINTAINER REVIEW: YES. Merge authorization: pending. The received single-character reply was not treated as approval.
+PR #4 merge gate: passed. This report retains the original candidate evidence and records the later merged/deployed result above.
