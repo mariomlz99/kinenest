@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
 import {launch,wait} from './browser-driver.mjs';
 const browser=process.argv[2]??'chrome';
 const arg=name=>process.argv.find(a=>a.startsWith('--'+name+'='))?.slice(name.length+3);
@@ -8,7 +9,7 @@ assert.ok(['python','cpp'].includes(language),'Choose --language=python or cpp')
 assert.ok(base&&/^[a-f0-9]{40}$/.test(commit??''),'Pass --url and --commit');
 const info=await(await fetch(new URL('build-info.json',base),{cache:'no-store'})).json();
 assert.equal(info.commit,commit);assert.equal(info.dirty,false);
-const b=await launch(browser);
+const b=await launch(browser,{profileRoot:fileURLToPath(new URL('../../',import.meta.url))});
 async function until(expression,seconds=90){
  for(let i=0;i<seconds*10;i++){if(await b.evaluate(expression))return;await wait(100);}
  throw Error('Timeout '+expression+' '+await b.evaluate('document.getElementById("feedback")?.textContent+" / "+document.getElementById("python-output")?.textContent'));
