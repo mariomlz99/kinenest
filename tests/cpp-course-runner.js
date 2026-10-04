@@ -46,6 +46,7 @@ async function cleaned() {
   for (const topic of runtime.topics.values()) {
     assert([...topic.publishers, ...topic.subscribers].every(node => allowed.has(node)), 'Stop retained graph endpoint');
   }
+  for (const service of runtime.services.values()) assert(service.clients.size === 0, 'Stop retained service client');
   runtime.reset();
   await wait(100);
   assert(runtime.evidence.callbacks === 0 && runtime.evidence.codePublications === 0 && runtime.course.scan === 0, 'Reset retained evidence');
@@ -75,7 +76,7 @@ async function record(id, kind, action) {
 }
 
 try {
-  assert(['1', '2'].includes(wave), 'Only Waves 1–2 are implemented in this runner; full 25-exercise acceptance is not claimed.');
+  assert(['1', '2', '3'].includes(wave), 'Only Waves 1–3 are implemented in this runner; full 25-exercise acceptance is not claimed.');
   const html = await (await request('../session-02.html')).text();
   const path = new DOMParser().parseFromString(html, 'text/html')
     .querySelector('script[src$="session3-boot.js"]').getAttribute('src').replace('ui/session3-boot.js', '');
@@ -114,10 +115,11 @@ try {
   }
   const ids = ['session-02-01-subscriber', 'session-02-02-callbacks', 'session-02-03-sectors', 'session-02-04-avoidance', 'session-06-01-topic-debug'];
   const alternates = new Set(['session-02-02-callbacks', 'session-02-03-sectors', 'session-06-01-topic-debug']);
-  if (wave === '2') {
+  if (Number(wave) >= 2) {
     ids.push('session-03-01-camera-subscriber', 'session-03-02-image-data', 'session-03-03-color-detection', 'session-03-04-object-position', 'session-03-06-target-challenge');
     for (const id of ids.filter(id => id.startsWith('session-03') && !id.includes('camera-subscriber'))) alternates.add(id);
   }
+  if (Number(wave) >= 3) { ids.push('session-03-05-services'); alternates.add('session-03-05-services'); }
   for (const id of ids) {
     for (const kind of ['reference', 'negative', ...(alternates.has(id) ? ['alternate'] : [])]) {
       await record(id, kind, async result => {
@@ -149,9 +151,10 @@ try {
           await until(() => checks().every(check => check.passed), 40);
           result.check = 'passed';
         }
+        if (id === 'session-03-05-services' && kind !== 'negative') assert(runtime.robot.x === 0 && runtime.robot.y === 0, 'Service did not physically reset the robot');
         result.expectedEvidence = checks();
         result.observed = snapshot();
-        if (lesson.session === 3) {
+        if (lesson.checks.some(check => check.type === 'camera_subscriber')) {
           assert(metrics?.imageFrames >= 3, 'Missing image callback metrics');
           assert(metrics.imageBytes === metrics.imageFrames * 320 * 240 * 3, 'Image binary payload accounting mismatch');
           result.imageTransport = {bytes: metrics.imageBytes, frames: metrics.imageFrames, bytesPerFrame: 230400};
@@ -159,7 +162,7 @@ try {
       });
     }
   }
-  if (wave === '2') {
+  if (Number(wave) >= 2) {
     await record('Image API', 'binary-latest-mailbox-burst', async result => {
       await setup('session-03-01-camera-subscriber');
       bridge.run(await (await request('./cpp/image-slow.cpp')).text());
@@ -218,6 +221,72 @@ try {
       await until(() => state.includes('callbacks ready'));
       running = true;
       await until(() => checks().every(check => check.passed), 10);
+      result.compile = 'error-then-recovered'; result.run = 'passed'; result.check = 'passed';
+    });
+  }
+  if (Number(wave) >= 3) {
+    const serviceProgram = '#include <rclcpp/rclcpp.hpp>\n#include <std_srvs/srv/trigger.hpp>\nusing Trigger=std_srvs::srv::Trigger;\nint main(){rclcpp::init();auto n=std::make_shared<rclcpp::Node>("service_probe");auto c=n->create_client<Trigger>("/reset_robot");c->async_send_request(std::make_shared<Trigger::Request>(),[n](rclcpp::Client<Trigger>::SharedFuture f){auto response=f.get();RCLCPP_INFO(n->get_logger(),"SERVICE_RESPONSE %d %s",response->success,response->message.c_str());});rclcpp::spin(n);}';
+    await record('Service API', 'handler-error-does-not-credit-response', async result => {
+      await setup('session-03-05-services');
+      const service = runtime.service('/reset_robot'), original = service.handler;
+      service.handler = () => { throw new Error('Controlled reset service failure'); };
+      try {
+        bridge.run(serviceProgram);
+        await until(() => !bridge.worker, 120, true);
+        assert(output.includes('Controlled reset service failure'), 'Service error lost actionable cause: ' + output);
+        assert(!runtime.evidence.response && !runtime.evidence.reset, 'Failed service credited success evidence');
+        assert(!output.includes('SERVICE_RESPONSE'), 'Failed service invoked success callback');
+        assert(runtime.robot.x === 2, 'Failed service unexpectedly moved the robot');
+        result.compile = 'passed'; result.run = 'rejected-as-expected'; result.check = 'passed';
+        result.diagnostic = output.slice(-3000);
+      } finally { service.handler = original; }
+    });
+    for (const mode of ['Stop', 'Reset']) {
+      await record('Service API', mode.toLowerCase() + '-pending-response-and-rerun', async result => {
+        await setup('session-03-05-services');
+        bridge.run(serviceProgram);
+        const oldWorker = bridge.worker, oldOnMessage = oldWorker.onmessage;
+        const originalPost = oldWorker.postMessage.bind(oldWorker);
+        let heldResponse;
+        // Deterministic transport fault injection: hold only the real response.
+        // Compilation, service execution and request routing remain unmodified.
+        oldWorker.postMessage = (message, ...transfer) => {
+          if (message.kind === 'service_response') { heldResponse = message; return; }
+          return originalPost(message, ...transfer);
+        };
+        await until(() => heldResponse !== undefined);
+        assert(runtime.evidence.client && runtime.evidence.request && !runtime.evidence.response, 'Missing pending service lifecycle');
+        assert(runtime.robot.x === 0, 'Real reset handler did not run before response');
+        bridge.stop();
+        if (mode === 'Reset') runtime.reset();
+        assert(runtime.service('/reset_robot').clients.size === 0, mode + ' retained service client');
+        output = '';
+        await setup('session-02-01-subscriber');
+        bridge.run(await (await request('./cpp/course/session-02-01-subscriber.cpp')).text());
+        await until(() => state.includes('callbacks ready'));
+        // A queued event from the disposed worker must fail its identity guard.
+        oldOnMessage({data: {kind: 'response_received', success: true}});
+        oldOnMessage({data: {kind: 'stdout', text: 'STALE_SERVICE_CALLBACK'}});
+        try { originalPost(heldResponse); } catch { /* A terminated worker may reject posting. */ }
+        running = true;
+        await until(() => checks().every(check => check.passed), 10);
+        assert(!runtime.evidence.response, 'Stale response credited the replacement run');
+        assert(!output.includes('STALE_SERVICE_CALLBACK') && !output.includes('SERVICE_RESPONSE'), 'Stale callback reached replacement output');
+        result.compile = 'passed'; result.run = 'passed'; result.check = 'passed';
+        result.injectedFault = 'Held real service response until its worker was terminated';
+      });
+    }
+    await record('Service API', 'compile-error-recovery', async result => {
+      bridge.run('#include <std_srvs/srv/trigger.hpp>\nint main(){std_srvs::srv::Trigger::Response response;response.sucess=true;}');
+      await until(() => !bridge.worker, 120, true);
+      assert(output.includes('controller.cpp:') && output.includes('sucess'), 'Service diagnostic lost filename/field');
+      result.diagnostic = output.slice(-3000);
+      output = '';
+      await setup('session-03-05-services');
+      bridge.run(await (await request('./cpp/course/session-03-05-services.cpp')).text());
+      await until(() => state.includes('callbacks ready'));
+      await until(() => checks().every(check => check.passed), 10);
+      assert(runtime.robot.x === 0, 'Corrected service did not reset the displaced robot');
       result.compile = 'error-then-recovered'; result.run = 'passed'; result.check = 'passed';
     });
   }

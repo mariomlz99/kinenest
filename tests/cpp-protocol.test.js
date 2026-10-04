@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readField, numberField, stringField, associateReport} from '../src/cpp/protocol.js';
+import {readField, numberField, stringField, boolField, associateReport} from '../src/cpp/protocol.js';
 
 test('C++ field access preserves nested values, arrays, UTF-8 text and sensor Infinity', () => {
   const payload = {
@@ -8,13 +8,16 @@ test('C++ field access preserves nested values, arrays, UTF-8 text and sensor In
     ranges: new Float32Array([Infinity, 1.5, -Infinity]),
     data: 'caffè 🤖',
     empty: '',
-    zero: 0,
+    zero: 0, success: true, rejected: false,
   };
   assert.equal(numberField(payload, 'transforms.0.transform.translation.x'), 0.2);
   assert.equal(stringField(payload, 'transforms.0.header.frame_id'), 'laser_link');
   assert.equal(numberField(payload, 'ranges.0'), Infinity);
   assert.equal(numberField(payload, 'ranges.2'), -Infinity);
   assert.equal(numberField(payload, 'zero'), 0);
+  assert.equal(boolField(payload, 'success'), true);
+  assert.equal(boolField(payload, 'rejected'), false);
+  assert.throws(() => boolField(payload, 'zero'), /must be a boolean/);
   assert.equal(stringField(payload, 'data'), 'caffè 🤖');
   assert.equal(stringField(payload, 'empty'), '');
   assert.deepEqual(readField(payload, 'transforms'), payload.transforms);

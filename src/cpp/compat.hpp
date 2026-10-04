@@ -20,6 +20,7 @@ __attribute__((import_module("kinenest"),import_name("spin"))) void kn_spin();
 __attribute__((import_module("kinenest"),import_name("range_access"))) void kn_range_access();
 __attribute__((import_module("kinenest"),import_name("image_access"))) void kn_image_access(int,int);
 __attribute__((import_module("kinenest"),import_name("fail"))) void kn_fail(const char*,int);
+__attribute__((import_module("kinenest"),import_name("field_bool"))) int kn_field_bool(const char*,int);
 __attribute__((import_module("kinenest"),import_name("field_number"))) double kn_field_number(const char*,int);
 __attribute__((import_module("kinenest"),import_name("field_string_size"))) int kn_field_string_size(const char*,int);
 __attribute__((import_module("kinenest"),import_name("field_string_copy"))) int kn_field_string_copy(const char*,int,char*,int);
@@ -33,6 +34,7 @@ inline std::string number(double value,const char* field="Value"){
  if(!std::isfinite(value))fail(std::string(field)+" must be a finite number");
  char text[32];std::snprintf(text,sizeof(text),"%.17g",value);return text;
 }
+inline bool field_bool(const std::string& path){return kn_field_bool(path.data(),path.size())!=0;}
 inline double field_number(const std::string& path){return kn_field_number(path.data(),path.size());}
 inline std::string field_string(const std::string& path){
  const int size=kn_field_string_size(path.data(),path.size());
@@ -107,11 +109,26 @@ struct Twist{using SharedPtr=std::shared_ptr<Twist>;using ConstSharedPtr=std::sh
 namespace std_msgs {namespace msg {
 struct String{using SharedPtr=std::shared_ptr<String>;using ConstSharedPtr=std::shared_ptr<const String>;std::string data;};
 }}
+namespace std_srvs {namespace srv {
+struct Trigger {
+ struct Request{using SharedPtr=std::shared_ptr<Request>;};
+ struct Response{using SharedPtr=std::shared_ptr<Response>;bool success=false;std::string message;};
+};
+}}
 namespace sensor_msgs {namespace msg {
 struct Image{using SharedPtr=std::shared_ptr<Image>;using ConstSharedPtr=std::shared_ptr<const Image>;kinenest::Header header;kinenest::ImageField<uint32_t> height,width;std::string encoding="rgb8";uint8_t is_bigendian=0;uint32_t step=0;kinenest::ImageBytes data;};
 struct LaserScan{using SharedPtr=std::shared_ptr<LaserScan>;using ConstSharedPtr=std::shared_ptr<const LaserScan>;kinenest::Header header;float angle_min=0,angle_max=0,angle_increment=0,time_increment=0,scan_time=.2,range_min=.05,range_max=10;kinenest::Ranges ranges;std::vector<float> intensities;};
 }}
 namespace kinenest {
+template<class T> struct ServiceTraits;
+template<> struct ServiceTraits<std_srvs::srv::Trigger>{
+ static const char* type(){return "std_srvs/srv/Trigger";}
+ static std_srvs::srv::Trigger::Response::SharedPtr response(){
+  auto result=std::make_shared<std_srvs::srv::Trigger::Response>();
+  result->success=field_bool("success");result->message=field_string("message");return result;
+ }
+};
+inline std::map<int,std::function<void()>> service_responses;
 template<class T> struct MessageTraits;
 template<> struct MessageTraits<std_msgs::msg::String>{
  static const char* type(){return "std_msgs/msg/String";}
@@ -145,6 +162,33 @@ inline bool initialized=false;
 inline void init(int argc=0,char** argv=nullptr);
 class Logger{std::string name_;public:explicit Logger(std::string name):name_(name){}const char* get_name()const{return name_.c_str();}};
 template<class... Args> inline void log(const Logger& logger,const char* format,Args... args){std::printf("[%s] ",logger.get_name());std::printf(format,kinenest::log_value(args)...);std::printf("\n");std::fflush(stdout);}
+// The callback receives an already-completed result. No blocking future/wait API.
+template<class T> class Client {
+ std::string node_,name_;std::map<int,bool> pending_;
+public:
+ using SharedPtr=std::shared_ptr<Client<T>>;
+ class SharedFuture {
+  typename T::Response::SharedPtr response_;
+ public:
+  explicit SharedFuture(typename T::Response::SharedPtr value):response_(value){}
+  typename T::Response::SharedPtr get()const{return response_;}
+ };
+ Client(std::string node,std::string name):node_(node),name_(name){
+  kinenest::emit("{\"kind\":\"client\",\"node\":"+kinenest::quote(node_)+",\"name\":"+kinenest::quote(name_)+",\"type\":"+kinenest::quote(kinenest::ServiceTraits<T>::type())+"}");
+ }
+ ~Client(){for(const auto& entry:pending_)kinenest::service_responses.erase(entry.first);}
+ template<class Callback> int async_send_request(typename T::Request::SharedPtr,Callback callback){
+  const int id=++kinenest::next_id;pending_[id]=true;
+  kinenest::service_responses[id]=[this,id,callback](){
+   pending_.erase(id);
+   auto response=kinenest::ServiceTraits<T>::response();
+   callback(SharedFuture(response));
+   kinenest::emit(std::string("{\"kind\":\"response_received\",\"success\":")+(response->success?"true":"false")+"}");
+  };
+  kinenest::emit("{\"kind\":\"service_call\",\"id\":"+std::to_string(id)+",\"node\":"+kinenest::quote(node_)+",\"name\":"+kinenest::quote(name_)+",\"request\":{}}");
+  return id;
+ }
+};
 template<class T> class Publisher {
  std::string node_,topic_;
 public:
@@ -178,6 +222,7 @@ public:
  explicit Node(std::string name):name_(name.size()&&name[0]=='/'?name:"/"+name){kinenest::emit("{\"kind\":\"node\",\"node\":"+kinenest::quote(name_)+"}");}
  virtual ~Node(){kinenest::emit("{\"kind\":\"destroy\",\"node\":"+kinenest::quote(name_)+"}");}
  Logger get_logger()const{return Logger(name_);}const char* get_name()const{return name_.c_str();}
+ template<class T> typename Client<T>::SharedPtr create_client(const std::string& name){return std::make_shared<Client<T>>(name_,name);}
  template<class T> typename Publisher<T>::SharedPtr create_publisher(const std::string& topic,int){return std::make_shared<Publisher<T>>(name_,topic);}
  template<class T,class Callback> typename Subscription<T>::SharedPtr create_subscription(const std::string& topic,int,Callback callback){
   const int id=++kinenest::next_id;
@@ -222,4 +267,9 @@ extern "C" __attribute__((export_name("kn_image_prepare"))) uint8_t* kn_image_pr
 extern "C" __attribute__((export_name("kn_receive_image"))) void kn_receive_image(int id){
  auto msg=std::move(kinenest::incoming_image);auto found=kinenest::images.find(id);
  if(found!=kinenest::images.end()){auto invoke=found->second;invoke(msg);}
+}
+
+extern "C" __attribute__((export_name("kn_service_response"))) void kn_service_response(int id){
+ auto found=kinenest::service_responses.find(id);if(found==kinenest::service_responses.end())return;
+ auto invoke=std::move(found->second);kinenest::service_responses.erase(found);invoke();
 }

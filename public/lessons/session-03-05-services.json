@@ -120,8 +120,110 @@
       "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom std_srvs.srv import Trigger\n\nclass ResetClient(Node):\n    def __init__(self):\n        super().__init__('reset_client')\n        # TODO: self.client = self.create_client(...)\n\n    def reset(self):\n        # TODO: request = Trigger.Request()\n        # Call asynchronously, then attach self.on_response to the future.\n        pass\n\n    def on_response(self, future):\n        response = future.result()\n        print(response.success, response.message)\n\nrclpy.init()\nnode = ResetClient()\nnode.reset()\nrclpy.spin(node)\n"
     },
     "cpp": {
-      "supported": false,
-      "starterCode": ""
+      "supported": true,
+      "experimental": true,
+      "starterCode": "#include <rclcpp/rclcpp.hpp>\n#include <std_srvs/srv/trigger.hpp>\n\nusing Trigger = std_srvs::srv::Trigger;\nclass ResetClient : public rclcpp::Node {\npublic:\n  ResetClient() : Node(\"reset_client\") {\n    // TODO: create the Trigger client for /reset_robot.\n  }\n  void send_reset() {\n    // TODO: create a shared Trigger::Request.\n    // TODO: async_send_request(request, callback).\n    // In the callback, future.get() provides the response.\n  }\nprivate:\n  rclcpp::Client<Trigger>::SharedPtr client_;\n};\nint main(int argc, char **argv) {\n  rclcpp::init(argc, argv);\n  auto node = std::make_shared<ResetClient>();\n  node->send_reset();\n  rclcpp::spin(node);\n}\n",
+      "content": {
+        "title": "Call a service",
+        "description": "Discover /reset_robot, create an asynchronous Trigger client and inspect its response. The displaced robot makes the reset visible.",
+        "steps": [
+          "Discover the service with ros2 service list and ros2 service type /reset_robot.",
+          "Create a Trigger client and send an empty request with async_send_request.",
+          "Read future.get() inside the response callback. Print success and message."
+        ],
+        "hints": [
+          "A service sends one request and receives one response; it is not a stream.",
+          "Use create_client<std_srvs::srv::Trigger>(\"/reset_robot\") and retain the client.",
+          "Build std::make_shared<Trigger::Request>(); pass it and a SharedFuture callback to async_send_request."
+        ],
+        "translations": {
+          "nl": {
+            "title": "Een service aanroepen",
+            "description": "Ontdek /reset_robot, maak een asynchrone Trigger-client en bekijk het antwoord. De verplaatste robot maakt het herstel zichtbaar.",
+            "steps": [
+              "Ontdek de service met ros2 service list en ros2 service type /reset_robot.",
+              "Maak een Trigger-client en verstuur een leeg verzoek met async_send_request.",
+              "Lees future.get() in de antwoordcallback. Print success en message."
+            ],
+            "hints": [
+              "Een service verstuurt één verzoek en ontvangt één antwoord; het is geen stroom.",
+              "Gebruik create_client<std_srvs::srv::Trigger>(\"/reset_robot\") en bewaar de client.",
+              "Maak std::make_shared<Trigger::Request>(); geef die en een SharedFuture-callback door aan async_send_request."
+            ]
+          },
+          "fr": {
+            "title": "Appeler un service",
+            "description": "Découvrez /reset_robot, créez un client Trigger asynchrone et examinez sa réponse. Le robot décalé rend la réinitialisation visible.",
+            "steps": [
+              "Découvrez le service avec ros2 service list et ros2 service type /reset_robot.",
+              "Créez un client Trigger et envoyez une requête vide avec async_send_request.",
+              "Lisez future.get() dans le callback de réponse. Affichez success et message."
+            ],
+            "hints": [
+              "Un service envoie une requête et reçoit une réponse ; ce n’est pas un flux.",
+              "Utilisez create_client<std_srvs::srv::Trigger>(\"/reset_robot\") et conservez le client.",
+              "Créez std::make_shared<Trigger::Request>(); passez cet objet et un callback SharedFuture à async_send_request."
+            ]
+          },
+          "es": {
+            "title": "Llamar a un servicio",
+            "description": "Descubre /reset_robot, crea un cliente Trigger asíncrono e inspecciona la respuesta. La posición inicial desplazada permite ver el reinicio.",
+            "steps": [
+              "Descubre el servicio con ros2 service list y ros2 service type /reset_robot.",
+              "Crea un cliente Trigger y envía una petición vacía con async_send_request.",
+              "Lee future.get() dentro del callback de respuesta. Muestra success y message."
+            ],
+            "hints": [
+              "Un servicio envía una petición y recibe una respuesta; no es un flujo.",
+              "Usa create_client<std_srvs::srv::Trigger>(\"/reset_robot\") y conserva el cliente.",
+              "Crea std::make_shared<Trigger::Request>(); pásalo junto con un callback SharedFuture a async_send_request."
+            ]
+          },
+          "de": {
+            "title": "Einen Dienst aufrufen",
+            "description": "Finde /reset_robot, erstelle einen asynchronen Trigger-Client und prüfe die Antwort. Die versetzte Startposition macht das Zurücksetzen sichtbar.",
+            "steps": [
+              "Finde den Dienst mit ros2 service list und ros2 service type /reset_robot.",
+              "Erstelle einen Trigger-Client und sende eine leere Anfrage mit async_send_request.",
+              "Lies future.get() im Antwort-Callback. Gib success und message aus."
+            ],
+            "hints": [
+              "Ein Dienst sendet eine Anfrage und empfängt eine Antwort; er ist kein Nachrichtenstrom.",
+              "Verwende create_client<std_srvs::srv::Trigger>(\"/reset_robot\") und bewahre den Client auf.",
+              "Erstelle std::make_shared<Trigger::Request>(); übergib es zusammen mit einem SharedFuture-Callback an async_send_request."
+            ]
+          },
+          "pt": {
+            "title": "Chamar um serviço",
+            "description": "Descobre /reset_robot, cria um cliente Trigger assíncrono e inspeciona a resposta. A posição inicial deslocada torna o reinício visível.",
+            "steps": [
+              "Descobre o serviço com ros2 service list e ros2 service type /reset_robot.",
+              "Cria um cliente Trigger e envia um pedido vazio com async_send_request.",
+              "Lê future.get() dentro do callback de resposta. Mostra success e message."
+            ],
+            "hints": [
+              "Um serviço envia um pedido e recebe uma resposta; não é um fluxo.",
+              "Usa create_client<std_srvs::srv::Trigger>(\"/reset_robot\") e guarda o cliente.",
+              "Cria std::make_shared<Trigger::Request>(); passa-o com um callback SharedFuture a async_send_request."
+            ]
+          },
+          "it": {
+            "title": "Chiamare un servizio",
+            "description": "Individua /reset_robot, crea un client Trigger asincrono e osserva la risposta. La posizione iniziale spostata rende visibile il ripristino.",
+            "steps": [
+              "Individua il servizio con ros2 service list e ros2 service type /reset_robot.",
+              "Crea un client Trigger e invia una richiesta vuota con async_send_request.",
+              "Leggi future.get() nel callback della risposta. Stampa success e message."
+            ],
+            "hints": [
+              "Un servizio invia una richiesta e riceve una risposta; non è un flusso di messaggi.",
+              "Usa create_client<std_srvs::srv::Trigger>(\"/reset_robot\") e conserva il client.",
+              "Crea std::make_shared<Trigger::Request>(); passalo con un callback SharedFuture ad async_send_request."
+            ]
+          }
+        }
+      },
+      "visibility": "public"
     }
   }
 }

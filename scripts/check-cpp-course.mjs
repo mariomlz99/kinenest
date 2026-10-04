@@ -5,7 +5,7 @@ import path from 'node:path';
 const browser = process.argv[2] ?? 'chrome';
 if (!['chrome', 'firefox'].includes(browser)) throw new Error('Choose chrome or firefox');
 const wave = process.argv.find(arg => arg.startsWith('--wave='))?.slice(7) ?? '1';
-if (!['1', '2'].includes(wave)) throw new Error('Only --wave=1 or --wave=2 is implemented; full C++ parity is not yet claimed');
+if (!['1', '2', '3'].includes(wave)) throw new Error('Only --wave=1, --wave=2 or --wave=3 is implemented; full C++ parity is not yet claimed');
 const directory = process.argv.find(arg => arg.startsWith('--output='))?.slice(9) ?? path.join(tmpdir(), 'kinenest-cpp-course');
 await mkdir(directory, {recursive: true});
 const report = {browser, wave: Number(wave), startedAt: new Date().toISOString(), cases: [], summary: null};

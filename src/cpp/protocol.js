@@ -30,6 +30,12 @@ export function numberField(payload, path) {
   return value;
 }
 
+export function boolField(payload,path) {
+  const value=readField(payload,path);
+  if(typeof value!=='boolean')throw new Error('C++ message field '+path+' must be a boolean');
+  return value;
+}
+
 export function stringField(payload, path) {
   const value = readField(payload, path);
   if (typeof value !== 'string') {

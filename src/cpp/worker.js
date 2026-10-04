@@ -1,5 +1,5 @@
 import {loadToolchain} from './toolchain.js';
-import {numberField,stringField,associateReport} from './protocol.js';
+import {numberField,stringField,boolField,associateReport} from './protocol.js';
 let app,tool,rangeAccess=false,chain=Promise.resolve(),stdout='',outputCount=0,outputSince=0;
 let currentPayload=null,currentSample=null,currentFrame=null,failed=false;
 const subscriptions=new Map(),decoder=new TextDecoder(),encoder=new TextEncoder();
@@ -21,12 +21,13 @@ async function handle(data){
   tool=await loadToolchain({output,stage:text=>postMessage({kind:'stage',text})});
   const response=await fetch(new URL('./compat.hpp',import.meta.url),{signal:AbortSignal.timeout(15000)});if(!response.ok)throw Error('C++ compatibility header: HTTP '+response.status);const header=await response.text();
   const headers={'/include/kinenest.hpp':header};
-  for(const path of ['rclcpp/rclcpp.hpp','geometry_msgs/msg/twist.hpp','sensor_msgs/msg/laser_scan.hpp','sensor_msgs/msg/image.hpp','std_msgs/msg/string.hpp','kinenest/reports.hpp'])headers['/include/'+path]='#include <kinenest.hpp>';
+  for(const path of ['rclcpp/rclcpp.hpp','geometry_msgs/msg/twist.hpp','sensor_msgs/msg/laser_scan.hpp','sensor_msgs/msg/image.hpp','std_msgs/msg/string.hpp','kinenest/reports.hpp','std_srvs/srv/trigger.hpp'])headers['/include/'+path]='#include <kinenest.hpp>';
   const module=await tool.compile(data.code,headers);
   const imports={kinenest:{
    image_access:(frame,field)=>{if(frame===currentFrame){const name={1:'width',2:'height',3:'data'}[field];if(name)imageAccess.add(name);}},
    emit,spin:()=>{throw SPIN;},range_access:()=>{rangeAccess=true;},
    fail:(ptr,length)=>{throw Error(textAt(ptr,length));},
+   field_bool:(ptr,length)=>boolField(currentPayload,textAt(ptr,length))?1:0,
    field_number:(ptr,length)=>numberField(currentPayload,textAt(ptr,length)),
    field_string_size:(ptr,length)=>encoder.encode(stringField(currentPayload,textAt(ptr,length))).length,
    field_string_copy:(ptr,length,dest,capacity)=>{const bytes=encoder.encode(stringField(currentPayload,textAt(ptr,length)));if(bytes.length>capacity)throw Error('C++ string buffer is too small');new Uint8Array(app.exports.memory.buffer,dest,bytes.length).set(bytes);return bytes.length;}
@@ -67,6 +68,10 @@ async function handle(data){
    tool.metrics.programMemoryBytes=app.exports.memory.buffer.byteLength;
    postMessage({kind:'metrics',metrics:tool.metrics});flush();
   }finally{currentPayload=null;currentFrame=null;imageAccess.clear();postMessage({kind:'frame_done',subscription:data.subscription});}
+ }else if(data.kind==='service_response'){
+  if(data.response?.error)throw Error('Service request failed: '+data.response.error);
+  currentPayload=data.response;
+  try{app.exports.kn_service_response(data.id);flush();}finally{currentPayload=null;}
  }else if(data.kind==='timer'){
   try{app.exports.kn_tick(data.id);postMessage({kind:'timer_processed'});flush();}finally{postMessage({kind:'frame_done',subscription:'timer-'+data.id});}
  }
