@@ -4,7 +4,8 @@ try{for(const page of ['index.html','session-01.html','session-02.html','session
  frame.src='../'+page;await new Promise(resolve=>frame.onload=resolve);let d;
  for(let i=0;i<150;i++){d=frame.contentDocument;if(d?.getElementById('language')&&d?.querySelector('footer .attribution'))break;await wait(50);}
  const p=d.querySelector('footer .attribution'),text=p?.textContent.replace(/\s+/g,' ').trim();
- if(text!=='Made with love in Belgium 🇧🇪 by Mario Malizia, an Italian soul, with development assistance from ChatGPT by OpenAI.')throw Error('Footer text: '+page+' '+text);
+ if(text!=='Made with love in Belgium 🇧🇪 by Mario Malizia, an 🇮🇹 soul, with development assistance from ChatGPT by OpenAI.')throw Error('Footer text: '+page+' '+text);
+ const italian=p.querySelector('[role="img"][aria-label="Italian"]');if(italian?.textContent!=='🇮🇹')throw Error('Italian attribution accessibility '+page);
  for(const [label,url]of [['Mario Malizia','https://www.linkedin.com/in/mario-malizia/'],['ChatGPT','https://chatgpt.com/'],['OpenAI','https://openai.com/']])if(![...p.querySelectorAll('a')].some(a=>a.textContent===label&&a.href===url))throw Error('Footer link '+page+' '+label);
  const support=d.querySelector('footer a.support-link');if(support?.href!=='https://buymeacoffee.com/mariomlz99'||support.target!=='_blank'||!['noopener','noreferrer'].every(x=>support.relList.contains(x))||!support.querySelector('svg'))throw Error('Support link '+page);
  if([...d.scripts].some(s=>/buymeacoffee/i.test(s.src)))throw Error('Support widget loaded');

@@ -51,3 +51,7 @@ Temporary maintainer artifacts from this inspection:
 These are local diagnostic files, not production assets.
 
 Post-change validation: 56/56 unit tests passed. Chrome and Firefox footer tests passed all ten public pages in seven UI languages; responsive suite passed 361 cases in each browser with no page overflow. Relevant Python Sessions 2 and 6 passed in both browsers.
+
+## Attribution clarification
+
+The maintainer subsequently requested replacing the visible word “Italian” with 🇮🇹, rather than appending the flag. The shared English attribution now reads “an 🇮🇹 soul”. Its inline flag uses role="img" and aria-label="Italian", preserving the intended spoken meaning. This explicit clarification supersedes the earlier exact visible-word requirement; it does not change the creator or assistance links. Footer, generated-build and deployed-site checks cover the visible flag and accessible label.

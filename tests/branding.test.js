@@ -10,6 +10,8 @@ test('public source and generated branding preserve independent identity',async(
  const html=brandPage('<html><head><title>old</title></head><body><header></header><nav class="session-nav"></nav><footer></footer></body></html>',5);
  assert.equal(PRODUCT.contact,'hello@kinenest.com');
  assert.ok(html.includes('<span>Questions?</span>'));
+ assert.ok(html.includes('an <span role="img" aria-label="Italian">🇮🇹</span> soul'));
+ assert.doesNotMatch(html,/an Italian soul/);
  assert.ok(html.includes('href="mailto:hello@kinenest.com" translate="no"'));
  assert.ok(html.includes(PRODUCT.name));assert.ok(html.includes('og:title'));assert.ok(html.includes('aria-current="page"'));assert.ok(navigation(5).includes('Real environment'));
  const about=await readFile(new URL('about.html',root),'utf8');assert.ok(about.includes('ROS™ 2'));assert.ok(about.includes('not affiliated with or endorsed by Open Robotics'));
