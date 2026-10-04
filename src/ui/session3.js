@@ -1,3 +1,4 @@
+import {pageReady} from './page-ready.js';
 import {CodeWorkspace} from './code-workspace.js';
 import {sensorPose,ROBOT_RADIUS,SENSORS} from '../simulator/sensors.js';
 import { createTFView } from './tf-view.js';
@@ -128,4 +129,4 @@ const names=Object.fromEntries(SESSIONS.map((name,i)=>[i+1,name]));
 document.querySelector('.intro .eyebrow').textContent='Python · 90 min';
 $('session-title').textContent=names[session];$('session-tag').textContent='SESSION 0'+session;
 catalog=await json('session-0'+session+'.json');for(const entry of catalog){const option=document.createElement('option');option.value=entry.id;option.textContent=entry.number+' — '+(entry.translations?.[language()]??entry.title);$('lesson-select').append(option);}
-await selectLesson(catalog[0].id);requestAnimationFrame(frame);
+await selectLesson(catalog[0].id);requestAnimationFrame(frame);await pageReady();
