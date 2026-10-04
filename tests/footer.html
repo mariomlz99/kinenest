@@ -8,7 +8,13 @@ try{for(const page of ['index.html','session-01.html','session-02.html','session
  for(const [label,url]of [['Mario Malizia','https://www.linkedin.com/in/mario-malizia/'],['ChatGPT','https://chatgpt.com/'],['OpenAI','https://openai.com/']])if(![...p.querySelectorAll('a')].some(a=>a.textContent===label&&a.href===url))throw Error('Footer link '+page+' '+label);
  const support=d.querySelector('footer a.support-link');if(support?.href!=='https://buymeacoffee.com/mariomlz99'||support.target!=='_blank'||!['noopener','noreferrer'].every(x=>support.relList.contains(x))||!support.querySelector('svg'))throw Error('Support link '+page);
  if([...d.scripts].some(s=>/buymeacoffee/i.test(s.src)))throw Error('Support widget loaded');
- const l=d.getElementById('language');l.value='it';l.dispatchEvent(new Event('change'));await wait(30);if(p.textContent.replace(/\s+/g,' ').trim()!==text||p.lang!=='en')throw Error('Attribution translation inconsistency');
+ const l=d.getElementById('language');
+ for(const [lang,label]of [['en','Questions?'],['nl','Vragen?'],['fr','Des questions ?'],['es','¿Preguntas?'],['de','Fragen?'],['pt','Dúvidas?'],['it','Domande?']]){
+  l.value=lang;l.dispatchEvent(new Event('change'));await wait(30);
+  const contact=d.querySelector('footer .footer-contact'),link=contact?.querySelector('a');
+  if(contact?.querySelector('span')?.textContent!==label||link?.getAttribute('href')!=='mailto:hello@kinenest.com'||link.textContent!=='hello@kinenest.com')throw Error('Contact link '+page+' '+lang);
+  if(p.textContent.replace(/\s+/g,' ').trim()!==text||p.lang!=='en')throw Error('Attribution translation inconsistency');
+ }
  if(page==='about.html'){for(let i=0;i<100&&!d.getElementById('build-info').textContent.includes('Commit:');i++)await wait(50);if(!d.getElementById('build-info').textContent.includes('Commit:'))throw Error('About build identity missing');}
-}out.textContent='PASS: exact attribution and links on all ten public pages, preserved in translated UI, About build identity';}catch(e){out.textContent='FAIL: '+e.message;}await fetch('/done',{method:'POST',body:out.textContent});
+}out.textContent='PASS: exact attribution, support and seven-language contact links on all ten public pages, About build identity';}catch(e){out.textContent='FAIL: '+e.message;}await fetch('/done',{method:'POST',body:out.textContent});
 </script>

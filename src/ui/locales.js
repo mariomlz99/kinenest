@@ -1,6 +1,7 @@
 // Rows: NL, FR, ES, DE, PT, IT. Code and ROS identifiers stay English.
 export const LANGUAGES = ["en","nl","fr","es","de","pt","it"];
 export const UI = {
+  "Questions?": ["Vragen?","Des questions ?","¿Preguntas?","Fragen?","Dúvidas?","Domande?"],
   "Sessions": ["Sessies","Sessions","Sesiones","Sitzungen","Sessões","Sessioni"],
   "Welcome to KineNest": ["Welkom bij KineNest","Bienvenue dans KineNest","Bienvenido a KineNest","Willkommen bei KineNest","Bem-vindo ao KineNest","Benvenuto in KineNest"],
   "Learn robotics concepts directly in your browser.": ["Leer roboticaconcepten rechtstreeks in je browser.","Apprenez les concepts de la robotique directement dans votre navigateur.","Aprende conceptos de robótica directamente en tu navegador.","Lerne Robotikkonzepte direkt im Browser.","Aprende conceitos de robótica diretamente no navegador.","Impara i concetti della robotica direttamente nel browser."],
