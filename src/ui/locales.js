@@ -1116,11 +1116,11 @@ export const UI = {
   ],
   "Made with love in Belgium 🇧🇪 by": [
     "Met liefde gemaakt in België 🇧🇪 door",
-    "Créé avec soin en Belgique 🇧🇪 par",
-    "Hecho con cariño en Bélgica 🇧🇪 por",
-    "Mit Sorgfalt in Belgien 🇧🇪 entwickelt von",
-    "Feito com carinho na Bélgica 🇧🇪 por",
-    "Realizzato con passione in Belgio 🇧🇪 da"
+    "Créé avec amour en Belgique 🇧🇪 par",
+    "Hecho con amor en Bélgica 🇧🇪 por",
+    "Mit Liebe in Belgien 🇧🇪 entwickelt von",
+    "Feito com amor na Bélgica 🇧🇪 por",
+    "Realizzato con amore in Belgio 🇧🇪 da"
   ],
   "with development assistance from": [
     "met ontwikkelhulp van",
@@ -1483,3 +1483,14 @@ export const UI = {
     "Medie dei canali RGB:"
   ]
 };
+
+// Linked names stay fixed; the sentence and flag description follow the UI language.
+export const ATTRIBUTION = Object.freeze({
+  en: ['Made with love in Belgium 🇧🇪 by ', ', an {flag} soul, with development assistance from ', ' by ', 'Italian'],
+  nl: ['Met liefde gemaakt in België 🇧🇪 door ', ', met een {flag} ziel, met ontwikkelhulp van ', ' van ', 'Italiaans'],
+  fr: ['Créé avec amour en Belgique 🇧🇪 par ', ', à l’âme {flag}, avec l’aide au développement de ', ' par ', 'italienne'],
+  es: ['Hecho con amor en Bélgica 🇧🇪 por ', ', de alma {flag}, con ayuda en el desarrollo de ', ' de ', 'italiana'],
+  de: ['Mit Liebe in Belgien 🇧🇪 entwickelt von ', ', mit {flag} Seele, mit Entwicklungsunterstützung durch ', ' von ', 'italienisch'],
+  pt: ['Feito com amor na Bélgica 🇧🇪 por ', ', de alma {flag}, com apoio ao desenvolvimento de ', ' da ', 'italiana'],
+  it: ['Realizzato con amore in Belgio 🇧🇪 da ', ', dall’anima {flag}, con il supporto allo sviluppo di ', ' di ', 'italiana']
+});
