@@ -25,7 +25,7 @@ async function handle(data){
   const module=await tool.compile(data.code,headers);
   const imports={kinenest:{
    image_access:(frame,field)=>{if(frame===currentFrame){const name={1:'width',2:'height',3:'data'}[field];if(name)imageAccess.add(name);}},
-   emit,spin:()=>{throw SPIN;},range_access:()=>{rangeAccess=true;},
+   emit,spin:()=>{throw SPIN;},range_access:sample=>{if(sample===currentSample)rangeAccess=true;},
    fail:(ptr,length)=>{throw Error(textAt(ptr,length));},
    field_length:(ptr,length)=>arrayLength(currentPayload,textAt(ptr,length)),
    field_kind:(ptr,length)=>({boolean:1,number:2,string:3}[typeof readField(currentPayload,textAt(ptr,length))]??0),
@@ -45,7 +45,7 @@ async function handle(data){
     const m=data.message,bytes=new Float32Array(m.ranges);ptr=app.exports.kn_alloc(bytes.byteLength);
     if(!ptr&&bytes.byteLength)throw Error('C++ sensor buffer allocation failed');
     new Float32Array(app.exports.memory.buffer,ptr,bytes.length).set(bytes);
-    app.exports.kn_receive_scan(data.subscription,ptr,bytes.length,m.angle_min,m.angle_max,m.angle_increment,m.range_min,m.range_max,m.header.stamp.sec,m.header.stamp.nanosec,m.scan_time);
+    app.exports.kn_receive_scan(data.subscription,ptr,bytes.length,m.angle_min,m.angle_max,m.angle_increment,m.range_min,m.range_max,m.header.stamp.sec,m.header.stamp.nanosec,m.scan_time,data.sample);
    }else app.exports.kn_receive_message(data.subscription);
    postMessage({kind:'message_processed',sample:data.sample,access:rangeAccess?['ranges']:[]});flush();
   }finally{if(ptr!==undefined)app.exports.kn_free(ptr);currentPayload=null;currentSample=null;postMessage({kind:'frame_done',subscription:data.subscription});}

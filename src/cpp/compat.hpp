@@ -18,7 +18,7 @@
 extern "C" {
 __attribute__((import_module("kinenest"),import_name("emit"))) void kn_emit(const char*,int);
 __attribute__((import_module("kinenest"),import_name("spin"))) void kn_spin();
-__attribute__((import_module("kinenest"),import_name("range_access"))) void kn_range_access();
+__attribute__((import_module("kinenest"),import_name("range_access"))) void kn_range_access(int);
 __attribute__((import_module("kinenest"),import_name("image_access"))) void kn_image_access(int,int);
 __attribute__((import_module("kinenest"),import_name("fail"))) void kn_fail(const char*,int);
 __attribute__((import_module("kinenest"),import_name("field_length"))) int kn_field_length(const char*,int);
@@ -46,25 +46,57 @@ inline std::string field_string(const std::string& path){
 // Learning hooks: the worker supplies the actual callback sample, not the student.
 inline void report_range(double value){emit("{\"kind\":\"course_report\",\"report\":\"range\",\"values\":["+number(value,"Range")+"]}");}
 inline void report_sectors(double front,double left,double right){emit("{\"kind\":\"course_report\",\"report\":\"sectors\",\"values\":["+number(front,"Front sector")+","+number(left,"Left sector")+","+number(right,"Right sector")+"]}");}
-struct Ranges:std::vector<float>{
- using std::vector<float>::vector;
- size_t size()const{kn_range_access();return std::vector<float>::size();}
- bool empty()const{kn_range_access();return std::vector<float>::empty();}
- float& operator[](size_t i){kn_range_access();return std::vector<float>::operator[](i);}
- const float& operator[](size_t i)const{kn_range_access();return std::vector<float>::operator[](i);}
- float& at(size_t i){kn_range_access();return std::vector<float>::at(i);}
- const float& at(size_t i)const{kn_range_access();return std::vector<float>::at(i);}
- iterator begin(){kn_range_access();return std::vector<float>::begin();}
- iterator end(){kn_range_access();return std::vector<float>::end();}
- const_iterator begin()const{kn_range_access();return std::vector<float>::begin();}
- const_iterator end()const{kn_range_access();return std::vector<float>::end();}
- const_iterator cbegin()const{kn_range_access();return std::vector<float>::cbegin();}
- const_iterator cend()const{kn_range_access();return std::vector<float>::cend();}
- float* data(){kn_range_access();return std::vector<float>::data();}
- const float* data()const{kn_range_access();return std::vector<float>::data();}
- float& front(){kn_range_access();return std::vector<float>::front();}
- float& back(){kn_range_access();return std::vector<float>::back();}
+// Vector-shaped sensor buffers retain sample provenance, including ordinary
+// std::vector copies. Composition prevents a derived-to-base conversion from
+// silently bypassing access tracking.
+template<class T,int Kind> class SampleVector {
+ using Base=std::vector<T>;
+ Base values_;
+ void accessed()const{if constexpr(Kind==1)kn_range_access(sample);else kn_image_access(sample,3);}
+public:
+ using value_type=T;using size_type=typename Base::size_type;
+ using iterator=typename Base::iterator;using const_iterator=typename Base::const_iterator;
+ using reverse_iterator=typename Base::reverse_iterator;using const_reverse_iterator=typename Base::const_reverse_iterator;
+ int sample=0;
+ SampleVector()=default;
+ explicit SampleVector(size_t count):values_(count){}
+ SampleVector(std::initializer_list<T> values):values_(values){}
+ SampleVector(const SampleVector& other):values_(other.values_),sample(other.sample){other.accessed();}
+ SampleVector(SampleVector&&)=default;
+ SampleVector& operator=(const SampleVector& other){if(this!=&other){other.accessed();values_=other.values_;sample=other.sample;}return *this;}
+ SampleVector& operator=(SampleVector&&)=default;
+ operator Base&(){accessed();return values_;}
+ operator const Base&()const{accessed();return values_;}
+ size_t size()const{accessed();return values_.size();}
+ bool empty()const{accessed();return values_.empty();}
+ T& operator[](size_t i){accessed();return values_[i];}
+ const T& operator[](size_t i)const{accessed();return values_[i];}
+ T& at(size_t i){accessed();return values_.at(i);}
+ const T& at(size_t i)const{accessed();return values_.at(i);}
+ iterator begin(){accessed();return values_.begin();}
+ iterator end(){accessed();return values_.end();}
+ const_iterator begin()const{accessed();return values_.begin();}
+ const_iterator end()const{accessed();return values_.end();}
+ const_iterator cbegin()const{accessed();return values_.cbegin();}
+ const_iterator cend()const{accessed();return values_.cend();}
+ reverse_iterator rbegin(){accessed();return values_.rbegin();}
+ reverse_iterator rend(){accessed();return values_.rend();}
+ const_reverse_iterator rbegin()const{accessed();return values_.rbegin();}
+ const_reverse_iterator rend()const{accessed();return values_.rend();}
+ const_reverse_iterator crbegin()const{accessed();return values_.crbegin();}
+ const_reverse_iterator crend()const{accessed();return values_.crend();}
+ T* data(){accessed();return values_.data();}
+ const T* data()const{accessed();return values_.data();}
+ T& front(){accessed();return values_.front();}
+ const T& front()const{accessed();return values_.front();}
+ T& back(){accessed();return values_.back();}
+ const T& back()const{accessed();return values_.back();}
+ template<class Iterator>void assign(Iterator first,Iterator last){values_.assign(first,last);}
+ void resize(size_t count){values_.resize(count);}
+ // Worker-only preparation avoids crediting pixel reads before the callback.
+ T* prepare(size_t count,int id){values_.resize(count);sample=id;return values_.data();}
 };
+using Ranges=SampleVector<float,1>;
 
 template<class T> struct ImageField {
  T value{};int frame=0,field=0;
@@ -73,29 +105,8 @@ template<class T> struct ImageField {
 };
 template<class T> inline T log_value(T value){return value;}
 template<class T> inline T log_value(const ImageField<T>& value){return static_cast<T>(value);}
-struct ImageBytes:std::vector<uint8_t>{
- int frame=0;
- using Base=std::vector<uint8_t>;using Base::vector;
- void accessed()const{kn_image_access(frame,3);}
- size_t size()const{accessed();return Base::size();}
- bool empty()const{accessed();return Base::empty();}
- uint8_t& operator[](size_t i){accessed();return Base::operator[](i);}
- const uint8_t& operator[](size_t i)const{accessed();return Base::operator[](i);}
- uint8_t& at(size_t i){accessed();return Base::at(i);}
- const uint8_t& at(size_t i)const{accessed();return Base::at(i);}
- iterator begin(){accessed();return Base::begin();}
- iterator end(){accessed();return Base::end();}
- const_iterator begin()const{accessed();return Base::begin();}
- const_iterator end()const{accessed();return Base::end();}
- const_iterator cbegin()const{accessed();return Base::cbegin();}
- const_iterator cend()const{accessed();return Base::cend();}
- uint8_t* data(){accessed();return Base::data();}
- const uint8_t* data()const{accessed();return Base::data();}
- uint8_t& front(){accessed();return Base::front();}
- const uint8_t& front()const{accessed();return Base::front();}
- uint8_t& back(){accessed();return Base::back();}
- const uint8_t& back()const{accessed();return Base::back();}
-};
+using ImageBytes=SampleVector<uint8_t,2>;
+
 inline void report_detection(bool visible){emit(std::string("{\"kind\":\"detection\",\"visible\":")+(visible?"true":"false")+",\"cx\":null}");}
 inline void report_detection(bool visible,double cx){emit(std::string("{\"kind\":\"detection\",\"visible\":")+(visible?"true":"false")+",\"cx\":"+number(cx,"Centroid")+"}");}
 inline void report_image_stats(std::array<int,3> shape,std::array<double,3> means){
@@ -397,8 +408,8 @@ inline void spin(Node::SharedPtr node){spinning.push_back(node);kn_spin();}
 #define RCLCPP_WARN(logger, ...) ::rclcpp::log(logger, __VA_ARGS__)
 #define RCLCPP_ERROR(logger, ...) ::rclcpp::log(logger, __VA_ARGS__)
 
-extern "C" __attribute__((export_name("kn_receive_scan"))) void kn_receive_scan(int id,const float* data,int count,float angle_min,float angle_max,float increment,float range_min,float range_max,int sec,unsigned int nanosec,float scan_time){
- auto callback=kinenest::scans.find(id);if(callback==kinenest::scans.end())return;auto msg=std::make_shared<sensor_msgs::msg::LaserScan>();msg->header.frame_id="laser_link";msg->header.stamp={sec,nanosec};msg->angle_min=angle_min;msg->angle_max=angle_max;msg->angle_increment=increment;msg->range_min=range_min;msg->range_max=range_max;msg->scan_time=scan_time;msg->ranges.assign(data,data+count);auto invoke=callback->second;invoke(msg);
+extern "C" __attribute__((export_name("kn_receive_scan"))) void kn_receive_scan(int id,const float* data,int count,float angle_min,float angle_max,float increment,float range_min,float range_max,int sec,unsigned int nanosec,float scan_time,int sample){
+ auto callback=kinenest::scans.find(id);if(callback==kinenest::scans.end())return;auto msg=std::make_shared<sensor_msgs::msg::LaserScan>();msg->header.frame_id="laser_link";msg->header.stamp={sec,nanosec};msg->angle_min=angle_min;msg->angle_max=angle_max;msg->angle_increment=increment;msg->range_min=range_min;msg->range_max=range_max;msg->scan_time=scan_time;msg->ranges.assign(data,data+count);msg->ranges.sample=sample;auto invoke=callback->second;invoke(msg);
 }
 extern "C" __attribute__((export_name("kn_receive_message"))) void kn_receive_message(int id){
  auto found=kinenest::subscriptions.find(id);if(found!=kinenest::subscriptions.end()){auto invoke=found->second;invoke();}
@@ -415,8 +426,8 @@ extern "C" __attribute__((export_name("kn_image_prepare"))) uint8_t* kn_image_pr
  msg->header.frame_id=kinenest::field_string("header.frame_id");
  msg->header.stamp.sec=kinenest::field_number("header.stamp.sec");
  msg->header.stamp.nanosec=kinenest::field_number("header.stamp.nanosec");
- msg->data.frame=frame;msg->data.resize(bytes);kinenest::incoming_image=msg;
- return static_cast<std::vector<uint8_t>&>(msg->data).data();
+ auto* data=msg->data.prepare(bytes,frame);kinenest::incoming_image=msg;
+ return data;
 }
 extern "C" __attribute__((export_name("kn_receive_image"))) void kn_receive_image(int id){
  auto msg=std::move(kinenest::incoming_image);auto found=kinenest::images.find(id);
