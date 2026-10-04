@@ -16,6 +16,7 @@ test('every public source has a synchronized first-paint shell and no-JS escape'
  for(const name of ['index.html','session-01.html','session-02.html','session-03.html','session-04.html','session-05.html','session-06.html','about.html','licences.html','real-ros.html']){
   const html=await readFile(new URL('../'+name,import.meta.url),'utf8');
   assert.equal(pageShell(html),html,name+': run scripts/sync-page-shell.mjs');
+  assert.ok(html.indexOf('<meta charset="utf-8">')<100,name+': declare encoding before the bootstrap');
   assert.ok(html.indexOf('<!-- kn:head -->')<html.indexOf('rel="stylesheet"'),name+': theme must precede CSS');
   assert.match(html,/<body[^>]*><!-- kn:cover -->/);
   assert.doesNotMatch(html.match(/<html[^>]*>/)[0],/data-kinenest-boot/,'Without JS the content must stay visible');

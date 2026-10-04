@@ -5,5 +5,6 @@ const cover="<div id=\"kn-boot-cover\" aria-hidden=\"true\"><img src=\"./public/
 export function pageShell(html){
  html=html.replace(/<!-- kn:head -->[\s\S]*?<!-- \/kn:head -->/g,'').replace(/<!-- kn:cover -->[\s\S]*?<!-- \/kn:cover -->/g,'');
  const head='<!-- kn:head --><script>('+bootstrap.toString()+')();</script><style>'+css+'</style><!-- /kn:head -->';
- return html.replace('<head>','<head>'+head).replace(/<body([^>]*)>/,'<body$1><!-- kn:cover -->'+cover+'<!-- /kn:cover -->');
+ html=html.replace(/<meta\s+charset=["']?utf-8["']?\s*\/?>(?:\r?\n)?/i,'');
+ return html.replace('<head>','<head><meta charset="utf-8">'+head).replace(/<body([^>]*)>/,'<body$1><!-- kn:cover -->'+cover+'<!-- /kn:cover -->');
 }
