@@ -116,11 +116,11 @@ try{
  try{
   await calm.navigate(base);for(let i=0;i<250;i++){if(await calm.evaluate('document.documentElement.dataset.kinenestBoot==="ready"'))break;await wait(40);}
   assert.equal(await calm.evaluate('matchMedia("(prefers-reduced-motion: reduce)").matches'),true);
-  await calm.evaluate('sessionStorage.removeItem("calm-dwell");const start=performance.now();addEventListener("pagehide",()=>sessionStorage.setItem("calm-dwell",String(performance.now()-start)),{once:true});document.querySelector(".start-course").click();true');
+  await calm.evaluate('(async()=>{const link=document.querySelector("link[data-transitions]");const m=await import(link.href.replace(/css$/,"js"));m.setupTransitions().dispose();const start=performance.now();m.installNavigationTransitions({navigate:url=>{sessionStorage.setItem("calm-dwell",String(performance.now()-start));location.assign(url);}});document.querySelector(".start-course").click();})()');
   let calmReady=false;
   for(let i=0;i<400;i++){try{if(await calm.evaluate('location.pathname.endsWith("session-01.html")&&document.documentElement.dataset.kinenestBoot==="ready"')){calmReady=true;break;}}catch{}await wait(30);}
   assert.ok(calmReady,'Reduced-motion destination did not become ready');
-  assert.ok(Number(await calm.evaluate('sessionStorage.getItem("calm-dwell")'))<450,'Reduced motion retained intentional dwell');
+  assert.ok(Number(await calm.evaluate('sessionStorage.getItem("calm-dwell")'))<150,'Reduced motion retained intentional dwell');
   assert.equal(await calm.evaluate('getComputedStyle(document.getElementById("kn-boot-cover")).display'),'none');
   console.log('PASS',browser,'real reduced-motion preference skips dwell and reveals ready content');
  }finally{await calm.close();}
