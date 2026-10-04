@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Real slow C++ camera callbacks</title><pre id="result">RUNNING</pre><img src="/hold" hidden alt=""><script type="module">
+const out=document.getElementById('result'),wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+const assert=(value,message)=>{if(!value)throw Error(message);};
+const html=await(await fetch('../session-03.html')).text();
+const path=new DOMParser().parseFromString(html,'text/html').querySelector('script[src$="session3-boot.js"]').getAttribute('src').replace('ui/session3-boot.js','');
+const {Runtime}=await import('../'+path+'runtime/graph.js'),{CppBridge}=await import('../'+path+'cpp/bridge.js'),{setParameter}=await import('../'+path+'runtime/course.js');
+const runtime=new Runtime();runtime.enableSession3();let output='',state='',metrics={},previousMs=0,previousFrames=0,sampling=false,callbackMs=[],memory=[],replaced=0,maxInFlight=0,maxPending=0,generation;
+const bridge=new CppBridge(runtime,{output:text=>output+=text+'\n',status:text=>state=text,metrics:value=>{
+ if(sampling&&value.imageFrames>previousFrames){callbackMs.push(value.imageCallbackMs-previousMs);memory.push(value.programMemoryBytes);}
+ previousMs=value.imageCallbackMs??0;previousFrames=value.imageFrames??0;metrics=value;
+}});
+const offer=bridge.mailbox.offer;bridge.mailbox.offer=function(key,deliver){
+ if(sampling&&this.inFlight.has(key)&&this.latest.has(key))replaced++;
+ const result=offer.call(this,key,deliver);if(sampling){maxInFlight=Math.max(maxInFlight,this.inFlight.size);maxPending=Math.max(maxPending,this.latest.size);}return result;
+};
+async function until(test,seconds=120){for(let i=0;i<seconds*50;i++){if(test())return;if(output.includes('C++:')||output.includes('C++ worker:'))throw Error(output);await wait(20);}throw Error('Timeout '+state+' '+output);}
+async function progress(text){out.textContent=text;await fetch('/progress',{method:'POST',body:text});}
+try{
+ bridge.run(await(await fetch('./cpp/camera-stress.cpp')).text());await until(()=>state.includes('callbacks ready'));
+ let iterations=500000,elapsed=0;const calibration=[];
+ for(let attempt=0;attempt<7;attempt++){
+  setParameter(runtime,'/camera_stress','work',iterations);
+  const count=metrics.imageFrames??0,total=metrics.imageCallbackMs??0;runtime.step(.125);
+  await until(()=>(metrics.imageFrames??0)>count&&bridge.mailbox.inFlight.size===0,5);
+  elapsed=metrics.imageCallbackMs-total;calibration.push({iterations,callbackMs:elapsed});
+  assert(elapsed<2000,'Calibration exceeded 2 seconds');
+  if(elapsed>=200&&elapsed<=700)break;
+  iterations=Math.max(1,Math.min(500000000,Math.round(iterations*Math.min(8,320/Math.max(.1,elapsed)))));
+ }
+ assert(elapsed>=200&&elapsed<=700,'Could not calibrate genuine slow callback: '+JSON.stringify(calibration));
+ await progress('CALIBRATED actual WASM loop '+JSON.stringify(calibration));
+ const firstFrame=runtime.frameId,firstProcessed=metrics.imageFrames;const started=performance.now();sampling=true;
+ generation=setInterval(()=>runtime.step(.125),125);await wait(6000);clearInterval(generation);generation=null;
+ const latest=runtime.frameId,generated=latest-firstFrame,elapsedGeneration=performance.now()-started;
+ await until(()=>bridge.mailbox.inFlight.size===0&&bridge.mailbox.latest.size===0,5);sampling=false;
+ const processed=metrics.imageFrames-firstProcessed;
+ assert(generated>=35,'Main thread did not sustain camera cadence');
+ assert(bridge.processed.has(latest),'Newest camera frame did not drain');
+ assert(maxInFlight===1&&maxPending===1,'Queue exceeded one active plus one latest');
+ assert(replaced>0&&processed<generated,'Slow callback did not exercise latest-frame replacement');
+ assert(generated-processed===replaced,'Frame accounting mismatch');
+ const sorted=[...callbackMs].sort((a,b)=>a-b),median=sorted[Math.floor(sorted.length/2)];
+ assert(median>125,'Callbacks were not actually slower than the sensor period');
+ assert(Math.max(...callbackMs)<2000,'Callback exceeded 2 seconds');
+ assert(memory.length>=5&&Math.max(...memory)===Math.min(...memory),'WASM linear memory did not remain stable');
+ assert(output.length<4096,'Unexpected output growth');
+ const result={kind:'sustained actual WASM callback work',sensorPeriodMs:125,generationMs:Math.round(elapsedGeneration),calibration,iterations,generated,processed,replaced,maxInFlight,maxPending,newestFrame:latest,newestDrained:true,medianCallbackMs:median,maxCallbackMs:Math.max(...callbackMs),wasmLinearMemoryBytes:memory[0],memorySamples:memory.length,note:'Real callback computation; no clock_time_get, fake worker delay, or synthetic frame burst. WASM linear memory is not total browser memory.'};
+ await progress('METRICS '+JSON.stringify(result));bridge.stop();assert(!runtime.nodes.has('/camera_stress'),'Stop left graph endpoint');runtime.reset();await wait(150);assert(!bridge.worker&&bridge.mailbox.inFlight.size===0&&bridge.mailbox.latest.size===0,'Stop/Reset queue cleanup');
+ out.textContent='PASS: sustained 8 Hz camera with actual slow C++ callbacks, bounded queue, newest drain, stable WASM memory and Stop/Reset';
+}catch(error){out.textContent='FAIL: '+error.message;}finally{clearInterval(generation);bridge.stop();}
+await fetch('/done',{method:'POST',body:out.textContent});
+</script></html>
