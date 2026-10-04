@@ -12,7 +12,7 @@ await rm(dest,{recursive:true,force:true});await mkdir(new URL(assetPath,dest),{
 // An explicit allowlist: no tests, reference solutions, docs, Git metadata or tooling.
 for(const name of ['src','public'])await cp(new URL(name,root),new URL(assetPath+name,dest),{recursive:true});
 for(const file of ['LICENSE','NOTICE','_redirects'])await cp(new URL(file,root),new URL(file,dest));
-for(const page of ['index.html','session-02.html','session-03.html','session-04.html','session-05.html','session-06.html','real-ros.html','about.html','licences.html']){const html=await readFile(new URL(page,root),'utf8');await writeFile(new URL(page,dest),brandPage(html,page==='index.html'?1:pageSession(page),{assetPath,page}).replaceAll('./src/','./'+assetPath+'src/').replaceAll('./public/','./'+assetPath+'public/'));}
+for(const page of ['index.html','session-01.html','session-02.html','session-03.html','session-04.html','session-05.html','session-06.html','real-ros.html','about.html','licences.html']){const html=await readFile(new URL(page,root),'utf8');await writeFile(new URL(page,dest),brandPage(html,pageSession(page),{assetPath,page}).replaceAll('./src/','./'+assetPath+'src/').replaceAll('./public/','./'+assetPath+'public/'));}
 let commit=null,dirty=null;
 try{commit=execFileSync('git',['rev-parse','HEAD'],{cwd:fileURLToPath(root),encoding:'utf8'}).trim();dirty=!!execFileSync('git',['status','--porcelain'],{cwd:fileURLToPath(root),encoding:'utf8'}).trim();}catch{}
 if(commit&&!/^[a-f0-9]{40}$/.test(commit))throw Error('Invalid build commit');
