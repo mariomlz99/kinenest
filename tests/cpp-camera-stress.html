@@ -16,7 +16,8 @@ const offer=bridge.mailbox.offer;bridge.mailbox.offer=function(key,deliver){
 async function until(test,seconds=120){for(let i=0;i<seconds*50;i++){if(test())return;if(output.includes('C++:')||output.includes('C++ worker:'))throw Error(output);await wait(20);}throw Error('Timeout '+state+' '+output);}
 async function progress(text){out.textContent=text;await fetch('/progress',{method:'POST',body:text});}
 try{
- bridge.run(await(await fetch('./cpp/camera-stress.cpp')).text());await until(()=>state.includes('callbacks ready'));
+ const source=await(await fetch('./cpp/camera-stress.cpp')).text();
+ bridge.run(source);await until(()=>state.includes('callbacks ready'));
  let iterations=500000,elapsed=0;const calibration=[];
  for(let attempt=0;attempt<7;attempt++){
   setParameter(runtime,'/camera_stress','work',iterations);
@@ -45,8 +46,45 @@ try{
  assert(memory.length>=5&&Math.max(...memory)===Math.min(...memory),'WASM linear memory did not remain stable');
  assert(output.length<4096,'Unexpected output growth');
  const result={kind:'sustained actual WASM callback work',sensorPeriodMs:125,generationMs:Math.round(elapsedGeneration),calibration,iterations,generated,processed,replaced,maxInFlight,maxPending,newestFrame:latest,newestDrained:true,medianCallbackMs:median,maxCallbackMs:Math.max(...callbackMs),wasmLinearMemoryBytes:memory[0],memorySamples:memory.length,note:'Real callback computation; no clock_time_get, fake worker delay, or synthetic frame burst. WASM linear memory is not total browser memory.'};
- await progress('METRICS '+JSON.stringify(result));bridge.stop();assert(!runtime.nodes.has('/camera_stress'),'Stop left graph endpoint');runtime.reset();await wait(150);assert(!bridge.worker&&bridge.mailbox.inFlight.size===0&&bridge.mailbox.latest.size===0,'Stop/Reset queue cleanup');
- out.textContent='PASS: sustained 8 Hz camera with actual slow C++ callbacks, bounded queue, newest drain, stable WASM memory and Stop/Reset';
+ await progress('METRICS '+JSON.stringify(result));
+ // The calibrated callback is real WASM computation. Stop before it completes,
+ // with another real camera frame waiting in the latest-sample mailbox.
+ const beforeFrames=metrics.imageFrames,beforeCallbacks=runtime.evidence.callbacks;
+ const beforeProcessed=bridge.processed.size,beforeReports=bridge.reports.size;
+ runtime.step(.125);const interruptedFrame=runtime.frameId;
+ await wait(100);
+ assert(metrics.imageFrames===beforeFrames&&runtime.evidence.callbacks===beforeCallbacks,'Slow callback completed before mid-callback Stop');
+ assert(bridge.worker&&bridge.mailbox.inFlight.size===1,'Expected actual callback in flight at Stop');
+ runtime.step(.125);const discardedFrame=runtime.frameId;
+ assert(bridge.mailbox.latest.size===1,'Expected latest real frame waiting at Stop');
+ const stoppedAt=performance.now();bridge.stop();
+ const stoppedOutput=output,stoppedState=state;
+ const clean=()=>{
+  assert(!bridge.worker&&bridge.nodes.size===0&&bridge.subscriptions.size===0&&bridge.jobs.size===0,'Stop left worker or runtime registrations');
+  assert(bridge.mailbox.inFlight.size===0&&bridge.mailbox.latest.size===0,'Stop left pending camera mailbox');
+  assert(!runtime.nodes.has('/camera_stress')&&!runtime.parameters.has('/camera_stress'),'Stop left node or parameters');
+  assert(!runtime.parameterListeners.has(bridge.parameterListener),'Stop left parameter update listener');
+  for(const topic of runtime.topics.values())assert(!topic.publishers.has('/camera_stress')&&!topic.subscribers.has('/camera_stress'),'Stop left graph endpoint');
+ };
+ clean();
+ // Keep producing real sensor samples after disposal: none may reach the old worker.
+ for(let i=0;i<10;i++){runtime.step(.125);await wait(125);clean();}
+ assert(metrics.imageFrames===beforeFrames&&runtime.evidence.callbacks===beforeCallbacks,'Stopped callback added evidence');
+ assert(bridge.processed.size===beforeProcessed&&bridge.reports.size===beforeReports,'Stopped callback changed report history');
+ assert(!bridge.processed.has(interruptedFrame)&&!bridge.processed.has(discardedFrame),'Stopped or queued frame was processed');
+ assert(output===stoppedOutput&&state===stoppedState,'Stopped worker produced stale output or status');
+ await progress('MID_CALLBACK_STOP '+JSON.stringify({interruptedFrame,discardedFrame,callbackIncompleteAtMs:100,observationMs:Math.round(performance.now()-stoppedAt),endpointsCleared:true,mailboxCleared:true,noLateEvidence:true}));
+ runtime.reset();clean();
+ assert(runtime.evidence.callbacks===0&&!runtime.evidence.dimensions&&!runtime.evidence.converted,'Reset retained camera exercise evidence');
+ bridge.run(source);
+ assert(bridge.processed.size===0&&bridge.reports.size===0,'Rerun retained previous frame evidence');
+ await until(()=>state.includes('callbacks ready'));
+ setParameter(runtime,'/camera_stress','work',500000);
+ const rerunFrames=metrics.imageFrames??0;runtime.step(.125);
+ await until(()=>(metrics.imageFrames??0)>rerunFrames&&bridge.mailbox.inFlight.size===0,5);
+ assert(runtime.evidence.callbacks===1&&runtime.evidence.converted,'Rerun did not process fresh image data');
+ bridge.stop();runtime.reset();clean();assert(runtime.evidence.callbacks===0,'Final Reset retained callback evidence');
+ out.textContent='PASS: sustained 8 Hz camera with actual slow C++ callbacks, bounded queue, newest drain, stable WASM memory, mid-callback Stop without stale evidence, Reset and real rerun';
 }catch(error){out.textContent='FAIL: '+error.message;}finally{clearInterval(generation);bridge.stop();}
 await fetch('/done',{method:'POST',body:out.textContent});
 </script></html>
