@@ -18,10 +18,10 @@ try{
   assert(d.querySelectorAll('#language option').length===7,'Language options');
  }
  assert($('pose').textContent!==initialPose,'Robot stopped moving');$('stop-python').click();
- for(const page of ['index.html','session-03.html','session-05.html','session-06.html','real-ros.html','about.html']){
+ for(const page of ['index.html','session-01.html','session-03.html','session-05.html','session-06.html','real-ros.html','about.html']){
   frame.src='../'+page;await until(()=>frame.contentDocument?.querySelector('#language')&&frame.contentWindow.location.pathname.endsWith(page));
   const doc=frame.contentDocument;
-  if(!['real-ros.html','about.html'].includes(page))await until(()=>doc.getElementById('mission-title').textContent!=='Loading lesson…'&&!doc.getElementById('check').disabled);
+  if(!['index.html','real-ros.html','about.html'].includes(page))await until(()=>doc.getElementById('mission-title').textContent!=='Loading lesson…'&&!doc.getElementById('check').disabled);
   for(const lang of ['en','nl','fr','es','de','pt','it']){const control=doc.getElementById('language');control.value=lang;control.dispatchEvent(new Event('change'));await wait(50);assert(doc.documentElement.lang===lang,'Page language');if(page==='about.html'&&lang!=='en')assert(!doc.querySelector('main>p').textContent.startsWith('KineNest helps'),'About untranslated');assert(!/ROS2Learn|KineCourse|Lab 01/.test(doc.body.textContent),'Legacy branding');}
  }
  out.textContent='PASS: seven languages, live Python/robot preservation, theme/layout, navigation and transition page';

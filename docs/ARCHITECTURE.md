@@ -65,3 +65,32 @@ ExecutionHost loads adapter constructors from a registry and owns cancellation d
 Every production build writes build-info.json with Git commit, build time, asset version and dirty-worktree status. About shows the deployed identity and currently loaded asset version. Source previews can report unavailable metadata. The production smoke command requires an expected commit and rejects an older deployment before exercising it.
 
 Parameter fidelity: the educational runtime validates scalar JavaScript types. It does not distinguish native ROS integer and double parameter types; numeric values share one number type. Native ROS parameter descriptors, ranges and type rules are outside this subset.
+
+## Static page readiness and navigation
+
+Every public HTML file contains the same generated first-paint shell from
+`src/ui/page-shell.js`. Run `npm run sync:shell` after changing that shell or
+the shared brand/navigation markup. The build applies the same idempotent
+generator, and unit tests detect stale source shells.
+
+A tiny synchronous head script reads the existing `ros2learn-theme` and
+`ros2learn-language` preferences before styles paint. The opaque, fixed boot
+cover exists in HTML; it does not depend on application modules arriving.
+Content remains hidden while its real dimensions can still be measured.
+
+Page entry calls `pageReady()` only after branding, saved layout, initial
+translation, lesson shell, controls and the first visual render are installed.
+The shared ready handler waits for the compact icons to decode and two
+animation frames, then reveals the page with a 160 ms fade. It never waits for
+Pyodide, NumPy or the C++ compiler. Those stay lazy.
+
+Internal navigation retains the five outgoing animations and approximately
+1000 ms dwell. The destination adds no artificial dwell. Reduced motion skips
+the outgoing delay and incoming animation while retaining first-paint coverage.
+History restoration clears stale covers. A failed initialization produces an
+actionable reload view; a 10-second watchdog handles modules that never arrive.
+Without JavaScript, the cover stays hidden and a noscript explanation remains.
+
+The welcome page lives at `/` and `index.html`; Session 1 lives at
+`session-01.html`. Session detection uses explicit session paths. Brand links
+return to the welcome page, and course navigation includes all six sessions.

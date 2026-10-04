@@ -63,3 +63,40 @@ Git-connected Workers Builds is independent of GitHub Actions: it does not autom
 Public branding is KineNest. The current site/source URLs remain the working GitHub URLs until the replacement is verified. Legacy storage keys retain student preferences; ros2learn and ros2learn_interfaces educational Python/message identifiers remain compatibility interfaces. Historical review evidence stays unchanged and excluded from dist. The private npm package name can change safely with the eventual repository-identity commit.
 
 No R2 migration, runtime-host migration, analytics, domain route, contact backend or new course feature is part of this configuration.
+
+## Boot-experience preview (4 October 2026)
+
+The apex domain is already attached. At the start of this pass, both
+`https://kinenest.com/` and the normal
+`https://kinenest.malizia-mario99.workers.dev/` served commit
+`63bb5ff8c2dfb3d234fe87bcc0144b400f9245ff`. The older sequence above records the
+initial launch; do not detach the working domain to repeat it.
+
+The new welcome/boot work must use an isolated branch Preview before merging.
+Publishing to the regular workers.dev address updates the same production
+Worker and would also change the apex.
+
+After local and GitHub checks pass, from branch `boot-experience`:
+
+~~~bash
+npm ci
+npm run build
+npx wrangler preview
+~~~
+
+Use the actual Preview URL returned by Cloudflare; verify its build-info SHA
+and assetVersion. The empty `previews` block enables branch previews; static
+assets and compatibility date remain top-level configuration, as specified in
+[Cloudflare's preview configuration](https://developers.cloudflare.com/workers/previews/configuration/).
+No application Worker or backend is needed.
+
+Run the deployed smoke, outgoing transitions and destination boot tests against
+that URL in Chrome and Firefox. Mario must then review landing → Session 1,
+Session 1 → 2 and Session 2 → 3 for visible flashes. Keep main unchanged until
+that explicit visual approval. PR #2's identity migration is on hold until this
+new experience is approved.
+
+The root now serves the welcome page; Session 1 is `/session-01.html`.
+Unknown paths must still return 404. The existing domain attachment does not
+prove the new build is ready, and neither responsive emulation nor Chromium
+screenshots establishes Safari/iOS support.

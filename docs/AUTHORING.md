@@ -96,3 +96,7 @@ Production excludes tests and reference programs. The public repository still ex
 ## Code variants
 
 Use programming.python and programming.cpp. Set supported only for a tested adapter/lesson pair; experimental: true keeps an implemented variant developer-gated unless ?experimentalCpp=1. Add visibility: public only after both browser acceptance suites pass; its Experimental label can remain. supported: false never exposes execution, even with the flag. Keep world, ID, mission and checks shared. Tests and reference programs belong under tests/, never public/. Compare uses current drafts. The compatibility reader still accepts old starterCode, but new lessons should use programming. See [CPP.md](CPP.md) for the implemented C++ subset.
+
+## Public page shell
+
+New public pages must use the shared brand/navigation and first-paint shell. Run `npm run sync:shell` after changing shared markup. Initialize preferences and page content, then call `pageReady()` from `src/ui/page-ready.js`; report startup failures with `pageFailed()`. Do not mark a lesson ready before initial translation and layout. Do not load Python or C++ merely to reveal a page. See ARCHITECTURE.md for the readiness contract.

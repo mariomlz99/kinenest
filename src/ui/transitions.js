@@ -8,14 +8,14 @@ export function createTransition({variant='sensor-pulse',loading=false,reducedMo
 }
 // Only course-page navigation receives the intentional one-second presentation.
 export function installNavigationTransitions({root=document,navigate=url=>location.assign(url),reducedMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches,dwell=1000,safety=5000,variant:forcedVariant}={}){
- let overlay,timer,recovery,busy=false;
- const clear=()=>{clearTimeout(timer);clearTimeout(recovery);overlay?.remove();overlay=null;busy=false;};
+ let overlay,timer,recovery,busy=false,wasInert=false;
+ const clear=()=>{clearTimeout(timer);clearTimeout(recovery);overlay?.remove();overlay=null;if(busy)document.body.inert=wasInert;busy=false;};
  const click=event=>{
   const link=event.target.closest?.('a[href]');
   if(!link||event.defaultPrevented||event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey||(link.target&&link.target!=='_self')||link.hasAttribute('download'))return;
   const url=new URL(link.href,location.href),base=new URL('./',location.href);
   if(url.origin!==location.origin||!url.pathname.startsWith(base.pathname)||url.hash||url.pathname===location.pathname||!(/\.html$/.test(url.pathname)||url.pathname.endsWith('/')))return;
-  event.preventDefault();if(busy)return;busy=true;
+  event.preventDefault();if(busy)return;wasInert=document.body.inert;busy=true;document.body.inert=true;
   let previous;try{previous=sessionStorage.getItem('kinenest-transition');}catch{}
   const variant=VARIANTS.includes(forcedVariant)?forcedVariant:chooseTransitionVariant(previous);try{sessionStorage.setItem('kinenest-transition',variant);}catch{}
   const calm=reducedMotion();

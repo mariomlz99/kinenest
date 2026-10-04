@@ -25,3 +25,7 @@ body[data-session] main{padding-top:16px}.intro{display:grid;grid-template-colum
   #python-code,#cpp-code,.code-pane textarea,.exercise-picker select,.tf-selectors select{font-size:16px}
   .code-languages button,.frame-controls label,.tf-panel>label,.secondary-panel>summary,.tf-panel summary{min-height:44px}
 }
+
+/* Long translated headings must not set the grid minimum on narrow screens. */
+.intro>h1{min-width:0;overflow-wrap:anywhere}
+@media(max-width:850px){.intro{grid-template-columns:minmax(0,1fr)}.exercise-picker{min-width:0}}

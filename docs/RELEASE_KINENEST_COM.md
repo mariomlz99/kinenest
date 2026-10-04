@@ -1,5 +1,107 @@
 # KineNest release hardening and domain handoff
 
+## Welcome and destination-boot pass — 4 October 2026
+
+This section supersedes the initial-attachment checklist below for the current
+presentation pass. Production is already attached; it must remain unchanged
+until the isolated preview receives Mario's visual approval.
+
+### Frozen starting state
+
+- Main / public starting commit: `63bb5ff8c2dfb3d234fe87bcc0144b400f9245ff`.
+- Cloudflare apex and regular workers.dev build: same commit,
+  builtAt `2026-10-03T23:31:04.711Z`, assetVersion `784328576e05`.
+- GitHub Pages fallback: same commit, builtAt `2026-10-03T23:18:54.361Z`.
+- Work is isolated on branch `boot-experience`; no production merge, repository
+  rename, domain change or release tag is part of the unapproved candidate.
+- Identity PR #2 remains on hold.
+
+Baseline npm ci, 49 unit tests, build, actual Workers routing, full course,
+real C++ and outgoing transitions passed in Chrome and Firefox. The first
+Chrome diagnostic run exposed a test timing race: endpoint cleanup was complete
+but the graph's next scheduled paint had not happened. Commit `4e7ec9c` waits
+for that bounded DOM update; it does not change runtime behavior or grading.
+
+### Proven cause and implementation
+
+Cold, throttled navigation on the deployed Worker painted the destination at
+about 441 ms before preferences or layout initialization. The saved light,
+Italian, stacked settings appeared around 1593 ms; the lesson was ready around
+1959 ms. The outgoing transition was working, but could not protect the new
+document. [Before/after evidence](review/boot-handoff/README.md).
+
+All ten public HTML pages now contain a generated, fixed, opaque cover and a
+tiny synchronous theme/language bootstrap. UTF-8 is declared before that
+script. The shared page-ready contract follows initial translation, layout,
+lesson and first visual setup, icon decode and two render frames. It does not
+load Pyodide or C++. Outgoing motion remains about 850 ms within a 1000 ms
+navigation dwell; the destination has no artificial dwell and fades in 160 ms.
+
+Direct entry, reload and history use the same contract. Reduced motion skips
+the intentional dwell and rotation. Initialization failures show a useful
+reload view; a 10-second watchdog handles missing modules. Without JavaScript,
+content and the noscript explanation remain visible.
+
+### Welcome, routing and brand
+
+- `/` and `/index.html`: concise welcome, Start Session 1, compact course links.
+- `/session-01.html`: preserved original Session 1 workstation.
+- Brand/home links return to the welcome page.
+- The tagline appears beneath KineNest in the global lockup, translated in all
+  seven UI languages and retained at phone widths.
+- The welcome page omits the irrelevant workstation-layout control. Small-phone
+  spacing keeps Start reachable without reducing text or touch target sizes.
+- Python and executable C++ scope are unchanged: C++ 2.1 and 2.4 only.
+- Root rewrite remains static; unknown paths remain real 404s.
+
+### Candidate validation status
+
+51 unit tests pass. The original expanded 360-case responsive matrix passed locally. CI then
+exposed a German Session 5 heading overflow with wider system fonts; it was
+reproduced with DejaVu Sans (342 px document at a 305 px client width), fixed
+with a shrinkable grid and wrapping heading, and added as case 361. The final
+361-case matrix passes Chrome and Firefox locally with no page overflow. Actual local Workers routing passes all ten
+pages, root rewrite, assets and real 404s. Visual captures cover welcome
+light/dark, small German/Italian layouts, Python/C++/Compare, camera, TF,
+debugging, About and footer. Full six-session Python, hardened checker alternatives/negative controls, real
+C++ 2.1/2.4 and all five outgoing transitions pass Chrome and Firefox.
+Destination readiness, failure/watchdog recovery and actual reduced-motion
+preferences also pass in both browsers.
+Root-domain smoke passed both browsers on exact candidate e5610be, including
+real Python, real C++ 2.1/2.4, ten footers and navigation. The live Cloudflare
+preview also passed those checks, all five outgoing variants, destination
+readiness/history/reduced motion, and all 25 Python exercises plus Session 1 CLI
+in Chrome. The subsequent heading-only fix is commit 83845a3; final CI and
+preview checks remain required for that revision.
+
+Live timing tests now measure the navigation request separately from pagehide.
+A remote Firefox response delay had been incorrectly counted as intentional
+reduced-motion dwell. Both browsers pass the corrected test.
+
+One intermediate local Chrome run was invalidated by a unit build test
+regenerating dist while the browser was loading it. The complete course was
+rerun against a frozen dist and passed; no readiness failure was ignored.
+The initial small-phone Start-button regression was corrected and the full
+responsive matrix rerun in both browsers.
+
+### Deployment gate and remaining work
+
+Cloudflare Git integration created the isolated branch preview automatically;
+local CLI authentication is unnecessary. [PR #3](https://github.com/mariomlz99/ros2learn/pull/3)
+remains unmerged. The [preview](https://boot-experience-kinenest.malizia-mario99.workers.dev/)
+was verified at e5610be3015ed006b7f3b8665eff6a8211469624, builtAt
+2026-10-04T00:30:13.769Z, assetVersion 2e1b5b1aeacc. Its immutable URL is
+https://2356df70-kinenest.malizia-mario99.workers.dev/.
+Production still served 63bb5ff at that check. Do not publish to the regular
+workers.dev hostname before approval: it also updates the apex.
+
+After the final heading-fix CI/preview checks, ask Mario to review landing → Session 1,
+Session 1 → 2 and Session 2 → 3. No manual approval has been inferred from the
+earlier approval of the old site. The new presentation is not yet production
+verified. Safari/iOS and physical mobile devices remain independently untested.
+
+---
+
 Date: 4 October 2026 (Europe/Brussels).
 
 **Status: application release candidate validated; kinenest.com release is not complete.** The maintainer is preparing the first Cloudflare deployment. No temporary Workers URL or custom-domain deployment has yet been verified.

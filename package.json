@@ -11,7 +11,9 @@
     "test:firefox": "node scripts/check-course.mjs firefox",
     "test:cpp": "node scripts/check-cpp.mjs",
     "test:deployed": "node scripts/check-deployed.mjs",
-    "test:transitions": "node scripts/check-transitions.mjs"
+    "test:transitions": "node scripts/check-transitions.mjs",
+    "test:boot": "node scripts/check-boot.mjs",
+    "sync:shell": "node scripts/sync-page-shell.mjs"
   },
   "engines": {
     "node": ">=22"

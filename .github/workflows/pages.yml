@@ -65,6 +65,10 @@ jobs:
         env:
           FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
         run: node scripts/check-transitions.mjs ${{ matrix.browser }} --output="$RUNNER_TEMP/transitions"
+      - name: Destination first paint, readiness and failure recovery
+        env:
+          FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
+        run: node scripts/check-boot.mjs ${{ matrix.browser }} --output="$RUNNER_TEMP/boot-handoff"
       - name: Root-domain production smoke test
         env:
           FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
@@ -73,7 +77,9 @@ jobs:
         if: always()
         with:
           name: transitions-${{ matrix.browser }}
-          path: ${{ runner.temp }}/transitions
+          path: |
+            ${{ runner.temp }}/transitions
+            ${{ runner.temp }}/boot-handoff
   deploy:
     # Preserve the working project site throughout domain migration.
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
