@@ -8,7 +8,7 @@ KineNest is a free, open-source teaching environment for robotics communication,
 
 ## Try online
 
-[Open KineNest](https://mariomlz99.github.io/ros2learn/). Start in Session 1; Python begins in Session 2. Chrome and Firefox are tested. Edge and Safari remain best-effort and have not been independently verified.
+[Open KineNest](https://mariomlz99.github.io/ros2learn/). The welcome page opens the course through **Start Session 1**. [Session 1](https://mariomlz99.github.io/ros2learn/session-01.html) has its own stable URL; Python begins in Session 2. Chrome and Firefox are tested. Edge and Safari remain best-effort and have not been independently verified.
 
 ## What students learn
 

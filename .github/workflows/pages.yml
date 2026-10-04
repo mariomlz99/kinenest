@@ -77,7 +77,9 @@ jobs:
         if: always()
         with:
           name: transitions-${{ matrix.browser }}
-          path: ${{ runner.temp }}/transitions
+          path: |
+            ${{ runner.temp }}/transitions
+            ${{ runner.temp }}/boot-handoff
   deploy:
     # Preserve the working project site throughout domain migration.
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
