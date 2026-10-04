@@ -1,12 +1,13 @@
 # C++ parity release candidate
 
-Status: implementation candidate; final validation and independent review in progress. Not merged or deployed to production.
+Status: all 25 coding exercises passed local and live-preview Chrome/Firefox acceptance; seven-role independent review complete. CI is tracked below. Awaiting maintainer review; not merged or deployed to production.
 
 ## Identity and isolation
 
 - Starting SHA: `96986c86223c575a1acb2f3525f5728bd5fddf6d` (PR #3, `boot-experience`).
 - Branch: `cpp-parity`, stacked from that open PR. C++ commits do not enter PR #3.
-- Local acceptance asset: `6ad7e489683f`, built from `e282d52f555a4b3521c390a3903cef4bbfb54879` with the Wave 9 changes present (`dirty: true`). The later commits record those same changes; final clean candidate identity will be recorded separately.
+- Local acceptance asset: `6ad7e489683f`, built from `e282d52f555a4b3521c390a3903cef4bbfb54879` with the Wave 9 changes present (`dirty: true`). The later commits record those same changes; the final clean candidate identity is recorded above.
+- Clean tested source candidate: 5c7d93254d18182f9ee9f095ae895f27c1773962; clean application asset: 71f28e8ff533. Final follow-up commits contain only review documentation/evidence and the live Firefox test-profile correction (633be43); no application changes after this freeze.
 - Production/domain/Worker routing settings are unchanged.
 - Baseline: [BASELINE.md](cpp-parity/BASELINE.md).
 
@@ -20,7 +21,7 @@ Status: implementation candidate; final validation and independent review in pro
 | 5 | 5.1–5.6 | Odometry, yaw, latest-planar TF, relative and safety controllers |
 | 6 | 6.1–6.3 | Topic/frame debugging and combined beacon docking |
 
-All 25 variants are enabled on this branch after their individual Chrome/Firefox wave gates. Session 1 remains language-neutral. Full-course release acceptance is a separate gate below.
+All 25 variants are enabled on this branch after their individual Chrome/Firefox wave gates. Session 1 remains language-neutral. Full-course local and actual-preview acceptance passed as detailed below.
 
 The interpreter, NumPy, Clang/LLD, generated WebAssembly and student algorithms are real. rclpy/rclcpp-shaped APIs, graph, CLI, messages, services, parameters, actions and TF are educational implementations; there is no DDS or native rclcpp. Both language adapters use the same physical world and behavioral checks.
 
@@ -56,19 +57,33 @@ Per-wave evidence is in `docs/cpp-parity/WAVE_1.md` through `WAVE_8.md`; full Py
 
 ## Performance and lifecycle
 
-Toolchain is pinned at 60,347,928 bytes, downloaded lazily on explicit C++ Run. Warm Cache Storage reuse does not mean one persistent compiler instance across Runs. Invalid cache entries are refetched; unavailable storage is optional. Python-only pages do not preload compiler assets. Final cold/warm/compile measurements will be recorded after acceptance.
+Toolchain is pinned at 60,347,928 bytes, downloaded lazily on explicit C++ Run. Warm Cache Storage reuse does not mean one persistent compiler instance across Runs. Invalid cache entries are refetched; unavailable storage is optional. Python-only pages do not preload compiler assets. On historical functional asset 6ad7e489683f, cold load was 1.836/3.562 s and warm load 0.121/0.485 s in Chrome/Firefox, with zero warm downloaded payload. Reference compile medians were 2.493/2.180 s; largest module 406,541 bytes; largest sampled compiler plus filesystem linear-memory capacity 96,862,208 bytes. Full 112-case suites took 639.742/711.067 s concurrently. These are workstation observations, not total process peaks or mobile benchmarks. [Retained JSON metrics](cpp-parity/results/performance-summary.json). Startup resource assertions and lazy-adapter source inspection support no compiler preload; these are not exhaustive worker-network traces.
 
 The actual 8 Hz camera stress on this candidate generated 48/47 frames in Chrome/Firefox, processed 20/20 and replaced 28/27, with one in-flight plus one newest pending frame. Median real WASM callback time was 318.1/319 ms. Sampled program linear memory remained 1,376,256 bytes; this is not total browser/process memory. Stop at 100 ms during an incomplete callback discarded the active and queued frames, and no late evidence appeared before a real Reset/recompile/rerun. See [CAMERA_STRESS.md](cpp-parity/CAMERA_STRESS.md).
 
-## Release gates still open
+## Clean candidate and actual preview
 
-- Freeze a clean candidate, finish visual captures and independent C++/Python/ROS/checker/educator/Compare/performance review.
-- Push only `cpp-parity`, run CI and verify the exact Cloudflare branch preview build.
-- Obtain maintainer teaching/visual approval. PR #3 remains open; rebase onto main and repeat required tests after its approved merge before opening the parity PR against main.
+Preview: https://cpp-parity-kinenest.malizia-mario99.workers.dev/
 
-Safari/iOS and physical-device behavior remain unverified. Rust, native package builds, Session 7 and production rmw_wasm remain deferred. Rollback is the unchanged production deployment and individually scoped wave commits.
+Build-info verified source 5c7d93254d18182f9ee9f095ae895f27c1773962, asset 71f28e8ff533, dirty false. Both Chrome and Firefox passed all 25 C++ references and all 25 Python references through the deployed UI, including Session 1, empty checks and Stop/Reset. Both passed actual-preview transitions and destination boot tests. All required public routes returned 200; unknown route returned 404. Full details and the resolved Firefox profile-harness issue: [LIVE_PREVIEW.md](cpp-parity/LIVE_PREVIEW.md).
 
-## Commits recorded so far
+Clean local candidate additionally passed 64 unit tests, both legacy C++ suites, Workers routing, both transition/boot suites and visual capture. The full Python suite included 361 responsive cases per browser with no reported page overflow. Screenshots cover the welcome page, explicit Session 1 route, Python/C++/Compare, sensors/TF, both About themes and transition handoffs: [visual evidence](cpp-parity/media/README.md).
+
+The outgoing overlay was already present; the inherited PR fixes destination first-paint/layout rearrangement by applying saved theme early and covering the static shell until branding, lesson, layout and initial translation declare readiness. Outgoing dwell is 1,000 ms (animation about 850 ms); incoming reveal is 160 ms with no artificial readiness delay. Reduced motion skips the outgoing dwell; history/direct entry/failure recovery passed. Delayed test fixtures make the first-paint cover observable; application initialization itself is not artificially delayed.
+
+CI run: https://github.com/mariomlz99/ros2learn/actions/runs/37200950076 — pending final result at report preparation. Test/build job passed; browser jobs were running. This is not a production deployment workflow invocation.
+
+## Independent review and remaining limitations
+
+Seven role reports and explicit trade-off decisions: [review synthesis](cpp-parity/review/SYNTHESIS.md). No established P0/P1. Nonblocking findings include a member-callback hint, Compare output/restore labels, legacy Python sensor-callback TF-report behavior, formative-checker limitations, graph endpoint lifetime and automatic timeout coverage for service/action-only callbacks. These are disclosed, not claimed fixed. Browser references and alternates do not prove every possible student program.
+
+Safari/iOS and physical-device behavior remain unverified. Rust, native package builds, Session 7 and production rmw_wasm remain deferred. Rollback remains production source 63bb5ff8c2dfb3d234fe87bcc0144b400f9245ff (asset 784328576e05); neither apex nor default Worker was updated. Wave commits remain individually scoped.
+
+## Maintainer gate
+
+PR #3 remains open. No parity PR against main has been opened and neither branch was merged. Please review the actual preview, especially 2.2, 3.3, 3.5, 4.2, 4.5, 5.3, 5.5 and 6.3, plus landing → Session 1 → 2 → 3. After explicit teaching/visual approval and PR #3 merge, rebase cpp-parity onto main and repeat required gates before opening/merging the parity PR. CI success alone is not merge authorization.
+
+## Implementation and validation commits
 
 ```text
 844db11 test: freeze C++ parity baseline and bridge design
@@ -89,4 +104,12 @@ e58b2dd fix: preserve sensor provenance across C++ buffer access
 a2cfa16 fix(cpp): recover toolchain downloads and remember first-run notice
 462ed13 docs: clarify native C++ transfer across coding sessions
 88d410f test: stop real C++ camera callbacks during execution
+09d4b0b test: cover C++ output bounds and compilation cancellation
+9f5d8e3 test: gate full C++ course and public UI in both browsers
+38c9b9e docs: describe tested Python and C++ course coverage
+d850c66 test: support full C++ course verification on live previews
+5c7d932 docs: record complete browser C++ candidate acceptance
+633be43 test: use workspace Firefox profile for live course validation
 ```
+
+The review/evidence commit containing this report follows these commits. The final branch SHA is reported with the handoff and preview build-info; a commit cannot embed its own SHA without changing it.

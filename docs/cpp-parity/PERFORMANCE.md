@@ -85,9 +85,11 @@ it did not create access evidence for a newer frame.
 
 ## Remaining measurements
 
-Broader parity will change module size, compilation time and API state. Repeat
-these measurements when services, parameters, odometry, TF and actions land.
-Record full 25-exercise duration only when those exercises are implemented.
+The historical Wave 2 measurements above are superseded for full-course scope by
+[WAVE_9_CPP.md](WAVE_9_CPP.md) and [the retained JSON results](results/performance-summary.json).
+Actual slow-callback, bounded-queue and mid-callback Stop measurements are in
+[CAMERA_STRESS.md](CAMERA_STRESS.md). Build identities and measurement limits
+remain explicit; these are not physical-phone benchmarks.
 
 Still unmeasured here: total process memory, long-duration retained-image growth,
 physical phone memory pressure, Safari, and end-to-end sensor scheduling latency.

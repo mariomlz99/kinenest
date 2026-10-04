@@ -42,7 +42,7 @@ npm run build
 npm run test:cpp -- chrome --built
 npm run test:cpp -- firefox --built
 npm run test:cpp-course -- chrome --built --wave=9
-npm run test:cpp-course -- firefox --built --wave=7
+npm run test:cpp-course -- firefox --built --wave=9
 ~~~
 
 The suite compiles hello-world, functional and class controllers, checks callbacks and obstacle avoidance, measures cold/warm loading, checks a compiler error, terminates an infinite loop and exercises Compare/Reset in the actual UI. Reference C++ programs live under tests/cpp and are excluded from production.
@@ -116,4 +116,8 @@ The first explicit C++ Run acknowledges the local download notice. Compiler asse
 
 ## Full-course candidate measurements, 4 October 2026
 
-Both browsers passed 112/112 cases on asset `6ad7e489683f`, including all 25 references and negatives. Cold/warm loads were 1.836/0.121 s in Chrome and 3.562/0.485 s in Firefox; reference compile medians were 2.493/2.180 s. The largest module was 406,541 bytes. Full suites took 639.742/711.067 s while running concurrently. See [WAVE_9_CPP.md](cpp-parity/WAVE_9_CPP.md) for precise metric scope, memory, camera observations and machine-readable reports. These results do not claim that the pending branch preview or production has been validated.
+Both browsers passed 112/112 cases on asset `6ad7e489683f`, including all 25 references and negatives. Cold/warm loads were 1.836/0.121 s in Chrome and 3.562/0.485 s in Firefox; reference compile medians were 2.493/2.180 s. The largest module was 406,541 bytes. Full suites took 639.742/711.067 s while running concurrently. See [WAVE_9_CPP.md](cpp-parity/WAVE_9_CPP.md) for precise metric scope, memory, camera observations and machine-readable reports. These measurements retain their historical asset identity. The later clean candidate and actual branch preview results are recorded separately in [LIVE_PREVIEW.md](cpp-parity/LIVE_PREVIEW.md); production remains unchanged.
+
+## Final review boundaries
+
+Despite its native-shaped name, create_wall_timer uses simulation time and accepts periods from 0.05 to 60 seconds. Publisher/service/action graph membership lasts until node teardown or Stop, even if an individual C++ handle is destroyed sooner; subscription teardown is more granular. Automatic callback timeout coverage currently applies to sensor/timer dispatch, while a runaway service/action-only callback requires manual Stop. Stop still terminates the isolated worker. These source-reviewed limitations are tracked in the [independent review synthesis](cpp-parity/review/SYNTHESIS.md).

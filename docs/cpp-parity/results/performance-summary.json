@@ -1,0 +1,132 @@
+{
+  "summaries": [
+    {
+      "browser": "chrome",
+      "buildInfo": {
+        "project": "KineNest",
+        "commit": "e282d52f555a4b3521c390a3903cef4bbfb54879",
+        "builtAt": "2026-10-04T11:47:37.003Z",
+        "assetVersion": "6ad7e489683f",
+        "dirty": true
+      },
+      "startedAt": "2026-10-04T11:49:10.803Z",
+      "finishedAt": "2026-10-04T11:59:50.545Z",
+      "summary": {
+        "wave": 9,
+        "focus": false,
+        "exercises": 25,
+        "availableExercises": 25,
+        "targetExercises": 25,
+        "cases": 112,
+        "passed": 112,
+        "fullParity": true,
+        "result": "passed"
+      },
+      "wallMs": 639742,
+      "caseMs": 626641,
+      "recordedMetrics": 103,
+      "cold": {
+        "exercise": "session-02-02-callbacks",
+        "kind": "reference",
+        "loadMs": 1836.2000000029802,
+        "downloadBytes": 60347928
+      },
+      "firstWarm": {
+        "exercise": "session-02-02-callbacks",
+        "kind": "negative",
+        "loadMs": 120.59999999403954,
+        "downloadBytes": 0,
+        "cacheBytes": 60347928
+      },
+      "allRecordedCompileMedianMs": 2508,
+      "referenceCompileMedianMs": 2493,
+      "referenceCompileAverageMs": 2661.731999999881,
+      "referenceLinkMedianMs": 31,
+      "largestModule": {
+        "exercise": "session-05-06-safety",
+        "kind": "reference",
+        "bytes": 406541
+      },
+      "maxCompilerLinearMemoryBytes": 96862208,
+      "maxProgramLinearMemoryBytes": 1638400,
+      "imageFrames": 705,
+      "imageBytes": 162432000,
+      "maxImageCallbackMs": 8
+    },
+    {
+      "browser": "firefox",
+      "buildInfo": {
+        "project": "KineNest",
+        "commit": "e282d52f555a4b3521c390a3903cef4bbfb54879",
+        "builtAt": "2026-10-04T11:47:37.003Z",
+        "assetVersion": "6ad7e489683f",
+        "dirty": true
+      },
+      "startedAt": "2026-10-04T11:49:10.808Z",
+      "finishedAt": "2026-10-04T12:01:01.875Z",
+      "summary": {
+        "wave": 9,
+        "focus": false,
+        "exercises": 25,
+        "availableExercises": 25,
+        "targetExercises": 25,
+        "cases": 112,
+        "passed": 112,
+        "fullParity": true,
+        "result": "passed"
+      },
+      "wallMs": 711067,
+      "caseMs": 698014,
+      "recordedMetrics": 103,
+      "cold": {
+        "exercise": "session-02-02-callbacks",
+        "kind": "reference",
+        "loadMs": 3562,
+        "downloadBytes": 60347928
+      },
+      "firstWarm": {
+        "exercise": "session-02-02-callbacks",
+        "kind": "negative",
+        "loadMs": 485,
+        "downloadBytes": 0,
+        "cacheBytes": 60347928
+      },
+      "allRecordedCompileMedianMs": 2207,
+      "referenceCompileMedianMs": 2180,
+      "referenceCompileAverageMs": 2373.48,
+      "referenceLinkMedianMs": 13,
+      "largestModule": {
+        "exercise": "session-05-06-safety",
+        "kind": "reference",
+        "bytes": 406541
+      },
+      "maxCompilerLinearMemoryBytes": 96862208,
+      "maxProgramLinearMemoryBytes": 1638400,
+      "imageFrames": 704,
+      "imageBytes": 162201600,
+      "maxImageCallbackMs": 34
+    }
+  ],
+  "camera": [
+    {
+      "browser": "chrome",
+      "frames": 58,
+      "bytes": 13363200,
+      "elapsedMs": 6835,
+      "payloadRateBytesPerSecond": 1921404.5354791514,
+      "meanCallbackMs": 2.193103448584162,
+      "maxCallbackMs": 4.9000000059604645,
+      "memory": 1376256
+    },
+    {
+      "browser": "firefox",
+      "frames": 58,
+      "bytes": 13363200,
+      "elapsedMs": 8435,
+      "payloadRateBytesPerSecond": 1556941.3159454651,
+      "meanCallbackMs": 6.810344827586207,
+      "maxCallbackMs": 14,
+      "memory": 1376256
+    }
+  ]
+}
