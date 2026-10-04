@@ -14,9 +14,9 @@ Identity and shared navigation live in src/ui/product.js. The static build and b
 
 ## Repository migration
 
-The current GitHub repository and Pages path remain mariomlz99/ros2learn and /ros2learn/. A separately approved move to kinenest is recommended before broad promotion. Update PRODUCT.source and PRODUCT.site, documentation URLs, package metadata and CI references when migrating; relative module/worker/lesson paths already support any project subpath. Verify Pages settings, redirects and existing links after the move. Do not rename the repository automatically.
+The canonical public site is https://kinenest.com/ and the release migration targets https://github.com/mariomlz99/kinenest. The maintainer explicitly authorized this rename after the domain was verified. PRODUCT.source and PRODUCT.site define current public links; relative module/worker/lesson paths support the root domain and project subpaths. Deployment and rename evidence is recorded in RELEASE_KINENEST_COM.md. Further naming or hosting changes need explicit direction.
 
-Technical legacy occurrences intentionally remain in ros2learn_interfaces, localStorage keys (to retain preferences), package metadata, test-profile prefixes, repository URLs and historical attribution. They are not public product branding. Original attribution in NOTICE is retained.
+Technical legacy occurrences intentionally remain in ros2learn_interfaces, localStorage keys (to retain preferences), the educational ros2learn Python helper, test-profile prefixes and historical review evidence/attribution. They are not public product branding. Original attribution in NOTICE is retained.
 
 Original code stays Apache-2.0. Dependencies retain their licences. The current release is free and open source; this document makes no permanent commercial-use restriction.
 

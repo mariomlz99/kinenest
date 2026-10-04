@@ -609,6 +609,7 @@ export const UI = {
     "Desafio de depuração",
     "Sfida di debugging"
   ],
+  "Home": ["Start","Accueil","Inicio","Startseite","Início","Home"],
   "Real environment": [
     "Echte omgeving",
     "Environnement réel",
