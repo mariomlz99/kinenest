@@ -108,6 +108,32 @@ namespace geometry_msgs {namespace msg {
 struct Vector3{double x=0,y=0,z=0;};
 struct Twist{using SharedPtr=std::shared_ptr<Twist>;using ConstSharedPtr=std::shared_ptr<const Twist>;Vector3 linear,angular;};
 }}
+
+namespace geometry_msgs {namespace msg {
+struct Quaternion{double x=0,y=0,z=0,w=1;};
+struct Point{double x=0,y=0,z=0;};
+struct Pose{Point position;Quaternion orientation;};
+struct PoseWithCovariance{Pose pose;};
+struct TwistWithCovariance{Twist twist;};
+}}
+namespace nav_msgs {namespace msg {
+struct Odometry{using SharedPtr=std::shared_ptr<Odometry>;using ConstSharedPtr=std::shared_ptr<const Odometry>;kinenest::Header header;std::string child_frame_id;geometry_msgs::msg::PoseWithCovariance pose;geometry_msgs::msg::TwistWithCovariance twist;};
+}}
+namespace tf2 {
+// Matches tf2 yaw semantics for finite, nonzero quaternions, including nonunit
+// inputs and the upstream near-pitch-singularity convention. The TF graph is planar.
+// Yaw formulas adapted from ros2/geometry2, tf2/include/tf2/impl/utils.hpp.
+// Copyright 2014 Open Source Robotics Foundation, Inc. Licensed Apache-2.0.
+// Modified for this educational header; see NOTICE and LICENSE.
+inline double getYaw(const geometry_msgs::msg::Quaternion& q){
+ const double norm2=q.x*q.x+q.y*q.y+q.z*q.z+q.w*q.w;
+ const double pitchSine=2*(q.w*q.y-q.x*q.z)/norm2;
+ if(pitchSine>=0.99999)return 2*std::atan2(q.y,q.x);
+ if(pitchSine<=-0.99999)return -2*std::atan2(q.y,q.x);
+ return std::atan2(2*(q.w*q.z+q.x*q.y),q.w*q.w+q.x*q.x-q.y*q.y-q.z*q.z);
+}
+}
+
 namespace std_msgs {namespace msg {
 struct String{using SharedPtr=std::shared_ptr<String>;using ConstSharedPtr=std::shared_ptr<const String>;std::string data;};
 }}
@@ -147,6 +173,24 @@ template<> struct MessageTraits<ros2learn_interfaces::msg::TargetInfo>{
   return std::string("{\"visible\":")+(msg.visible?"true":"false")+",\"position\":"+quote(msg.position)+",\"confidence\":"+number(msg.confidence,"TargetInfo.confidence")+"}";
  }
 };
+
+
+inline Header header_field(const std::string& path){
+ Header h;h.frame_id=field_string(path+".frame_id");h.stamp.sec=field_number(path+".stamp.sec");h.stamp.nanosec=field_number(path+".stamp.nanosec");return h;
+}
+inline geometry_msgs::msg::Vector3 vector_field(const std::string& path){return {field_number(path+".x"),field_number(path+".y"),field_number(path+".z")};}
+inline geometry_msgs::msg::Quaternion quaternion_field(const std::string& path){return {field_number(path+".x"),field_number(path+".y"),field_number(path+".z"),field_number(path+".w")};}
+template<> struct MessageTraits<nav_msgs::msg::Odometry>{
+ static const char* type(){return "nav_msgs/msg/Odometry";}
+ static nav_msgs::msg::Odometry decode(){
+  nav_msgs::msg::Odometry m;m.header=header_field("header");m.child_frame_id=field_string("child_frame_id");
+  auto p=vector_field("pose.pose.position");m.pose.pose.position={p.x,p.y,p.z};m.pose.pose.orientation=quaternion_field("pose.pose.orientation");
+  m.twist.twist.linear=vector_field("twist.twist.linear");m.twist.twist.angular=vector_field("twist.twist.angular");return m;
+ }
+};
+inline void report_pose(double x,double y,double yaw){
+ emit("{\"kind\":\"course_report\",\"report\":\"pose\",\"values\":["+number(x,"Pose.x")+","+number(y,"Pose.y")+","+number(yaw,"Pose.yaw")+"]}");
+}
 
 template<> struct MessageTraits<std_msgs::msg::String>{
  static const char* type(){return "std_msgs/msg/String";}

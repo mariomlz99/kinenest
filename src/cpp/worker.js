@@ -21,7 +21,7 @@ async function handle(data){
   tool=await loadToolchain({output,stage:text=>postMessage({kind:'stage',text})});
   const response=await fetch(new URL('./compat.hpp',import.meta.url),{signal:AbortSignal.timeout(15000)});if(!response.ok)throw Error('C++ compatibility header: HTTP '+response.status);const header=await response.text();
   const headers={'/include/kinenest.hpp':header};
-  for(const path of ['rclcpp/rclcpp.hpp','geometry_msgs/msg/twist.hpp','sensor_msgs/msg/laser_scan.hpp','sensor_msgs/msg/image.hpp','std_msgs/msg/string.hpp','kinenest/reports.hpp','std_srvs/srv/trigger.hpp','ros2learn_interfaces/msg/target_info.hpp'])headers['/include/'+path]='#include <kinenest.hpp>';
+  for(const path of ['rclcpp/rclcpp.hpp','geometry_msgs/msg/twist.hpp','sensor_msgs/msg/laser_scan.hpp','sensor_msgs/msg/image.hpp','std_msgs/msg/string.hpp','kinenest/reports.hpp','std_srvs/srv/trigger.hpp','ros2learn_interfaces/msg/target_info.hpp','nav_msgs/msg/odometry.hpp','geometry_msgs/msg/quaternion.hpp','tf2/utils.h','tf2/utils.hpp'])headers['/include/'+path]='#include <kinenest.hpp>';
   const module=await tool.compile(data.code,headers);
   const imports={kinenest:{
    image_access:(frame,field)=>{if(frame===currentFrame){const name={1:'width',2:'height',3:'data'}[field];if(name)imageAccess.add(name);}},

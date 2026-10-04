@@ -79,7 +79,7 @@ async function record(id, kind, action) {
 }
 
 try {
-  assert(['1', '2', '3', '4'].includes(wave), 'Only Waves 1–4 are implemented in this runner; full 25-exercise acceptance is not claimed.');
+  assert(['1', '2', '3', '4', '5'].includes(wave), 'Only Waves 1–5 are implemented in this runner; full 25-exercise acceptance is not claimed.');
   const html = await (await request('../session-02.html')).text();
   const path = new DOMParser().parseFromString(html, 'text/html')
     .querySelector('script[src$="session3-boot.js"]').getAttribute('src').replace('ui/session3-boot.js', '');
@@ -127,7 +127,10 @@ try {
   if (Number(wave) >= 4) {
     for (const id of ['session-04-01-configure', 'session-04-02-tuning', 'session-04-03-custom']) { ids.push(id); alternates.add(id); }
   }
-  const newest = id => Number(wave) === 4 ? id.startsWith('session-04-') : Number(wave) === 3 ? id === 'session-03-05-services' : Number(wave) === 2 ? id.startsWith('session-03-') : ['session-02-02-callbacks', 'session-02-03-sectors', 'session-06-01-topic-debug'].includes(id);
+  if (Number(wave) >= 5) {
+    for (const id of ['session-05-01-odometry', 'session-05-02-heading']) { ids.push(id); alternates.add(id); }
+  }
+  const newest = id => Number(wave) === 5 ? ['session-05-01-odometry', 'session-05-02-heading'].includes(id) : Number(wave) === 4 ? id.startsWith('session-04-') : Number(wave) === 3 ? id === 'session-03-05-services' : Number(wave) === 2 ? id.startsWith('session-03-') : ['session-02-02-callbacks', 'session-02-03-sectors', 'session-06-01-topic-debug'].includes(id);
   ids.sort((a, b) => Number(newest(b)) - Number(newest(a)));
   availableExercises = ids.length;
   const selectedIds = focus ? ids.filter(newest) : ids;
@@ -403,6 +406,82 @@ try {
       assert(!runtime.course.customCode, 'Invalid TargetInfo publication received evidence');
       result.compile = 'passed'; result.run = 'rejected-as-expected'; result.check = 'passed';
       result.diagnostic = output.slice(-3000);
+    });
+  }
+  if (includeApi(5)) {
+    await record('Odometry API', 'nested-fields-match-published-samples', async result => {
+      await setup('session-05-01-odometry');
+      runtime.robot.x = 1.25; runtime.robot.y = -0.75; runtime.robot.yaw = 0.6;
+      const samples = new Map();
+      const dispose = runtime.subscribe('/odom', '/odometry_oracle', message => {
+        samples.set(message.header.stamp.sec + ':' + message.header.stamp.nanosec, message);
+      });
+      try {
+        bridge.run('#include <rclcpp/rclcpp.hpp>\n#include <nav_msgs/msg/odometry.hpp>\nint main(){rclcpp::init();auto n=std::make_shared<rclcpp::Node>("odometry_probe");auto s=n->create_subscription<nav_msgs::msg::Odometry>("/odom",10,[](nav_msgs::msg::Odometry::SharedPtr m){const auto &p=m->pose.pose.position;const auto &q=m->pose.pose.orientation;const auto &v=m->twist.twist.linear;const auto &w=m->twist.twist.angular;std::printf("ODOM %d %u %s %s %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g\\n",m->header.stamp.sec,m->header.stamp.nanosec,m->header.frame_id.c_str(),m->child_frame_id.c_str(),p.x,p.y,p.z,q.x,q.y,q.z,q.w,v.x,v.y,v.z,w.x,w.y,w.z);std::fflush(stdout);});rclcpp::spin(n);}');
+        await until(() => state.includes('callbacks ready'));
+        runtime.robot.command(0.35, -0.4);
+        running = true;
+        await until(() => output.split('\n').filter(line => line.startsWith('ODOM ')).length >= 3, 10);
+        running = false;
+        const rows = output.split('\n').filter(line => line.startsWith('ODOM '));
+        for (const row of rows) {
+          const [, sec, nanosec, parent, child, ...values] = row.split(' ');
+          const message = samples.get(sec + ':' + nanosec);
+          assert(message, 'C++ odometry stamp did not match an actual published sample');
+          assert(parent === message.header.frame_id && child === message.child_frame_id, 'Odometry frame identity changed');
+          const p = message.pose.pose.position, q = message.pose.pose.orientation;
+          const v = message.twist.twist.linear, w = message.twist.twist.angular;
+          const expected = [p.x, p.y, p.z, q.x, q.y, q.z, q.w, v.x, v.y, v.z, w.x, w.y, w.z];
+          assert(values.length === expected.length && values.every((value, i) => Number.isFinite(Number(value)) && Math.abs(Number(value) - expected[i]) < 1e-10), 'C++ odometry nested fields disagreed with the shared published message');
+        }
+        result.compile = 'passed'; result.run = 'passed'; result.check = 'passed';
+        result.comparedSamples = rows.length;
+        result.observed = snapshot();
+      } finally { dispose(); }
+    });
+    await record('Odometry API', 'yaw-scaled-boundary-and-singular-quaternions', async result => {
+      const half = angle => [Math.sin(angle / 2), Math.cos(angle / 2)];
+      const [z, w] = half(0.7);
+      const roll = 0.4, pitch = -0.7, yaw = 1.2;
+      const cr = Math.cos(roll / 2), sr = Math.sin(roll / 2), cp = Math.cos(pitch / 2), sp = Math.sin(pitch / 2), cy = Math.cos(yaw / 2), sy = Math.sin(yaw / 2);
+      const cases = [
+        {name: 'unit-planar', q: [0, 0, z, w], yaw: 0.7},
+        {name: 'scaled-planar', q: [0, 0, 3 * z, 3 * w], yaw: 0.7},
+        {name: 'negative-scale', q: [0, 0, -2 * z, -2 * w], yaw: 0.7},
+        {name: 'positive-pi', q: [0, 0, 1, 0], yaw: Math.PI},
+        {name: 'negative-pi', q: [0, 0, -1, 0], yaw: -Math.PI},
+        {name: 'nonplanar', q: [sr * cp * cy - cr * sp * sy, cr * sp * cy + sr * cp * sy, cr * cp * sy - sr * sp * cy, cr * cp * cy + sr * sp * sy], yaw},
+        // Expected singular values follow the documented upstream tf2 convention.
+        {name: 'positive-pitch-singularity', q: [0.5, 0.5, -0.5, 0.5], yaw: Math.PI / 2},
+        {name: 'negative-pitch-singularity', q: [0.5, -0.5, 0.5, 0.5], yaw: Math.PI / 2},
+        {name: 'scaled-singularity', q: [-1, -1, 1, -1], yaw: Math.PI / 2},
+      ];
+      const expressions = cases.map((item, index) => 'std::printf("YAW ' + index + ' %.17g\\n",tf2::getYaw(geometry_msgs::msg::Quaternion{' + item.q.join(',') + '}));').join('\n');
+      bridge.run('#include <rclcpp/rclcpp.hpp>\n#include <tf2/utils.h>\nint main(){' + expressions + 'std::fflush(stdout);}');
+      await until(() => state.includes('callbacks ready'));
+      const rows = output.split('\n').filter(line => line.startsWith('YAW '));
+      assert(rows.length === cases.length, 'Missing quaternion outputs');
+      for (const row of rows) {
+        const [, index, raw] = row.split(' '), value = Number(raw), expected = cases[Number(index)];
+        const error = Math.atan2(Math.sin(value - expected.yaw), Math.cos(value - expected.yaw));
+        assert(Number.isFinite(value) && Math.abs(error) < 1e-10, 'Unexpected tf2 yaw for ' + expected.name + ': ' + raw);
+      }
+      result.compile = 'passed'; result.run = 'passed'; result.check = 'passed';
+      result.quaternionCases = cases.map(item => item.name);
+      result.angularToleranceRadians = 1e-10;
+    });
+    await record('Odometry API', 'compile-error-recovery', async result => {
+      bridge.run('#include <nav_msgs/msg/odometry.hpp>\nint main(){nav_msgs::msg::Odometry m;m.pose.pose.positon.x=1;}');
+      await until(() => !bridge.worker, 120, true);
+      assert(output.includes('controller.cpp:') && output.includes('positon'), 'Odometry diagnostic lost source/field');
+      result.diagnostic = output.slice(-3000);
+      output = '';
+      await setup('session-05-01-odometry');
+      bridge.run(await (await request('./cpp/course/session-05-01-odometry.cpp')).text());
+      await until(() => state.includes('callbacks ready'));
+      running = true;
+      await until(() => checks().every(check => check.passed), 10);
+      result.compile = 'error-then-recovered'; result.run = 'passed'; result.check = 'passed';
     });
   }
   if (includeApi(1)) {
