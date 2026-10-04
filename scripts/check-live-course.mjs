@@ -3,7 +3,8 @@ import {readFile} from 'node:fs/promises';
 import {launch,wait} from './browser-driver.mjs';
 const browser=process.argv[2]??'chrome';
 const arg=name=>process.argv.find(a=>a.startsWith('--'+name+'='))?.slice(name.length+3);
-const base=arg('url'),commit=arg('commit');
+const base=arg('url'),commit=arg('commit'),language=arg('language')??'python';
+assert.ok(['python','cpp'].includes(language),'Choose --language=python or cpp');
 assert.ok(base&&/^[a-f0-9]{40}$/.test(commit??''),'Pass --url and --commit');
 const info=await(await fetch(new URL('build-info.json',base),{cache:'no-store'})).json();
 assert.equal(info.commit,commit);assert.equal(info.dirty,false);
@@ -30,20 +31,20 @@ try{
    await until('document.body.dataset.lessonId==='+JSON.stringify(id)+'&&document.body.dataset.lessonState==="ready"&&!document.getElementById("run-python").disabled');
    await b.evaluate('document.getElementById("check").click();true');
    assert.ok(!await b.evaluate('document.getElementById("status").textContent.startsWith("Exercise complete")'),'Empty passed '+id);
-   const file=session===3?'solution-'+(index+1)+'.py':'course/'+id+'.py';
-   const code=await readFile(new URL('../tests/python/'+file,import.meta.url),'utf8');
-   await b.evaluate('document.getElementById("python-code").value='+JSON.stringify(code)+';document.getElementById("run-python").click();true');
-   await until('document.getElementById("python-state").textContent.includes("callbacks ready")');
+   const file=language==='cpp'?'cpp/course/'+id+'.cpp':'python/'+(session===3?'solution-'+(index+1)+'.py':'course/'+id+'.py');
+   const code=await readFile(new URL('../tests/'+file,import.meta.url),'utf8');
+   await b.evaluate('document.querySelector('+JSON.stringify('[data-code-language="'+language+'"]')+').click();document.getElementById("'+language+'-code").value='+JSON.stringify(code)+';document.getElementById("run-python").click();true');
+   await until('document.getElementById("python-state").textContent.includes("callbacks ready")',120);
    if(id.includes('parameter')||id.includes('tuning')){await wait(1000);await command('ros2 param set /student_controller speed 0.6');}
-   await until('(()=>{const done=()=>document.getElementById("status").textContent.startsWith("Exercise complete");if(done())return true;const c=document.getElementById("check");if(!c.disabled)c.click();return done()})()',45);
+   await until('(()=>{const done=()=>document.getElementById("status").textContent.startsWith("Exercise complete");if(done())return true;const c=document.getElementById("check");if(!c.disabled)c.click();return done()})()',90);
    await b.evaluate('document.getElementById("stop-python").click();true');
    await until('document.getElementById("python-state").textContent.includes("stopped")');
    await b.evaluate('document.getElementById("reset").click();true');
    await until('document.body.dataset.lessonState==="ready"&&!document.getElementById("check").disabled');
    await b.evaluate('document.getElementById("check").click();true');
    assert.ok(!await b.evaluate('document.getElementById("status").textContent.startsWith("Exercise complete")'),'Reset retained completion '+id);
-   console.log('PASS live',id,'reference, empty, Stop/Reset');count++;
+   console.log('PASS live',language,id,'reference, empty, Stop/Reset');count++;
   }
  }
- assert.equal(count,25);console.log('PASS live full course:',browser,commit,'Session 1 CLI + 25 Python exercises');
+ assert.equal(count,25);console.log('PASS live full course:',browser,commit,'Session 1 CLI + 25 '+language+' exercises');
 }finally{await b.close();}
