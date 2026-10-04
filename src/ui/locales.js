@@ -935,13 +935,13 @@ export const UI = {
     "Revê o erro do terminal.",
     "Controlla l'errore nel terminale."
   ],
-  "Run your Python detector before checking.": [
-    "Voer je Python-detector uit voor de controle.",
-    "Exécutez le détecteur Python avant la vérification.",
-    "Ejecuta el detector Python antes de comprobar.",
-    "Starte den Python-Detektor vor der Prüfung.",
-    "Executa o detetor Python antes de verificar.",
-    "Esegui il rilevatore Python prima della verifica."
+  "Run your detector before checking.": [
+    "Voer je detector uit voor de controle.",
+    "Exécutez le détecteur avant la vérification.",
+    "Ejecuta el detector antes de comprobar.",
+    "Starte den Detektor vor der Prüfung.",
+    "Executa o detetor antes de verificar.",
+    "Esegui il rilevatore prima della verifica."
   ],
   "Camera": [
     "Camera",

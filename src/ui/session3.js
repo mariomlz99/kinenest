@@ -62,7 +62,7 @@ window.addEventListener('languagechange',()=>{renderLesson();for(const option of
 function showResults(){const results=session===3?sessionChecks(runtime,lesson):courseChecks(runtime,lesson);$('feedback').replaceChildren();for(const result of results){const p=document.createElement('p');p.className=result.passed?'pass':'fail';p.textContent=(result.passed?'✓ ':'○ ')+result.label;$('feedback').append(p);}$('feedback').hidden=false;$('status').textContent=results.every(r=>r.passed)?'Exercise complete. Your code passed the behavioural checks.':'Not complete yet. Review the checks, output and hints.';}
 const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function testScenes(){
-  if(!execution.peek('python')?.worker){$('status').textContent='Run your Python detector before checking.';return;}
+  if(![...execution.instances.values()].some(adapter=>adapter.worker)){$('status').textContent='Run your detector before checking.';return;}
   testing=true;$('check').disabled=true;const token=++epoch;
   const e=runtime.evidence;e.detectionCases.clear();e.positionCases.clear();e.detectionCounts.clear();e.positionCounts.clear();
   // Random positions and order prevent constant answers from passing. Ground truth stays on the JS side.

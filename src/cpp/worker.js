@@ -3,6 +3,7 @@ import {numberField,stringField,associateReport} from './protocol.js';
 let app,tool,rangeAccess=false,chain=Promise.resolve(),stdout='',outputCount=0,outputSince=0;
 let currentPayload=null,currentSample=null,currentFrame=null,failed=false;
 const subscriptions=new Map(),decoder=new TextDecoder(),encoder=new TextEncoder();
+const imageAccess=new Set();let imageStarted;
 const SPIN={kind:'spin'};
 function textAt(ptr,length){return decoder.decode(new Uint8Array(app.exports.memory.buffer,ptr,length));}
 function output(text){stdout+=String(text).replace(/\x1b\[[0-9;]*m/g,'');while(stdout.includes('\n')||stdout.length>4000){const end=stdout.includes('\n')?stdout.indexOf('\n'):4000,line=stdout.slice(0,Math.min(end,4000));stdout=stdout.slice(end+1);const now=performance.now();if(now-outputSince>1000){outputSince=now;outputCount=0;}if(outputCount++<40)postMessage({kind:'stdout',text:line});}}
@@ -20,9 +21,10 @@ async function handle(data){
   tool=await loadToolchain({output,stage:text=>postMessage({kind:'stage',text})});
   const response=await fetch(new URL('./compat.hpp',import.meta.url),{signal:AbortSignal.timeout(15000)});if(!response.ok)throw Error('C++ compatibility header: HTTP '+response.status);const header=await response.text();
   const headers={'/include/kinenest.hpp':header};
-  for(const path of ['rclcpp/rclcpp.hpp','geometry_msgs/msg/twist.hpp','sensor_msgs/msg/laser_scan.hpp','std_msgs/msg/string.hpp','kinenest/reports.hpp'])headers['/include/'+path]='#include <kinenest.hpp>';
+  for(const path of ['rclcpp/rclcpp.hpp','geometry_msgs/msg/twist.hpp','sensor_msgs/msg/laser_scan.hpp','sensor_msgs/msg/image.hpp','std_msgs/msg/string.hpp','kinenest/reports.hpp'])headers['/include/'+path]='#include <kinenest.hpp>';
   const module=await tool.compile(data.code,headers);
   const imports={kinenest:{
+   image_access:(frame,field)=>{if(frame===currentFrame){const name={1:'width',2:'height',3:'data'}[field];if(name)imageAccess.add(name);}},
    emit,spin:()=>{throw SPIN;},range_access:()=>{rangeAccess=true;},
    fail:(ptr,length)=>{throw Error(textAt(ptr,length));},
    field_number:(ptr,length)=>numberField(currentPayload,textAt(ptr,length)),
@@ -44,6 +46,27 @@ async function handle(data){
    }else app.exports.kn_receive_message(data.subscription);
    postMessage({kind:'message_processed',sample:data.sample,access:rangeAccess?['ranges']:[]});flush();
   }finally{if(ptr!==undefined)app.exports.kn_free(ptr);currentPayload=null;currentSample=null;postMessage({kind:'frame_done',subscription:data.subscription});}
+ }else if(data.kind==='image'){
+  if(!subscriptions.has(data.subscription)){postMessage({kind:'frame_done',subscription:data.subscription});return;}
+  const {meta,bytes,frame}=data;
+  if(!(bytes instanceof Uint8Array)||meta.encoding!=='rgb8'||!Number.isSafeInteger(meta.width)||!Number.isSafeInteger(meta.height)||!Number.isSafeInteger(meta.step)||meta.width<=0||meta.height<=0||meta.step<meta.width*3||bytes.byteLength!==meta.height*meta.step||bytes.byteLength>16*1024*1024)throw Error('Invalid rgb8 Image payload');
+  currentPayload=meta;currentFrame=frame;imageAccess.clear();
+  const began=performance.now();imageStarted??=began;
+  try{
+   const ptr=app.exports.kn_image_prepare(bytes.byteLength,frame);
+   if(!ptr)throw Error('C++ image buffer allocation failed');
+   new Uint8Array(app.exports.memory.buffer,ptr,bytes.byteLength).set(bytes);
+   app.exports.kn_receive_image(data.subscription);
+   postMessage({kind:'processed',frame,access:[...imageAccess]});
+   const elapsed=performance.now()-began;
+   tool.metrics.imageFrames=(tool.metrics.imageFrames??0)+1;
+   tool.metrics.imageBytes=(tool.metrics.imageBytes??0)+bytes.byteLength;
+   tool.metrics.imageCallbackMs=(tool.metrics.imageCallbackMs??0)+elapsed;
+   tool.metrics.imageMaxCallbackMs=Math.max(tool.metrics.imageMaxCallbackMs??0,elapsed);
+   tool.metrics.imageElapsedMs=performance.now()-imageStarted;
+   tool.metrics.programMemoryBytes=app.exports.memory.buffer.byteLength;
+   postMessage({kind:'metrics',metrics:tool.metrics});flush();
+  }finally{currentPayload=null;currentFrame=null;imageAccess.clear();postMessage({kind:'frame_done',subscription:data.subscription});}
  }else if(data.kind==='timer'){
   try{app.exports.kn_tick(data.id);postMessage({kind:'timer_processed'});flush();}finally{postMessage({kind:'frame_done',subscription:'timer-'+data.id});}
  }

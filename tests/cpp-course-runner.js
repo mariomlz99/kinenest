@@ -3,7 +3,7 @@ const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 const assert = (condition, message) => { if (!condition) throw new Error(message); };
 const wave = new URLSearchParams(location.search).get('wave') ?? '1';
 const results = [];
-let runtime, bridge, timer, lesson = null, output = '', state = '', metrics = null, running = false;
+let runtime, bridge, timer, lesson = null, output = '', state = '', metrics = null, running = false, freezeMotion = false;
 
 async function request(url) {
   const response = await fetch(url, {signal: AbortSignal.timeout(15000)});
@@ -34,6 +34,7 @@ function snapshot() {
 }
 async function cleaned() {
   running = false;
+  freezeMotion = false;
   bridge.stop();
   assert(!bridge.worker, 'Stop retained worker');
   assert(bridge.nodes.size === 0 && bridge.subscriptions.size === 0 && bridge.jobs.size === 0, 'Stop retained adapter endpoint');
@@ -74,7 +75,7 @@ async function record(id, kind, action) {
 }
 
 try {
-  assert(wave === '1', 'Only Wave 1 is implemented in this runner; full 25-exercise acceptance is not claimed.');
+  assert(['1', '2'].includes(wave), 'Only Waves 1–2 are implemented in this runner; full 25-exercise acceptance is not claimed.');
   const html = await (await request('../session-02.html')).text();
   const path = new DOMParser().parseFromString(html, 'text/html')
     .querySelector('script[src$="session3-boot.js"]').getAttribute('src').replace('ui/session3-boot.js', '');
@@ -94,13 +95,15 @@ try {
   });
   timer = setInterval(() => {
     if (!running) return;
+    if (freezeMotion) runtime.robot.command(0, 0);
     runtime.step(1 / 60);
-    if (lesson) observeCourse(runtime, lesson);
+    if (lesson && lesson.session !== 3) observeCourse(runtime, lesson);
   }, 1000 / 60);
   const checks = () => lesson.session === 3 ? sessionChecks(runtime, lesson) : courseChecks(runtime, lesson);
   async function setup(id) {
     await cleaned();
     lesson = await (await request('../' + publicPath + 'lessons/' + id + '.json')).json();
+    lesson.session ??= Number(/^session-(\d+)-/.exec(id)?.[1]);
     runtime.robot.x = lesson.startX ?? 0;
     runtime.robot.y = lesson.startY ?? 0;
     runtime.robot.yaw = lesson.startYaw ?? 0;
@@ -111,6 +114,10 @@ try {
   }
   const ids = ['session-02-01-subscriber', 'session-02-02-callbacks', 'session-02-03-sectors', 'session-02-04-avoidance', 'session-06-01-topic-debug'];
   const alternates = new Set(['session-02-02-callbacks', 'session-02-03-sectors', 'session-06-01-topic-debug']);
+  if (wave === '2') {
+    ids.push('session-03-01-camera-subscriber', 'session-03-02-image-data', 'session-03-03-color-detection', 'session-03-04-object-position', 'session-03-06-target-challenge');
+    for (const id of ids.filter(id => id.startsWith('session-03') && !id.includes('camera-subscriber'))) alternates.add(id);
+  }
   for (const id of ids) {
     for (const kind of ['reference', 'negative', ...(alternates.has(id) ? ['alternate'] : [])]) {
       await record(id, kind, async result => {
@@ -121,9 +128,21 @@ try {
         await until(() => state.includes('callbacks ready'));
         result.compile = 'passed'; result.run = 'passed';
         running = true;
+        const variedScenes = lesson.checks.some(check => ['detection', 'position'].includes(check.type));
+        if (variedScenes) {
+          freezeMotion = true;
+          const scenes = [{y: 2.4, color: [235, 45, 45]}, {y: 0.15, color: [220, 35, 50]}, {y: -2.7, color: [240, 65, 40]}, {y: 0, color: [40, 85, 230]}];
+          for (const [index, scene] of scenes.entries()) {
+            runtime.robot.reset(); runtime.testCase = 'test-' + index;
+            runtime.targets = [{x: 5, ...scene}, {x: 6, y: -2, color: [30, 160, 65]}];
+            const startTime = runtime.time;
+            await until(() => runtime.time - startTime >= 1.5, 6);
+          }
+          freezeMotion = false;
+        }
         if (kind === 'negative') {
           const seconds = lesson.checks.some(check => check.type === 'avoidance') ? 10 : 3;
-          await until(() => runtime.time >= seconds, seconds * 2 + 3);
+          if (!variedScenes) await until(() => runtime.time >= seconds, seconds * 2 + 3);
           assert(!checks().every(check => check.passed), 'Negative control passed ' + id);
           result.check = 'rejected-as-expected';
         } else {
@@ -132,8 +151,75 @@ try {
         }
         result.expectedEvidence = checks();
         result.observed = snapshot();
+        if (lesson.session === 3) {
+          assert(metrics?.imageFrames >= 3, 'Missing image callback metrics');
+          assert(metrics.imageBytes === metrics.imageFrames * 320 * 240 * 3, 'Image binary payload accounting mismatch');
+          result.imageTransport = {bytes: metrics.imageBytes, frames: metrics.imageFrames, bytesPerFrame: 230400};
+        }
       });
     }
+  }
+  if (wave === '2') {
+    await record('Image API', 'binary-latest-mailbox-burst', async result => {
+      await setup('session-03-01-camera-subscriber');
+      bridge.run(await (await request('./cpp/image-slow.cpp')).text());
+      await until(() => state.includes('callbacks ready'));
+      const memory = [], batches = [], started = performance.now();
+      for (let batch = 0; batch < 6; batch++) {
+        const before = runtime.evidence.callbacks;
+        // A same-turn burst cannot be acknowledged midway. All but the newest
+        // waiting frame must be replaced, irrespective of machine speed.
+        for (let frame = 0; frame < 20; frame++) runtime.cameraFrame();
+        const latest = runtime.frameId;
+        assert(bridge.mailbox.inFlight.size === 1 && bridge.mailbox.latest.size === 1, 'Image mailbox exceeded one active plus one pending frame');
+        await until(() => runtime.evidence.callbacks >= before + 2 && bridge.mailbox.inFlight.size === 0, 15);
+        assert(runtime.evidence.callbacks === before + 2, 'Stale image frames accumulated instead of being replaced');
+        assert(bridge.processed.has(latest), 'Newest waiting image was not processed');
+        assert(bridge.mailbox.latest.size === 0, 'Image mailbox failed to drain');
+        assert(Number.isFinite(metrics?.programMemoryBytes), 'Missing sampled WASM memory');
+        memory.push(metrics.programMemoryBytes);
+        batches.push({generated: 20, processed: runtime.evidence.callbacks - before, latestFrame: latest});
+      }
+      const durationMs = performance.now() - started;
+      assert(metrics.imageFrames === 12 && metrics.imageBytes === 12 * 230400, 'Binary frame accounting disagrees with completed callbacks');
+      assert(Number.isFinite(metrics.imageCallbackMs) && metrics.imageCallbackMs > 0 &&
+        Number.isFinite(metrics.imageMaxCallbackMs), 'Missing image callback timing');
+      const stableMemory = memory.slice(2);
+      assert(Math.max(...stableMemory) - Math.min(...stableMemory) <= 1024 * 1024, 'Repeated image dispatch grew WASM memory without bound');
+      result.compile = 'passed'; result.run = 'passed'; result.check = 'passed';
+      result.performance = {payloadBytes: metrics.imageBytes, durationMs: Math.round(durationMs),
+        payloadBytesPerSecond: Math.round(metrics.imageBytes / (durationMs / 1000)),
+        generatedFrames: 120, processedFrames: 12, replacedFrames: 108,
+        maxInFlight: 1, maxPending: 1, sampledWasmLinearMemoryBytes: memory,
+        imageCallbackMs: metrics.imageCallbackMs, imageMaxCallbackMs: metrics.imageMaxCallbackMs, imageElapsedMs: metrics.imageElapsedMs,
+        note: 'Synthetic burst stress; WASM linear memory is not total browser memory.', batches};
+    });
+    await record('Image API', 'retained-image-does-not-credit-current-frame', async result => {
+      await setup('session-03-03-color-detection');
+      bridge.run(await (await request('./cpp/image-retained.cpp')).text());
+      await until(() => state.includes('callbacks ready'));
+      running = true;
+      await until(() => runtime.evidence.callbacks >= 5, 10);
+      assert(output.includes('retained byte '), 'Retained Image shared_ptr was not usable');
+      assert(!runtime.evidence.converted, 'Old Image.data access was credited to a new frame');
+      assert([...bridge.processed.values()].every(access => !access.has('data')), 'Current frame acquired stale pixel-access evidence');
+      assert(runtime.evidence.detectionCases.size === 0, 'Retained image report bypassed physical scene checking');
+      result.compile = 'passed'; result.run = 'passed'; result.check = 'rejected-as-expected';
+      result.observed = snapshot();
+    });
+    await record('Image API', 'compile-error-recovery', async result => {
+      bridge.run('#include <sensor_msgs/msg/image.hpp>\nint main(){sensor_msgs::msg::Image image;image.widht=10;}');
+      await until(() => !bridge.worker, 120, true);
+      assert(output.includes('controller.cpp:') && output.includes('widht'), 'Image compiler diagnostic lost filename/field');
+      result.diagnostic = output.slice(-3000);
+      output = '';
+      await setup('session-03-01-camera-subscriber');
+      bridge.run(await (await request('./cpp/course/session-03-01-camera-subscriber.cpp')).text());
+      await until(() => state.includes('callbacks ready'));
+      running = true;
+      await until(() => checks().every(check => check.passed), 10);
+      result.compile = 'error-then-recovered'; result.run = 'passed'; result.check = 'passed';
+    });
   }
   await record('String API', 'utf8-quotes-newline-infinity-roundtrip', async result => {
     const expected = 'quote "\nUTF-8 caffè Infinity';
@@ -181,10 +267,10 @@ try {
     assert(!bridge.worker, 'Stop during loading recreated worker');
     result.compile = 'passed'; result.run = 'terminated'; result.check = 'passed';
   });
-  await progress('CPP_COURSE_SUMMARY', {wave: 1, exercises: ids.length, targetExercises: 25,
+  await progress('CPP_COURSE_SUMMARY', {wave: Number(wave), exercises: ids.length, targetExercises: 25,
     cases: results.length, passed: results.filter(result => result.passed).length,
     fullParity: false, result: 'passed'});
-  out.textContent = 'PASS: C++ Wave 1 — 5/25 exercise references, negatives, alternates and lifecycle diagnostics';
+  out.textContent = 'PASS: C++ Wave ' + wave + ' — ' + ids.length + '/25 exercise references, negatives, alternates and lifecycle diagnostics';
 } catch (error) {
   out.textContent = 'FAIL: C++ course Wave ' + wave + ': ' + error.message;
   await progress('CPP_COURSE_SUMMARY', {wave: Number(wave), cases: results.length,

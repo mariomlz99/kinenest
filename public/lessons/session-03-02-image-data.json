@@ -126,8 +126,110 @@
       "starterCode": "import rclpy\nimport numpy as np\nfrom rclpy.node import Node\nfrom sensor_msgs.msg import Image\nfrom cv_bridge import CvBridge\nfrom ros2learn import report_detection, report_image_stats\n\nclass CameraReader(Node):\n    def __init__(self):\n        super().__init__('camera_reader')\n        self.bridge = CvBridge()\n        self.subscription = self.create_subscription(\n            Image, '/camera/image_raw', self.image_callback, 10)\n\n    def image_callback(self, msg):\n        image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='rgb8')\n        # TODO: print image.shape and calculate the three channel means.\n        # Send your calculated values to the checker:\n        # report_image_stats(image.shape, channel_means)\n        pass\n\nrclpy.init()\nnode = CameraReader()\nrclpy.spin(node)\n"
     },
     "cpp": {
-      "supported": false,
-      "starterCode": ""
+      "supported": true,
+      "experimental": true,
+      "starterCode": "#include <rclcpp/rclcpp.hpp>\n#include <sensor_msgs/msg/image.hpp>\n#include <kinenest/reports.hpp>\n#include <array>\n#include <cstdint>\n\nclass CameraReader : public rclcpp::Node {\npublic:\n  CameraReader() : Node(\"camera_reader\") {\n    subscription_ = create_subscription<sensor_msgs::msg::Image>(\n      \"/camera/image_raw\", 10, [this](sensor_msgs::msg::Image::SharedPtr msg) { receive(msg); });\n  }\nprivate:\n  void receive(sensor_msgs::msg::Image::SharedPtr msg) {\n    const std::uint32_t width = msg->width;\n    const std::uint32_t height = msg->height;\n    const auto &pixels = msg->data;\n    // TODO: use y * msg->step + 3 * x + channel to read RGB bytes.\n    // TODO: calculate the mean of each channel.\n    // TODO: kinenest::report_image_stats({int(height), int(width), 3}, means);\n  }\n  rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr subscription_;\n};\nint main(int argc, char **argv) {\n  rclcpp::init(argc, argv);\n  rclcpp::spin(std::make_shared<CameraReader>());\n}\n",
+      "content": {
+        "title": "Image buffers and pixel indexing",
+        "description": "Read the contiguous RGB byte buffer. Use image dimensions and row stride to calculate the three channel means.",
+        "steps": [
+          "Read msg->data, width, height and step. Each rgb8 pixel contains red, green and blue bytes.",
+          "Loop over rows and columns. Accumulate each channel and divide by the pixel count.",
+          "Call kinenest::report_image_stats with {height, width, 3} and the three calculated means."
+        ],
+        "hints": [
+          "step is the number of bytes per row; width is the number of pixels.",
+          "The byte offset is y * msg->step + 3 * x + channel. Channel indices are 0, 1 and 2.",
+          "Store sums in std::array<double, 3>; divide by double(width) * height before reporting."
+        ],
+        "translations": {
+          "nl": {
+            "title": "Beeldbuffers en pixelindexering",
+            "description": "Lees de aaneengesloten RGB-bytebuffer. Gebruik de afmetingen en rijlengte om de drie kanaalgemiddelden te berekenen.",
+            "steps": [
+              "Lees msg->data, width, height en step. Elke rgb8-pixel bevat bytes voor rood, groen en blauw.",
+              "Loop over rijen en kolommen. Tel elk kanaal op en deel door het aantal pixels.",
+              "Roep kinenest::report_image_stats aan met {height, width, 3} en de drie berekende gemiddelden."
+            ],
+            "hints": [
+              "step is het aantal bytes per rij; width is het aantal pixels.",
+              "De bytepositie is y * msg->step + 3 * x + channel. Kanaalindices zijn 0, 1 en 2.",
+              "Bewaar sommen in std::array<double, 3>; deel vóór het rapporteren door double(width) * height."
+            ]
+          },
+          "fr": {
+            "title": "Buffers d’image et indexation des pixels",
+            "description": "Lisez le buffer contigu d’octets RGB. Utilisez les dimensions et le pas de ligne pour calculer les trois moyennes des canaux.",
+            "steps": [
+              "Lisez msg->data, width, height et step. Chaque pixel rgb8 contient des octets rouge, vert et bleu.",
+              "Parcourez les lignes et colonnes. Additionnez chaque canal puis divisez par le nombre de pixels.",
+              "Appelez kinenest::report_image_stats avec {height, width, 3} et les trois moyennes calculées."
+            ],
+            "hints": [
+              "step est le nombre d’octets par ligne ; width est le nombre de pixels.",
+              "L’indice d’octet est y * msg->step + 3 * x + channel. Les indices des canaux sont 0, 1 et 2.",
+              "Stockez les sommes dans std::array<double, 3> ; divisez par double(width) * height avant de les rapporter."
+            ]
+          },
+          "es": {
+            "title": "Búferes de imagen e índices de píxeles",
+            "description": "Lee el búfer contiguo de bytes RGB. Usa las dimensiones y el tamaño de fila para calcular las tres medias de los canales.",
+            "steps": [
+              "Lee msg->data, width, height y step. Cada píxel rgb8 contiene bytes rojo, verde y azul.",
+              "Recorre filas y columnas. Suma cada canal y divide por el número de píxeles.",
+              "Llama a kinenest::report_image_stats con {height, width, 3} y las tres medias calculadas."
+            ],
+            "hints": [
+              "step es el número de bytes por fila; width es el número de píxeles.",
+              "El índice de byte es y * msg->step + 3 * x + channel. Los canales tienen índices 0, 1 y 2.",
+              "Guarda las sumas en std::array<double, 3>; divide por double(width) * height antes de informar."
+            ]
+          },
+          "de": {
+            "title": "Bildpuffer und Pixelindizes",
+            "description": "Lies den zusammenhängenden RGB-Bytepuffer. Berechne die drei Kanalmittelwerte anhand von Bildgröße und Zeilenlänge.",
+            "steps": [
+              "Lies msg->data, width, height und step. Jedes rgb8-Pixel enthält ein rotes, grünes und blaues Byte.",
+              "Durchlaufe Zeilen und Spalten. Summiere jeden Kanal und teile durch die Pixelanzahl.",
+              "Rufe kinenest::report_image_stats mit {height, width, 3} und den drei berechneten Mittelwerten auf."
+            ],
+            "hints": [
+              "step ist die Byteanzahl pro Zeile; width ist die Pixelanzahl.",
+              "Der Byteindex ist y * msg->step + 3 * x + channel. Die Kanalindizes sind 0, 1 und 2.",
+              "Speichere Summen in std::array<double, 3>; teile vor dem Melden durch double(width) * height."
+            ]
+          },
+          "pt": {
+            "title": "Buffers de imagem e índices de píxeis",
+            "description": "Lê o buffer contíguo de bytes RGB. Usa as dimensões e o tamanho da linha para calcular as três médias dos canais.",
+            "steps": [
+              "Lê msg->data, width, height e step. Cada píxel rgb8 contém bytes vermelho, verde e azul.",
+              "Percorre linhas e colunas. Soma cada canal e divide pelo número de píxeis.",
+              "Chama kinenest::report_image_stats com {height, width, 3} e as três médias calculadas."
+            ],
+            "hints": [
+              "step é o número de bytes por linha; width é o número de píxeis.",
+              "O índice do byte é y * msg->step + 3 * x + channel. Os índices dos canais são 0, 1 e 2.",
+              "Guarda as somas em std::array<double, 3>; divide por double(width) * height antes de comunicar."
+            ]
+          },
+          "it": {
+            "title": "Buffer di immagini e indici dei pixel",
+            "description": "Leggi il buffer contiguo di byte RGB. Usa dimensioni e passo di riga per calcolare le medie dei tre canali.",
+            "steps": [
+              "Leggi msg->data, width, height e step. Ogni pixel rgb8 contiene i byte rosso, verde e blu.",
+              "Scorri righe e colonne. Somma ogni canale e dividi per il numero di pixel.",
+              "Chiama kinenest::report_image_stats con {height, width, 3} e le tre medie calcolate."
+            ],
+            "hints": [
+              "step è il numero di byte per riga; width è il numero di pixel.",
+              "L’indice del byte è y * msg->step + 3 * x + channel. Gli indici dei canali sono 0, 1 e 2.",
+              "Conserva le somme in std::array<double, 3>; dividi per double(width) * height prima di riportarle."
+            ]
+          }
+        }
+      },
+      "visibility": "public"
     }
   }
 }

@@ -126,8 +126,110 @@
       "starterCode": "import rclpy\nimport numpy as np\nfrom rclpy.node import Node\nfrom sensor_msgs.msg import Image\nfrom cv_bridge import CvBridge\nfrom ros2learn import report_detection, report_image_stats\n\nclass CameraReader(Node):\n    def __init__(self):\n        super().__init__('camera_reader')\n        self.bridge = CvBridge()\n        self.subscription = self.create_subscription(\n            Image, '/camera/image_raw', self.image_callback, 10)\n\n    def image_callback(self, msg):\n        image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='rgb8')\n        # TODO: find red pixels, then their mean horizontal position.\n        # report_detection(visible, cx) where cx is a pixel coordinate,\n        # or None if no target was found.\n        pass\n\nrclpy.init()\nnode = CameraReader()\nrclpy.spin(node)\n"
     },
     "cpp": {
-      "supported": false,
-      "starterCode": ""
+      "supported": true,
+      "experimental": true,
+      "starterCode": "#include <rclcpp/rclcpp.hpp>\n#include <sensor_msgs/msg/image.hpp>\n#include <kinenest/reports.hpp>\n#include <cstdint>\n\nclass CameraReader : public rclcpp::Node {\npublic:\n  CameraReader() : Node(\"camera_reader\") {\n    subscription_ = create_subscription<sensor_msgs::msg::Image>(\n      \"/camera/image_raw\", 10, [this](sensor_msgs::msg::Image::SharedPtr msg) { receive(msg); });\n  }\nprivate:\n  void receive(sensor_msgs::msg::Image::SharedPtr msg) {\n    const std::uint32_t width = msg->width;\n    const std::uint32_t height = msg->height;\n    const auto &pixels = msg->data;\n    // TODO: count red pixels and accumulate their x coordinates.\n    // TODO: report the computed horizontal centroid, or report_detection(false).\n    // TODO: print LEFT, CENTER or RIGHT using thirds of the image width.\n  }\n  rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr subscription_;\n};\nint main(int argc, char **argv) {\n  rclcpp::init(argc, argv);\n  rclcpp::spin(std::make_shared<CameraReader>());\n}\n",
+      "content": {
+        "title": "Left, center, or right?",
+        "description": "Find the horizontal centroid of red pixels. Print LEFT, CENTER or RIGHT and kinenest::report_detection(visible, cx).",
+        "steps": [
+          "Find the red pixels with a mask.",
+          "Calculate their horizontal centroid and print LEFT, CENTER or RIGHT.",
+          "Call kinenest::report_detection(visible, cx), then check on varied scenes."
+        ],
+        "hints": [
+          "Reuse your red-pixel threshold and count.",
+          "Accumulate each matching pixel’s x coordinate in a double. Divide by count only when a target is visible.",
+          "Call kinenest::report_detection(true, cx), or kinenest::report_detection(false) when absent. Compare cx with thirds of width."
+        ],
+        "translations": {
+          "nl": {
+            "title": "Links, midden of rechts?",
+            "description": "Bereken de horizontale positie van het rode object uit de geselecteerde pixels.",
+            "steps": [
+              "Vind de rode pixels met een masker.",
+              "Bereken hun horizontale zwaartepunt en print LEFT, CENTER of RIGHT.",
+              "Roep kinenest::report_detection(visible, cx) aan en test op verschillende scènes."
+            ],
+            "hints": [
+              "Hergebruik de drempels en telling voor rode pixels.",
+              "Tel de x-coördinaten van passende pixels op in een double. Deel alleen door count als het doel zichtbaar is.",
+              "Roep kinenest::report_detection(true, cx) aan, of kinenest::report_detection(false) bij afwezigheid. Vergelijk cx met derden van width."
+            ]
+          },
+          "fr": {
+            "title": "À gauche, au centre ou à droite ?",
+            "description": "Calculez la position horizontale de l’objet rouge à partir des pixels sélectionnés.",
+            "steps": [
+              "Trouvez les pixels rouges avec un masque.",
+              "Calculez leur centroïde horizontal et affichez LEFT, CENTER ou RIGHT.",
+              "Appelez kinenest::report_detection(visible, cx), puis testez sur plusieurs scènes."
+            ],
+            "hints": [
+              "Réutilisez les seuils et le comptage des pixels rouges.",
+              "Additionnez les coordonnées x des pixels retenus dans un double. Divisez par count uniquement si la cible est visible.",
+              "Appelez kinenest::report_detection(true, cx), ou kinenest::report_detection(false) sans cible. Comparez cx aux tiers de width."
+            ]
+          },
+          "es": {
+            "title": "¿Izquierda, centro o derecha?",
+            "description": "Calcula el centroide horizontal de los píxeles rojos. Muestra LEFT, CENTER o RIGHT y kinenest::report_detection(visible, cx).",
+            "steps": [
+              "Encuentra píxeles rojos mediante una máscara.",
+              "Calcula el centroide horizontal y muestra LEFT, CENTER o RIGHT.",
+              "Llama a kinenest::report_detection(visible, cx) y comprueba varias escenas."
+            ],
+            "hints": [
+              "Reutiliza los umbrales y el recuento de píxeles rojos.",
+              "Acumula las coordenadas x de los píxeles seleccionados en un double. Divide por count solo si el objetivo es visible.",
+              "Llama a kinenest::report_detection(true, cx), o kinenest::report_detection(false) si no hay objetivo. Compara cx con tercios de width."
+            ]
+          },
+          "de": {
+            "title": "Links, Mitte oder rechts?",
+            "description": "Berechne den horizontalen Schwerpunkt roter Pixel. Gib LEFT, CENTER oder RIGHT aus und melde kinenest::report_detection(visible, cx).",
+            "steps": [
+              "Finde rote Pixel mit einer Maske.",
+              "Berechne ihren horizontalen Schwerpunkt und gib LEFT, CENTER oder RIGHT aus.",
+              "Rufe kinenest::report_detection(visible, cx) auf und prüfe mehrere Szenen."
+            ],
+            "hints": [
+              "Verwende die Schwellwerte und Zählung für rote Pixel erneut.",
+              "Summiere die x-Koordinaten passender Pixel in einem double. Teile nur bei sichtbarem Ziel durch count.",
+              "Rufe kinenest::report_detection(true, cx) auf, sonst kinenest::report_detection(false). Vergleiche cx mit Dritteln von width."
+            ]
+          },
+          "pt": {
+            "title": "Esquerda, centro ou direita?",
+            "description": "Calcula o centroide horizontal dos píxeis vermelhos. Mostra LEFT, CENTER ou RIGHT e kinenest::report_detection(visible, cx).",
+            "steps": [
+              "Encontra píxeis vermelhos com uma máscara.",
+              "Calcula o centroide horizontal e mostra LEFT, CENTER ou RIGHT.",
+              "Chama kinenest::report_detection(visible, cx) e verifica várias cenas."
+            ],
+            "hints": [
+              "Reutiliza os limiares e a contagem de píxeis vermelhos.",
+              "Acumula as coordenadas x dos píxeis selecionados num double. Divide por count apenas se o alvo estiver visível.",
+              "Chama kinenest::report_detection(true, cx), ou kinenest::report_detection(false) sem alvo. Compara cx com terços de width."
+            ]
+          },
+          "it": {
+            "title": "Sinistra, centro o destra?",
+            "description": "Trova il centroide orizzontale dei pixel rossi. Stampa LEFT, CENTER o RIGHT e chiama kinenest::report_detection(visible, cx).",
+            "steps": [
+              "Trova i pixel rossi con una maschera.",
+              "Calcola il centroide orizzontale e stampa LEFT, CENTER o RIGHT.",
+              "Chiama kinenest::report_detection(visible, cx), poi verifica su scene diverse."
+            ],
+            "hints": [
+              "Riusa le soglie e il conteggio dei pixel rossi.",
+              "Somma le coordinate x dei pixel selezionati in un double. Dividi per count solo quando il target è visibile.",
+              "Chiama kinenest::report_detection(true, cx), oppure kinenest::report_detection(false) se assente. Confronta cx con i terzi di width."
+            ]
+          }
+        }
+      },
+      "visibility": "public"
     }
   }
 }
