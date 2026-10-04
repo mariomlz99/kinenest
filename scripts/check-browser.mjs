@@ -19,10 +19,13 @@ const server=http.createServer(async(req,res)=>{
 await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const suite=process.argv.find(a=>a.startsWith('--suite='))?.slice(8)||'session3';
 if(!/^[a-z0-9-]+$/.test(suite))throw Error('Invalid suite');
-const url='http://127.0.0.1:'+server.address().port+'/ros2learn/tests/'+suite+'.html';
+const query=process.argv.find(arg=>arg.startsWith('--query='))?.slice(8)??'';
+const suffix=query?'?'+new URLSearchParams(query).toString():'';
+const url='http://127.0.0.1:'+server.address().port+'/ros2learn/tests/'+suite+'.html'+suffix;
 const args=browser==='firefox'?['--headless','--no-remote','--profile',profile,url]:['--headless','--disable-gpu','--user-data-dir='+profile,'--remote-debugging-port=0',url];
 console.log('Testing '+browser+' at '+url);
 child=spawn(browser==='firefox'?(process.env.FIREFOX_BIN||'firefox'):'google-chrome',args,{stdio:['ignore','ignore','pipe']});
 let errors='';child.stderr.on('data',data=>{errors=(errors+data).slice(-2000);});
 child.on('error',error=>finish('FAIL: '+error.message));child.on('exit',()=>{if(!finished)finish('FAIL: Browser exited before test result. '+errors);});
-timeout=setTimeout(()=>finish('FAIL: Browser test exceeded 420 seconds. '+errors),420000);
+const timeoutSeconds=['cpp-course','cpp-parity-ui'].includes(suite)?1800:420;
+timeout=setTimeout(()=>finish('FAIL: Browser test exceeded '+timeoutSeconds+' seconds. '+errors),timeoutSeconds*1000);

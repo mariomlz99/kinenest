@@ -47,15 +47,18 @@ export class RuntimeAdapter {
       case 'timer_processed':r.course.timers++;break;
       case 'parameter_declare':declareParameter(r,data.node,data.name,data.value);break;
       case 'parameter_read':r.course.paramReads++;r.course.paramValues.add(data.value);break;
-      case 'action_client':r.actions.get(data.name).clients.add(data.node);break;
+      case 'action_client':{const action=r.actions.get(data.name);if(!action)throw new Error('Unknown action server: '+data.name);action.clients.add(data.node);break;}
       case 'action_goal':{
-        try{const id=startGoal(r,data.node,data.goal,(event,payload)=>this.worker?.postMessage({kind:'action_event',id:data.id,event,payload}));this.actionIds.set(data.id,id);this.worker.postMessage({kind:'action_event',id:data.id,event:'accepted',payload:{accepted:true}});}
-        catch(error){this.output('Goal rejected: '+error.message);this.worker.postMessage({kind:'action_event',id:data.id,event:'accepted',payload:{accepted:false}});}break;
+        const worker=this.worker;if(!worker)break;
+        try{const name=data.name??'/drive_distance',action=r.actions.get(name);if(!action?.clients.has(data.node))throw new Error('Register an action client for '+name+' on '+data.node+' before sending a goal');
+          const id=startGoal(r,data.node,data.goal,(event,payload)=>{if(this.worker!==worker)return;if(event==='result')this.actionIds.delete(data.id);worker.postMessage({kind:'action_event',id:data.id,event,payload});});
+          this.actionIds.set(data.id,id);worker.postMessage({kind:'action_event',id:data.id,event:'accepted',payload:{accepted:true}});
+        }catch(error){this.output('Goal rejected: '+error.message);if(this.worker===worker)worker.postMessage({kind:'action_event',id:data.id,event:'accepted',payload:{accepted:false}});}break;
       }
-      case 'action_cancel':{const cancelled=cancelGoal(r,this.actionIds.get(data.id));this.worker.postMessage({kind:'action_event',id:data.request,event:'cancel',payload:{goals_canceling:cancelled?[data.id]:[]}});break;}
+      case 'action_cancel':{const worker=this.worker;if(!worker)break;const cancelled=cancelGoal(r,this.actionIds.get(data.id));if(this.worker===worker)worker.postMessage({kind:'action_event',id:data.request,event:'cancel',payload:{goals_canceling:cancelled?[data.id]:[]}});break;}
       case 'action_observed':if(data.event==='feedback')r.course.feedback++;else if(data.status===4)r.course.results++;else if(data.status===5)r.course.cancelled++;break;
       case 'tf_lookup':r.course.tf++;break;
-      case 'message_processed':{const sample=r.samples.get(data.sample);if(sample){sample.processed=true;if(sample.topic==='/scan'){r.course.scan++;if(data.access?.includes('ranges'))r.course.scanAccess=(r.course.scanAccess??0)+1;}else if(sample.topic==='/odom')r.course.odom++;else if(sample.topic==='/chatter')r.course.messages++;this.assessCourse(sample);}break;}
+      case 'message_processed':{const sample=r.samples.get(data.sample);if(sample){sample.processed=true;sample.access=new Set(data.access??[]);if(sample.topic==='/scan'){r.course.scan++;if(data.access?.includes('ranges'))r.course.scanAccess=(r.course.scanAccess??0)+1;}else if(sample.topic==='/odom')r.course.odom++;else if(sample.topic==='/chatter')r.course.messages++;this.assessCourse(sample);}break;}
       case 'course_report':{const sample=r.samples.get(data.sample);if(sample){sample.report=data;this.assessCourse(sample);}else if(data.report==='relative'){const t=lookup(r,'base_link','target');if(data.values.length===2&&data.values.every(Number.isFinite)&&Math.hypot(data.values[0]-t.x,data.values[1]-t.y)<.05)r.course.relative=(r.course.relative??0)+1;}else if(data.report==='transform'){const t=lookup(r,'odom','laser_link');if(data.values.every(Number.isFinite)&&Math.hypot(data.values[0]-t.x,data.values[1]-t.y)<.05)r.course.transform++;}break;}
       case 'client':r.service(data.name).clients.add(data.node);e.client=true;break;
       case 'service_call':{
@@ -93,8 +96,8 @@ export class RuntimeAdapter {
   assessCourse(sample){
     if(!sample.processed||!sample.report)return;
     const {report,values}=sample.report,m=sample.message,c=this.runtime.course;
-    if(report==='range'&&sample.topic==='/scan'){const nearest=Math.min(...m.ranges.filter(Number.isFinite));if(Number.isFinite(nearest)&&Number.isFinite(values[0])&&Math.abs(nearest-values[0])<.05)c.range++;}
-    if(report==='sectors'&&sample.topic==='/scan'){const sector=center=>Math.min(...m.ranges.filter((v,i)=>Number.isFinite(v)&&Math.abs(Math.atan2(Math.sin(m.angle_min+i*m.angle_increment-center),Math.cos(m.angle_min+i*m.angle_increment-center)))<=Math.PI/12+1e-9));const truth=[sector(0),sector(Math.PI/2),sector(-Math.PI/2)];if(values.length===3&&values.every((v,i)=>Number.isFinite(v)&&Math.abs(v-truth[i])<.05))c.sectors=(c.sectors??0)+1;}
+    if(report==='range'&&sample.topic==='/scan'&&sample.access?.has('ranges')){const nearest=Math.min(...m.ranges.filter(Number.isFinite));if(Number.isFinite(nearest)&&Number.isFinite(values[0])&&Math.abs(nearest-values[0])<.05)c.range++;}
+    if(report==='sectors'&&sample.topic==='/scan'&&sample.access?.has('ranges')){const sector=center=>Math.min(...m.ranges.filter((v,i)=>Number.isFinite(v)&&Math.abs(Math.atan2(Math.sin(m.angle_min+i*m.angle_increment-center),Math.cos(m.angle_min+i*m.angle_increment-center)))<=Math.PI/12+1e-9));const truth=[sector(0),sector(Math.PI/2),sector(-Math.PI/2)];if(values.length===3&&values.every((v,i)=>Number.isFinite(v)&&Math.abs(v-truth[i])<.05))c.sectors=(c.sectors??0)+1;}
     if(report==='pose'&&sample.topic==='/odom'){const p=m.pose.pose.position,q=m.pose.pose.orientation,yaw=2*Math.atan2(q.z,q.w);if(values.length===3&&values.every(Number.isFinite)&&Math.hypot(values[0]-p.x,values[1]-p.y)<.03&&Math.abs(Math.atan2(Math.sin(values[2]-yaw),Math.cos(values[2]-yaw)))<.03)c.pose++;}
     delete sample.report;
   }

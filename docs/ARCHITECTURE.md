@@ -2,13 +2,13 @@
 
 ## Static delivery and UI
 
-Native JavaScript modules, CSS, Canvas/SVG and JSON. Seven static entry pages reuse the workstation UI for Sessions 2–6. GitHub Pages serves an allowlisted dist with content-versioned src/public directories. All module, lesson and worker URLs remain relative to those directories. Reference answers/tests are excluded.
+Native JavaScript modules, CSS, Canvas/SVG and JSON. Ten public static pages include the welcome page, Sessions 1–6 and reference pages. Sessions 2–6 reuse the workstation UI. Cloudflare Workers Static Assets and the GitHub Pages fallback serve an allowlisted dist with content-versioned src/public directories. All module, lesson and worker URLs remain relative to those directories. Reference answers/tests are excluded.
 
 The preferences module switches light/dark, split/stacked layout and EN/NL/FR/ES/DE/PT/IT. JSON carries translated lesson titles/descriptions/steps/hints. Shared UI translations are separate from code. Language changes do not reset the simulator or modify Python. Code drafts stay in memory per lesson; preferences alone use localStorage.
 
 ## Runtime and geometry
 
-Runtime owns the graph, Robot, simulation time, event listeners and evidence. CLI and Python call the same validated publication/service/parameter/action APIs. Sensor endpoints exist only when enabled. Dynamic message topics are typed and removed when no endpoints remain. Node lifetimes follow Python/terminal lifetimes.
+Runtime owns the graph, Robot, simulation time, event listeners and evidence. CLI, Python and C++ call the same validated publication/service/parameter/action APIs. Sensor endpoints exist only when enabled. Dynamic message topics are typed and removed when no endpoints remain. Node lifetimes follow program/terminal lifetimes.
 
 Fixed-step (maximum 1/60 s) exact constant-twist integration drives x/y/yaw. Valid axes are linear.x and angular.z. Commands have a two-second watchdog. Camera renders 320 × 240 RGB at 8 Hz. LaserScan uses 120 deterministic ray/AABB intersections at 5 Hz; laser_link is 0.2 m ahead of the robot. A 0.18 m circular footprint collision guard rejects intersecting translation and records a contact. There is no dynamics, friction or rigid-body engine. Odometry has valid quaternions and zero covariance in this ideal model.
 
@@ -22,11 +22,11 @@ spin yields to worker events; statements after spin do not resume. Node subclass
 
 /reset_robot (Trigger) cancels motion goals and resets pose while preserving subscriptions. Full lab Reset also clears graph/evidence and restores the lesson world; starter code is restored only by its explicit button.
 
-Scalar parameters are stored per node and sent to its worker when CLI updates occur. The node reads its current value in callbacks. /drive_distance_server implements a bounded single-active-goal DriveDistance server. Physical distance drives feedback/results; actual Twist commands appear on /cmd_vel. Collision aborts, cancellation stops, reset cancels. The worker receives asynchronous goal, feedback and result events. This is not a general executor/action-server framework.
+Scalar parameters are stored per node and sent to its worker when CLI updates occur. The node reads its current value in callbacks. /drive_distance_server implements a bounded single-active-goal DriveDistance server. Physical distance drives feedback/results; actual Twist commands appear on /cmd_vel. Collision aborts, cancellation stops, reset cancels. The worker receives asynchronous goal, feedback and result events. Python and C++ consume the same action events. Notification closures are pinned to their originating worker; terminal request IDs are removed before delivery. Completed records release notification/disposer closures, and only the newest 100 terminal goals remain for inspection. This is not a general executor/action-server framework.
 
 ## TF
 
-The published tree is world → odom → base_link, base_link → laser_link/camera_link, world → target. The Python Buffer composes/inverts received transforms. Only latest planar transforms are supported, all sent periodically on /tf. There is no TF history, interpolation or /tf_static durability simulation. The visual tree is drawn from the same published state.
+The published tree is world → odom → base_link, base_link → laser_link/camera_link, world → target. The Python Buffer and educational C++ tf2_ros::Buffer compose/invert received transforms. Only latest planar transforms are supported, all sent periodically on /tf. There is no TF history, interpolation or /tf_static durability simulation. The visual tree is drawn from the same published state.
 
 ## Lessons and checking
 
@@ -38,7 +38,7 @@ An explicit parser supports the documented ROS subset; it is not a shell or full
 
 ## Spatial transforms and disclosure
 
-The TF inspector, spatial axes and SVG hierarchy use src/ui/tf-model.js and the published edges from runtime/course.js. The shared lookup composes those edges, as Python Buffer does; there is no separate visual pose model. Spatial labels retain actual origins, including distinct camera/laser mounts and coincident world/odom frames. Sensor offsets rotate with base_link. Numeric data attributes support browser assertions without exporting application runtime globals.
+The TF inspector, spatial axes and SVG hierarchy use src/ui/tf-model.js and the published edges from runtime/course.js. The shared lookup composes those edges, as both language buffers do; there is no separate visual pose model. Spatial labels retain actual origins, including distinct camera/laser mounts and coincident world/odom frames. Sensor offsets rotate with base_link. Numeric data attributes support browser assertions without exporting application runtime globals.
 
 Session 5 defaults to world/base_link/target; exercise 5.3 selects base_link/laser_link. Source and target selectors follow lookup_transform(target_frame, source_frame) semantics. The dashed vector always connects base_link to the target. Panel disclosure follows session focus; it does not remove graph endpoints or CLI capabilities.
 
@@ -50,11 +50,11 @@ src/simulator/sensors.js is the shared mounting configuration: laser_link at (+0
 
 RuntimeAdapter owns graph endpoints, sensor mailboxes, parameters/actions, evidence and cleanup. PythonBridge supplies a Pyodide worker; the experimental C++ adapter supplies a compiled WebAssembly worker. Both use the same typed event protocol and runtime. Checkers count code publications and processed samples, independently of the execution language.
 
-Lessons now use programming.python/cpp with supported, starterCode and an optional experimental flag. World, task, ID and checks stay shared. DraftStore keeps separate code per exercise and language. Compare renders the actual editable drafts; switching views or UI language does not restart execution. Tested exercises 2.1 and 2.4 expose C++ publicly with an Experimental label. Future supported variants can remain gated by ?experimentalCpp=1; unsupported variants never expose execution. Unsupported exercises fall back to Python without deleting the C++ draft.
+Lessons now use programming.python/cpp with supported, starterCode and an optional experimental flag. World, task, ID and checks stay shared. DraftStore keeps separate code per exercise and language. Compare renders the actual editable drafts; switching views or UI language does not restart execution. Public availability is enabled per exercise only after its Chrome and Firefox acceptance passes; CPP.md records the current branch matrix. Future supported variants can remain gated by ?experimentalCpp=1; unsupported variants never expose execution. Unsupported exercises fall back to Python without deleting the C++ draft.
 
 ## Experimental C++ and navigation
 
-The C++ adapter compiles a single translation unit through a pinned WebAssembly Clang/LLD worker, then supplies explicit kinenest imports for endpoint events, publishing and callback dispatch. LaserScan arrays cross the shared latest-sample mailbox and are copied into module memory for each callback. The real compiler and C++ algorithms run locally. Toolchain assets are lazy and cached separately; see CPP.md for limits, measurements and provenance.
+The C++ adapter compiles a single translation unit through a pinned WebAssembly Clang/LLD worker, then supplies explicit kinenest imports for endpoint events, publishing and callback dispatch. LaserScan arrays cross the shared latest-sample mailbox and are copied into module memory for each callback. Image payloads use a transferred Uint8Array and one copy into a message-owned WASM vector; they are never serialized as JSON integer arrays. Small messages use deterministic typed fields with strict own-property traversal. Trigger requests use request IDs and asynchronous response dispatch; callbacks see an already-completed response object, not a blocking future. Parameter updates are pinned to the active worker and node; typed reads reject invalid narrowing. Odometry and TF decode the same nested published messages used by Python. TF carries latest planar edge snapshots, with no time history. The real compiler and C++ algorithms run locally. Toolchain assets are lazy and cached separately; see CPP.md for limits, measurements and provenance.
 
 Shared transitions use the compact supplied logo, native CSS and sessionStorage no-repeat selection. Eligible internal links prevent default navigation and show one 850 ms animation within a deliberate 1,000 ms outgoing dwell. Reduced motion navigates immediately. Duplicate clicks retain the first destination; pagehide/pageshow, navigation exceptions and a five-second safety deadline clear overlays. Destination pages do not add another dwell. A separate inline indicator follows actual runtime loading/compilation stages. Reduced motion disables rotational effects.
 
@@ -94,3 +94,9 @@ Without JavaScript, the cover stays hidden and a noscript explanation remains.
 The welcome page lives at `/` and `index.html`; Session 1 lives at
 `session-01.html`. Session detection uses explicit session paths. Brand links
 return to the welcome page, and course navigation includes all six sessions.
+
+## C++ sensor provenance and failure recovery
+
+Camera pixels cross the worker boundary as transferable binary data, followed by one copy into owned WASM storage. Laser and Image buffers expose vector-shaped access, including const/reverse iterators and explicit std::vector copies. The wrapper records the originating sample, so reading a retained old buffer cannot credit a newer callback. Ordinary C++ code and algorithms remain compiled; no source inspection determines evidence. Range/sector reports require actual ranges access in the same processed sample for both languages. These are formative checks, not a security boundary against deliberate use of internal bridge imports.
+
+Toolchain cache responses are size-checked before use. An incomplete cached asset is discarded and fetched again; cache lookup/write failures fall back to ordinary pinned downloads. Only complete assets enter the cache. Network failures identify the asset and suggest retrying while preserving the editor draft. The first-run download notice is acknowledged locally on explicit C++ Run; it does not promise permanent caching or trigger any preload.

@@ -27,7 +27,7 @@ async function json(name){const response=await fetch(new URL('../../public/lesso
 function reset(){
   epoch++;testing=false;execution.stop();$('stop-python').disabled=true;terminals.reset();runtime.reset();runtime.robot.x=lesson.startX??0;runtime.robot.y=lesson.startY??0;runtime.robot.yaw=lesson.startYaw??0;
   runtime.world=lesson.world??(session===2?structuredClone(TRAINING_WORLD):null);runtime.targets=lesson.targets;runtime.targetFrame=lesson.goal??[5,0];
-  hints=0;lastDetection=null;lastFrame=-1;last=0;accumulator=0;$('hints').replaceChildren();$('hint').textContent='Reveal next hint';$('hint').disabled=false;$('feedback').hidden=true;$('check').disabled=false;$('python-output').textContent='';$('detection').textContent='No student detection reported';$('status').textContent='Ready. Complete the TODOs and Run Python.';runtime.cameraFrame();tfView?.setLesson(lesson);draw();
+  hints=0;lastDetection=null;lastFrame=-1;last=0;accumulator=0;$('hints').replaceChildren();$('hint').textContent='Reveal next hint';$('hint').disabled=false;$('feedback').hidden=true;$('check').disabled=false;$('python-output').textContent='';$('detection').textContent='No student detection reported';$('status').textContent='Ready. Complete the TODOs and Run.';runtime.cameraFrame();tfView?.setLesson(lesson);draw();
 }
 async function selectLesson(id){
   const request=++selection;
@@ -39,8 +39,8 @@ async function selectLesson(id){
   $('status').textContent='Loading lesson…';
   try{
     const next=await json(id+'.json');if(request!==selection)return;lesson=next;reset();
-    renderLesson();
     workspace.load(lesson);
+    renderLesson();
     document.body.dataset.lessonId=id;
     document.body.dataset.lessonState='ready';
     for(const control of ['run-python','restore-code','reset','check','hint'])$(control).disabled=false;workspace.render();
@@ -52,7 +52,7 @@ async function selectLesson(id){
     if(request===selection)$('lesson-select').disabled=false;
   }
 }
-function localLesson(){return {...lesson,...lesson.translations?.[language()]};}
+function localLesson(){const base={...lesson,...lesson.translations?.[language()]};const content=workspace?.mode==='cpp'?lesson.programming?.cpp?.content:null;return content?{...base,...content,...content.translations?.[language()]}:base;}
 function renderLesson(){
   if(!lesson)return;const text=localLesson();$('hint').disabled=hints>=text.hints.length;$('lesson-number').textContent='EXERCISE '+lesson.number;$('mission-title').textContent=text.title;$('description').textContent=text.description;
   $('steps').replaceChildren();for(const step of text.steps){const li=document.createElement('li');li.textContent=step;$('steps').append(li);}
@@ -62,7 +62,7 @@ window.addEventListener('languagechange',()=>{renderLesson();for(const option of
 function showResults(){const results=session===3?sessionChecks(runtime,lesson):courseChecks(runtime,lesson);$('feedback').replaceChildren();for(const result of results){const p=document.createElement('p');p.className=result.passed?'pass':'fail';p.textContent=(result.passed?'✓ ':'○ ')+result.label;$('feedback').append(p);}$('feedback').hidden=false;$('status').textContent=results.every(r=>r.passed)?'Exercise complete. Your code passed the behavioural checks.':'Not complete yet. Review the checks, output and hints.';}
 const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function testScenes(){
-  if(!execution.peek('python')?.worker){$('status').textContent='Run your Python detector before checking.';return;}
+  if(![...execution.instances.values()].some(adapter=>adapter.worker)){$('status').textContent='Run your detector before checking.';return;}
   testing=true;$('check').disabled=true;const token=++epoch;
   const e=runtime.evidence;e.detectionCases.clear();e.positionCases.clear();e.detectionCounts.clear();e.positionCounts.clear();
   // Random positions and order prevent constant answers from passing. Ground truth stays on the JS side.
@@ -124,7 +124,7 @@ function draw(){
 }
 function frame(now){if(last)accumulator+=Math.min((now-last)/1000,.1);last=now;while(accumulator>=1/60){if(testing)runtime.robot.command(0,0);runtime.step(1/60);if(session!==3)observeCourse(runtime,lesson);accumulator-=1/60;}draw();requestAnimationFrame(frame);}
 document.addEventListener('visibilitychange',()=>{last=0;accumulator=0;});
-setupPreferences();updateWorldColors();arrangeSession(session);tfView=createTFView(runtime,session);workspace=new CodeWorkspace({onRunCpp:()=>executeCode('cpp')});
+setupPreferences();updateWorldColors();arrangeSession(session);tfView=createTFView(runtime,session);workspace=new CodeWorkspace({onRunCpp:()=>executeCode('cpp'),onChange:()=>renderLesson()});
 const names=Object.fromEntries(SESSIONS.map((name,i)=>[i+1,name]));
 document.querySelector('.intro .eyebrow').textContent='Python · 90 min';
 $('session-title').textContent=names[session];$('session-tag').textContent='SESSION 0'+session;

@@ -1,10 +1,43 @@
 <!doctype html><meta charset="utf-8"><img src="/hold" hidden alt=""><pre id="result">RUNNING</pre><iframe width="1440" height="1100" src="../session-02.html"></iframe><script type="module">
 const f=document.querySelector('iframe'),out=document.getElementById('result'),wait=ms=>new Promise(r=>setTimeout(r,ms));
-async function until(fn){for(let i=0;i<400;i++){if(fn())return;await wait(100);}throw Error('Timeout');}const assert=(v,m)=>{if(!v)throw Error(m);};
-try{await until(()=>f.contentDocument?.body?.dataset.lessonState==='ready');const d=f.contentDocument,$=id=>d.getElementById(id),select=m=>d.querySelector('[data-code-language="'+m+'"]').click();const py=$('python-code'),cpp=$('cpp-code');await until(()=>[...d.querySelectorAll('.code-languages img')].every(img=>img.complete&&img.naturalWidth>0));py.value='# my Python draft';select('cpp');cpp.value='// my C++ draft';select('compare');assert(py.getBoundingClientRect().width>=420,'Desktop Compare too narrow');f.width=1100;await wait(100);assert(cpp.getBoundingClientRect().top>py.getBoundingClientRect().bottom,'Narrow Compare must stack');f.width=1440;await wait(100);assert(!py.closest('[data-code-pane]').hidden&&!cpp.closest('[data-code-pane]').hidden,'Compare panes');select('python');assert(py.value==='# my Python draft','Python lost');select('cpp');assert(cpp.value==='// my C++ draft','C++ lost');
- const pose=$('pose').textContent;$('language').value='it';$('language').dispatchEvent(new Event('change'));await wait(100);assert(cpp.value==='// my C++ draft'&&py.value==='# my Python draft','UI language lost drafts');assert($('pose').textContent===pose,'Language reset world');assert(d.querySelector('[data-code-language="cpp"]').getAttribute('aria-pressed')==='true','Code language lost');
- $('lesson-select').selectedIndex=1;$('lesson-select').dispatchEvent(new Event('change'));await until(()=>d.body.dataset.lessonState==='ready'&&d.body.dataset.lessonId.endsWith('callbacks'));assert(d.querySelector('[data-code-language="python"]').getAttribute('aria-pressed')==='true','Unsupported fallback');assert(d.querySelector('[data-code-language="cpp"]').hidden,'Unsupported C++ visible');
- $('lesson-select').selectedIndex=0;$('lesson-select').dispatchEvent(new Event('change'));await until(()=>d.body.dataset.lessonState==='ready'&&d.body.dataset.lessonId.endsWith('subscriber'));assert(cpp.value==='// my C++ draft'&&py.value==='# my Python draft','Exercise switch lost drafts');assert(d.querySelector('[data-code-language="cpp"]').getAttribute('aria-pressed')==='true','Preference not retained');
- f.src='../session-02.html';await until(()=>f.contentDocument!==d&&f.contentDocument?.body?.dataset.lessonState==='ready');assert(!f.contentDocument.querySelector('[data-code-language="cpp"]').hidden,'Tested C++ missing from ordinary URL');out.textContent='PASS: independent drafts, Compare, UI language, exercise fallback, preference and public supported modes';
-}catch(e){out.textContent='FAIL: '+e.message;}await fetch('/done',{method:'POST',body:out.textContent});
+async function until(fn){for(let i=0;i<400;i++){if(fn())return;await wait(100);}throw Error('Timeout');}
+const assert=(v,m)=>{if(!v)throw Error(m);};
+try{
+ await until(()=>f.contentDocument?.body?.dataset.lessonState==='ready');
+ let d=f.contentDocument;const $=id=>d.getElementById(id),select=m=>d.querySelector('[data-code-language="'+m+'"]').click();
+ const choose=async id=>{$('lesson-select').value=id;$('lesson-select').dispatchEvent(new Event('change'));await until(()=>d.body.dataset.lessonState==='ready'&&d.body.dataset.lessonId===id);};
+ let py=$('python-code'),cpp=$('cpp-code');
+ await until(()=>[...d.querySelectorAll('.code-languages img')].every(img=>img.complete&&img.naturalWidth>0));
+ py.value='# my Python draft';select('cpp');cpp.value='// my C++ draft';select('compare');
+ assert(py.getBoundingClientRect().width>=420,'Desktop Compare too narrow');
+ f.width=1100;await wait(100);assert(cpp.getBoundingClientRect().top>py.getBoundingClientRect().bottom,'Narrow Compare must stack');
+ f.width=1440;await wait(100);assert(!py.closest('[data-code-pane]').hidden&&!cpp.closest('[data-code-pane]').hidden,'Compare panes');
+ select('python');assert(py.value==='# my Python draft','Python lost');select('cpp');assert(cpp.value==='// my C++ draft','C++ lost');
+ const pose=$('pose').textContent;$('language').value='it';$('language').dispatchEvent(new Event('change'));await wait(100);
+ assert(cpp.value==='// my C++ draft'&&py.value==='# my Python draft','UI language lost drafts');assert($('pose').textContent===pose,'Language reset world');
+ assert(d.querySelector('[data-code-language="cpp"]').getAttribute('aria-pressed')==='true','Code language lost');
+ await choose('session-02-02-callbacks');
+ assert(!d.querySelector('[data-code-language="cpp"]').hidden&&!d.querySelector('[data-code-language="compare"]').hidden,'Public callbacks C++ missing');
+ assert(d.querySelector('[data-code-language="cpp"]').getAttribute('aria-pressed')==='true','Supported exercise lost preferred C++');
+ cpp.value='// callback draft';py.value='# callback draft';
+ await choose('session-02-01-subscriber');assert(cpp.value==='// my C++ draft'&&py.value==='# my Python draft','Exercise switch lost drafts');
+ assert(d.querySelector('[data-code-language="cpp"]').getAttribute('aria-pressed')==='true','Preference not retained');
+ await choose('session-02-02-callbacks');assert(cpp.value==='// callback draft'&&py.value==='# callback draft','Second supported exercise lost drafts');
+ const previous=d;f.src='../session-06.html';await until(()=>f.contentDocument!==previous&&f.contentDocument?.body?.dataset.lessonState==='ready');d=f.contentDocument;py=$('python-code');cpp=$('cpp-code');
+ assert(!f.contentWindow.location.search,'Debugging test must use ordinary URL');
+ assert(!d.querySelector('[data-code-language="cpp"]').hidden,'Tested debugging C++ missing');select('cpp');
+ py.value='# debugging Python draft';cpp.value='// debugging C++ draft';
+ await choose('session-06-02-frame-debug');
+ for(const mode of ['python','cpp','compare'])assert(!d.querySelector('[data-code-language="'+mode+'"]').hidden,'Missing public frame-debug mode '+mode);
+ assert(d.querySelector('[data-code-language="cpp"]').getAttribute('aria-pressed')==='true','Frame-debug exercise lost preferred C++');
+ py.value='# frame-debug Python draft';cpp.value='// frame-debug C++ draft';select('compare');
+ assert(!py.closest('[data-code-pane]').hidden&&!cpp.closest('[data-code-pane]').hidden,'Frame-debug Compare panes');select('cpp');
+ await choose('session-06-01-topic-debug');
+ assert(cpp.value==='// debugging C++ draft'&&py.value==='# debugging Python draft','Supported round trip lost topic-debug drafts');
+ assert(d.querySelector('[data-code-language="cpp"]').getAttribute('aria-pressed')==='true','Supported round trip lost preference');
+ await choose('session-06-02-frame-debug');
+ assert(cpp.value==='// frame-debug C++ draft'&&py.value==='# frame-debug Python draft','Supported round trip lost frame-debug drafts');
+ out.textContent='PASS: independent drafts, Compare layout, UI language, public supported exercise preference and Session 6 draft round trips';
+}catch(e){out.textContent='FAIL: '+e.message;}
+await fetch('/done',{method:'POST',body:out.textContent});
 </script>

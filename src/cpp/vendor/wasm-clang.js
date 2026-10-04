@@ -1,4 +1,4 @@
-// KineNest modification: expose App and allow explicitly supplied runtime imports.
+// KineNest modifications: expose App, allow runtime imports, decode WASI output as UTF-8.
 /*
  * Copyright 2020 WebAssembly Community Group participants
  *
@@ -217,7 +217,9 @@ class MemFS {
       iovs += 4;
       const len = this.hostMem_.read32(iovs);
       iovs += 4;
-      str += this.hostMem_.readStr(buf, len);
+      this.outputDecoders ??= new Map();
+      if (!this.outputDecoders.has(fd)) this.outputDecoders.set(fd, new TextDecoder());
+      str += this.outputDecoders.get(fd).decode(this.hostMem_.u8.subarray(buf, buf + len), {stream: true});
       size += len;
     }
     this.hostMem_.write32(nwritten_out, size);

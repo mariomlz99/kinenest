@@ -114,8 +114,110 @@
       "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom rclpy.action import ActionClient\nfrom ros2learn_interfaces.action import DriveDistance\n\nrclpy.init()\nnode = Node('student_controller')\n\n# TODO: adapt the previous exercise: retain the goal handle,\n# send a 2 m goal, cancel once after 0.3 m of feedback,\n# and receive its final result.\nrclpy.spin(node)\n"
     },
     "cpp": {
-      "supported": false,
-      "starterCode": ""
+      "supported": true,
+      "experimental": true,
+      "starterCode": "#include <rclcpp/rclcpp.hpp>\n#include <rclcpp_action/rclcpp_action.hpp>\n#include <ros2learn_interfaces/action/drive_distance.hpp>\n\nusing Action = ros2learn_interfaces::action::DriveDistance;\nusing GoalHandle = rclcpp_action::ClientGoalHandle<Action>;\n\nint main(int argc, char **argv) {\n  rclcpp::init(argc, argv);\n  auto node = std::make_shared<rclcpp::Node>(\"student_controller\");\n  auto client = rclcpp_action::create_client<Action>(node, \"/drive_distance\");\n  rclcpp_action::Client<Action>::SendGoalOptions options;\n  auto accepted = std::make_shared<GoalHandle::SharedPtr>();\n  auto cancel_sent = std::make_shared<bool>(false);\n  // TODO: retain the accepted handle in goal_response_callback.\n  // TODO: add feedback_callback; cancel once after more than 0.3 m.\n  options.result_callback = [node](const GoalHandle::WrappedResult &result) {\n    RCLCPP_INFO(node->get_logger(), \"Cancelled: %s; travelled: %.3f\",\n      result.code == rclcpp_action::ResultCode::CANCELED ? \"true\" : \"false\", result.result->final_distance);\n  };\n  Action::Goal goal;\n  goal.distance = 2.0;\n  client->async_send_goal(goal, options);\n  rclcpp::spin(node);\n}\n",
+      "content": {
+        "title": "Optional: cancel a goal",
+        "description": "Send a two-metre goal, then cancel it after feedback reports more than 0.3 m. Wait for cancellation to finish.",
+        "steps": [
+          "Retain the accepted GoalHandle::SharedPtr in goal_response_callback. Send a two-metre goal.",
+          "In feedback_callback, request client->async_cancel_goal(handle) once after distance_travelled exceeds 0.3 m.",
+          "Wait for result.code == rclcpp_action::ResultCode::CANCELED and verify that the robot stops before two metres."
+        ],
+        "hints": [
+          "A cancellation request is not the final result; keep the result callback.",
+          "Use a boolean to prevent repeated cancellation requests.",
+          "Retain the goal handle after acceptance; set the boolean before calling async_cancel_goal."
+        ],
+        "translations": {
+          "nl": {
+            "title": "Optioneel: annuleer een doel",
+            "description": "Verstuur een doel van 2 m en annuleer na meer dan 0.3 m voortgang.",
+            "steps": [
+              "Bewaar de geaccepteerde GoalHandle::SharedPtr in goal_response_callback. Verstuur een doel van twee meter.",
+              "Vraag in feedback_callback één keer client->async_cancel_goal(handle) aan zodra distance_travelled groter is dan 0.3 m.",
+              "Wacht op result.code == rclcpp_action::ResultCode::CANCELED en controleer dat de robot vóór twee meter stopt."
+            ],
+            "hints": [
+              "Een annuleringsverzoek is niet het eindresultaat; behoud de resultaatcallback.",
+              "Gebruik een boolean om herhaalde annuleringsverzoeken te voorkomen.",
+              "Bewaar de goal handle na acceptatie; stel de boolean in vóór async_cancel_goal."
+            ]
+          },
+          "fr": {
+            "title": "Optionnel : annuler un objectif",
+            "description": "Envoyez un objectif de 2 m et annulez après plus de 0.3 m de progression.",
+            "steps": [
+              "Conservez le GoalHandle::SharedPtr accepté dans goal_response_callback. Envoyez un objectif de deux mètres.",
+              "Dans feedback_callback, demandez client->async_cancel_goal(handle) une seule fois lorsque distance_travelled dépasse 0.3 m.",
+              "Attendez result.code == rclcpp_action::ResultCode::CANCELED et vérifiez que le robot s’arrête avant deux mètres."
+            ],
+            "hints": [
+              "Une demande d’annulation n’est pas le résultat final ; conservez le callback de résultat.",
+              "Utilisez un booléen pour éviter les demandes d’annulation répétées.",
+              "Conservez le goal handle après acceptation ; positionnez le booléen avant async_cancel_goal."
+            ]
+          },
+          "es": {
+            "title": "Opcional: cancelar un objetivo",
+            "description": "Envía un objetivo de dos metros. Cancélalo después de recibir más de 0.3 m de progreso y espera el resultado.",
+            "steps": [
+              "Conserva el GoalHandle::SharedPtr aceptado en goal_response_callback. Envía un objetivo de dos metros.",
+              "En feedback_callback, solicita client->async_cancel_goal(handle) una sola vez cuando distance_travelled supere 0.3 m.",
+              "Espera result.code == rclcpp_action::ResultCode::CANCELED y comprueba que el robot se detiene antes de dos metros."
+            ],
+            "hints": [
+              "La petición de cancelación no es el resultado final; conserva el callback del resultado.",
+              "Usa un booleano para evitar peticiones de cancelación repetidas.",
+              "Conserva el manejador tras la aceptación; cambia el booleano antes de llamar a async_cancel_goal."
+            ]
+          },
+          "de": {
+            "title": "Optional: ein Ziel abbrechen",
+            "description": "Sende ein Zwei-Meter-Ziel. Brich es nach mehr als 0.3 m Feedback ab und warte auf das Ergebnis.",
+            "steps": [
+              "Bewahre den angenommenen GoalHandle::SharedPtr in goal_response_callback auf. Sende ein Zwei-Meter-Ziel.",
+              "Fordere in feedback_callback einmal client->async_cancel_goal(handle) an, sobald distance_travelled größer als 0.3 m ist.",
+              "Warte auf result.code == rclcpp_action::ResultCode::CANCELED und prüfe, dass der Roboter vor zwei Metern stoppt."
+            ],
+            "hints": [
+              "Eine Abbruchanfrage ist nicht das Endergebnis; behalte den Ergebnis-Callback.",
+              "Verhindere wiederholte Abbruchanfragen mit einer booleschen Variable.",
+              "Bewahre das Goal-Handle nach Annahme auf; setze die boolesche Variable vor async_cancel_goal."
+            ]
+          },
+          "pt": {
+            "title": "Opcional: cancelar um objetivo",
+            "description": "Envia um objetivo de dois metros. Cancela após mais de 0.3 m de progresso e espera o resultado.",
+            "steps": [
+              "Guarda o GoalHandle::SharedPtr aceite em goal_response_callback. Envia um objetivo de dois metros.",
+              "Em feedback_callback, pede client->async_cancel_goal(handle) uma só vez quando distance_travelled ultrapassar 0.3 m.",
+              "Espera result.code == rclcpp_action::ResultCode::CANCELED e verifica que o robô para antes dos dois metros."
+            ],
+            "hints": [
+              "Um pedido de cancelamento não é o resultado final; mantém o callback do resultado.",
+              "Usa um booleano para evitar pedidos de cancelamento repetidos.",
+              "Guarda o identificador após a aceitação; altera o booleano antes de chamar async_cancel_goal."
+            ]
+          },
+          "it": {
+            "title": "Opzionale: annullare un goal",
+            "description": "Invia un goal di due metri, poi annullalo quando il feedback supera 0,3 m. Attendi il completamento dell’annullamento.",
+            "steps": [
+              "Conserva il GoalHandle::SharedPtr accettato in goal_response_callback. Invia un goal di due metri.",
+              "In feedback_callback richiedi client->async_cancel_goal(handle) una sola volta quando distance_travelled supera 0.3 m.",
+              "Attendi result.code == rclcpp_action::ResultCode::CANCELED e verifica che il robot si fermi prima dei due metri."
+            ],
+            "hints": [
+              "La richiesta di annullamento non è il risultato finale; conserva il callback del risultato.",
+              "Usa un booleano per evitare richieste di annullamento ripetute.",
+              "Conserva il goal handle dopo l’accettazione; imposta il booleano prima di chiamare async_cancel_goal."
+            ]
+          }
+        }
+      },
+      "visibility": "public"
     }
   }
 }

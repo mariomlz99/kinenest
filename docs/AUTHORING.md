@@ -72,7 +72,7 @@ Choose existing behaviours from src/exercises/course.js or perception.js.
 | goal / integrated | Goal reached and stopped; optional scan safety |
 | camera_subscriber / image_array | Image callbacks and actual pixel access |
 | detection / position | Correct results across varied rendered scenes |
-| service | Python client, request, response and reset |
+| service | Actual client, request, consumed response and reset |
 | control / centered | Commands, centered image and stopped robot |
 
 Read the implementation for thresholds. report_pose, report_transform, report_relative, report_sectors and image-report helpers submit computed values for checking. They are educational helpers, not standard ROS APIs. Explain them in the task. Avoid source matching and allow alternate algorithms.
@@ -100,3 +100,11 @@ Use programming.python and programming.cpp. Set supported only for a tested adap
 ## Public page shell
 
 New public pages must use the shared brand/navigation and first-paint shell. Run `npm run sync:shell` after changing shared markup. Initialize preferences and page content, then call `pageReady()` from `src/ui/page-ready.js`; report startup failures with `pageFailed()`. Do not mark a lesson ready before initial translation and layout. Do not load Python or C++ merely to reveal a page. See ARCHITECTURE.md for the readiness contract.
+
+## Adding a browser C++ variant
+
+Put the natural C++ starter in `programming.cpp.starterCode`. Optional `programming.cpp.content` supplies language-specific title, description, steps and hints, with the same six translated objects as ordinary lesson text. For example, 3.2 teaches NumPy in Python and contiguous image buffers/pixel indexing in C++; it retains the same world and behavioral check. Keep includes/main/node scaffolding in the starter and leave the learning-critical operation for students. KineNest reporting hooks belong to `kinenest::`, not `rclcpp::`.
+
+Add a real reference under `tests/cpp/course/<exercise-id>.cpp`, a negative control for that exercise, and alternate algorithms where useful. Register the cases in `tests/cpp-course-runner.js`. Every public variant needs real compilation and behavioral success/failure, Stop/Reset, draft/Compare checks, and Chrome plus Firefox. Run `npm run test:cpp-course -- chrome --built` and its Firefox equivalent; the default is the complete 25-exercise gate and writes a JSON report. A focused development wave is not a full-parity release result. Never place references in public assets.
+
+Do not duplicate the checker for C++. Extend the shared typed protocol only when necessary, preserve latest-sample queues, bind response callbacks to their originating worker, and add cleanup/race tests for a new service/action family. Native ROS transfer notes should distinguish the educational headers from real ament_cmake/rclcpp and generated interfaces.

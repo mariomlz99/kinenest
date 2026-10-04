@@ -130,8 +130,110 @@
       "starterCode": "import rclpy\nfrom rclpy.node import Node\nimport math\nfrom sensor_msgs.msg import LaserScan\nfrom geometry_msgs.msg import Twist\n\nrclpy.init()\nnode = Node('student_controller')\n\ndef sector(msg, center):\n    values = []\n    for i, distance in enumerate(msg.ranges):\n        angle = msg.angle_min + i * msg.angle_increment\n        delta = math.atan2(math.sin(angle-center), math.cos(angle-center))\n        if abs(delta) <= math.pi/12 + 1e-9 and math.isfinite(distance):\n            values.append(distance)\n    return min(values) if values else float('inf')\npublisher = node.create_publisher(Twist, '/velocity', 10)\ndef scan(msg):\n    front = sector(msg, 0)\n    cmd = Twist()\n    if front < 1.1:\n        cmd.angular.z = 0.9\n    else:\n        cmd.linear.x = 0.6\n    publisher.publish(cmd)\nnode.create_subscription(LaserScan, '/scan', scan, 10)\nrclpy.spin(node)\n"
     },
     "cpp": {
-      "supported": false,
-      "starterCode": ""
+      "supported": true,
+      "experimental": true,
+      "starterCode": "#include <rclcpp/rclcpp.hpp>\n#include <sensor_msgs/msg/laser_scan.hpp>\n#include <geometry_msgs/msg/twist.hpp>\n#include <algorithm>\n#include <cmath>\n#include <limits>\nconstexpr double pi = 3.141592653589793;\n\ndouble sector(const sensor_msgs::msg::LaserScan &scan, double center) {\n  double nearest = std::numeric_limits<double>::infinity();\n  for (size_t i = 0; i < scan.ranges.size(); ++i) {\n    const double angle = scan.angle_min + i * scan.angle_increment;\n    const double delta = std::atan2(std::sin(angle - center), std::cos(angle - center));\n    const double distance = scan.ranges[i];\n    if (std::abs(delta) <= pi / 12 + 1e-6 && std::isfinite(distance))\n      nearest = std::min(nearest, distance);\n  }\n  return nearest;\n}\n\nclass Controller : public rclcpp::Node {\npublic:\n  Controller() : Node(\"student_controller\") {\n    publisher_ = create_publisher<geometry_msgs::msg::Twist>(\"/velocity\", 10);\n    subscription_ = create_subscription<sensor_msgs::msg::LaserScan>(\"/scan\", 10,\n      [this](sensor_msgs::msg::LaserScan::SharedPtr msg) {\n        geometry_msgs::msg::Twist command;\n        if (sector(*msg, 0) < 1.1) command.angular.z = 0.9;\n        else command.linear.x = 0.6;\n        publisher_->publish(command);\n      });\n  }\nprivate:\n  rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr publisher_;\n  rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr subscription_;\n};\nint main(int argc, char **argv) {\n  rclcpp::init(argc, argv);\n  rclcpp::spin(std::make_shared<Controller>());\n}\n",
+      "content": {
+        "title": "The robot hears nothing",
+        "description": "A controller runs and publishes, but the robot does not move. Diagnose the graph before editing code.",
+        "steps": [
+          "Run the supplied program and inspect node list, topic list -t and topic info /cmd_vel.",
+          "Find the publisher’s topic and compare it with the simulator’s subscription. Fix the mismatch.",
+          "Let the repaired controller avoid the block. Explain which evidence identified the fault."
+        ],
+        "hints": [
+          "A valid topic name can still be the wrong topic.",
+          "Use node info /student_controller to see its publishers.",
+          "The simulator listens on /cmd_vel."
+        ],
+        "translations": {
+          "nl": {
+            "title": "De robot hoort niets",
+            "description": "De controller draait en publiceert, maar de robot beweegt niet. Onderzoek eerst de graaf.",
+            "steps": [
+              "Voer de startcode uit; inspecteer node list, topic list -t en topic info /cmd_vel.",
+              "Vergelijk het publicatietopic met de subscription van de simulator.",
+              "Herstel de fout, ontwijk het blok en leg je diagnose uit."
+            ],
+            "hints": [
+              "Een geldig topic kan toch het verkeerde topic zijn.",
+              "Bekijk node info /student_controller.",
+              "De simulator luistert op /cmd_vel."
+            ]
+          },
+          "fr": {
+            "title": "Le robot n’entend rien",
+            "description": "Le contrôleur publie mais le robot ne bouge pas. Examinez d’abord le graphe.",
+            "steps": [
+              "Exécutez le code initial ; inspectez node list, topic list -t et topic info /cmd_vel.",
+              "Comparez le topic publié et l’abonnement du simulateur.",
+              "Corrigez, évitez le bloc et expliquez votre diagnostic."
+            ],
+            "hints": [
+              "Un topic valide peut être le mauvais topic.",
+              "Examinez node info /student_controller.",
+              "Le simulateur écoute /cmd_vel."
+            ]
+          },
+          "es": {
+            "title": "El robot no recibe comandos",
+            "description": "El controlador publica pero el robot no se mueve. Diagnostica el grafo antes de editar.",
+            "steps": [
+              "Ejecuta el programa y consulta ros2 node list, ros2 topic list -t y ros2 topic info /cmd_vel.",
+              "Compara el topic del publisher con la suscripción del simulador. Corrige la diferencia.",
+              "Deja que el controlador evite el bloque y explica qué datos revelaron el fallo."
+            ],
+            "hints": [
+              "Un nombre válido puede ser el topic equivocado.",
+              "Usa ros2 node info /student_controller para ver sus publishers.",
+              "El simulador escucha /cmd_vel."
+            ]
+          },
+          "de": {
+            "title": "Der Roboter empfängt nichts",
+            "description": "Der Controller veröffentlicht, aber der Roboter bewegt sich nicht. Untersuche den Graphen vor dem Code.",
+            "steps": [
+              "Starte das Programm und prüfe ros2 node list, ros2 topic list -t und ros2 topic info /cmd_vel.",
+              "Vergleiche Publisher-Topic und Simulator-Subscription. Korrigiere die Abweichung.",
+              "Lass den reparierten Controller dem Block ausweichen. Welche Beobachtung zeigte den Fehler?"
+            ],
+            "hints": [
+              "Ein gültiger Name kann trotzdem das falsche Topic sein.",
+              "ros2 node info /student_controller zeigt die Publisher.",
+              "Der Simulator hört auf /cmd_vel."
+            ]
+          },
+          "pt": {
+            "title": "O robô não recebe comandos",
+            "description": "O controlador publica mas o robô não se move. Diagnostica o grafo antes de editar.",
+            "steps": [
+              "Executa o programa e consulta ros2 node list, ros2 topic list -t e ros2 topic info /cmd_vel.",
+              "Compara o topic do publisher com a subscrição do simulador. Corrige a diferença.",
+              "Deixa o controlador reparado evitar o bloco. Explica que dados revelaram a falha."
+            ],
+            "hints": [
+              "Um nome válido pode ser o topic errado.",
+              "Usa ros2 node info /student_controller para ver os publishers.",
+              "O simulador escuta /cmd_vel."
+            ]
+          },
+          "it": {
+            "title": "Il robot non riceve i comandi",
+            "description": "Il controllore è attivo e pubblica, ma il robot non si muove. Diagnostica il grafo prima di modificare il codice.",
+            "steps": [
+              "Esegui il programma e ispeziona node list, topic list -t e topic info /cmd_vel.",
+              "Trova il topic del publisher e confrontalo con la subscription del simulatore. Correggi la differenza.",
+              "Lascia che il controllore corretto eviti il blocco. Spiega quali osservazioni hanno identificato il guasto."
+            ],
+            "hints": [
+              "Un nome di topic valido può comunque essere quello sbagliato.",
+              "Usa node info /student_controller per vedere i publisher.",
+              "Il simulatore ascolta /cmd_vel."
+            ]
+          }
+        }
+      },
+      "visibility": "public"
     }
   }
 }

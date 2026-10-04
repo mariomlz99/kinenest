@@ -1,0 +1,90 @@
+<!doctype html><meta charset="utf-8"><img src="/hold" hidden alt=""><pre id="result">RUNNING</pre><iframe width="1440" height="1100" src="../session-03.html"></iframe><script type="module">
+const frame=document.querySelector('iframe'),out=document.getElementById('result'),wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+const assert=(value,message)=>{if(!value)throw Error(message);};
+async function until(predicate,seconds=90){for(let i=0;i<seconds*10;i++){if(predicate())return;await wait(100);}const d=frame.contentDocument;throw Error('Timeout '+d?.body?.dataset.lessonId+' / '+d?.getElementById('status')?.textContent+' / '+d?.getElementById('python-output')?.textContent);}
+async function get(url){const response=await fetch(url);assert(response.ok,'Fetch failed: '+url);return response;}
+try{
+ await until(()=>frame.contentDocument?.body?.dataset.lessonState==='ready');
+ const d=frame.contentDocument,$=id=>d.getElementById(id),mode=name=>d.querySelector('[data-code-language="'+name+'"]').click();
+ const choose=async id=>{$('lesson-select').value=id;$('lesson-select').dispatchEvent(new Event('change'));await until(()=>d.body.dataset.lessonState==='ready'&&d.body.dataset.lessonId===id);};
+ assert(!frame.contentWindow.location.search,'Camera acceptance must use an ordinary URL');
+ const cases=[['session-03-01-camera-subscriber','3.1'],['session-03-02-image-data','3.2'],['session-03-03-color-detection','3.3'],['session-03-04-object-position','3.4'],['session-03-05-services','3.5'],['session-03-06-target-challenge','3.6']];
+ let retainedSource,serviceSource;
+ for(const [id,label]of cases){
+  if(d.body.dataset.lessonId!==id)await choose(id);
+  for(const name of ['python','cpp','compare'])assert(!d.querySelector('[data-code-language="'+name+'"]').hidden,'Missing public '+name+' '+label);
+  mode('compare');$('python-code').value='# retained perception draft '+label;
+  const python=$('python-code').value;let source=await(await get('./cpp/course/'+id+'.cpp')).text();
+  // Exercise natural ROS-style logging directly from tracked message fields.
+  if(label==='3.1'){source=source.replace('    const std::uint32_t width = msg->width;\n    const std::uint32_t height = msg->height;\n','').replace('width, height);','msg->width, msg->height);');assert(source.includes('RCLCPP_INFO(get_logger(), "Image: %u x %u", msg->width, msg->height);'),'Natural image-field logger fixture missing');}
+  $('cpp-code').value=source;
+  if(label==='3.2'){
+   const lessonURL=new URL('../../public/lessons/'+id+'.json',d.querySelector('script[src*="session3-boot.js"]').src);
+   const lesson=await(await get(lessonURL)).json(),pose=$('pose').textContent;
+   for(const language of ['en','nl','fr','es','de','pt','it']){
+    $('language').value=language;$('language').dispatchEvent(new Event('change'));mode('cpp');await wait(30);
+    const cppCopy=language==='en'?lesson.programming.cpp.content:lesson.programming.cpp.content.translations[language];
+    assert($('mission-title').textContent===cppCopy.title,'C++ image title '+language);
+    assert(!/NumPy/i.test($('description').textContent),'C++ task incorrectly requests NumPy '+language);
+    mode('python');await wait(30);
+    const pythonCopy=language==='en'?lesson:lesson.translations[language];
+    assert($('mission-title').textContent===pythonCopy.title,'Python image title not restored '+language);
+    assert(/NumPy/i.test($('description').textContent),'Python NumPy task not restored '+language);
+    assert($('python-code').value===python&&$('cpp-code').value===source,'Language/code switch lost drafts '+language);
+    assert($('pose').textContent===pose,'Language/code switch reset world '+language);
+   }
+   $('language').value='en';$('language').dispatchEvent(new Event('change'));mode('compare');
+   frame.width=390;await wait(100);
+   const pyRect=$('python-code').getBoundingClientRect(),cppRect=$('cpp-code').getBoundingClientRect();
+   assert(cppRect.top>=pyRect.bottom,'Phone Compare must stack');
+   assert(pyRect.width>=200&&cppRect.width>=200,'Phone editor too narrow');
+   assert(d.documentElement.scrollWidth<=d.documentElement.clientWidth+1,'Phone document overflow');
+   for(const element of [$('run-python'),$('run-cpp'),$('stop-python'),$('check'),$('reset'),...d.querySelectorAll('.code-languages button')]){const r=element.getBoundingClientRect();assert(r.width>0&&r.left>=-1&&r.right<=d.documentElement.clientWidth+1,'Phone control outside viewport: '+element.id+' '+element.textContent);}
+  }
+  if(label==='3.5'){
+   const lessonURL=new URL('../../public/lessons/'+id+'.json',d.querySelector('script[src*="session3-boot.js"]').src);
+   const lesson=await(await get(lessonURL)).json(),pose=$('pose').textContent;
+   for(const language of ['en','nl','fr','es','de','pt','it']){
+    $('language').value=language;$('language').dispatchEvent(new Event('change'));mode('cpp');await wait(30);
+    const cppCopy=language==='en'?lesson.programming.cpp.content:lesson.programming.cpp.content.translations[language];
+    assert($('mission-title').textContent===cppCopy.title,'C++ service title '+language);
+    assert($('steps').textContent.includes('async_send_request')&&!$('steps').textContent.includes('call_async'),'C++ service API wording '+language);
+    mode('python');await wait(30);
+    const pythonCopy=language==='en'?lesson:lesson.translations[language];
+    assert($('mission-title').textContent===pythonCopy.title,'Python service title not restored '+language);
+    assert($('steps').textContent.includes('call_async'),'Python service API wording not restored '+language);
+    assert($('python-code').value===python&&$('cpp-code').value===source,'Service language/code switch lost drafts '+language);
+    assert($('pose').textContent===pose,'Service language/code switch reset world '+language);
+   }
+   $('language').value='en';$('language').dispatchEvent(new Event('change'));mode('compare');
+  }
+  $('run-cpp').click();await until(()=>$('python-state').textContent.includes('callbacks ready'));
+  if(label==='3.3'||label==='3.4'){
+   $('check').click();await until(()=>$('check').disabled,3);
+   await until(()=>!$('check').disabled,20);
+   assert($('status').textContent.startsWith('Exercise complete'),'Rendered four-scene checker failed '+label+' '+$('feedback').textContent+' '+$('status').textContent);
+  }else await until(()=>{$('check').click();return $('status').textContent.startsWith('Exercise complete');});
+  if(label==='3.1')assert($('python-output').textContent.includes('Image: 320 x 240'),'Natural image-field logger output incorrect');
+  if(label==='3.5'){assert($('python-output').textContent.includes('Reset: true; Robot reset'),'Service response callback output missing');assert(/x 0\.00 m/.test($('pose').textContent),'Service did not reset displaced robot');}
+  assert($('python-code').value===python&&$('cpp-code').value===source,'Run changed drafts '+label);
+  $('language').value='it';$('language').dispatchEvent(new Event('change'));$('theme').click();$('layout').value='stack';$('layout').dispatchEvent(new Event('change'));await wait(100);
+  assert(!$('stop-python').disabled,'Preferences stopped C++ '+label);
+  assert($('python-code').value===python&&$('cpp-code').value===source,'Preferences lost drafts '+label);
+  $('reset').click();assert($('stop-python').disabled,'Reset kept execution '+label);
+  assert(!/\/(camera_reader|target_detector|student_controller|reset_client)\b/.test($('graph').textContent),'Reset kept student graph endpoints '+label);
+  assert($('python-code').value===python&&$('cpp-code').value===source,'Reset erased drafts '+label);
+  $('language').value='en';$('language').dispatchEvent(new Event('change'));$('layout').value='split';$('layout').dispatchEvent(new Event('change'));frame.width=1440;
+  if(label==='3.5')serviceSource=source;
+  if(label==='3.6')retainedSource=source;
+  await fetch('/progress',{method:'POST',body:'PASS public camera C++ '+label});
+ }
+ mode('cpp');await choose('session-03-05-services');
+ assert(!d.querySelector('[data-code-language="cpp"]').hidden&&!d.querySelector('[data-code-language="compare"]').hidden,'Public service C++ missing');
+ assert($('cpp-code').value===serviceSource&&$('python-code').value==='# retained perception draft 3.5','Service draft not retained');
+ await choose('session-03-06-target-challenge');
+ assert($('cpp-code').value===retainedSource&&$('python-code').value==='# retained perception draft 3.6','Exercise round trip lost camera drafts');
+ assert(d.querySelector('[data-code-language="cpp"]').getAttribute('aria-pressed')==='true','Exercise round trip lost C++ preference');
+ out.textContent='PASS: public C++ Session 3 all six exercises compile/run, four-scene UI checks, seven-language C++/Python copy, actual Compare drafts, phone controls and service response';
+}catch(error){out.textContent='FAIL: '+error.message;}
+await fetch('/done',{method:'POST',body:out.textContent});
+</script>

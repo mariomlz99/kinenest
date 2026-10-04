@@ -1,0 +1,19 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Python live TF frame identity regression</title><pre id="result">RUNNING</pre><img src="/hold" alt=""><iframe title="Python Session 5 under test" width="1440" height="1100"></iframe><script type="module">
+const frame=document.querySelector('iframe'),out=document.getElementById('result'),wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+const assert=(value,message)=>{if(!value)throw Error(message);};
+async function until(test,seconds=90){for(let i=0;i<seconds*10;i++){if(test())return;await wait(100);}throw Error('Timeout: '+frame.contentDocument?.getElementById('python-output')?.textContent);}
+const code="import math\nimport rclpy\nfrom rclpy.node import Node\nfrom rclpy.time import Time\nfrom tf2_ros import Buffer, TransformListener, TransformException\n\nrclpy.init()\nbuffer = Buffer()\ndef reject(target, source):\n    try:\n        buffer.lookup_transform(target, source, Time())\n    except TransformException:\n        return\n    raise AssertionError('Unknown transform accepted: ' + source + ' -> ' + target)\n\nreject('missing', 'missing')\nreject('world', 'base_link')\nprint('PASS empty buffer rejects unknown identity and lookup')\nnode = Node('tf_identity_probe')\nlistener = TransformListener(buffer, node)\ndone = False\ndef verify():\n    global done\n    if done or ('odom', 'base_link') not in buffer.transforms:\n        return\n    for frame in ['world', 'odom', 'base_link', 'laser_link', 'camera_link', 'target']:\n        identity = buffer.lookup_transform(frame, frame, Time())\n        p, q = identity.transform.translation, identity.transform.rotation\n        assert abs(p.x) < 1e-10 and abs(p.y) < 1e-10\n        assert abs(q.z) < 1e-10 and abs(q.w - 1) < 1e-10\n        assert identity.header.frame_id == frame and identity.child_frame_id == frame\n    reject('missing', 'missing')\n    reject('world', 'missing')\n    reject('missing', 'world')\n    forward = buffer.lookup_transform('world', 'base_link', Time())\n    reverse = buffer.lookup_transform('base_link', 'world', Time())\n    p, q = forward.transform.translation, forward.transform.rotation\n    back = reverse.transform.translation\n    yaw = 2 * math.atan2(q.z, q.w)\n    assert abs(p.x + math.cos(yaw)*back.x - math.sin(yaw)*back.y) < 1e-8\n    assert abs(p.y + math.sin(yaw)*back.x + math.cos(yaw)*back.y) < 1e-8\n    done = True\n    print('PASS live TF known identities, unknown rejection and inverse composition')\ntimer = node.create_timer(0.1, verify)\nrclpy.spin(node)\n";
+try{
+ frame.src='../session-05.html';await until(()=>frame.contentDocument?.body?.dataset.lessonState==='ready');const d=frame.contentDocument,$=id=>d.getElementById(id);
+ for(let run=0;run<2;run++){
+  $('reset').click();$('python-code').value=code;$('run-python').click();
+  await until(()=>$('python-output').textContent.includes('PASS live TF known identities, unknown rejection and inverse composition'));
+  assert($('python-output').textContent.includes('PASS empty buffer rejects unknown identity and lookup'),'Missing empty-buffer rejection');
+  assert(!$('python-output').textContent.includes('Traceback'),'Python error');
+  $('stop-python').click();assert($('python-code').value===code,'Stop lost draft');
+  $('reset').click();assert($('python-code').value===code,'Reset lost draft');
+  await fetch('/progress',{method:'POST',body:'PASS Python TF identity live run '+(run+1)+' with Stop/Reset rerun'});
+ }
+ out.textContent='PASS: real Pyodide rejects unknown frame identities, preserves known identities and live inverse geometry; Stop/Reset rerun';
+}catch(error){out.textContent='FAIL: '+error.message;}await fetch('/done',{method:'POST',body:out.textContent});
+</script></html>

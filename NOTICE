@@ -16,3 +16,9 @@ Language badges (Py, C++) are original text artwork under Apache-2.0.
 
 The monochrome support cup is original KineNest SVG artwork, Apache-2.0.
 No Buy Me a Coffee brand asset or widget is included.
+
+The C++ yaw helper adapts the formulas and singularity convention in
+tf2/include/tf2/impl/utils.hpp (ros2/geometry2).
+Copyright 2014 Open Source Robotics Foundation, Inc. Licensed Apache-2.0.
+Modified for the educational compatibility header; no native tf2 is bundled.
+Source: https://github.com/ros2/geometry2/blob/rolling/tf2/include/tf2/impl/utils.hpp
