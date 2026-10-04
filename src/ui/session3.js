@@ -39,8 +39,8 @@ async function selectLesson(id){
   $('status').textContent='Loading lesson…';
   try{
     const next=await json(id+'.json');if(request!==selection)return;lesson=next;reset();
-    renderLesson();
     workspace.load(lesson);
+    renderLesson();
     document.body.dataset.lessonId=id;
     document.body.dataset.lessonState='ready';
     for(const control of ['run-python','restore-code','reset','check','hint'])$(control).disabled=false;workspace.render();
@@ -52,7 +52,7 @@ async function selectLesson(id){
     if(request===selection)$('lesson-select').disabled=false;
   }
 }
-function localLesson(){return {...lesson,...lesson.translations?.[language()]};}
+function localLesson(){const base={...lesson,...lesson.translations?.[language()]};const content=workspace?.mode==='cpp'?lesson.programming?.cpp?.content:null;return content?{...base,...content,...content.translations?.[language()]}:base;}
 function renderLesson(){
   if(!lesson)return;const text=localLesson();$('hint').disabled=hints>=text.hints.length;$('lesson-number').textContent='EXERCISE '+lesson.number;$('mission-title').textContent=text.title;$('description').textContent=text.description;
   $('steps').replaceChildren();for(const step of text.steps){const li=document.createElement('li');li.textContent=step;$('steps').append(li);}
@@ -124,7 +124,7 @@ function draw(){
 }
 function frame(now){if(last)accumulator+=Math.min((now-last)/1000,.1);last=now;while(accumulator>=1/60){if(testing)runtime.robot.command(0,0);runtime.step(1/60);if(session!==3)observeCourse(runtime,lesson);accumulator-=1/60;}draw();requestAnimationFrame(frame);}
 document.addEventListener('visibilitychange',()=>{last=0;accumulator=0;});
-setupPreferences();updateWorldColors();arrangeSession(session);tfView=createTFView(runtime,session);workspace=new CodeWorkspace({onRunCpp:()=>executeCode('cpp')});
+setupPreferences();updateWorldColors();arrangeSession(session);tfView=createTFView(runtime,session);workspace=new CodeWorkspace({onRunCpp:()=>executeCode('cpp'),onChange:()=>renderLesson()});
 const names=Object.fromEntries(SESSIONS.map((name,i)=>[i+1,name]));
 document.querySelector('.intro .eyebrow').textContent='Python · 90 min';
 $('session-title').textContent=names[session];$('session-tag').textContent='SESSION 0'+session;

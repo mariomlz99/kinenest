@@ -1,10 +1,10 @@
 # Experimental browser C++
 
-Open session-02.html. Tested exercises 2.1 and 2.4 offer Python, C++ and Compare by default, with an Experimental label. Future implemented variants can remain developer-gated by ?experimentalCpp=1. The normal course remains Python-first. Compare contains editable student drafts; it does not insert answers. Only the selected program runs at a time.
+Open session-02.html. On the cpp-parity candidate, tested exercises 2.1–2.4 and 6.1 offer Python, C++ and Compare by default, with an Experimental label. Future implemented variants can remain developer-gated by ?experimentalCpp=1. The normal course remains Python-first. Compare contains editable student drafts; it does not insert answers. Only the selected program runs at a time.
 
 ## Implemented
 
-A worker downloads a pinned Clang/LLD toolchain, compiles controller.cpp as C++17, links WebAssembly and executes it locally. Compiler diagnostics retain filename and line numbers. The original educational header supports Node, Twist publishers, LaserScan subscriptions, real C++ callbacks, chrono-based timers and logger macros. Both adapters use RuntimeAdapter, the same graph, sensor mailbox, robot and behavioural checks. Stop terminates compilation or execution; Reset also discards stale messages and endpoints.
+A worker downloads a pinned Clang/LLD toolchain, compiles controller.cpp as C++17, links WebAssembly and executes it locally. Compiler diagnostics retain filename and line numbers. The educational header supports Node, Twist and String publishers/subscribers, LaserScan subscriptions, real C++ callbacks, chrono-based timers and logger macros. KineNest-only report_range/report_sectors helpers associate results with the actual active scan; they are not rclcpp APIs. Both adapters use RuntimeAdapter, the same graph, sensor mailbox, robot and behavioural checks. Stop terminates compilation or execution; Reset also discards stale messages and endpoints.
 
 The shipped rclcpp-shaped header is not ROS rclcpp. It supports one translation unit and one worker executor. spin yields into browser events; statements following spin do not resume. No threads, blocking sleep, exception handling, native filesystem, package build or arbitrary ROS packages are supported. Services, parameters, actions, TF and camera access remain Python-only. No compilation server is used.
 
@@ -14,7 +14,7 @@ The proof of concept pins [binji/wasm-clang](https://github.com/binji/wasm-clang
 
 [LiveCodes clang-wasm](https://github.com/live-codes/clang-wasm) is a newer candidate with a different host/sysroot integration. It was reviewed, not integrated or benchmarked. Replacing the compiler should preserve the bridge and require the same browser acceptance suite.
 
-The vendored JavaScript host differs from upstream only by an explicit additional-import hook and exported App constructor. Licence files are retained beside it. Compilation selects the sysroot's ABI version 2 and musl configuration, disables thread support and thread-safe static guards. This avoids unsupported atomic instructions in shared_ptr/static initialization in a single-threaded worker. No student source rewriting is involved.
+The vendored JavaScript host differs from upstream by an explicit additional-import hook, exported App constructor and streaming UTF-8 decoding of WASI output. Source and headers enter its filesystem as UTF-8 bytes. Licence files are retained beside it. Compilation selects the sysroot's ABI version 2 and musl configuration, disables thread support and thread-safe static guards. This avoids unsupported atomic instructions in shared_ptr/static initialization in a single-threaded worker. No student source rewriting is involved.
 
 ## Measurements, 3 October 2026
 
@@ -41,6 +41,8 @@ npm test
 npm run build
 npm run test:cpp -- chrome --built
 npm run test:cpp -- firefox --built
+npm run test:cpp-course -- chrome --built --wave=1
+npm run test:cpp-course -- firefox --built --wave=1
 ~~~
 
 The suite compiles hello-world, functional and class controllers, checks callbacks and obstacle avoidance, measures cold/warm loading, checks a compiler error, terminates an infinite loop and exercises Compare/Reset in the actual UI. Reference C++ programs live under tests/cpp and are excluded from production.
@@ -50,16 +52,16 @@ The suite compiles hello-world, functional and class controllers, checks callbac
 | Location | Production effect |
 | --- | --- |
 | src/exercises/programming.js | supported plus visibility: public exposes tested variants; experimental variants otherwise require the flag |
-| public/lessons/session-02-01-subscriber.json, session-02-04-avoidance.json | Both set supported: true and visibility: public; experimental remains a status label |
+| public/lessons/session-02-*.json and session-06-01-topic-debug.json | Five tested variants set supported: true and visibility: public; experimental remains a status label |
 | src/ui/code-workspace.js | Reads experimentalCpp once and passes it to the capability check |
 | src/ui/product.js | Carries an explicitly supplied developer flag across navigation; never adds it to ordinary URLs |
 | tests/cpp-ui.html, tests/compare.html | Ordinary URLs validate public execution and draft preservation |
 
 Historical VALIDATION.md entries describe the earlier gate. Capture tooling previously used the flag; it now uses ordinary URLs. No hidden server switch controls C++. The production build includes bridge.js, compat.hpp, toolchain.js, worker.js and vendor host/licences; large compiler binaries remain pinned remote downloads triggered by Run.
 
-On this pass, local public C++ was already working. The live site still served 13f0acc, where the older gate hid both modes without experimentalCpp=1. Chrome and Firefox probes confirmed both URL cases. Publishing the pending commits is required; broadening C++ parity remains deferred until that release is verified.
+Historical visibility diagnosis: local public C++ was already working. The live site still served 13f0acc, where the older gate hid both modes without experimentalCpp=1. Chrome and Firefox probes confirmed both URL cases. That gate diagnosis preceded this parity implementation. It is not the current production SHA.
 
-Further parity starts only after ordinary-URL production execution is verified: finish Session 2 fundamentals first, then camera pixels and service clients, followed by parameters/actions, odometry/TF and integrated debugging. Each new executable variant needs a real compiler run, behavioural success and failure cases, Stop/Reset and both browsers. Rust, native package builds and Session 7 remain deferred.
+The current stacked cpp-parity branch completes Session 2 and wrong-topic debugging first. Camera pixels and service clients, parameters/actions, odometry/TF and integrated debugging remain subsequent gated waves. Each new executable variant needs a real compiler run, behavioural success and failure cases, Stop/Reset and both browsers. Rust, native package builds and Session 7 remain deferred.
 
 ## Public-release remeasurement
 
@@ -76,3 +78,7 @@ Both browser suites passed after the brand/support pass. The normal Session 2 Py
 | Generated controller module | 328,991 bytes | 328,991 bytes |
 
 Fresh browser profiles define cold; concurrent workstation activity and network conditions affect timings. No compiler preload was added.
+
+## Parity Wave 1 — 4 October 2026
+
+Five references (2.1–2.4, 6.1), five negatives, three alternates, Unicode String round-trip, compiler-error recovery, three non-finite values and runaway/Stop-during-load passed Chrome and Firefox: 19 cases per browser. Shared Python checkers are unchanged. New C++ wording/hints use all seven UI languages; Python content is retained. See [wave evidence](cpp-parity/WAVE_1.md). Public availability here describes the branch candidate, not an automatic production deployment.
