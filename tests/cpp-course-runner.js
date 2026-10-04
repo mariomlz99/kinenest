@@ -82,7 +82,7 @@ async function record(id, kind, action) {
 }
 
 try {
-  assert(['1', '2', '3', '4', '5', '6', '7'].includes(wave), 'Only Waves 1–7 are implemented in this runner; full 25-exercise acceptance is not claimed.');
+  assert(['1', '2', '3', '4', '5', '6', '7', '8'].includes(wave), 'Only Waves 1–8 are implemented in this runner; full 25-exercise acceptance is not claimed.');
   const html = await (await request('../session-02.html')).text();
   const path = new DOMParser().parseFromString(html, 'text/html')
     .querySelector('script[src$="session3-boot.js"]').getAttribute('src').replace('ui/session3-boot.js', '');
@@ -140,7 +140,8 @@ try {
   }
   const wave7Ids = ['session-04-04-goal', 'session-04-05-feedback', 'session-04-06-cancel'];
   if (Number(wave) >= 7) { ids.push(...wave7Ids); alternates.add('session-04-05-feedback'); alternates.add('session-04-06-cancel'); }
-  const newest = id => Number(wave) === 7 ? wave7Ids.includes(id) : Number(wave) === 6 ? wave6Ids.includes(id) : Number(wave) === 5 ? ['session-05-01-odometry', 'session-05-02-heading'].includes(id) : Number(wave) === 4 ? id.startsWith('session-04-') : Number(wave) === 3 ? id === 'session-03-05-services' : Number(wave) === 2 ? id.startsWith('session-03-') : ['session-02-02-callbacks', 'session-02-03-sectors', 'session-06-01-topic-debug'].includes(id);
+  if (Number(wave) >= 8) { ids.push('session-06-03-beacon'); alternates.add('session-06-03-beacon'); }
+  const newest = id => Number(wave) === 8 ? id === 'session-06-03-beacon' : Number(wave) === 7 ? wave7Ids.includes(id) : Number(wave) === 6 ? wave6Ids.includes(id) : Number(wave) === 5 ? ['session-05-01-odometry', 'session-05-02-heading'].includes(id) : Number(wave) === 4 ? id.startsWith('session-04-') : Number(wave) === 3 ? id === 'session-03-05-services' : Number(wave) === 2 ? id.startsWith('session-03-') : ['session-02-02-callbacks', 'session-02-03-sectors', 'session-06-01-topic-debug'].includes(id);
   ids.sort((a, b) => Number(newest(b)) - Number(newest(a)));
   availableExercises = ids.length;
   const selectedIds = focus ? ids.filter(newest) : ids;
@@ -171,7 +172,7 @@ try {
           freezeMotion = false;
         }
         if (kind === 'negative') {
-          const seconds = lesson.checks.some(check => check.type === 'avoidance') ? 10 : 3;
+          const seconds = lesson.checks.some(check => ['avoidance', 'dock'].includes(check.type)) ? 10 : 3;
           if (!variedScenes) await until(() => runtime.time >= seconds, seconds * 2 + 3);
           assert(!checks().every(check => check.passed), 'Negative control passed ' + id);
           result.check = 'rejected-as-expected';
@@ -703,6 +704,69 @@ try {
       await until(() => state.includes('callbacks ready')); running = true;
       await until(() => checks().every(check => check.passed), 15);
       result.compile = 'error-then-recovered'; result.run = 'passed'; result.check = 'passed';
+    });
+  }
+
+  if (includeApi(8)) {
+    await record('Docking integration', 'python-cpp-shared-physical-outcome', async result => {
+      const {PythonBridge} = await import('../' + path + 'python/bridge.js');
+      const outcomes = {}; let python = null, pythonOutput = '', pythonState = '', sampler = null;
+      try {
+        for (const language of ['cpp', 'python']) {
+          await setup('session-06-03-beacon');
+          if (language === 'cpp') {
+            bridge.run(await (await request('./cpp/course/session-06-03-beacon.cpp')).text());
+            await until(() => state.includes('callbacks ready'));
+          } else {
+            python = new PythonBridge(runtime, {output: value => { pythonOutput = (pythonOutput + value + '\n').slice(-24000); }, status: value => { pythonState = value; }});
+            python.run(await (await request('./python/course/session-06-03-beacon.py')).text());
+            const deadline = performance.now() + 120000;
+            while (!pythonState.includes('callbacks ready')) {
+              if (!python.worker || performance.now() > deadline) throw new Error('Python docking initialization failed: ' + pythonState + '\n' + pythonOutput);
+              await wait(50);
+            }
+          }
+          const trajectory = []; let maxInFlight = 0, maxPending = 0;
+          sampler = setInterval(() => {
+            if (trajectory.length < 150) trajectory.push({t: runtime.time, x: runtime.robot.x, y: runtime.robot.y, yaw: runtime.robot.yaw});
+            const active = python ?? bridge;
+            maxInFlight = Math.max(maxInFlight, active.mailbox.inFlight.size);
+            maxPending = Math.max(maxPending, active.mailbox.latest.size);
+          }, 200);
+          running = true; const deadline = performance.now() + 40000;
+          while (!checks().every(check => check.passed)) {
+            if (!(python ?? bridge).worker || performance.now() > deadline) throw new Error(language + ' docking failed: ' + JSON.stringify(checks()) + '\n' + (python ? pythonOutput : output));
+            await wait(50);
+          }
+          running = false; clearInterval(sampler); sampler = null;
+          assert(runtime.course.scanAccess >= 3 && runtime.evidence.converted && runtime.evidence.centeredFrames >= 8 && runtime.collisions === 0, language + ' docking lacked genuine multimodal evidence');
+          assert(maxInFlight <= 3 && maxPending <= 2, language + ' sensor/timer mailbox grew beyond endpoint bounds');
+          outcomes[language] = {checks: checks(), state: snapshot(), trajectory, maxInFlight, maxPending,
+            ...(language === 'cpp' ? {imageFrames: metrics.imageFrames, imageBytes: metrics.imageBytes, sampledWasmLinearMemoryBytes: metrics.programMemoryBytes} : {})};
+          if (python) { python.stop(); python = null; } else bridge.stop();
+        }
+        result.compile = 'passed'; result.run = 'passed'; result.check = 'passed'; result.physicalOutcomes = outcomes;
+        result.comparison = 'Both real languages satisfy the same physical checker; identical floating-point trajectories are not required.';
+      } finally { clearInterval(sampler); python?.stop(); }
+    });
+    await record('Docking integration', 'stop-reset-and-switch-with-pending-sensors', async result => {
+      await setup('session-06-03-beacon');
+      bridge.run(await (await request('./cpp/course/session-06-03-beacon.cpp')).text());
+      await until(() => state.includes('callbacks ready')); running = true;
+      await until(() => runtime.evidence.callbacks >= 3 && runtime.course.scanAccess >= 3 && runtime.evidence.codePublications >= 3, 10);
+      const oldWorker = bridge.worker, oldOnMessage = oldWorker.onmessage;
+      runtime.cameraFrame(); runtime.cameraFrame();
+      running = false; bridge.stop(); runtime.reset();
+      assert(bridge.mailbox.inFlight.size === 0 && bridge.mailbox.latest.size === 0 && runtime.frames.size === 0 && runtime.samples.size === 0, 'Reset retained multimodal sensor data');
+      output = ''; await setup('session-02-01-subscriber');
+      bridge.run(await (await request('./cpp/course/session-02-01-subscriber.cpp')).text());
+      await until(() => state.includes('callbacks ready'));
+      oldOnMessage({data: {kind: 'processed', frame: 1, access: ['data', 'width', 'height']}});
+      oldOnMessage({data: {kind: 'detection', frame: 1, visible: true, cx: 160}});
+      oldOnMessage({data: {kind: 'stdout', text: 'STALE_DOCKING_CALLBACK'}});
+      running = true; await until(() => checks().every(check => check.passed), 10);
+      assert(runtime.evidence.callbacks === 0 && !runtime.evidence.converted && !output.includes('STALE_DOCKING_CALLBACK'), 'Previous exercise sensor callback changed replacement run');
+      result.compile = 'passed'; result.run = 'passed'; result.check = 'passed';
     });
   }
   if (includeApi(1)) {
