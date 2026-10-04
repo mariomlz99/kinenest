@@ -1,6 +1,6 @@
 # C++ parity release candidate
 
-Status: all 25 coding exercises passed local and live-preview Chrome/Firefox acceptance; seven-role independent review complete. CI is tracked below. Awaiting maintainer review; not merged or deployed to production.
+Status: all 25 coding exercises passed local and live-preview Chrome/Firefox acceptance; seven-role independent review complete. CI passed all required jobs. Awaiting maintainer review; not merged or deployed to production.
 
 ## Identity and isolation
 
@@ -71,7 +71,7 @@ Clean local candidate additionally passed 64 unit tests, both legacy C++ suites,
 
 The outgoing overlay was already present; the inherited PR fixes destination first-paint/layout rearrangement by applying saved theme early and covering the static shell until branding, lesson, layout and initial translation declare readiness. Outgoing dwell is 1,000 ms (animation about 850 ms); incoming reveal is 160 ms with no artificial readiness delay. Reduced motion skips the outgoing dwell; history/direct entry/failure recovery passed. Delayed test fixtures make the first-paint cover observable; application initialization itself is not artificially delayed.
 
-CI run: https://github.com/mariomlz99/ros2learn/actions/runs/37200950076 — pending final result at report preparation. Test/build job passed; browser jobs were running. This is not a production deployment workflow invocation.
+CI run: https://github.com/mariomlz99/ros2learn/actions/runs/37200950076 — SUCCESS on source 5c7d93254d18182f9ee9f095ae895f27c1773962. Unit/build/Workers routing and complete Chrome/Firefox jobs passed, including Python, 112-case C++, provenance, network/cache, output/cancellation, all-exercise UI/Compare, slow camera, transitions, first paint and root-domain smoke. Production deployment jobs were skipped by the branch gate. [Machine-readable CI result](cpp-parity/results/ci-37200950076.json).
 
 ## Independent review and remaining limitations
 
@@ -113,3 +113,9 @@ d850c66 test: support full C++ course verification on live previews
 ```
 
 The review/evidence commit containing this report follows these commits. The final branch SHA is reported with the handoff and preview build-info; a commit cannot embed its own SHA without changing it.
+
+## Final handoff identity
+
+After test-runner and report commits, preview source 2317e739562d033ac18b639f315a9b33cfc92788 was verified with dirty false and asset 71f28e8ff533. Rebuilding that clean branch produced a byte-identical dist to tested 5c7d932, excluding build-info.json: sorted path/content SHA-256 digest a5560ba50f5d171ed5bfbc09a555d20bd90b5736a9134c314071c9fb92b9a2e0. The final CI-result documentation commit does not change application files; its exact SHA is supplied in the handoff and preview build-info. No duplicate full run is claimed for documentation-only commits.
+
+READY FOR MAINTAINER REVIEW: YES. Merge authorization: pending. The received single-character reply was not treated as approval.

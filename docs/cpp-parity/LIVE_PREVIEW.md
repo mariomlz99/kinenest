@@ -38,6 +38,8 @@ The root-domain production and main workers.dev build-info still identify `63bb5
 - `/tmp/kn-parity-live-firefox-{cpp,python}-profile.log`
 - `/tmp/kn-parity-live-{transitions,boot}-{chrome,firefox}.log`
 - `/tmp/kn-parity-live-routes.json`
-- [CI run for the exact candidate](https://github.com/mariomlz99/ros2learn/actions/runs/37200950076) is tracked separately; this report does not predeclare its result.
+- [CI run for the exact candidate](https://github.com/mariomlz99/ros2learn/actions/runs/37200950076) completed successfully: test/build and both full browser jobs passed; production deployment jobs were skipped.
 
 Maintainer teaching/visual approval is still required before merge. Safari/iOS and physical-device behavior remain unverified.
+
+The subsequent report/test-runner source 2317e739562d033ac18b639f315a9b33cfc92788 was also verified live with the same asset 71f28e8ff533 and dirty false. All served application files are byte-identical to the fully tested candidate (excluding build-info metadata). The final CI-result documentation commit is verified separately at handoff; these metadata changes do not claim another full-course run.
