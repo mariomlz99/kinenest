@@ -3,7 +3,7 @@ import {pageShell} from './page-shell.js';
 export const PRODUCT = Object.freeze({
   name: 'KineNest',
   tagline: 'A safe place to learn robotics by making things move.',
-  description: 'A free, open-source environment for learning robotics communication, sensors, perception and coordinate frames through interactive browser experiments.',
+  description: 'Free, open-source browser robotics exercises with real Python and browser-compiled C++, shared sensors, simulation and behavioral checks.',
   source: 'https://github.com/mariomlz99/ros2learn',
   support: 'https://buymeacoffee.com/mariomlz99',
   contact: 'hello@kinenest.com',

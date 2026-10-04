@@ -4,15 +4,17 @@ A safe place to learn robotics by making things move.
 
 <img src="public/assets/brand/kinenest-logo.png" alt="KineNest logo" width="320">
 
-KineNest is a free, open-source teaching environment for robotics communication, sensors, perception and coordinate frames. Students write real Python throughout the course and compile C++ locally in supported exercises. Interactive simulations require no robotics installation or account. Exercises mirror common ROS™ 2 APIs and command-line workflows so the same concepts transfer to a real robotics workspace.
+KineNest is a free, open-source teaching environment for robotics communication, sensors, perception and coordinate frames. Students write real Python and compile C++ in their browser throughout the 25 coding exercises in Sessions 2–6. Session 1 introduces the CLI, graph and topics without choosing a programming language. Interactive simulations require no robotics installation or account. Exercises mirror common ROS™ 2 APIs and command-line workflows so the same concepts transfer to a real robotics workspace.
+
+This branch is a full-C++ release candidate. It has not been merged or published to production; see the [candidate report and preview status](docs/CPP_PARITY_RELEASE.md).
 
 ## Try online
 
-[Open KineNest](https://mariomlz99.github.io/ros2learn/). The welcome page opens the course through **Start Session 1**. [Session 1](https://mariomlz99.github.io/ros2learn/session-01.html) has its own stable URL; Python begins in Session 2. Chrome and Firefox are tested. Edge and Safari remain best-effort and have not been independently verified.
+[Open the current KineNest release](https://kinenest.com/). In this candidate, the welcome page opens the course through **Start Session 1**, and Session 1 has the explicit `/session-01.html` route. Python and C++ begin in Session 2. Chrome and Firefox are tested. Edge and Safari remain best-effort and have not been independently verified.
 
 ## What students learn
 
-Nodes, topics, messages, publishers, subscribers, callbacks, LiDAR, camera arrays, services, parameters, actions, odometry, transforms and debugging. One shared runtime connects the terminals, Python, supported C++ programs and robot within each page.
+Nodes, topics, messages, publishers, subscribers, callbacks, LiDAR, camera arrays, services, parameters, actions, odometry, transforms and debugging. One shared runtime connects the terminals, Python, C++ programs and robot within each page.
 
 No installation, account, backend, API key or paid service is required. The first Python run downloads Pyodide and NumPy; initial use requires internet.
 
@@ -24,13 +26,13 @@ No installation, account, backend, API key or paid service is required. The firs
 
 ## Six-session course
 
-Each session is designed for approximately 90 minutes. Sessions 1–2 introduce the basics; allow time for explanation and experimentation.
+Each session is designed for approximately 90 minutes. Sessions 1–2 introduce the basics; allow time for explanation and experimentation. All coding exercises in Sessions 2–6 offer Python, C++ and Compare.
 
 | Session | Focus | Exercises |
 | --- | --- | --- |
 | 1 | Nodes & Topics | CLI discovery and robot commands |
-| 2 | Callbacks & LiDAR | 4 Python exercises |
-| 3 | Perception & Services | 6 Python exercises |
+| 2 | Callbacks & LiDAR | 4 Python/C++ exercises |
+| 3 | Perception & Services | 6 Python/C++ exercises |
 | 4 | Parameters & Actions | 5 core exercises + optional cancellation |
 | 5 | Odometry & Frames | 5 core exercises + obstacle integration |
 | 6 | Debugging Challenge | 2 repairs + an integrated beacon mission |
@@ -45,17 +47,19 @@ Fork the repository, edit lesson JSON and enable Pages. See [AUTHORING.md](docs/
 
 ## How it works
 
-Static HTML, CSS and JavaScript provide the workstation. Real Python and NumPy run in a Pyodide Web Worker. Educational message classes and robotics APIs connect student programs to the same graph used by the CLI. Canvas renders sensors and obstacles; SVG displays coordinate frames from actual runtime transforms.
+Static HTML, CSS and JavaScript provide the workstation. Real Python and NumPy run in a Pyodide Web Worker; real browser-compiled C++ runs as WebAssembly in a separate execution worker. Educational message classes and robotics APIs connect student programs to the same graph used by the CLI. Canvas renders sensors and obstacles; SVG displays coordinate frames from actual runtime transforms.
 
 Camera: 320 × 240 at 8 Hz. LiDAR: 120 rays at 5 Hz. Odometry: ideal 2D pose at 5 Hz. Stop terminates the worker, including an infinite loop. Slow callbacks drop sensor frames instead of accumulating work. Output and terminal history are bounded.
 
 ## Python and experimental C++
 
-Python supports the complete course. [Experimental C++](https://mariomlz99.github.io/ros2learn/session-02.html) is available by default for the scan subscriber and obstacle-avoidance exercises (2.1 and 2.4). It compiles real C++ to WebAssembly locally and uses the same robot and checks. Python/C++/Compare preserves independent drafts. The toolchain downloads about 60 MB only when C++ runs; its age and limited API keep it experimental. See [support, measurements and reproduction](docs/CPP.md).
+Python and browser-compiled C++ are available throughout all 25 coding exercises in Sessions 2–6, including the optional action-cancellation exercise. Real Clang/LLD compiles C++ to WebAssembly in an isolated browser worker. Both languages use the same simulator, graph, sensors and behavioral checks. Python/C++/Compare preserves independent drafts.
+
+The C++ toolchain downloads about 60 MB on first use, and again if its cache is unavailable or evicted; Python-only students fetch no compiler assets. The educational rclcpp-shaped API supports the course messages, asynchronous services, live parameters, actions and latest planar TF. It is not native rclcpp, DDS or arbitrary ROS package support. C++ remains experimental pending classroom use. See [support, measurements and reproduction](docs/CPP.md).
 
 ## Educational runtime and limitations
 
-KineNest is not a full robot middleware installation. Python, NumPy and student algorithms are real; rclpy, messages, services, parameters, actions, TF, cv_bridge, limited cv2 and the CLI are educational implementations.
+KineNest is not a full robot middleware installation. Python, NumPy, the C++ compiler and student algorithms are real; the rclpy/rclcpp-shaped APIs, messages, services, parameters, actions, TF, cv_bridge, limited cv2 and the CLI are educational implementations.
 
 No DDS, QoS negotiation, TF history, native OpenCV, Gazebo, RViz, Nav2, SLAM or native package builds. TF is planar and latest-only. The two-second velocity timeout is a simulator controller policy. Each tab has a separate world. See [architecture](docs/ARCHITECTURE.md) and the [About page](https://mariomlz99.github.io/ros2learn/about.html).
 
@@ -79,6 +83,8 @@ npm test
 npm run build
 npm run test:chrome -- --built
 npm run test:firefox -- --built
+npm run test:cpp-course -- chrome --built
+npm run test:cpp-course -- firefox --built
 ~~~
 
 Browser tests require the corresponding installed browser and access to the Pyodide CDN. They exercise all reference programs, alternate implementations, negative controls, Stop/Reset, translations and numerical TF agreement. To run one suite:
@@ -93,7 +99,7 @@ GitHub repository Settings → Pages → Source: **GitHub Actions**. Pushes to m
 
 Production contains static assets only. The allowlist excludes tests, reference programs, docs and private development artifacts. Content-versioned relative paths work under /ros2learn/ and other project prefixes. The existing personal website is a separate repository.
 
-Cloudflare Workers Static Assets is prepared in wrangler.jsonc, serving dist/ with no application Worker. See the [exact build, preview and release steps](docs/CLOUDFLARE_RELEASE.md). The working GitHub Pages site remains available while the temporary Workers host and kinenest.com are validated. Repository/source/canonical migration follows that validation; the domain is not yet claimed as live.
+Cloudflare Workers Static Assets is prepared in wrangler.jsonc, serving dist/ with no application Worker. See the [exact build, preview and release steps](docs/CLOUDFLARE_RELEASE.md). The existing kinenest.com deployment is live and the GitHub Pages site remains a fallback. This candidate does not change the production Worker, DNS, custom domains or repository identity. Its separate branch preview must pass release checks and maintainer review before production changes.
 
 To verify a deployed commit with the same checks used after Pages publishes:
 
