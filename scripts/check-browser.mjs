@@ -27,5 +27,5 @@ console.log('Testing '+browser+' at '+url);
 child=spawn(browser==='firefox'?(process.env.FIREFOX_BIN||'firefox'):'google-chrome',args,{stdio:['ignore','ignore','pipe']});
 let errors='';child.stderr.on('data',data=>{errors=(errors+data).slice(-2000);});
 child.on('error',error=>finish('FAIL: '+error.message));child.on('exit',()=>{if(!finished)finish('FAIL: Browser exited before test result. '+errors);});
-const timeoutSeconds=suite==='cpp-course'?1800:420;
+const timeoutSeconds=['cpp-course','cpp-parity-ui'].includes(suite)?1800:420;
 timeout=setTimeout(()=>finish('FAIL: Browser test exceeded '+timeoutSeconds+' seconds. '+errors),timeoutSeconds*1000);

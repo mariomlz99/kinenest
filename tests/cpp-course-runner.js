@@ -1,7 +1,7 @@
 const out = document.getElementById('result');
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 const assert = (condition, message) => { if (!condition) throw new Error(message); };
-const wave = new URLSearchParams(location.search).get('wave') ?? '1';
+const wave = new URLSearchParams(location.search).get('wave') ?? '9';
 const focus = new URLSearchParams(location.search).get('focus') === '1';
 const includeApi = number => Number(wave) >= number && (!focus || Number(wave) === number);
 const results = [];
@@ -82,7 +82,8 @@ async function record(id, kind, action) {
 }
 
 try {
-  assert(['1', '2', '3', '4', '5', '6', '7', '8'].includes(wave), 'Only Waves 1–8 are implemented in this runner; full 25-exercise acceptance is not claimed.');
+  assert(['1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(wave), 'Choose a course implementation wave from 1 through 9.');
+  assert(!(wave === '9' && focus), 'Wave 9 requires a full course run.');
   const html = await (await request('../session-02.html')).text();
   const path = new DOMParser().parseFromString(html, 'text/html')
     .querySelector('script[src$="session3-boot.js"]').getAttribute('src').replace('ui/session3-boot.js', '');
@@ -819,7 +820,7 @@ try {
   });
   await progress('CPP_COURSE_SUMMARY', {wave: Number(wave), focus, exercises: results.filter(result => result.kind === 'reference').length, availableExercises, targetExercises: 25,
     cases: results.length, passed: results.filter(result => result.passed).length,
-    fullParity: false, result: 'passed'});
+    fullParity: !focus && Number(wave) >= 9 && results.filter(result => result.kind === 'reference' && result.passed).length === 25 && results.every(result => result.passed), result: 'passed'});
   out.textContent = 'PASS: C++ Wave ' + wave + (focus ? ' focused' : '') + ' — ' + selectedIds.length + '/25 exercise references, negatives, alternates and lifecycle diagnostics';
 } catch (error) {
   out.textContent = 'FAIL: C++ course Wave ' + wave + ': ' + error.message;

@@ -61,6 +61,30 @@ jobs:
         env:
           FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
         run: node scripts/check-cpp.mjs ${{ matrix.browser }} --built
+      - name: Full real C++ course — 25 exercises and API recovery
+        env:
+          FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
+        run: npm run test:cpp-course -- ${{ matrix.browser }} --built --output="$RUNNER_TEMP/cpp-course"
+      - name: Sensor provenance and standard C++ buffer access
+        env:
+          FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
+        run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=cpp-buffer-probe --query=expect=fixed
+      - name: C++ network failure and cache recovery
+        env:
+          FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
+        run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=cpp-network
+      - name: Bounded C++ output and Stop/Reset during compilation
+        env:
+          FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
+        run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=cpp-ui-stress
+      - name: All C++ drafts, Compare, translations and mobile controls
+        env:
+          FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
+        run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=cpp-parity-ui --query=wave=9
+      - name: Real slow C++ camera callbacks and bounded sensor queues
+        env:
+          FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
+        run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=cpp-camera-stress
       - name: Visible transitions, first click and history
         env:
           FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
@@ -80,6 +104,7 @@ jobs:
           path: |
             ${{ runner.temp }}/transitions
             ${{ runner.temp }}/boot-handoff
+            ${{ runner.temp }}/cpp-course
   deploy:
     # Preserve the working project site throughout domain migration.
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
