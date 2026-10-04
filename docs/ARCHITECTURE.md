@@ -22,7 +22,7 @@ spin yields to worker events; statements after spin do not resume. Node subclass
 
 /reset_robot (Trigger) cancels motion goals and resets pose while preserving subscriptions. Full lab Reset also clears graph/evidence and restores the lesson world; starter code is restored only by its explicit button.
 
-Scalar parameters are stored per node and sent to its worker when CLI updates occur. The node reads its current value in callbacks. /drive_distance_server implements a bounded single-active-goal DriveDistance server. Physical distance drives feedback/results; actual Twist commands appear on /cmd_vel. Collision aborts, cancellation stops, reset cancels. The worker receives asynchronous goal, feedback and result events. This is not a general executor/action-server framework.
+Scalar parameters are stored per node and sent to its worker when CLI updates occur. The node reads its current value in callbacks. /drive_distance_server implements a bounded single-active-goal DriveDistance server. Physical distance drives feedback/results; actual Twist commands appear on /cmd_vel. Collision aborts, cancellation stops, reset cancels. The worker receives asynchronous goal, feedback and result events. Python and C++ consume the same action events. Notification closures are pinned to their originating worker; terminal request IDs are removed before delivery. Completed records release notification/disposer closures, and only the newest 100 terminal goals remain for inspection. This is not a general executor/action-server framework.
 
 ## TF
 

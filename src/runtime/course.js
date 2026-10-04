@@ -53,5 +53,12 @@ export function startGoal(r,node,goal,notify=()=>{}){
   g.collisions=r.collisions;g.dispose=r.every(.1,()=>{elapsed+=.1;if(r.collisions>g.collisions){finishGoal(r,g,6);return;}const travelled=r.robot.distance-g.start;if(travelled>=distance-.015){finishGoal(r,g,4);return;}r.publish('/cmd_vel','geometry_msgs/msg/Twist',{linear:{x:Math.min(speed,(distance-travelled)/.1)}});if(elapsed>=.2-1e-9){elapsed=0;notify('feedback',{distance_travelled:travelled});}});
   return id;
 }
-function finishGoal(r,g,status){g.dispose();g.status=status;r.publish('/cmd_vel','geometry_msgs/msg/Twist',{});g.result={status,result:{final_distance:r.robot.distance-g.start,success:status===4}};g.notify('result',g.result);}
+function finishGoal(r,g,status){
+  g.dispose();g.dispose=()=>{};g.status=status;r.publish('/cmd_vel','geometry_msgs/msg/Twist',{});g.result={status,result:{final_distance:r.robot.distance-g.start,success:status===4}};
+  const notify=g.notify;g.notify=()=>{};
+  // Retain useful recent results without retaining worker closures or unbounded history.
+  const terminal=[...r.goals.values()].filter(goal=>goal.status!==2);
+  for(const old of terminal.slice(0,Math.max(0,terminal.length-100)))r.goals.delete(old.id);
+  notify('result',g.result);
+}
 export function cancelGoal(r,id){const g=r.goals.get(id);if(!g||g.status!==2)return false;finishGoal(r,g,5);return true;}

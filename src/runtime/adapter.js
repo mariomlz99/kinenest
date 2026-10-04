@@ -47,12 +47,15 @@ export class RuntimeAdapter {
       case 'timer_processed':r.course.timers++;break;
       case 'parameter_declare':declareParameter(r,data.node,data.name,data.value);break;
       case 'parameter_read':r.course.paramReads++;r.course.paramValues.add(data.value);break;
-      case 'action_client':r.actions.get(data.name).clients.add(data.node);break;
+      case 'action_client':{const action=r.actions.get(data.name);if(!action)throw new Error('Unknown action server: '+data.name);action.clients.add(data.node);break;}
       case 'action_goal':{
-        try{const id=startGoal(r,data.node,data.goal,(event,payload)=>this.worker?.postMessage({kind:'action_event',id:data.id,event,payload}));this.actionIds.set(data.id,id);this.worker.postMessage({kind:'action_event',id:data.id,event:'accepted',payload:{accepted:true}});}
-        catch(error){this.output('Goal rejected: '+error.message);this.worker.postMessage({kind:'action_event',id:data.id,event:'accepted',payload:{accepted:false}});}break;
+        const worker=this.worker;if(!worker)break;
+        try{const name=data.name??'/drive_distance',action=r.actions.get(name);if(!action?.clients.has(data.node))throw new Error('Register an action client for '+name+' on '+data.node+' before sending a goal');
+          const id=startGoal(r,data.node,data.goal,(event,payload)=>{if(this.worker!==worker)return;if(event==='result')this.actionIds.delete(data.id);worker.postMessage({kind:'action_event',id:data.id,event,payload});});
+          this.actionIds.set(data.id,id);worker.postMessage({kind:'action_event',id:data.id,event:'accepted',payload:{accepted:true}});
+        }catch(error){this.output('Goal rejected: '+error.message);if(this.worker===worker)worker.postMessage({kind:'action_event',id:data.id,event:'accepted',payload:{accepted:false}});}break;
       }
-      case 'action_cancel':{const cancelled=cancelGoal(r,this.actionIds.get(data.id));this.worker.postMessage({kind:'action_event',id:data.request,event:'cancel',payload:{goals_canceling:cancelled?[data.id]:[]}});break;}
+      case 'action_cancel':{const worker=this.worker;if(!worker)break;const cancelled=cancelGoal(r,this.actionIds.get(data.id));if(this.worker===worker)worker.postMessage({kind:'action_event',id:data.request,event:'cancel',payload:{goals_canceling:cancelled?[data.id]:[]}});break;}
       case 'action_observed':if(data.event==='feedback')r.course.feedback++;else if(data.status===4)r.course.results++;else if(data.status===5)r.course.cancelled++;break;
       case 'tf_lookup':r.course.tf++;break;
       case 'message_processed':{const sample=r.samples.get(data.sample);if(sample){sample.processed=true;if(sample.topic==='/scan'){r.course.scan++;if(data.access?.includes('ranges'))r.course.scanAccess=(r.course.scanAccess??0)+1;}else if(sample.topic==='/odom')r.course.odom++;else if(sample.topic==='/chatter')r.course.messages++;this.assessCourse(sample);}break;}

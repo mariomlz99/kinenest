@@ -6,7 +6,7 @@ const browser = process.argv[2] ?? 'chrome';
 if (!['chrome', 'firefox'].includes(browser)) throw new Error('Choose chrome or firefox');
 const focus = process.argv.includes('--focus');
 const wave = process.argv.find(arg => arg.startsWith('--wave='))?.slice(7) ?? '1';
-if (!['1', '2', '3', '4', '5', '6'].includes(wave)) throw new Error('Only --wave=1 through --wave=6 is implemented; full C++ parity is not yet claimed');
+if (!['1', '2', '3', '4', '5', '6', '7'].includes(wave)) throw new Error('Only --wave=1 through --wave=7 is implemented; full C++ parity is not yet claimed');
 const directory = process.argv.find(arg => arg.startsWith('--output='))?.slice(9) ?? path.join(tmpdir(), 'kinenest-cpp-course');
 await mkdir(directory, {recursive: true});
 let buildInfo = null;

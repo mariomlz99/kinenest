@@ -43,6 +43,9 @@ async function cleaned() {
   assert(bridge.nodes.size === 0 && bridge.subscriptions.size === 0 && bridge.jobs.size === 0, 'Stop retained adapter endpoint');
   assert(bridge.mailbox.inFlight.size === 0 && bridge.mailbox.latest.size === 0, 'Stop retained sensor mailbox');
   assert(runtime.parameterListeners.size === 0, 'Stop retained parameter listener');
+  assert(bridge.actionIds.size === 0, 'Stop retained action request mapping');
+  for (const action of runtime.actions.values()) assert(action.clients.size === 0, 'Stop retained action client');
+  assert([...runtime.goals.values()].every(goal => goal.status !== 2), 'Stop retained active action goal');
   assert(runtime.robot.linear === 0 && runtime.robot.angular === 0, 'Stop retained motion command');
   const allowed = new Set(['/simulator', '/reset_server', '/drive_distance_server']);
   assert([...runtime.nodes].every(node => allowed.has(node)), 'Stop retained student node');
@@ -79,7 +82,7 @@ async function record(id, kind, action) {
 }
 
 try {
-  assert(['1', '2', '3', '4', '5', '6'].includes(wave), 'Only Waves 1–6 are implemented in this runner; full 25-exercise acceptance is not claimed.');
+  assert(['1', '2', '3', '4', '5', '6', '7'].includes(wave), 'Only Waves 1–7 are implemented in this runner; full 25-exercise acceptance is not claimed.');
   const html = await (await request('../session-02.html')).text();
   const path = new DOMParser().parseFromString(html, 'text/html')
     .querySelector('script[src$="session3-boot.js"]').getAttribute('src').replace('ui/session3-boot.js', '');
@@ -135,7 +138,9 @@ try {
     ids.push(...wave6Ids);
     for (const id of ['session-05-04-relative', 'session-05-05-goal', 'session-06-02-frame-debug']) alternates.add(id);
   }
-  const newest = id => Number(wave) === 6 ? wave6Ids.includes(id) : Number(wave) === 5 ? ['session-05-01-odometry', 'session-05-02-heading'].includes(id) : Number(wave) === 4 ? id.startsWith('session-04-') : Number(wave) === 3 ? id === 'session-03-05-services' : Number(wave) === 2 ? id.startsWith('session-03-') : ['session-02-02-callbacks', 'session-02-03-sectors', 'session-06-01-topic-debug'].includes(id);
+  const wave7Ids = ['session-04-04-goal', 'session-04-05-feedback', 'session-04-06-cancel'];
+  if (Number(wave) >= 7) { ids.push(...wave7Ids); alternates.add('session-04-05-feedback'); alternates.add('session-04-06-cancel'); }
+  const newest = id => Number(wave) === 7 ? wave7Ids.includes(id) : Number(wave) === 6 ? wave6Ids.includes(id) : Number(wave) === 5 ? ['session-05-01-odometry', 'session-05-02-heading'].includes(id) : Number(wave) === 4 ? id.startsWith('session-04-') : Number(wave) === 3 ? id === 'session-03-05-services' : Number(wave) === 2 ? id.startsWith('session-03-') : ['session-02-02-callbacks', 'session-02-03-sectors', 'session-06-01-topic-debug'].includes(id);
   ids.sort((a, b) => Number(newest(b)) - Number(newest(a)));
   availableExercises = ids.length;
   const selectedIds = focus ? ids.filter(newest) : ids;
@@ -586,6 +591,115 @@ try {
       result.diagnostic = output.slice(-3000); output = '';
       await setup('session-05-03-frames');
       bridge.run(await (await request('./cpp/course/session-05-03-frames.cpp')).text());
+      await until(() => state.includes('callbacks ready')); running = true;
+      await until(() => checks().every(check => check.passed), 15);
+      result.compile = 'error-then-recovered'; result.run = 'passed'; result.check = 'passed';
+    });
+  }
+
+  if (includeApi(7)) {
+    const probe = await (await request('./cpp/action-lifecycle.cpp')).text();
+    const actionProgram = mode => '#define PROBE_MODE ' + mode + '\n' + probe;
+    const events = () => output.split('\n').filter(line => line.startsWith('EVENT '));
+    await record('Action API', 'accept-feedback-physical-result-order', async result => {
+      await setup('session-04-04-goal'); bridge.run(actionProgram(0));
+      await until(() => state.includes('callbacks ready')); running = true;
+      await until(() => output.includes('EVENT RESULT '), 15);
+      const rows = events(), accepted = rows.findIndex(row => row.startsWith('EVENT ACCEPT 1 2'));
+      const feedback = rows.map((row, i) => row.startsWith('EVENT FEEDBACK ') ? i : -1).filter(i => i >= 0);
+      const final = rows.findIndex(row => row.startsWith('EVENT RESULT 4 1 '));
+      assert(accepted === 0 && feedback.length >= 2 && final > feedback.at(-1) && feedback[0] > accepted, 'Action callbacks violated acceptance/feedback/result order: ' + rows.join('; '));
+      const values = rows[final].split(' '), distance = Number(values[4]);
+      assert(Number(values[5]) === 4 && Math.abs(distance - runtime.robot.distance) < 1e-6 && distance >= 0.38 && distance <= 0.41, 'Action result disagreed with physical travel or goal status');
+      assert(runtime.course.feedback === feedback.length && runtime.course.results === 1 && runtime.course.actionAccepted === 1, 'Action consumption evidence mismatch');
+      const stoppedAt = runtime.robot.distance; await wait(250);
+      assert(runtime.robot.distance === stoppedAt && runtime.robot.linear === 0, 'Completed action retained motion');
+      result.compile = 'passed'; result.run = 'passed'; result.check = 'passed'; result.events = rows; result.physicalDistance = distance;
+    });
+    await record('Action API', 'invalid-goal-rejected-without-feedback-or-result', async result => {
+      await setup('session-04-04-goal'); bridge.run(actionProgram(1));
+      await until(() => output.includes('EVENT ACCEPT 0 0'));
+      running = true; await until(() => runtime.time >= 0.5, 5);
+      assert(!output.includes('EVENT FEEDBACK') && !output.includes('EVENT RESULT'), 'Rejected goal received later callbacks');
+      assert(runtime.course.actionAccepted === 0 && runtime.goals.size === 0 && runtime.robot.distance === 0, 'Rejected goal changed physical state');
+      assert(output.includes('Goal rejected:'), 'Goal rejection lost actionable cause');
+      result.compile = 'passed'; result.run = 'rejected-as-expected'; result.check = 'passed'; result.events = events();
+    });
+    for (const [name, mode] of [['immediate', 2], ['mid-goal', 3]]) {
+      await record('Action API', name + '-cancel-result-before-ack', async result => {
+        await setup('session-04-06-cancel'); bridge.run(actionProgram(mode));
+        await until(() => state.includes('callbacks ready')); running = true;
+        await until(() => output.includes('EVENT CANCEL_ACK '), 15);
+        const rows = events(), acceptance = rows.findIndex(row => row.startsWith('EVENT ACCEPT 1'));
+        const final = rows.findIndex(row => row.startsWith('EVENT RESULT 5 0 '));
+        const ack = rows.findIndex(row => row === 'EVENT CANCEL_ACK 0 1');
+        assert(acceptance === 0 && final > acceptance && ack > final, 'Synchronous cancelled result before acknowledgement lost ordering/callback: ' + rows.join('; '));
+        assert(rows.some(row => row === 'EVENT TERMINAL_CANCEL 3 0'), 'Retained terminal goal did not reject a second cancel cleanly');
+        assert(runtime.course.cancelled === 1 && runtime.course.results === 0 && runtime.robot.linear === 0, 'Cancellation consumption or physical stop failed');
+        if (mode === 2) assert(runtime.robot.distance === 0 && runtime.course.feedback === 0, 'Immediate cancellation moved before first timer');
+        else assert(runtime.robot.distance >= 0.2 && runtime.robot.distance < 0.5 && runtime.course.feedback >= 2, 'Mid-goal cancellation missed physical progress');
+        result.compile = 'passed'; result.run = 'passed'; result.check = 'passed'; result.events = rows; result.physicalDistance = runtime.robot.distance;
+      });
+    }
+    for (const mode of ['Stop', 'Reset']) {
+      await record('Action API', mode.toLowerCase() + '-active-goal-stale-events-and-rerun', async result => {
+        await setup('session-04-04-goal'); bridge.run(actionProgram(4));
+        await until(() => state.includes('callbacks ready')); running = true;
+        await until(() => output.includes('EVENT FEEDBACK '), 10);
+        const oldWorker = bridge.worker, oldOnMessage = oldWorker.onmessage;
+        const goal = [...runtime.goals.values()].find(value => value.status === 2);
+        assert(goal, 'No real active goal to cancel'); const oldNotify = goal.notify;
+        bridge.stop(); running = false;
+        assert(runtime.robot.linear === 0 && goal.status !== 2, mode + ' left action moving');
+        assert(bridge.actionIds.size === 0, mode + ' retained action IDs');
+        assert([...runtime.actions.values()].every(action => action.clients.size === 0), mode + ' retained action clients');
+        if (mode === 'Reset') runtime.reset();
+        output = ''; await setup('session-02-01-subscriber');
+        bridge.run(await (await request('./cpp/course/session-02-01-subscriber.cpp')).text());
+        await until(() => state.includes('callbacks ready'));
+        oldNotify('feedback', {distance_travelled: 99});
+        oldNotify('result', {status: 4, result: {success: true, final_distance: 99}});
+        oldOnMessage({data: {kind: 'action_observed', event: 'feedback'}});
+        oldOnMessage({data: {kind: 'action_observed', event: 'result', status: 4}});
+        oldOnMessage({data: {kind: 'stdout', text: 'STALE_ACTION'}});
+        running = true; await until(() => checks().every(check => check.passed), 10);
+        assert(runtime.course.feedback === 0 && runtime.course.results === 0 && runtime.course.cancelled === 0, 'Stale action credited replacement run');
+        assert(!output.includes('STALE_ACTION') && !output.includes('EVENT '), 'Stale action callback leaked into new output');
+        result.compile = 'passed'; result.run = 'passed'; result.check = 'passed';
+      });
+    }
+    await record('Action API', 'stop-before-acceptance-delivery', async result => {
+      await setup('session-04-04-goal'); bridge.run(actionProgram(4));
+      const oldWorker = bridge.worker, post = oldWorker.postMessage.bind(oldWorker);
+      let acceptance = null;
+      oldWorker.postMessage = (message, ...transfer) => {
+        if (message.kind === 'action_event' && message.event === 'accepted') { acceptance = message; return; }
+        return post(message, ...transfer);
+      };
+      await until(() => acceptance !== null);
+      assert(runtime.course.actionAccepted === 1 && !output.includes('EVENT ACCEPT'), 'Acceptance transport fault was not isolated');
+      bridge.stop(); assert([...runtime.goals.values()].every(goal => goal.status !== 2), 'Stop left unacknowledged goal active');
+      try { post(acceptance); } catch { /* Terminated worker may reject delivery. */ }
+      await wait(100); assert(!output.includes('EVENT ACCEPT'), 'Terminated worker delivered late acceptance');
+      result.compile = 'passed'; result.run = 'terminated'; result.check = 'passed';
+    });
+    await record('Action API', 'invalid-handle-error-and-recovery', async result => {
+      bridge.run('#include <rclcpp/rclcpp.hpp>\n#include <rclcpp_action/rclcpp_action.hpp>\n#include <ros2learn_interfaces/action/drive_distance.hpp>\nint main(){rclcpp::init();auto n=std::make_shared<rclcpp::Node>("invalid_cancel");auto c=rclcpp_action::create_client<ros2learn_interfaces::action::DriveDistance>(n,"/drive_distance");c->async_cancel_goal(nullptr);rclcpp::spin(n);}');
+      await until(() => !bridge.worker, 120, true);
+      assert(output.includes('accepted goal from this action client'), 'Invalid cancel lacked useful diagnostic: ' + output);
+      result.diagnostic = output.slice(-3000); output = '';
+      await setup('session-04-04-goal'); bridge.run(actionProgram(0));
+      await until(() => state.includes('callbacks ready')); running = true;
+      await until(() => runtime.course.results === 1, 10);
+      result.compile = 'passed'; result.run = 'error-then-recovered'; result.check = 'passed';
+    });
+    await record('Action API', 'compile-error-recovery', async result => {
+      bridge.run('#include <ros2learn_interfaces/action/drive_distance.hpp>\nint main(){ros2learn_interfaces::action::DriveDistance::Goal g;g.distnace=1;}');
+      await until(() => !bridge.worker, 120, true);
+      assert(output.includes('controller.cpp:') && output.includes('distnace'), 'Action diagnostic lost filename/field');
+      result.diagnostic = output.slice(-3000); output = '';
+      await setup('session-04-04-goal');
+      bridge.run(await (await request('./cpp/course/session-04-04-goal.cpp')).text());
       await until(() => state.includes('callbacks ready')); running = true;
       await until(() => checks().every(check => check.passed), 15);
       result.compile = 'error-then-recovered'; result.run = 'passed'; result.check = 'passed';

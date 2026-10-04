@@ -478,3 +478,156 @@ public:
  }
 };
 }
+
+// Callback-based educational action client.
+// Real compiled C++; this is not native rclcpp_action and has no blocking futures.
+// Callback-based calls return an educational request id, not std::shared_future.
+namespace ros2learn_interfaces { namespace action {
+struct DriveDistance {
+ struct Goal { using SharedPtr=std::shared_ptr<Goal>; float distance=0; };
+ struct Result { using SharedPtr=std::shared_ptr<Result>; bool success=false; float final_distance=0; };
+ struct Feedback { using SharedPtr=std::shared_ptr<Feedback>; using ConstSharedPtr=std::shared_ptr<const Feedback>; float distance_travelled=0; };
+};
+}}
+namespace kinenest {
+inline std::map<int,std::function<void()>> action_events;
+inline int field_length(const std::string& path){return kn_field_length(path.data(),static_cast<int>(path.size()));}
+}
+namespace rclcpp_action {
+enum class ResultCode:int8_t { UNKNOWN=0, SUCCEEDED=4, CANCELED=5, ABORTED=6 };
+// Numeric ids are educational runtime handles, not native 128-bit GoalUUIDs.
+struct CancelResponse {
+ using SharedPtr=std::shared_ptr<CancelResponse>;
+ static constexpr int8_t ERROR_NONE=0, ERROR_REJECTED=1, ERROR_UNKNOWN_GOAL_ID=2, ERROR_GOAL_TERMINATED=3;
+ int8_t return_code=ERROR_NONE;
+ std::vector<int> goals_canceling;
+};
+template<class Action> class Client;
+template<class Action> class ClientGoalHandle {
+ friend class Client<Action>;
+ int id_=0;int8_t status_=0;bool accepted_=false,terminal_=false;
+ std::weak_ptr<void> owner_;
+public:
+ using SharedPtr=std::shared_ptr<ClientGoalHandle<Action>>;
+ struct WrappedResult { ResultCode code=ResultCode::UNKNOWN; typename Action::Result::SharedPtr result; };
+ int8_t get_status()const{return status_;}
+};
+template<class Action> class Client {
+ static_assert(std::is_same<Action,ros2learn_interfaces::action::DriveDistance>::value,"Only DriveDistance is supported by this educational action client");
+public:
+ using SharedPtr=std::shared_ptr<Client<Action>>;
+ using GoalHandle=ClientGoalHandle<Action>;
+ using GoalResponseCallback=std::function<void(typename GoalHandle::SharedPtr)>;
+ using FeedbackCallback=std::function<void(typename GoalHandle::SharedPtr,typename Action::Feedback::ConstSharedPtr)>;
+ using ResultCallback=std::function<void(const typename GoalHandle::WrappedResult&)>;
+ using CancelResponse=rclcpp_action::CancelResponse;
+ using CancelCallback=std::function<void(typename CancelResponse::SharedPtr)>;
+ struct SendGoalOptions { GoalResponseCallback goal_response_callback; FeedbackCallback feedback_callback; ResultCallback result_callback; };
+private:
+ struct PendingGoal { typename GoalHandle::SharedPtr handle; SendGoalOptions options; bool acceptance_received=false; };
+ struct State {
+  bool alive=true;std::string node,name;
+  std::map<int,PendingGoal> goals;
+  std::map<int,CancelCallback> cancellations;
+ };
+ std::shared_ptr<State> state_;
+ static void dispatch_goal(const std::weak_ptr<State>& weak,int id){
+  auto state=weak.lock();if(!state||!state->alive)return;
+  auto found=state->goals.find(id);if(found==state->goals.end())return;
+  const auto event=kinenest::field_string("event");
+  if(event=="accepted"){
+   if(found->second.acceptance_received)return;
+   found->second.acceptance_received=true;
+   const bool accepted=kinenest::field_bool("payload.accepted");
+   auto handle=found->second.handle;handle->accepted_=accepted;handle->status_=accepted?2:0;
+   auto callback=std::move(found->second.options.goal_response_callback);
+   // A rejected goal has no later feedback/result. Remove it before student code.
+   if(!accepted){handle->terminal_=true;state->goals.erase(found);kinenest::action_events.erase(id);}
+   if(callback)callback(accepted?handle:nullptr);
+   return;
+  }
+  if(!found->second.acceptance_received||!found->second.handle->accepted_)return;
+  if(event=="feedback"){
+   auto callback=found->second.options.feedback_callback;auto handle=found->second.handle;
+   if(!callback)return;
+   auto feedback=std::make_shared<typename Action::Feedback>();
+   feedback->distance_travelled=static_cast<float>(kinenest::field_number("payload.distance_travelled"));
+   callback(handle,feedback);
+   kinenest::emit("{\"kind\":\"action_observed\",\"event\":\"feedback\"}");
+   return;
+  }
+  if(event=="result"){
+   const int status=static_cast<int>(kinenest::field_number("payload.status"));
+   if(status!=4&&status!=5&&status!=6)return;
+   auto handle=found->second.handle;handle->terminal_=true;handle->status_=static_cast<int8_t>(status);
+   typename GoalHandle::WrappedResult wrapped;
+   wrapped.code=static_cast<ResultCode>(status);wrapped.result=std::make_shared<typename Action::Result>();
+   wrapped.result->success=kinenest::field_bool("payload.result.success");
+   wrapped.result->final_distance=static_cast<float>(kinenest::field_number("payload.result.final_distance"));
+   auto callback=std::move(found->second.options.result_callback);
+   // A result may arrive before a cancellation response. Do not discard separate cancel requests.
+   state->goals.erase(found);kinenest::action_events.erase(id);
+   if(callback){callback(wrapped);kinenest::emit("{\"kind\":\"action_observed\",\"event\":\"result\",\"status\":"+std::to_string(status)+"}");}
+  }
+ }
+ static void dispatch_cancel(const std::weak_ptr<State>& weak,int request){
+  auto state=weak.lock();if(!state||!state->alive)return;
+  auto found=state->cancellations.find(request);if(found==state->cancellations.end())return;
+  if(kinenest::field_string("event")!="cancel")return;
+  auto response=std::make_shared<CancelResponse>();
+  const int count=kinenest::field_length("payload.goals_canceling");
+  if(count<0||count>128){kinenest::fail("Malformed action cancellation response");return;}
+  for(int i=0;i<count;++i)response->goals_canceling.push_back(static_cast<int>(kinenest::field_number("payload.goals_canceling."+std::to_string(i))));
+  response->return_code=count?CancelResponse::ERROR_NONE:CancelResponse::ERROR_REJECTED;
+  auto callback=std::move(found->second);
+  state->cancellations.erase(found);kinenest::action_events.erase(request);
+  if(callback)callback(response);
+ }
+public:
+ Client(std::string node,std::string name):state_(std::make_shared<State>()){
+  state_->node=std::move(node);state_->name=std::move(name);
+  kinenest::emit("{\"kind\":\"action_client\",\"node\":"+kinenest::quote(state_->node)+",\"name\":"+kinenest::quote(state_->name)+"}");
+ }
+ Client(const Client&)=delete;Client& operator=(const Client&)=delete;
+ ~Client(){dispose();}
+ void dispose(){
+  if(!state_||!state_->alive)return;state_->alive=false;
+  for(const auto& goal:state_->goals)kinenest::action_events.erase(goal.first);
+  for(const auto& request:state_->cancellations)kinenest::action_events.erase(request.first);
+  state_->goals.clear();state_->cancellations.clear();
+ }
+ int async_send_goal(const typename Action::Goal& goal,const SendGoalOptions& options=SendGoalOptions()){
+  if(!state_->alive){kinenest::fail("Action client has been disposed");return 0;}
+  const std::string distance=kinenest::number(goal.distance,"Goal distance");
+  const int id=++kinenest::next_id;
+  auto handle=std::make_shared<GoalHandle>();handle->id_=id;handle->owner_=state_;
+  state_->goals.emplace(id,PendingGoal{handle,options,false});
+  std::weak_ptr<State> weak=state_;
+  kinenest::action_events[id]=[weak,id](){dispatch_goal(weak,id);};
+  kinenest::emit("{\"kind\":\"action_goal\",\"node\":"+kinenest::quote(state_->node)+",\"name\":"+kinenest::quote(state_->name)+",\"id\":"+std::to_string(id)+",\"goal\":{\"distance\":"+distance+"}}");
+  return id;
+ }
+ int async_cancel_goal(typename GoalHandle::SharedPtr handle,CancelCallback callback=CancelCallback()){
+  if(!state_->alive){kinenest::fail("Action client has been disposed");return 0;}
+  if(!handle||handle->owner_.lock().get()!=state_.get()||!handle->accepted_){kinenest::fail("Cancel requires an accepted goal from this action client");return 0;}
+  // Retained terminal handles can be queried without sending a stale command.
+  if(handle->terminal_){auto response=std::make_shared<CancelResponse>();response->return_code=CancelResponse::ERROR_GOAL_TERMINATED;if(callback)callback(response);return 0;}
+  const int request=++kinenest::next_id;state_->cancellations.emplace(request,std::move(callback));
+  std::weak_ptr<State> weak=state_;
+  kinenest::action_events[request]=[weak,request](){dispatch_cancel(weak,request);};
+  kinenest::emit("{\"kind\":\"action_cancel\",\"id\":"+std::to_string(handle->id_)+",\"request\":"+std::to_string(request)+"}");
+  return request;
+ }
+};
+template<class Action,class NodeT> typename Client<Action>::SharedPtr create_client(NodeT* node,const std::string& name){
+ if(!node){kinenest::fail("An action client requires a node");return nullptr;}
+ return std::make_shared<Client<Action>>(node->get_name(),name);
+}
+template<class Action,class NodeT> typename Client<Action>::SharedPtr create_client(const std::shared_ptr<NodeT>& node,const std::string& name){return create_client<Action>(node.get(),name);}
+}
+extern "C" __attribute__((export_name("kn_action_event"))) void kn_action_event(){
+ const int id=static_cast<int>(kinenest::field_number("id"));
+ auto found=kinenest::action_events.find(id);if(found==kinenest::action_events.end())return;
+ // Own a copy: student callbacks may erase this registry entry or destroy the client.
+ auto invoke=found->second;invoke();
+}

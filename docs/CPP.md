@@ -1,12 +1,12 @@
 # Experimental browser C++
 
-Open session-02.html. On the cpp-parity candidate, tested exercises 2.1–2.4, 3.1–3.6, 4.1–4.3, 5.1–5.6 and 6.1–6.2 offer Python, C++ and Compare by default, with an Experimental label. Future implemented variants can remain developer-gated by ?experimentalCpp=1. The normal course remains Python-first. Compare contains editable student drafts; it does not insert answers. Only the selected program runs at a time.
+Open session-02.html. On the cpp-parity candidate, tested exercises 2.1–2.4, 3.1–3.6, 4.1–4.6, 5.1–5.6 and 6.1–6.2 offer Python, C++ and Compare by default, with an Experimental label. Future implemented variants can remain developer-gated by ?experimentalCpp=1. The normal course remains Python-first. Compare contains editable student drafts; it does not insert answers. Only the selected program runs at a time.
 
 ## Implemented
 
 A worker downloads a pinned Clang/LLD toolchain, compiles controller.cpp as C++17, links WebAssembly and executes it locally. Compiler diagnostics retain filename and line numbers. The educational header supports Node, Twist and String publishers/subscribers, LaserScan and binary rgb8 Image subscriptions, real C++ callbacks, chrono-based timers and logger macros. KineNest-only report_range/report_sectors helpers associate results with the actual active scan; they are not rclcpp APIs. Both adapters use RuntimeAdapter, the same graph, sensor mailbox, robot and behavioural checks. Stop terminates compilation or execution; Reset also discards stale messages and endpoints.
 
-The shipped rclcpp-shaped header is not ROS rclcpp. It supports one translation unit and one worker executor. spin yields into browser events; statements following spin do not resume. No threads, blocking sleep, exception handling, native filesystem, package build or arbitrary ROS packages are supported. Asynchronous Trigger clients use create_client and async_send_request; the response callback receives an already-completed SharedFuture whose get() returns success/message. Blocking waits are unavailable. Failed requests stop cleanly with their cause; Stop/Reset remove clients and invalidate pending responses. Scalar parameters and live updates are supported, as are TargetInfo publishers/subscribers. The host represents numeric parameters as JavaScript numbers; integer declarations are restricted to the safe integer range and typed reads reject narrowing overflow. Native integer/double parameter distinctions and descriptors are not implemented. Odometry subscriptions expose header, child frame, nested position/quaternion and linear/angular twist; covariance arrays are omitted. tf2::getYaw follows the upstream quaternion yaw convention, including scaled inputs and pitch singularities. The latest-planar TF Buffer/TransformListener consumes the same published tree as Python and the inspector. canTransform guards unavailable frames; lookupTransform failures stop cleanly with an actionable diagnostic rather than pretending native C++ exceptions. Actions remain Python-only. Image pixels arrive as a transferable byte buffer and are copied once into the message-owned WASM vector; width/height/data access and reports are tied to the current image. Old frames are replaced instead of queued. No compilation server is used.
+The shipped rclcpp-shaped header is not ROS rclcpp. It supports one translation unit and one worker executor. spin yields into browser events; statements following spin do not resume. No threads, blocking sleep, exception handling, native filesystem, package build or arbitrary ROS packages are supported. Asynchronous Trigger clients use create_client and async_send_request; the response callback receives an already-completed SharedFuture whose get() returns success/message. Blocking waits are unavailable. Failed requests stop cleanly with their cause; Stop/Reset remove clients and invalidate pending responses. Scalar parameters and live updates are supported, as are TargetInfo publishers/subscribers. The host represents numeric parameters as JavaScript numbers; integer declarations are restricted to the safe integer range and typed reads reject narrowing overflow. Native integer/double parameter distinctions and descriptors are not implemented. Odometry subscriptions expose header, child frame, nested position/quaternion and linear/angular twist; covariance arrays are omitted. tf2::getYaw follows the upstream quaternion yaw convention, including scaled inputs and pitch singularities. The latest-planar TF Buffer/TransformListener consumes the same published tree as Python and the inspector. canTransform guards unavailable frames; lookupTransform failures stop cleanly with an actionable diagnostic rather than pretending native C++ exceptions. DriveDistance action clients support asynchronous acceptance, physical feedback/results and cancellation. Calls return educational numeric request IDs rather than native shared futures/GoalUUIDs. A retained terminal handle returns a local terminated cancellation response immediately; normal goal/cancel replies are asynchronous. Stop/Reset invalidate callbacks and stop active goals. Image pixels arrive as a transferable byte buffer and are copied once into the message-owned WASM vector; width/height/data access and reports are tied to the current image. Old frames are replaced instead of queued. No compilation server is used.
 
 ## Toolchain decision
 
@@ -41,8 +41,8 @@ npm test
 npm run build
 npm run test:cpp -- chrome --built
 npm run test:cpp -- firefox --built
-npm run test:cpp-course -- chrome --built --wave=6
-npm run test:cpp-course -- firefox --built --wave=6
+npm run test:cpp-course -- chrome --built --wave=7
+npm run test:cpp-course -- firefox --built --wave=7
 ~~~
 
 The suite compiles hello-world, functional and class controllers, checks callbacks and obstacle avoidance, measures cold/warm loading, checks a compiler error, terminates an infinite loop and exercises Compare/Reset in the actual UI. Reference C++ programs live under tests/cpp and are excluded from production.
@@ -52,7 +52,7 @@ The suite compiles hello-world, functional and class controllers, checks callbac
 | Location | Production effect |
 | --- | --- |
 | src/exercises/programming.js | supported plus visibility: public exposes tested variants; experimental variants otherwise require the flag |
-| public/lessons/*.json | Twenty-one browser-tested variants set supported: true and visibility: public; experimental remains a status label |
+| public/lessons/*.json | Twenty-four browser-tested variants set supported: true and visibility: public; experimental remains a status label |
 | src/ui/code-workspace.js | Reads experimentalCpp once and passes it to the capability check |
 | src/ui/product.js | Carries an explicitly supplied developer flag across navigation; never adds it to ordinary URLs |
 | tests/cpp-ui.html, tests/compare.html | Ordinary URLs validate public execution and draft preservation |
@@ -61,7 +61,7 @@ Historical VALIDATION.md entries describe the earlier gate. Capture tooling prev
 
 Historical visibility diagnosis: local public C++ was already working. The live site still served 13f0acc, where the older gate hid both modes without experimentalCpp=1. Chrome and Firefox probes confirmed both URL cases. That gate diagnosis preceded this parity implementation. It is not the current production SHA.
 
-The current stacked cpp-parity branch completes Sessions 2, 3 and 5, scalar parameters/custom messages (4.1–4.3), and debugging 6.1–6.2. Actions and beacon integration remain subsequent gated waves. Each new executable variant needs a real compiler run, behavioural success and failure cases, Stop/Reset and both browsers. Rust, native package builds and Session 7 remain deferred.
+The current stacked cpp-parity branch completes Sessions 2–5 and debugging 6.1–6.2. Beacon integration remains the final gated exercise. Each new executable variant needs a real compiler run, behavioural success and failure cases, Stop/Reset and both browsers. Rust, native package builds and Session 7 remain deferred.
 
 ## Public-release remeasurement
 
