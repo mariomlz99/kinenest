@@ -2,9 +2,25 @@ import {API} from './vendor/wasm-clang.js';
 export const TOOLCHAIN={revision:'648c4a89997a351eef75cdaec3ef5b89d4937dec',base:'https://raw.githubusercontent.com/binji/wasm-clang/648c4a89997a351eef75cdaec3ef5b89d4937dec/',files:{clang:31214472,lld:19490094,memfs:345442,'sysroot.tar':9297920}};
 export async function loadToolchain({output=()=>{},stage=()=>{}}={}){
  const metrics={downloadBytes:0,cacheBytes:0,loadMs:0,compileMs:0,linkMs:0,peakLinearMemoryBytes:0};const started=performance.now();
- const readBuffer=async name=>{const url=TOOLCHAIN.base+name;let cache;try{cache=await caches.open('kinenest-clang-'+TOOLCHAIN.revision);}catch{}let response=await cache?.match(url);const cached=!!response;
-  if(!response){response=await fetch(url,{signal:AbortSignal.timeout(90000)});if(!response.ok)throw Error('Toolchain '+name+': HTTP '+response.status);await cache?.put(url,response.clone()).catch(()=>{});}
-  const bytes=await response.arrayBuffer();if(bytes.byteLength!==TOOLCHAIN.files[name])throw Error('Unexpected toolchain asset size: '+name);metrics[cached?'cacheBytes':'downloadBytes']+=bytes.byteLength;return bytes;};
+ const readBuffer=async name=>{
+  const url=TOOLCHAIN.base+name,expected=TOOLCHAIN.files[name];let cache,response;
+  try{cache=await caches.open('kinenest-clang-'+TOOLCHAIN.revision);response=await cache.match(url);}catch{}
+  if(response){
+   try{const bytes=await response.arrayBuffer();if(bytes.byteLength===expected){metrics.cacheBytes+=bytes.byteLength;return bytes;}}catch{}
+   // An incomplete cached response must not poison every subsequent Run.
+   try{await cache?.delete?.(url);}catch{}
+  }
+  let bytes;
+  try{
+   response=await fetch(url,{signal:AbortSignal.timeout(90000)});
+   if(!response.ok)throw Error('HTTP '+response.status);
+   bytes=await response.arrayBuffer();
+   if(bytes.byteLength!==expected)throw Error('Incomplete asset: expected '+expected+' bytes, received '+bytes.byteLength);
+  }catch(error){throw Error('C++ toolchain '+name+' could not load: '+error.message+'. Check your connection and run again. Your code is preserved.');}
+  // Cache only a complete verified-size asset; browser storage failure is optional.
+  try{await cache?.put(url,new Response(bytes,{headers:{'Content-Type':'application/octet-stream'}}));}catch{}
+  metrics.downloadBytes+=bytes.byteLength;return bytes;
+ };
  stage('Loading C++ toolchain…');const api=new API({readBuffer,compileStreaming:async name=>WebAssembly.compile(await readBuffer(name)),hostWrite:output});api.hostLog=()=>{};api.hostLogAsync=async(_message,promise)=>promise;api.run=async(module,...args)=>{const app=new API.App(module,api.memfs,...args);await app.ready;try{return await app.run()?app:null;}finally{metrics.peakLinearMemoryBytes=Math.max(metrics.peakLinearMemoryBytes,app.exports.memory.buffer.byteLength+api.memfs.exports.memory.buffer.byteLength);}};await api.ready;
  // Warm compiler/linker once, in the worker. Python never imports this module.
  await api.getModule('clang');await api.getModule('lld');metrics.loadMs=performance.now()-started;

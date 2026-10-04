@@ -1,8 +1,8 @@
 import {DraftStore,codeVariants,cppVisible} from '../exercises/programming.js';
 export class CodeWorkspace {
  constructor({onRunCpp=()=>{},onChange=()=>{}}={}){
-  this.drafts=new DraftStore();this.experimental=new URLSearchParams(location.search).get('experimentalCpp')==='1';this.preferred='python';this.mode='python';this.onChange=onChange;
-  try{this.preferred=localStorage.getItem('kinenest-code-language')||'python';}catch{}
+  this.drafts=new DraftStore();this.experimental=new URLSearchParams(location.search).get('experimentalCpp')==='1';this.preferred='python';this.mode='python';this.cppNoticeSeen=false;this.onChange=onChange;
+  try{this.preferred=localStorage.getItem('kinenest-code-language')||'python';this.cppNoticeSeen=localStorage.getItem('kinenest-cpp-download-notice-seen')==='1';}catch{}
   if(!['python','cpp','compare'].includes(this.preferred))this.preferred='python';
   const panel=document.querySelector('.python-panel'),head=panel.querySelector('.panel-head');head.querySelector('h2').textContent='Code';
   this.controls=document.createElement('div');this.controls.className='code-languages';this.controls.setAttribute('role','group');this.controls.setAttribute('aria-label','Code language');this.controls.dataset.i18nLabel='Code language';
@@ -23,8 +23,8 @@ export class CodeWorkspace {
  render(){const available=cppVisible(this.lesson,this.experimental),cpp=codeVariants(this.lesson).cpp;for(const button of this.controls.children){button.hidden=button.dataset.codeLanguage!=='python'&&!available;button.setAttribute('aria-pressed',String(button.dataset.codeLanguage===this.mode));}
   this.editors.dataset.mode=this.mode;for(const pane of this.editors.children)pane.hidden=this.mode!=='compare'&&pane.dataset.codePane!==this.mode;
   const run=document.getElementById('run-python');run.textContent=this.mode==='cpp'?'Run C++':'Run Python';run.disabled=this.mode==='cpp'&&!cpp?.supported;this.runCpp.hidden=this.mode!=='compare';this.runCpp.disabled=!cpp?.supported;
-  this.note.textContent=this.mode==='python'?(this.preferred!=='python'&&!available?'This exercise uses Python. Your C++ draft is preserved.':''):cpp?.supported?'Experimental C++ · first run downloads about 60 MB. Cached when available.':'C++ comparison draft. Execution is not available for this exercise.';
+  this.note.textContent=this.mode==='python'?(this.preferred!=='python'&&!available?'This exercise uses Python. Your C++ draft is preserved.':''):cpp?.supported?(this.cppNoticeSeen?'Experimental C++ · compiled in your browser.':'Experimental C++ · first run downloads about 60 MB. Cached when available.'):'C++ comparison draft. Execution is not available for this exercise.';
  }
- code(language){this.save();return language==='cpp'?this.cpp.value:this.python.value;}
+ code(language){this.save();if(language==='cpp'&&!this.cppNoticeSeen){this.cppNoticeSeen=true;try{localStorage.setItem('kinenest-cpp-download-notice-seen','1');}catch{}this.render();}return language==='cpp'?this.cpp.value:this.python.value;}
  restore(){const lang=this.mode==='cpp'?'cpp':'python';const editor=lang==='cpp'?this.cpp:this.python;editor.value=this.drafts.restore(this.lesson,lang);}
 }
