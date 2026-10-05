@@ -24,9 +24,18 @@ test('the camera sees the LiDAR obstacle and a nearby target stays in view',()=>
  assert.ok(laserScan(robot,TRAINING_WORLD,{sec:0,nanosec:0}).ranges[60]<3);
  const close=renderCamera({x:4.2,y:0,yaw:0},target);
  assert.equal(inspectPixels(close).visible,true);
+ assert.ok(inspectPixels(close).count>inspectPixels(renderCamera(robot,target)).count);
  assert.equal(close.data[center],235);
  const beaconWorld={obstacles:[{x:4.7,y:-.4,w:.6,h:.8}]};
  assert.equal(inspectPixels(renderCamera(robot,target,beaconWorld)).visible,true);
+});
+test('camera and LiDAR see the same obstacle after the robot turns',()=>{
+ const robot={x:0,y:0,yaw:Math.PI/2},world={obstacles:[{x:-.5,y:3,w:1,h:.6}]};
+ const scan=laserScan(robot,world,{sec:0,nanosec:0});
+ near(scan.ranges[60],2.8);
+ const image=renderCamera(robot,[],world),pixel=(120*image.width+160)*3;
+ assert.equal(image.data[pixel],image.data[pixel+1]);
+ assert.equal(image.data[pixel+1],image.data[pixel+2]);
 });
 test('simulator sensors publish without a student program or active exercise',()=>{
  const r=new Runtime();r.enableSession3();const seen={camera:0,scan:0};

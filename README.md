@@ -51,7 +51,7 @@ Static HTML, CSS and JavaScript provide the workstation. Real Python and NumPy r
 
 Camera: 320 × 240 at 8 Hz. LiDAR: 120 rays at 5 Hz. Odometry: ideal 2D pose at 5 Hz. Stop terminates the worker, including an infinite loop. Slow callbacks drop sensor frames instead of accumulating work. Output and terminal history are bounded.
 
-The simulator publishes `/camera/image_raw` and `/scan` throughout Sessions 2–6, even before student code runs. In Learning terminals, use `ros2 topic hz /scan`, `ros2 topic echo /scan --field ranges --once`, or `ros2 topic echo /camera/image_raw --field width --once`. These are simulated ROS topics within the browser tab. In Session 3, **Add LiDAR obstacle** places an optional box for sensor exploration; **Show LiDAR rays** only changes the map overlay.
+The simulator publishes `/camera/image_raw`, `/scan`, `/odom` and `/tf` throughout Sessions 2–6, even before student code runs. In Learning terminals, use `ros2 topic hz /scan`, `ros2 topic echo /scan --field ranges --once`, or `ros2 topic echo /camera/image_raw --field width --once`. These are simulated ROS topics within the browser tab. In Session 3, **Add LiDAR obstacle** places an optional box for sensor exploration; **Show LiDAR rays** changes only the map overlay. Solid rays show returns and dashed rays show the sensor's reach when nothing is hit.
 
 ## Python and experimental C++
 

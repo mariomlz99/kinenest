@@ -8,7 +8,7 @@ export function arrangeSession(session){
  document.body.dataset.session=String(session);
  const camera=document.querySelector('.camera-panel'),world=document.querySelector('.world-panel'),graph=document.querySelector('.graph-panel');
  if(session!==3&&session!==6)disclose(camera,'Camera');
- if(session===3)disclose(world,'Robot');
+ if(session===3)disclose(world,'Robot · LiDAR',true);
  const tf=document.getElementById('tf-tree').closest('details');tf.hidden=true;
  const params=document.getElementById('parameters').closest('details'),actions=document.getElementById('action-progress').closest('details');
  if(session===4){const inspector=document.createElement('section');inspector.className='panel course-inspector';params.open=true;actions.open=true;inspector.append(params,actions);world.before(inspector);}

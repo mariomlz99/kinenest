@@ -35,3 +35,10 @@ test('scan is live and topic metrics stop cleanly',()=>{
  for(const mode of ['hz','bw','delay']){const out=[],session=new TerminalSession(r,2,text=>out.push(text));session.run('ros2 topic '+mode+' /odom');r.step(2);assert.ok(out.length>2);assert.ok(!out.at(-1).includes('NaN'));session.stop();}
  assert.equal(r.topic('/odom').subscribers.size,0);
 });
+test('terminal can inspect a live nested TF field',()=>{
+ const r=new Runtime();r.enableSession3();const values=[],echo=new TerminalSession(r,1,text=>values.push(text));
+ echo.run('ros2 topic echo /tf --field transforms.1.child_frame_id --once');
+ r.step(.125);
+ assert.equal(values.at(-1),'"base_link"\n---');
+ assert.equal(echo.running,false);
+});
