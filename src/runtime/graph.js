@@ -37,7 +37,7 @@ export class Runtime {
     return service.handler(request);
   }
   cameraFrame() {
-    const image=renderCamera(this.robot,this.targets);image.header={stamp:this.stamp(),frame_id:SENSORS.camera.frame};
+    const image=renderCamera(this.robot,this.targets,this.world);image.header={stamp:this.stamp(),frame_id:SENSORS.camera.frame};
     this.emit('/tf',transforms(this));
     this.sensorSamples.camera={stamp:image.header.stamp,basePose:{x:this.robot.x,y:this.robot.y,yaw:this.robot.yaw},pose:sensorPose(this.robot,'camera')};
     this.camera=image;const id=++this.frameId,truth=inspectPixels(image);

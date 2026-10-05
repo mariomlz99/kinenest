@@ -10,7 +10,7 @@ import { createTerminals } from './terminals.js';
 import { sessionChecks } from '../exercises/perception.js';
 import { courseChecks, observeCourse } from '../exercises/course.js';
 import { transforms } from '../runtime/course.js';
-import { TRAINING_WORLD } from '../simulator/lidar.js';
+import { TRAINING_WORLD,RANGE_MAX } from '../simulator/lidar.js';
 import { setupPreferences, translate, language } from './preferences.js';
 import { inspectPixels } from '../simulator/camera.js';
 
@@ -27,7 +27,14 @@ async function json(name){const response=await fetch(new URL('../../public/lesso
 function reset(){
   epoch++;testing=false;execution.stop();$('stop-python').disabled=true;terminals.reset();runtime.reset();runtime.robot.x=lesson.startX??0;runtime.robot.y=lesson.startY??0;runtime.robot.yaw=lesson.startYaw??0;
   runtime.world=lesson.world??(session===2?structuredClone(TRAINING_WORLD):null);runtime.targets=lesson.targets;runtime.targetFrame=lesson.goal??[5,0];
+  updateObstacleControl();
   hints=0;lastDetection=null;lastFrame=-1;last=0;accumulator=0;$('hints').replaceChildren();$('hint').textContent='Reveal next hint';$('hint').disabled=false;$('feedback').hidden=true;$('check').disabled=false;$('python-output').textContent='';$('detection').textContent='No student detection reported';$('status').textContent='Ready. Complete the TODOs and Run.';runtime.cameraFrame();tfView?.setLesson(lesson);draw();
+}
+function updateObstacleControl(){
+  const button=$('toggle-obstacle');if(!button)return;
+  const present=!!runtime.world?.obstacles?.length;
+  button.textContent=present?'Remove LiDAR obstacle':'Add LiDAR obstacle';
+  button.setAttribute('aria-pressed',String(present));
 }
 async function selectLesson(id){
   const request=++selection;
@@ -64,6 +71,7 @@ const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function testScenes(){
   if(![...execution.instances.values()].some(adapter=>adapter.worker)){$('status').textContent='Run your detector before checking.';return;}
   testing=true;$('check').disabled=true;const token=++epoch;
+  const practiceWorld=runtime.world;runtime.world=null;
   const e=runtime.evidence;e.detectionCases.clear();e.positionCases.clear();e.detectionCounts.clear();e.positionCounts.clear();
   // Random positions and order prevent constant answers from passing. Ground truth stays on the JS side.
   const cases=[{y:2+Math.random(),color:[235,45,45]},{y:(Math.random()-.5)*.5,color:[220,35,50]},{y:-2-Math.random(),color:[240,65,40]},{y:0,color:[40,85,230]}].sort(()=>Math.random()-.5);
@@ -74,7 +82,7 @@ async function testScenes(){
     await wait(1500);
   }
   if(epoch!==token)return;
-  runtime.testCase=null;runtime.targets=undefined;testing=false;$('check').disabled=false;showResults();
+  runtime.testCase=null;runtime.targets=undefined;runtime.world=practiceWorld;testing=false;$('check').disabled=false;showResults();
 }
 $('lesson-select').addEventListener('change',()=>selectLesson($('lesson-select').value).catch(error=>{$('status').textContent=error.message;}));
 async function executeCode(language){
@@ -90,6 +98,17 @@ $('restore-code').addEventListener('click',()=>workspace.restore());
 $('reset').addEventListener('click',reset);
 $('check').addEventListener('click',()=>{if(lesson.testScenes)testScenes();else showResults();});
 $('hint').addEventListener('click',()=>{if(hints>=localLesson().hints.length)return;const p=document.createElement('p');p.textContent=localLesson().hints[hints++];$('hints').append(p);$('hint').disabled=hints===localLesson().hints.length;});
+if(session===3){
+  const button=document.createElement('button');button.type='button';button.id='toggle-obstacle';
+  button.addEventListener('click',()=>{
+    runtime.world=runtime.world?.obstacles?.length?null:{bounds:structuredClone(TRAINING_WORLD.bounds),obstacles:[{x:3,y:1.5,w:.6,h:1.2}]};
+    updateObstacleControl();runtime.cameraFrame();draw();
+  });
+  $('show-rays').closest('label').after(button);
+}
+const sensorHelp=document.createElement('p');
+sensorHelp.textContent='The simulator publishes /scan at 5 Hz and /camera/image_raw at 8 Hz in every exercise. Inspect either topic in Learning terminals. Solid LiDAR rays are returns; dashed rays show reach without a hit. Showing rays changes only this map view.';
+$('show-rays').closest('label').after(sensorHelp);
 let leaveEditor=false;$('python-code').addEventListener('keydown',event=>{if(event.key==='Escape'){leaveEditor=true;return;}if(event.key==='Tab'&&!event.shiftKey&&!leaveEditor){event.preventDefault();const el=event.target;el.setRangeText('    ',el.selectionStart,el.selectionEnd,'end');}leaveEditor=false;});
 // Cache computed theme colors; do not read CSS on every sensor frame.
 function updateWorldColors(){
@@ -111,7 +130,18 @@ function draw(){
     const sx=x=>ox+(x-bounds.minX)*scale,sy=y=>height-oy-(y-bounds.minY)*scale;
     ctx.fillStyle=worldColors.background;ctx.fillRect(0,0,width,height);ctx.strokeStyle=worldColors.boundary;ctx.strokeRect(ox,oy,scale*(bounds.maxX-bounds.minX),scale*(bounds.maxY-bounds.minY));
     for(const o of world?.obstacles??[]){ctx.fillStyle=worldColors.obstacle;ctx.fillRect(sx(o.x),sy(o.y+o.h),o.w*scale,o.h*scale);}
-    if($('show-rays').checked){const scan=runtime.latestScan??runtime.scan(),sensor=runtime.sensorSamples.lidar?.pose??sensorPose(r,'lidar');ctx.strokeStyle=worldColors.rays;ctx.beginPath();scan.ranges.forEach((d,i)=>{if(!Number.isFinite(d))return;const angle=sensor.yaw+scan.angle_min+i*scan.angle_increment,{x,y}=sensor;ctx.moveTo(sx(x),sy(y));ctx.lineTo(sx(x+d*Math.cos(angle)),sy(y+d*Math.sin(angle)));});ctx.stroke();}
+    if($('show-rays').checked){
+      const scan=runtime.latestScan??runtime.scan(),sensor=runtime.sensorSamples.lidar?.pose??sensorPose(r,'lidar');ctx.strokeStyle=worldColors.rays;
+      for(const misses of [false,true]){
+        ctx.setLineDash(misses?[2,5]:[]);ctx.beginPath();
+        scan.ranges.forEach((value,i)=>{
+          if(!misses&&!Number.isFinite(value)||misses&&(Number.isFinite(value)||i%4!==0))return;
+          const distance=misses?RANGE_MAX:value,angle=sensor.yaw+scan.angle_min+i*scan.angle_increment;
+          ctx.moveTo(sx(sensor.x),sy(sensor.y));ctx.lineTo(sx(sensor.x+distance*Math.cos(angle)),sy(sensor.y+distance*Math.sin(angle)));
+        });ctx.stroke();
+      }
+      ctx.setLineDash([]);
+    }
     for(const t of runtime.targets??[{x:5,y:0,color:[235,45,45]},{x:6,y:-2,color:[40,85,230]}]){ctx.fillStyle='rgb('+(t.color??[235,45,45]).join(',')+')';ctx.fillRect(sx(t.x)-6,sy(t.y)-6,12,12);}
     if(lesson.goal){ctx.strokeStyle=worldColors.goal;ctx.beginPath();ctx.arc(sx(lesson.goal[0]),sy(lesson.goal[1]),8,0,Math.PI*2);ctx.stroke();}
     ctx.save();ctx.translate(sx(r.x),sy(r.y));ctx.rotate(-r.yaw);ctx.fillStyle=worldColors.robot;ctx.beginPath();ctx.arc(0,0,ROBOT_RADIUS*scale,0,Math.PI*2);ctx.fill();ctx.strokeStyle=worldColors.heading;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(ROBOT_RADIUS*scale,0);ctx.stroke();ctx.restore();for(const [name,mount]of Object.entries(SENSORS)){const p=sensorPose(r,name);ctx.fillStyle=name==='lidar'?'#b5fff0':'#e8f1ff';ctx.strokeStyle='#163d48';ctx.beginPath();if(name==='lidar')ctx.arc(sx(p.x),sy(p.y),1.7,0,Math.PI*2);else ctx.rect(sx(p.x)-1,sy(p.y)-1.3,2,2.6);ctx.fill();ctx.stroke();}tfView?.draw({sx,sy,scale,width,height});

@@ -1,6 +1,7 @@
 import { interfaceType } from '../runtime/interfaces.js';
 import { startGoal, cancelGoal, DRIVE } from '../runtime/course.js';
 import { execute, parsePublication, parseMessage, tokens } from './cli.js';
+import {transforms} from '../runtime/course.js';
 
 export function fieldValue(message, path) {
   let value=message;
@@ -77,7 +78,7 @@ export class TerminalSession {
     if(!topicName)throw new Error('Usage: ros2 topic echo TOPIC [--field FIELD] [--once]');
     const topic=this.runtime.topic(topicName);
     if(topic.placeholder)throw new Error(topicName+' has no simulated sensor samples yet. Try /odom or /cmd_vel.');
-    const sample=topicName==='/camera/image_raw'?(this.runtime.camera??interfaceType(topic.type).prototype):topicName==='/odom'?this.runtime.odometry():topicName==='/scan'?this.runtime.scan():interfaceType(topic.type).prototype;
+    const sample=topicName==='/camera/image_raw'?(this.runtime.camera??interfaceType(topic.type).prototype):topicName==='/odom'?this.runtime.odometry():topicName==='/scan'?this.runtime.scan():topicName==='/tf'?transforms(this.runtime):interfaceType(topic.type).prototype;
     if(field!==null)fieldValue(sample,field);
     this.unsubscribe=this.runtime.subscribe(topicName,'/ros2cli_echo_'+this.id,message=>{
       const {_frameId,...display}=message;this.write(formatMessage(field===null?display:fieldValue(message,field))+'\n---');
