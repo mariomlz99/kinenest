@@ -6,14 +6,12 @@ fetch('/progress',{method:'POST',body:'Harness started'});
 try{
  await until(()=>frame.contentDocument?.getElementById('lesson-select')?.disabled===false);
  const d=frame.contentDocument,$=id=>d.getElementById(id);
- const camera=$('camera').getContext('2d'),pixel=()=>[...camera.getImageData(75,120,1,1).data].slice(0,3);
- const clear=pixel(),obstacle=$('toggle-obstacle');
- if(!obstacle||obstacle.textContent!=='Add LiDAR obstacle')throw new Error('Complementary LiDAR obstacle control is missing');
- obstacle.click();await until(()=>pixel()[0]===pixel()[1]&&pixel()[1]===pixel()[2]);
- if(obstacle.getAttribute('aria-pressed')!=='true')throw new Error('LiDAR obstacle was not added');
- obstacle.click();await until(()=>pixel().join(',')===clear.join(','));
+ if($('toggle-obstacle'))throw new Error('Unexpected LiDAR obstacle control');
+ if(!$('map').closest('details')?.open)throw new Error('LiDAR map is hidden');
  const terminal=$('command');terminal.value='ros2 topic list';terminal.closest('form').requestSubmit();
  if(!$('output').textContent.includes('/scan')||!$('output').textContent.includes('/camera/image_raw'))throw new Error('Sensors are missing from the live ROS graph');
+ terminal.value='ros2 topic echo /scan --field ranges.60 --once';terminal.closest('form').requestSubmit();
+ await until(()=>$('output').textContent.includes('\n7.8\n---')&&!terminal.readOnly);
  for(let index=0;index<6;index++){
    $('lesson-select').selectedIndex=index;$('lesson-select').dispatchEvent(new Event('change'));
    await until(()=>d.body.dataset.lessonState==='ready'&&$('lesson-number').textContent==='EXERCISE 3.'+(index+1));
