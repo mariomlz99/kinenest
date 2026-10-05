@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {Runtime} from '../src/runtime/graph.js';
 import {lookup} from '../src/runtime/course.js';
 import {SENSORS,sensorPose,ROBOT_RADIUS} from '../src/simulator/sensors.js';
-import {laserScan} from '../src/simulator/lidar.js';
+import {laserScan,TRAINING_WORLD} from '../src/simulator/lidar.js';
 import {renderCamera,inspectPixels} from '../src/simulator/camera.js';
 import {LatestMailbox} from '../src/runtime/mailbox.js';
 import {PythonBridge} from '../src/python/bridge.js';
@@ -14,6 +14,26 @@ test('sensor origins are distinct and match TF after translation and rotation',(
  near(lookup(r,'laser_link','camera_link').x,-.1);assert.ok(SENSORS.camera.x<ROBOT_RADIUS);
  const scan=laserScan(r.robot,{obstacles:[{x:0,y:4,w:3,h:1}]},{sec:1,nanosec:0});near(scan.ranges[60],1.8);
  const image=renderCamera({x:0,y:0,yaw:0},[{x:5,y:1,color:[235,45,45]}]);assert.ok(Math.abs(inspectPixels(image).cx-(160-160/4.9))<1);
+});
+test('the camera sees the LiDAR obstacle and a nearby target stays in view',()=>{
+ const robot={x:0,y:0,yaw:0},target=[{x:5,y:0,color:[235,45,45]}];
+ const image=renderCamera(robot,target,TRAINING_WORLD),center=(120*image.width+160)*3;
+ assert.equal(image.data[center],image.data[center+1]);
+ assert.equal(image.data[center+1],image.data[center+2]);
+ assert.equal(inspectPixels(image).visible,false);
+ assert.ok(laserScan(robot,TRAINING_WORLD,{sec:0,nanosec:0}).ranges[60]<3);
+ const close=renderCamera({x:4.2,y:0,yaw:0},target);
+ assert.equal(inspectPixels(close).visible,true);
+ assert.equal(close.data[center],235);
+ const beaconWorld={obstacles:[{x:4.7,y:-.4,w:.6,h:.8}]};
+ assert.equal(inspectPixels(renderCamera(robot,target,beaconWorld)).visible,true);
+});
+test('simulator sensors publish without a student program or active exercise',()=>{
+ const r=new Runtime();r.enableSession3();const seen={camera:0,scan:0};
+ r.subscribe('/camera/image_raw','/camera_observer',()=>seen.camera++);
+ r.subscribe('/scan','/scan_observer',()=>seen.scan++);
+ r.step(1);
+ assert.deepEqual(seen,{camera:8,scan:5});
 });
 test('camera and scan stamps match capture pose and a same-stamp TF sample',()=>{
  const r=new Runtime();r.enableSession3();let tf;const seen=[];r.subscribe('/tf','/tf_test',m=>tf=m);

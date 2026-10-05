@@ -7,6 +7,10 @@ try{for(const session of sessions){
  frame.src='../session-0'+session+'.html';await until(()=>frame.contentDocument?.getElementById('session-tag')?.textContent==='SESSION 0'+session&&frame.contentDocument?.body.dataset.lessonState==='ready');
  const d=frame.contentDocument,$=id=>d.getElementById(id),ids=[...$('lesson-select').options].map(o=>o.value);
  if(ids.length<3)throw Error('Missing lesson catalog: '+session);
+ if(session==='2'){
+  const color=$('camera').getContext('2d').getImageData(160,120,1,1).data;
+  if(color[0]!==color[1]||color[1]!==color[2]||color[0]<80)throw Error('LiDAR obstacle is missing from the live camera view');
+ }
  for(const [index,id]of ids.entries()){
   if(document.body.dataset.filter&&!id.includes(document.body.dataset.filter))continue;
   $('lesson-select').value=id;$('lesson-select').dispatchEvent(new Event('change'));await until(()=>d.body.dataset.lessonState==='ready'&&d.body.dataset.lessonId===id&&!$('run-python').disabled);

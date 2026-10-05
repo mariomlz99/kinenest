@@ -27,7 +27,14 @@ async function json(name){const response=await fetch(new URL('../../public/lesso
 function reset(){
   epoch++;testing=false;execution.stop();$('stop-python').disabled=true;terminals.reset();runtime.reset();runtime.robot.x=lesson.startX??0;runtime.robot.y=lesson.startY??0;runtime.robot.yaw=lesson.startYaw??0;
   runtime.world=lesson.world??(session===2?structuredClone(TRAINING_WORLD):null);runtime.targets=lesson.targets;runtime.targetFrame=lesson.goal??[5,0];
+  updateObstacleControl();
   hints=0;lastDetection=null;lastFrame=-1;last=0;accumulator=0;$('hints').replaceChildren();$('hint').textContent='Reveal next hint';$('hint').disabled=false;$('feedback').hidden=true;$('check').disabled=false;$('python-output').textContent='';$('detection').textContent='No student detection reported';$('status').textContent='Ready. Complete the TODOs and Run.';runtime.cameraFrame();tfView?.setLesson(lesson);draw();
+}
+function updateObstacleControl(){
+  const button=$('toggle-obstacle');if(!button)return;
+  const present=!!runtime.world?.obstacles?.length;
+  button.textContent=present?'Remove LiDAR obstacle':'Add LiDAR obstacle';
+  button.setAttribute('aria-pressed',String(present));
 }
 async function selectLesson(id){
   const request=++selection;
@@ -64,6 +71,7 @@ const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function testScenes(){
   if(![...execution.instances.values()].some(adapter=>adapter.worker)){$('status').textContent='Run your detector before checking.';return;}
   testing=true;$('check').disabled=true;const token=++epoch;
+  const practiceWorld=runtime.world;runtime.world=null;
   const e=runtime.evidence;e.detectionCases.clear();e.positionCases.clear();e.detectionCounts.clear();e.positionCounts.clear();
   // Random positions and order prevent constant answers from passing. Ground truth stays on the JS side.
   const cases=[{y:2+Math.random(),color:[235,45,45]},{y:(Math.random()-.5)*.5,color:[220,35,50]},{y:-2-Math.random(),color:[240,65,40]},{y:0,color:[40,85,230]}].sort(()=>Math.random()-.5);
@@ -74,7 +82,7 @@ async function testScenes(){
     await wait(1500);
   }
   if(epoch!==token)return;
-  runtime.testCase=null;runtime.targets=undefined;testing=false;$('check').disabled=false;showResults();
+  runtime.testCase=null;runtime.targets=undefined;runtime.world=practiceWorld;testing=false;$('check').disabled=false;showResults();
 }
 $('lesson-select').addEventListener('change',()=>selectLesson($('lesson-select').value).catch(error=>{$('status').textContent=error.message;}));
 async function executeCode(language){
@@ -90,6 +98,17 @@ $('restore-code').addEventListener('click',()=>workspace.restore());
 $('reset').addEventListener('click',reset);
 $('check').addEventListener('click',()=>{if(lesson.testScenes)testScenes();else showResults();});
 $('hint').addEventListener('click',()=>{if(hints>=localLesson().hints.length)return;const p=document.createElement('p');p.textContent=localLesson().hints[hints++];$('hints').append(p);$('hint').disabled=hints===localLesson().hints.length;});
+if(session===3){
+  const button=document.createElement('button');button.type='button';button.id='toggle-obstacle';
+  button.addEventListener('click',()=>{
+    runtime.world=runtime.world?.obstacles?.length?null:{bounds:structuredClone(TRAINING_WORLD.bounds),obstacles:[{x:3,y:1.5,w:.6,h:1.2}]};
+    updateObstacleControl();runtime.cameraFrame();draw();
+  });
+  $('show-rays').closest('label').after(button);
+}
+const sensorHelp=document.createElement('p');
+sensorHelp.textContent='The simulator publishes /scan at 5 Hz and /camera/image_raw at 8 Hz in every exercise. Inspect either topic in Learning terminals. Showing rays changes only this map view.';
+$('show-rays').closest('label').after(sensorHelp);
 let leaveEditor=false;$('python-code').addEventListener('keydown',event=>{if(event.key==='Escape'){leaveEditor=true;return;}if(event.key==='Tab'&&!event.shiftKey&&!leaveEditor){event.preventDefault();const el=event.target;el.setRangeText('    ',el.selectionStart,el.selectionEnd,'end');}leaveEditor=false;});
 // Cache computed theme colors; do not read CSS on every sensor frame.
 function updateWorldColors(){
