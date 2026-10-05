@@ -110,7 +110,7 @@
   "programming": {
     "python": {
       "supported": true,
-      "starterCode": "import rclpy\nfrom rclpy.node import Node\nimport math\nfrom sensor_msgs.msg import LaserScan\nfrom ros2learn import report_sectors\n\nrclpy.init()\nnode = Node('student_controller')\n\ndef scan(msg):\n    # TODO: calculate front/left/right minima using the beam angles\n    # TODO: report_sectors(front, left, right)\n    pass\nnode.create_subscription(LaserScan, '/scan', scan, 10)\nrclpy.spin(node)\n"
+      "starterCode": "import rclpy\nfrom rclpy.node import Node\nimport math\nimport numpy as np\nfrom sensor_msgs.msg import LaserScan\nfrom ros2learn import report_sectors\n\nrclpy.init()\nnode = Node('student_controller')\n\ndef scan(msg):\n    # TODO: calculate front/left/right minima using the beam angles\n    # TODO: report_sectors(front, left, right)\n    pass\nnode.create_subscription(LaserScan, '/scan', scan, 10)\nrclpy.spin(node)\n"
     },
     "cpp": {
       "supported": true,
