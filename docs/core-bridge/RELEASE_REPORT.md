@@ -1,16 +1,26 @@
-# External review follow-up — validation pending, 2026-10-06
+# Release hardening — blocked, 2026-10-06
 
-Reviewed base: `a2c4b58f77810d1d5ee30e5ee3d3d1aa59465efd`. Follow-up changes are local and uncommitted; they have no deployed commit or verified live build identity yet. **CORE READY TO FREEZE: NO — required gates remain pending.**
+**CORE READY TO FREEZE: NO.** The hardening implementation was committed as `684eb2fdf0d345f5c37c85994ef470d8d2702838`; this report is a subsequent documentation-only update. No merge, tag, production deployment or fresh preview deployment was performed.
 
-- Replaced the obsolete empty-query Compare assertion with explicit default Core lesson and canonical lesson URL checks. Added direct frame-debug deep-link and same-document Back/Forward draft checks. Existing Compare, language preference and Session 6 round-trip checks remain.
-- Added the missing lesson-history listener, keeping in-memory drafts when history restores another exercise.
-- Added `wrong-topic-graph-debugging` within the existing terminal-browser CI suite, on Session 1's initial graph. Echo receives repeated typo-topic Twist messages while the robot stays still. Echo is stopped before asserting zero subscribers; stopping the publisher then removes the empty dynamic topic. The five requested terminal error cases are also checked.
-- Curriculum, lesson starters, bridge and package export files are unchanged. The bridge already has localized Package & Build, Run & Inspect, Launch & Debug headings and progress indicators. Existing native Jazzy evidence in [NATIVE_JAZZY_VALIDATION.md](NATIVE_JAZZY_VALIDATION.md) is retained; native revalidation was not required by this change.
-- Source inspection confirms 6.1/6.2 explicitly supply their controllers and require topic/frame repairs; 4.4 starters contain no feedback implementation. Existing Core starter coverage uses supplied starters and edits, not imported reference programs. This inspection does not substitute for a new four-way browser walkthrough.
+## Intended changes
 
-Local verification: VS Code's bundled Node 24.21.0 ran 85 tests with isolation disabled: 84 passed; the build-identity test failed because this environment's bundled runtime could not obtain Git metadata (`commit: null`). A direct runtime smoke passed repeated typo publication, echo, stationary robot, endpoint counts and topic cleanup. Changed JavaScript syntax and `git diff --check` passed. The generated local build is not release evidence.
+- Preserved the existing Compare correction: ordinary Session 6 URLs select the default Core lesson and canonicalize to a valid `?lesson=` URL. Direct frame-debug deep links, Compare, language preference, draft round trips and same-document Back/Forward remain covered by the browser regression.
+- Preserved the lesson-history listener that restores the selected exercise and in-memory drafts.
+- Completed the existing wrong-topic regression: publisher alone on `/cmdd_vel` is 1 publisher / 0 subscribers; active echo is 1 / 1; the robot stays stationary and `/cmd_vel` remains 0 publishers / 1 simulator subscriber; stopping echo restores 1 / 0; stopping the publisher removes the empty dynamic topic. The five terminal error cases remain covered.
+- Retained `.nvmrc` selecting Node 22. No curriculum, starter, bridge, package or export code changed. Existing [native Jazzy validation](NATIVE_JAZZY_VALIDATION.md) remains applicable; it was not rerun.
 
-Environment blockers: outbound GitHub access fails; even Python socket creation returns `PermissionError: Operation not permitted`, so a local HTTP browser harness cannot start. The Chrome/Firefox matrix, all downstream acceptance steps, Python/C++ starter walkthroughs and live build-info verification remain unrun for this patch. No merge or deployment was performed. Run the complete existing workflow against the eventual exact commit, require every acceptance step in both browsers to pass, and record its CI URL and preview build-info before changing the freeze verdict.
+## Verification and blockers
+
+- Syntax checks for the changed JavaScript and `git diff --check` passed. The implementation commit left a clean working tree.
+- Node 22.23.3 ran all 85 unit tests with test isolation disabled: 84 passed, 1 failed (build identity). This is not a passing release test run.
+- Building from the clean implementation commit produced asset version `98b8341f51ee`, but `build-info.json` reported `commit: null` and `dirty: null`. Direct diagnosis returned `EPERM spawnSync git EPERM`. The generated artifact is invalid as a release candidate; its metadata was not manually altered.
+- Full Chrome and Firefox course runners were both attempted with Node 22. Both stopped at their first browser suite with `listen EPERM: operation not permitted 127.0.0.1`. The remaining browser matrix and downstream gates have not executed successfully.
+- GitHub CLI access failed; Git remote access failed with DNS resolution for github.com. No remote CI run for this candidate could be started or verified.
+- Preview publication remains gated on a clean identified build and the complete green matrix. No new preview identity is claimed.
+
+## Remaining release sequence
+
+On a workstation permitting Git subprocesses, local browser servers and GitHub access, verify the final clean HEAD, build with Node 22 and require its exact SHA plus `dirty: false`. Run every existing workflow acceptance step in both browsers, including all downstream C++, starters, bridge, terminals, transitions, responsive and cleanup checks. Require all steps to execute and pass. Only then deploy a preview from that SHA and verify both commit and assetVersion against the tested build. Record the CI and preview evidence before changing the freeze verdict. Do not merge, tag or deploy production before that clean green candidate.
 
 # Latest curriculum follow-up
 
