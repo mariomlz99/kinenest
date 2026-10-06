@@ -1,3 +1,37 @@
+# Final Core freeze gate addendum — 2026-10-06
+
+**CORE READY TO FREEZE: NO.** This pass is based on `46311aaf7179fa98a48b4e421510d78783348a51`. The release candidate becomes the clean commit containing this addendum and its test-only/CI changes; earlier SHA evidence does not certify the new candidate.
+
+Added only verification: the terminal browser regression now also checks non-finite velocity rejection, corrected `/cmd_vel` movement and explicit zero-Twist stopping. CI explicitly requires exact `GITHUB_SHA`, `dirty: false`, asset version and timestamp after building. Course suites continue after failures while retaining a failing exit code. All 16 browser workflow acceptance steps run after earlier test failures when the artifact downloaded successfully, unless cancelled. No test failure is ignored, and production deployment still depends on successful build and browser jobs.
+
+Local checks: JavaScript syntax and diff whitespace passed; workflow YAML parsed and all 16 acceptance conditions were checked. A direct runtime test passed non-finite rejection, corrected-topic movement and explicit zero stopping. Browser assertions and the revised GitHub workflow remain unexecuted in their target environments. Branch-protection API verification failed because GitHub is inaccessible. Previous sandbox build/socket blockers remain unresolved; metadata has not been fabricated.
+
+## Mandatory evidence still missing
+
+| Gate | Required evidence / current status |
+| --- | --- |
+| Clean build | Final exact SHA, `dirty: false`, non-null assetVersion and timestamp from Node 22+ on a normal host/CI. Missing. Preserve and deploy the validated artifact; revalidate any rebuild. |
+| Full matrix | Green CI URL and all required Chrome/Firefox steps, including Python/C++ Foundations and Further compatibility, 15 Core starters in each language, bridge in both languages, terminals, Compare/history/drafts, Stop/Reset, recovery, transitions/first paint, responsive, seven-language content/navigation, checker negatives and alternate valid solutions. Missing for final candidate. |
+| Wrong-topic browser regression | All endpoint lifecycle assertions, stationary typo publication, corrected-topic movement, zero stop and all negative inputs. Implemented; browser pass missing. |
+| Novice walkthrough | Entire required Core using only starter, visible task/hints, terminals and simulator/graph; no reference solutions. Record undocumented API/convention requirements as blockers. Missing. |
+| Further independence | Fresh-state Core completion without 2.3–2.4, 3.2–3.4, 3.6, 4.6, 5.5–5.6 or 6.3; verify supplied-controller explanations in 6.1/6.2. Human execution evidence missing. |
+| UX | Desktop landing → Session 1 → Core → Session 6 → Build & Launch → Native ROS; clear optional status, correct Next Core route and three bridge stages, understandable first entry. Human pass missing. |
+| Keyboard | Navigation, selector, Python/C++/Compare, Run/Stop/Reset, hints, terminals, bridge tree/editor; visible focus and no traps. Human pass missing. |
+| Native Jazzy | Existing validation retained: package/export/launch scaffold code is unchanged. Rerun only if those files change. |
+| Clean preview | URL; exact SHA/assetVersion and `dirty: false`; 11 public routes, unknown-route 404, actual Python/C++ execution, bridge build/run/launch and deep links. Missing. |
+| Merge protection | Verify required `test-build`, `browser-acceptance (chrome)` and `browser-acceptance (firefox)` checks against actual GitHub check names; auto-merge must wait. Remote protection status unverified. |
+| Rollback | Immediately before production actions record current production SHA, assetVersion and Worker deployment identity; preserve known-good artifact and recovery infrastructure. Missing. |
+| Production | Approved exact SHA only, production URL/build identity and successful smoke test. Not deployed; missing. |
+| Freeze marker | Maintainer-selected semantic version/tag after production verification. Not created. |
+
+Do not merge, tag or publish production until the clean green candidate, human gates, preview and protection checks pass. The final report must include final SHA, assetVersion, `dirty: false`, PR/merge SHA, CI URL/status, Chrome/Firefox results, Python/C++ starter and bridge results, preview URL, native validation status, production identity, limitations and rollback SHA. Missing evidence means NO.
+
+Safari/iPhone physical-device certification remains explicitly unverified and nonblocking for the first stable Core. Desktop Chrome/Firefox plus responsive viewport testing is the required browser scope.
+
+The pedagogical boundary is unchanged: beginners must finish Core without prior competence in perception, control, planning or robotics mathematics, understanding ROS 2 concepts and project assembly. After production verification, mark ROS 2 Foundations, From KineNest to ROS 2, Python, C++ and the native Jazzy reference bridge complete, then mark **CORE FROZEN**. Later Core changes are limited to bugs, browser/security/accessibility fixes, translations, ROS/Jazzy compatibility and small teaching clarifications. New subjects belong to separate tracks, not additional Core sessions.
+
+---
+
 # Release hardening — blocked, 2026-10-06
 
 **CORE READY TO FREEZE: NO.** The hardening implementation was committed as `684eb2fdf0d345f5c37c85994ef470d8d2702838`; this report is a subsequent documentation-only update. No merge, tag, production deployment or fresh preview deployment was performed.

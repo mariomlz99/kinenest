@@ -55,8 +55,17 @@ try{
     [`ros2 topic pub --once /cmd_vel std_msgs/msg/String '{"data":"oops"}'`,'Topic type mismatch: geometry_msgs/msg/Twist'],
     ['ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist "{linear: {y: 1}}"','This 2D lab supports only linear.x and angular.z'],
     ['ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 3}}"','Lab limits:'],
+    [`ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist '{"linear":{"x":1e309}}'`,'Vector components must be finite numbers.'],
     ['ros2 topic echo /does_not_exist','Unknown topic: /does_not_exist']
   ])await command(2,input,'Error: '+message,{error:true});
+  await command(0,'ros2 topic pub -r 2 /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.6}}"','publishing #1');
+  await until(()=>d.getElementById('robot').getAttribute('transform')!==pose,'Corrected topic moves robot');
+  panels[0].querySelector('.stop-echo').click();
+  await command(0,'ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0}, angular: {z: 0}}"','Published one message on /cmd_vel');
+  await sleep(100);
+  const stoppedPose=d.getElementById('robot').getAttribute('transform');
+  await sleep(500);
+  assert(d.getElementById('robot').getAttribute('transform')===stoppedPose,'Explicit zero Twist did not stop robot');
   await fetch('/progress',{method:'POST',body:'PASS wrong-topic-graph-debugging and terminal errors'});
   await fetch('/done',{method:'POST',body:'PASS terminal commands across all six Foundations pages'});
 }catch(error){await fetch('/done',{method:'POST',body:'FAIL terminal browser: '+(error.stack??error)});}
