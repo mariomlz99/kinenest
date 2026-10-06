@@ -1,4 +1,6 @@
-// Complete the changed starter TODOs using only the APIs named in the visible lessons.
+import {coreEdits} from './core-starter-edits.js';
+import {CORE_EXERCISES} from '../src/ui/curriculum.js';
+// Complete every Core coding starter using the APIs named in the visible lessons.
 // No reference-program fetches: a drift in a starter or an incomplete scaffold fails here.
 const language=new URLSearchParams(location.search).get('language')==='cpp'?'cpp':'python';
 const frame=document.querySelector('iframe'),sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
@@ -26,9 +28,11 @@ const edits={
   cpp:s=>replace(s,'// TODO: kinenest::report_pose(x, y, yaw);','const auto &p = msg->pose.pose.position;\n    const auto &q = msg->pose.pose.orientation;\n    kinenest::report_pose(p.x, p.y, tf2::getYaw(q));')
  }
 };
+Object.assign(edits,coreEdits);
 try{
+ if(CORE_EXERCISES.some(id=>!edits[id.slice(8)]))throw Error('Core starter coverage missing');
  let currentSession;
- for(const [suffix,variants] of Object.entries(edits)){
+ for(const [suffix,variants] of Object.entries(edits).sort(([a],[b])=>a.localeCompare(b))){
   const session=suffix.slice(0,2),id='session-'+suffix;
   if(session!==currentSession){frame.src='../session-'+session+'.html';await new Promise(resolve=>frame.onload=resolve);await until(()=>frame.contentDocument.documentElement.dataset.kinenestReady==='true','page ready');currentSession=session;}
   const d=frame.contentDocument,$=id=>d.getElementById(id);
@@ -37,7 +41,7 @@ try{
   d.querySelector('[data-code-language="'+language+'"]').click();
   const editor=$(language==='cpp'?'cpp-code':'python-code');
   // Each case is first visited with a clean browser profile, so this is the supplied starter.
-  if(!editor.value.includes('TODO'))throw Error('Expected a supplied starter for '+id);
+  if(!suffix.startsWith('06-')&&!editor.value.includes('TODO'))throw Error('Expected a supplied starter for '+id);
   editor.value=variants[language](editor.value);editor.dispatchEvent(new Event('input',{bubbles:true}));
   $(language==='cpp'?'run-cpp':'run-python').click();
   await until(()=>$('python-state').textContent.includes('callbacks ready'),'runtime ready');
@@ -46,5 +50,5 @@ try{
   await until(()=>{$('check').click();return $('status').textContent.startsWith('Exercise complete');},'starter completion '+id,40);
   $('stop-python').click();await fetch('/progress',{method:'POST',body:'PASS starter '+language+' '+id});
  }
- await fetch('/done',{method:'POST',body:'PASS '+language+' changed starter path: declaration, live tuning, feedback, raw odometry, yaw'});
+ await fetch('/done',{method:'POST',body:'PASS '+language+' all 15 Core coding starters: communication, services, parameters, actions, odometry, TF and debugging'});
 }catch(error){await fetch('/done',{method:'POST',body:'FAIL starter '+language+': '+error.stack});}

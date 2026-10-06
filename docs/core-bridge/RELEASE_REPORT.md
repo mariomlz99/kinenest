@@ -1,3 +1,7 @@
+# Latest curriculum follow-up
+
+The reviewed Core/Further split is documented in [CORE_PATH_IMPLEMENTATION.md](CORE_PATH_IMPLEMENTATION.md), including complete required coding-starter coverage and remaining human-review/CI gates. The earlier candidate evidence below is retained as historical evidence.
+
 # Core bridge release report — review candidate, 2026-10-06
 
 ## Final hardening follow-up

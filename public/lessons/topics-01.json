@@ -3,6 +3,7 @@
   "title": "Discover and use /cmd_vel",
   "description": "Mission: discover the topic that controls the robot. Publish a velocity command and travel at least 1 metre. KineNest stops stale velocity commands after 2 s; real robot bases may use different safety behavior.",
   "steps": [
+    "A node is a running participant in a ROS system. A publisher sends typed messages on a named topic; subscribers receive them. Here /simulator subscribes to /cmd_vel, and your terminal command creates a publisher.",
     "Inspect the nodes and list the available topics.",
     "Find the velocity topic and inspect its message type.",
     "Inspect the Twist interface, then publish a single command.",
@@ -32,6 +33,7 @@
       "title": "Ontdek het besturingstopic",
       "description": "Ontdek welk topic de robot bestuurt. Publiceer een Twist en laat de robot minstens één meter rijden. KineNest stopt oude snelheidsopdrachten na 2 s; echte robotbases kunnen ander veiligheidsgedrag hebben.",
       "steps": [
+        "Een node is een actieve deelnemer in een ROS-systeem. Een publisher stuurt getypeerde berichten op een topic; subscribers ontvangen ze. /simulator luistert naar /cmd_vel en je terminalopdracht maakt een publisher.",
         "Inspecteer de nodes en toon de beschikbare topics.",
         "Vind het snelheidstopic en inspecteer het berichttype.",
         "Inspecteer Twist en publiceer één opdracht.",
@@ -49,6 +51,7 @@
       "title": "Découvrir le topic de commande",
       "description": "Trouvez le topic qui commande le robot. Publiez un Twist pour lui faire parcourir au moins un mètre. KineNest arrête les commandes de vitesse périmées après 2 s ; les bases réelles peuvent se comporter autrement.",
       "steps": [
+        "Un nœud participe à un système ROS en cours d’exécution. Un publisher envoie des messages typés sur un topic ; les subscribers les reçoivent. /simulator est abonné à /cmd_vel et votre commande crée un publisher.",
         "Inspectez les nœuds et listez les topics disponibles.",
         "Trouvez le topic de vitesse et inspectez son type.",
         "Inspectez Twist puis publiez une seule commande.",
@@ -66,6 +69,7 @@
       "title": "Descubrir y usar /cmd_vel",
       "description": "Encuentra el topic que controla el robot. Publica una velocidad y recorre al menos 1 metro. KineNest detiene órdenes de velocidad antiguas tras 2 s; las bases reales pueden tener otra conducta de seguridad.",
       "steps": [
+        "Un nodo participa en un sistema ROS en ejecución. Un publisher envía mensajes tipados por un topic; los subscribers los reciben. /simulator se suscribe a /cmd_vel y tu comando crea un publisher.",
         "Inspecciona los nodos y enumera los topics disponibles.",
         "Encuentra el topic de velocidad y consulta su tipo de mensaje.",
         "Inspecciona Twist y publica un único comando.",
@@ -83,6 +87,7 @@
       "title": "/cmd_vel entdecken und nutzen",
       "description": "Finde das Topic zur Robotersteuerung. Sende eine Geschwindigkeit und fahre mindestens 1 Meter. KineNest stoppt veraltete Geschwindigkeitsbefehle nach 2 s; echte Roboterbasen können sich anders verhalten.",
       "steps": [
+        "Ein Node ist ein laufender Teilnehmer eines ROS-Systems. Ein Publisher sendet typisierte Nachrichten auf einem Topic; Subscriber empfangen sie. /simulator abonniert /cmd_vel und dein Terminalbefehl erzeugt einen Publisher.",
         "Untersuche die Knoten und liste die Topics auf.",
         "Finde das Geschwindigkeits-Topic und seinen Nachrichtentyp.",
         "Untersuche Twist und sende einen einzelnen Befehl.",
@@ -100,6 +105,7 @@
       "title": "Descobrir e usar /cmd_vel",
       "description": "Encontra o topic que controla o robô. Publica uma velocidade e percorre pelo menos 1 metro. KineNest para comandos de velocidade antigos após 2 s; bases reais podem ter outro comportamento de segurança.",
       "steps": [
+        "Um nó participa num sistema ROS em execução. Um publisher envia mensagens tipadas num tópico; os subscribers recebem-nas. /simulator subscreve /cmd_vel e o teu comando cria um publisher.",
         "Inspeciona os nós e lista os topics disponíveis.",
         "Encontra o topic de velocidade e consulta o tipo de mensagem.",
         "Inspeciona Twist e publica um único comando.",
@@ -117,6 +123,7 @@
       "title": "Scoprire e usare /cmd_vel",
       "description": "Missione: trova il topic che controlla il robot. Pubblica un comando di velocità e percorri almeno un metro. KineNest ferma i comandi di velocità scaduti dopo 2 s; le basi reali possono avere un comportamento di sicurezza diverso.",
       "steps": [
+        "Un nodo è un partecipante attivo in un sistema ROS. Un publisher invia messaggi tipizzati su un topic; i subscriber li ricevono. /simulator è iscritto a /cmd_vel e il comando nel terminale crea un publisher.",
         "Ispeziona i nodi ed elenca i topic disponibili.",
         "Trova il topic di velocità e leggi il tipo di messaggio.",
         "Ispeziona l’interfaccia Twist, poi pubblica un comando singolo.",

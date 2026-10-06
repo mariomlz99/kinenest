@@ -5,6 +5,7 @@
   "title": "Correct numbers, wrong frame",
   "description": "This controller keeps turning toward the wrong direction. Its TF query returns valid coordinates, but they are in the wrong frame for the steering calculation.",
   "steps": [
+    "The steering code is supplied: it turns toward the target, advances when aligned, and stops nearby. It needs target coordinates relative to the robot (+x forward, +y left). Use 5.3–5.4 to repair the frame lookup. The check confirms reaching and stopping; implementing a controller or completing 5.5–5.6 is not required.",
     "Inspect the TF tree and identify the frame needed by atan2(y, x).",
     "Repair the lookup, then reach the target and stop.",
     "Explain why world-aligned coordinates cannot directly be used as a robot-relative heading error."
@@ -31,6 +32,7 @@
       "title": "Juiste getallen, verkeerd frame",
       "description": "De TF-query werkt, maar levert coördinaten in het verkeerde stelsel voor de stuurregeling.",
       "steps": [
+        "De stuurcode is gegeven: draaien naar het doel, vooruitrijden wanneer uitgelijnd en dichtbij stoppen. Hij verwacht robotrelatieve coördinaten (+x vooruit, +y links). Gebruik 5.3–5.4 om de TF-opvraag te herstellen. De controle bevestigt aankomst en stoppen; 5.5–5.6 zijn niet vereist.",
         "Bekijk welk frame atan2(y,x) nodig heeft.",
         "Herstel de query en bereik het doel.",
         "Leg uit waarom wereldcoördinaten niet direct een robotrelatieve koersfout geven."
@@ -45,6 +47,7 @@
       "title": "Bons nombres, mauvais repère",
       "description": "La requête TF fonctionne mais renvoie des coordonnées dans le mauvais repère pour la commande.",
       "steps": [
+        "La commande est fournie : tourner vers la cible, avancer une fois aligné et s’arrêter à proximité. Elle attend des coordonnées relatives au robot (+x devant, +y à gauche). Utilisez 5.3–5.4 pour corriger la recherche TF. La vérification confirme l’arrivée et l’arrêt ; 5.5–5.6 ne sont pas requis.",
         "Identifiez le repère nécessaire à atan2(y,x).",
         "Corrigez la requête et atteignez la cible.",
         "Expliquez pourquoi les coordonnées du monde ne donnent pas directement l’erreur de cap du robot."
@@ -59,6 +62,7 @@
       "title": "Números correctos, marco incorrecto",
       "description": "El controlador gira en la dirección equivocada. TF devuelve coordenadas válidas en un marco inadecuado para controlar.",
       "steps": [
+        "El control está incluido: gira hacia el objetivo, avanza al alinearse y se detiene cerca. Necesita coordenadas relativas al robot (+x delante, +y izquierda). Usa 5.3–5.4 para reparar la consulta TF. Se verifica llegada y parada; 5.5–5.6 no son requisitos.",
         "Inspecciona el árbol TF e identifica el marco que necesita atan2(y, x).",
         "Corrige la consulta, alcanza el objetivo y detente.",
         "Explica por qué las coordenadas del mundo no son directamente un error angular relativo al robot."
@@ -73,6 +77,7 @@
       "title": "Richtige Zahlen, falscher Bezug",
       "description": "Der Controller dreht in die falsche Richtung. TF liefert gültige Koordinaten im falschen Bezugssystem.",
       "steps": [
+        "Die Steuerung ist vorgegeben: zum Ziel drehen, ausgerichtet vorfahren und nahebei stoppen. Sie braucht roboterrelative Koordinaten (+x vorwärts, +y links). Nutze 5.3–5.4 für die TF-Korrektur. Ankunft und Stopp werden geprüft; 5.5–5.6 sind keine Voraussetzung.",
         "Prüfe den TF-Baum und den Bezug, den atan2(y, x) benötigt.",
         "Korrigiere die Abfrage, erreiche das Ziel und stoppe.",
         "Erkläre, warum Weltkoordinaten nicht direkt als roboterrelativer Winkelfehler dienen."
@@ -87,6 +92,7 @@
       "title": "Números certos, referencial errado",
       "description": "O controlador roda na direção errada. TF devolve coordenadas válidas num referencial inadequado para controlar.",
       "steps": [
+        "O controlo é fornecido: vira para o alvo, avança quando alinhado e para perto. Precisa de coordenadas relativas ao robô (+x em frente, +y à esquerda). Usa 5.3–5.4 para corrigir a consulta TF. Verifica-se chegada e paragem; 5.5–5.6 não são requisitos.",
         "Inspeciona a árvore TF e identifica o referencial de que atan2(y, x) precisa.",
         "Corrige a consulta, alcança o alvo e para.",
         "Explica porque coordenadas do mundo não são diretamente um erro angular relativo ao robô."
@@ -101,6 +107,7 @@
       "title": "Numeri corretti, riferimento sbagliato",
       "description": "Il controllore continua a girare nella direzione sbagliata. La query TF restituisce coordinate valide, ma nel riferimento errato per calcolare la sterzata.",
       "steps": [
+        "Il controllo è fornito: gira verso il bersaglio, avanza quando allineato e si ferma vicino. Richiede coordinate relative al robot (+x avanti, +y sinistra). Usa 5.3–5.4 per correggere la ricerca TF. Si verificano arrivo e arresto; 5.5–5.6 non sono prerequisiti.",
         "Ispeziona l’albero TF e identifica il riferimento richiesto da atan2(y, x).",
         "Correggi la query, raggiungi il target e fermati.",
         "Spiega perché le coordinate allineate al mondo non sono direttamente un errore angolare relativo al robot."
@@ -125,6 +132,7 @@
         "title": "Correct numbers, wrong frame",
         "description": "This controller keeps turning toward the wrong direction. Its TF query returns valid coordinates, but they are in the wrong frame for the steering calculation.",
         "steps": [
+          "The steering code is supplied: it turns toward the target, advances when aligned, and stops nearby. It needs target coordinates relative to the robot (+x forward, +y left). Use 5.3–5.4 to repair the frame lookup. The check confirms reaching and stopping; implementing a controller or completing 5.5–5.6 is not required.",
           "Inspect the TF tree and identify the frame needed by atan2(y, x).",
           "Repair the lookup, then reach the target and stop.",
           "Explain why world-aligned coordinates cannot directly be used as a robot-relative heading error."
@@ -139,6 +147,7 @@
             "title": "Juiste getallen, verkeerd frame",
             "description": "De TF-query werkt, maar levert coördinaten in het verkeerde stelsel voor de stuurregeling.",
             "steps": [
+              "De stuurcode is gegeven: draaien naar het doel, vooruitrijden wanneer uitgelijnd en dichtbij stoppen. Hij verwacht robotrelatieve coördinaten (+x vooruit, +y links). Gebruik 5.3–5.4 om de TF-opvraag te herstellen. De controle bevestigt aankomst en stoppen; 5.5–5.6 zijn niet vereist.",
               "Bekijk welk frame atan2(y,x) nodig heeft.",
               "Herstel de query en bereik het doel.",
               "Leg uit waarom wereldcoördinaten niet direct een robotrelatieve koersfout geven."
@@ -153,6 +162,7 @@
             "title": "Bons nombres, mauvais repère",
             "description": "La requête TF fonctionne mais renvoie des coordonnées dans le mauvais repère pour la commande.",
             "steps": [
+              "La commande est fournie : tourner vers la cible, avancer une fois aligné et s’arrêter à proximité. Elle attend des coordonnées relatives au robot (+x devant, +y à gauche). Utilisez 5.3–5.4 pour corriger la recherche TF. La vérification confirme l’arrivée et l’arrêt ; 5.5–5.6 ne sont pas requis.",
               "Identifiez le repère nécessaire à atan2(y,x).",
               "Corrigez la requête et atteignez la cible.",
               "Expliquez pourquoi les coordonnées du monde ne donnent pas directement l’erreur de cap du robot."
@@ -167,6 +177,7 @@
             "title": "Números correctos, marco incorrecto",
             "description": "El controlador gira en la dirección equivocada. TF devuelve coordenadas válidas en un marco inadecuado para controlar.",
             "steps": [
+              "El control está incluido: gira hacia el objetivo, avanza al alinearse y se detiene cerca. Necesita coordenadas relativas al robot (+x delante, +y izquierda). Usa 5.3–5.4 para reparar la consulta TF. Se verifica llegada y parada; 5.5–5.6 no son requisitos.",
               "Inspecciona el árbol TF e identifica el marco que necesita atan2(y, x).",
               "Corrige la consulta, alcanza el objetivo y detente.",
               "Explica por qué las coordenadas del mundo no son directamente un error angular relativo al robot."
@@ -181,6 +192,7 @@
             "title": "Richtige Zahlen, falscher Bezug",
             "description": "Der Controller dreht in die falsche Richtung. TF liefert gültige Koordinaten im falschen Bezugssystem.",
             "steps": [
+              "Die Steuerung ist vorgegeben: zum Ziel drehen, ausgerichtet vorfahren und nahebei stoppen. Sie braucht roboterrelative Koordinaten (+x vorwärts, +y links). Nutze 5.3–5.4 für die TF-Korrektur. Ankunft und Stopp werden geprüft; 5.5–5.6 sind keine Voraussetzung.",
               "Prüfe den TF-Baum und den Bezug, den atan2(y, x) benötigt.",
               "Korrigiere die Abfrage, erreiche das Ziel und stoppe.",
               "Erkläre, warum Weltkoordinaten nicht direkt als roboterrelativer Winkelfehler dienen."
@@ -195,6 +207,7 @@
             "title": "Números certos, referencial errado",
             "description": "O controlador roda na direção errada. TF devolve coordenadas válidas num referencial inadequado para controlar.",
             "steps": [
+              "O controlo é fornecido: vira para o alvo, avança quando alinhado e para perto. Precisa de coordenadas relativas ao robô (+x em frente, +y à esquerda). Usa 5.3–5.4 para corrigir a consulta TF. Verifica-se chegada e paragem; 5.5–5.6 não são requisitos.",
               "Inspeciona a árvore TF e identifica o referencial de que atan2(y, x) precisa.",
               "Corrige a consulta, alcança o alvo e para.",
               "Explica porque coordenadas do mundo não são diretamente um erro angular relativo ao robô."
@@ -209,6 +222,7 @@
             "title": "Numeri corretti, riferimento sbagliato",
             "description": "Il controllore continua a girare nella direzione sbagliata. La query TF restituisce coordinate valide, ma nel riferimento errato per calcolare la sterzata.",
             "steps": [
+              "Il controllo è fornito: gira verso il bersaglio, avanza quando allineato e si ferma vicino. Richiede coordinate relative al robot (+x avanti, +y sinistra). Usa 5.3–5.4 per correggere la ricerca TF. Si verificano arrivo e arresto; 5.5–5.6 non sono prerequisiti.",
               "Ispeziona l’albero TF e identifica il riferimento richiesto da atan2(y, x).",
               "Correggi la query, raggiungi il target e fermati.",
               "Spiega perché le coordinate allineate al mondo non sono direttamente un errore angolare relativo al robot."

@@ -5,6 +5,7 @@
   "title": "The robot hears nothing",
   "description": "A controller runs and publishes, but the robot does not move. Diagnose the graph before editing code.",
   "steps": [
+    "The avoidance code is supplied: it reads the nearest range ahead, turns when an obstacle is close, and otherwise moves forward. Your task is to repair its topic connection. The check confirms the repaired system moves and avoids the block; implementing avoidance or completing 2.3–2.4 is not required.",
     "Run the supplied program and inspect node list, topic list -t and topic info /cmd_vel.",
     "Find the publisher’s topic and compare it with the simulator’s subscription. Fix the mismatch.",
     "Let the repaired controller avoid the block. Explain which evidence identified the fault."
@@ -43,6 +44,7 @@
       "title": "De robot hoort niets",
       "description": "De controller draait en publiceert, maar de robot beweegt niet. Onderzoek eerst de graaf.",
       "steps": [
+        "De ontwijkcode is gegeven: hij leest de afstand vooruit, draait bij een obstakel en rijdt anders vooruit. Herstel de topicverbinding. De controle bevestigt beweging zonder botsing; 2.3–2.4 zijn niet vereist.",
         "Voer de startcode uit; inspecteer node list, topic list -t en topic info /cmd_vel.",
         "Vergelijk het publicatietopic met de subscription van de simulator.",
         "Herstel de fout, ontwijk het blok en leg je diagnose uit."
@@ -57,6 +59,7 @@
       "title": "Le robot n’entend rien",
       "description": "Le contrôleur publie mais le robot ne bouge pas. Examinez d’abord le graphe.",
       "steps": [
+        "Le code d’évitement est fourni : il lit la distance devant, tourne près d’un obstacle et avance sinon. Réparez sa connexion au topic. La vérification confirme le déplacement sans collision ; 2.3–2.4 ne sont pas requis.",
         "Exécutez le code initial ; inspectez node list, topic list -t et topic info /cmd_vel.",
         "Comparez le topic publié et l’abonnement du simulateur.",
         "Corrigez, évitez le bloc et expliquez votre diagnostic."
@@ -71,6 +74,7 @@
       "title": "El robot no recibe comandos",
       "description": "El controlador publica pero el robot no se mueve. Diagnostica el grafo antes de editar.",
       "steps": [
+        "El código de evasión está incluido: lee la distancia frontal, gira cerca de un obstáculo y avanza en otro caso. Repara la conexión del topic. La prueba verifica movimiento sin colisión; 2.3–2.4 no son requisitos.",
         "Ejecuta el programa y consulta ros2 node list, ros2 topic list -t y ros2 topic info /cmd_vel.",
         "Compara el topic del publisher con la suscripción del simulador. Corrige la diferencia.",
         "Deja que el controlador evite el bloque y explica qué datos revelaron el fallo."
@@ -85,6 +89,7 @@
       "title": "Der Roboter empfängt nichts",
       "description": "Der Controller veröffentlicht, aber der Roboter bewegt sich nicht. Untersuche den Graphen vor dem Code.",
       "steps": [
+        "Der Ausweichcode ist vorgegeben: Er liest den Abstand vorn, dreht vor einem Hindernis und fährt sonst vorwärts. Repariere die Topic-Verbindung. Geprüft wird die Fahrt ohne Kollision; 2.3–2.4 sind keine Voraussetzung.",
         "Starte das Programm und prüfe ros2 node list, ros2 topic list -t und ros2 topic info /cmd_vel.",
         "Vergleiche Publisher-Topic und Simulator-Subscription. Korrigiere die Abweichung.",
         "Lass den reparierten Controller dem Block ausweichen. Welche Beobachtung zeigte den Fehler?"
@@ -99,6 +104,7 @@
       "title": "O robô não recebe comandos",
       "description": "O controlador publica mas o robô não se move. Diagnostica o grafo antes de editar.",
       "steps": [
+        "O código de desvio é fornecido: lê a distância à frente, vira perto de um obstáculo e avança no restante percurso. Corrige a ligação do tópico. A verificação confirma movimento sem colisão; 2.3–2.4 não são requisitos.",
         "Executa o programa e consulta ros2 node list, ros2 topic list -t e ros2 topic info /cmd_vel.",
         "Compara o topic do publisher com a subscrição do simulador. Corrige a diferença.",
         "Deixa o controlador reparado evitar o bloco. Explica que dados revelaram a falha."
@@ -113,6 +119,7 @@
       "title": "Il robot non riceve i comandi",
       "description": "Il controllore è attivo e pubblica, ma il robot non si muove. Diagnostica il grafo prima di modificare il codice.",
       "steps": [
+        "Il codice di evitamento è fornito: legge la distanza davanti, gira vicino a un ostacolo e altrimenti avanza. Correggi il collegamento del topic. La verifica conferma il movimento senza collisioni; 2.3–2.4 non sono prerequisiti.",
         "Esegui il programma e ispeziona node list, topic list -t e topic info /cmd_vel.",
         "Trova il topic del publisher e confrontalo con la subscription del simulatore. Correggi la differenza.",
         "Lascia che il controllore corretto eviti il blocco. Spiega quali osservazioni hanno identificato il guasto."
@@ -137,6 +144,7 @@
         "title": "The robot hears nothing",
         "description": "A controller runs and publishes, but the robot does not move. Diagnose the graph before editing code.",
         "steps": [
+          "The avoidance code is supplied: it reads the nearest range ahead, turns when an obstacle is close, and otherwise moves forward. Your task is to repair its topic connection. The check confirms the repaired system moves and avoids the block; implementing avoidance or completing 2.3–2.4 is not required.",
           "Run the supplied program and inspect node list, topic list -t and topic info /cmd_vel.",
           "Find the publisher’s topic and compare it with the simulator’s subscription. Fix the mismatch.",
           "Let the repaired controller avoid the block. Explain which evidence identified the fault."
@@ -151,6 +159,7 @@
             "title": "De robot hoort niets",
             "description": "De controller draait en publiceert, maar de robot beweegt niet. Onderzoek eerst de graaf.",
             "steps": [
+              "De ontwijkcode is gegeven: hij leest de afstand vooruit, draait bij een obstakel en rijdt anders vooruit. Herstel de topicverbinding. De controle bevestigt beweging zonder botsing; 2.3–2.4 zijn niet vereist.",
               "Voer de startcode uit; inspecteer node list, topic list -t en topic info /cmd_vel.",
               "Vergelijk het publicatietopic met de subscription van de simulator.",
               "Herstel de fout, ontwijk het blok en leg je diagnose uit."
@@ -165,6 +174,7 @@
             "title": "Le robot n’entend rien",
             "description": "Le contrôleur publie mais le robot ne bouge pas. Examinez d’abord le graphe.",
             "steps": [
+              "Le code d’évitement est fourni : il lit la distance devant, tourne près d’un obstacle et avance sinon. Réparez sa connexion au topic. La vérification confirme le déplacement sans collision ; 2.3–2.4 ne sont pas requis.",
               "Exécutez le code initial ; inspectez node list, topic list -t et topic info /cmd_vel.",
               "Comparez le topic publié et l’abonnement du simulateur.",
               "Corrigez, évitez le bloc et expliquez votre diagnostic."
@@ -179,6 +189,7 @@
             "title": "El robot no recibe comandos",
             "description": "El controlador publica pero el robot no se mueve. Diagnostica el grafo antes de editar.",
             "steps": [
+              "El código de evasión está incluido: lee la distancia frontal, gira cerca de un obstáculo y avanza en otro caso. Repara la conexión del topic. La prueba verifica movimiento sin colisión; 2.3–2.4 no son requisitos.",
               "Ejecuta el programa y consulta ros2 node list, ros2 topic list -t y ros2 topic info /cmd_vel.",
               "Compara el topic del publisher con la suscripción del simulador. Corrige la diferencia.",
               "Deja que el controlador evite el bloque y explica qué datos revelaron el fallo."
@@ -193,6 +204,7 @@
             "title": "Der Roboter empfängt nichts",
             "description": "Der Controller veröffentlicht, aber der Roboter bewegt sich nicht. Untersuche den Graphen vor dem Code.",
             "steps": [
+              "Der Ausweichcode ist vorgegeben: Er liest den Abstand vorn, dreht vor einem Hindernis und fährt sonst vorwärts. Repariere die Topic-Verbindung. Geprüft wird die Fahrt ohne Kollision; 2.3–2.4 sind keine Voraussetzung.",
               "Starte das Programm und prüfe ros2 node list, ros2 topic list -t und ros2 topic info /cmd_vel.",
               "Vergleiche Publisher-Topic und Simulator-Subscription. Korrigiere die Abweichung.",
               "Lass den reparierten Controller dem Block ausweichen. Welche Beobachtung zeigte den Fehler?"
@@ -207,6 +219,7 @@
             "title": "O robô não recebe comandos",
             "description": "O controlador publica mas o robô não se move. Diagnostica o grafo antes de editar.",
             "steps": [
+              "O código de desvio é fornecido: lê a distância à frente, vira perto de um obstáculo e avança no restante percurso. Corrige a ligação do tópico. A verificação confirma movimento sem colisão; 2.3–2.4 não são requisitos.",
               "Executa o programa e consulta ros2 node list, ros2 topic list -t e ros2 topic info /cmd_vel.",
               "Compara o topic do publisher com a subscrição do simulador. Corrige a diferença.",
               "Deixa o controlador reparado evitar o bloco. Explica que dados revelaram a falha."
@@ -221,6 +234,7 @@
             "title": "Il robot non riceve i comandi",
             "description": "Il controllore è attivo e pubblica, ma il robot non si muove. Diagnostica il grafo prima di modificare il codice.",
             "steps": [
+              "Il codice di evitamento è fornito: legge la distanza davanti, gira vicino a un ostacolo e altrimenti avanza. Correggi il collegamento del topic. La verifica conferma il movimento senza collisioni; 2.3–2.4 non sono prerequisiti.",
               "Esegui il programma e ispeziona node list, topic list -t e topic info /cmd_vel.",
               "Trova il topic del publisher e confrontalo con la subscription del simulatore. Correggi la differenza.",
               "Lascia che il controllore corretto eviti il blocco. Spiega quali osservazioni hanno identificato il guasto."

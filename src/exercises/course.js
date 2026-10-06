@@ -17,7 +17,7 @@ export function courseChecks(r,lesson){
     scan:[c.scan>=3&&c.range>=3,'Scan callback reported three correct finite distances'],
     safe_stop:[c.stopped>=30&&c.scan>=3&&e.codePublications>=3,'Moved, then stopped 0.55–1.10 m before the obstacle'],
     custom:[c.customCode>=3,'Published three valid TargetInfo messages through the graph'],
-    configured:[r.parameters.get('/student_controller')?.has('speed')&&c.commandPublications>=3,'Declared speed on /student_controller and published motion'],
+    configured:[r.parameters.get('/student_controller')?.has('speed')&&c.commandPublications>=3&&[...(c.commandSpeeds??[])].some(speed=>Number.isFinite(speed)&&speed>0)&&r.robot.distance>0,'Declared speed on /student_controller and published motion'],
     parameter:[c.paramChanges>=1&&c.paramValues.size>=2&&c.commandSpeeds?.size>=2&&c.paramReads>=3&&c.timers>=3,'Live parameter changed and code read both values'],
     action_result:[c.actionAccepted>=1&&c.results>=1,'Action completed and final result received'],
     action:[c.actionAccepted>=1&&c.feedback>=2&&c.results>=1,'Goal accepted, feedback processed and success result received'],

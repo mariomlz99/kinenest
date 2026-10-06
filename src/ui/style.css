@@ -94,3 +94,5 @@ footer .footer-contact{flex-basis:100%;margin:0;line-height:1.6}footer .footer-c
 :root .terminal-cwd{font:11px ui-monospace,monospace;color:var(--text-muted);overflow-wrap:anywhere}
 .checker-helper-note{margin:8px 0 0;padding:7px 10px;border-left:3px solid var(--accent);background:var(--accent-soft);color:var(--text-muted);font-size:12px;line-height:1.45}
 .checker-helper-note[hidden]{display:none}
+
+.lesson-path{border-inline-start:3px solid var(--accent,#61ddc5);padding:.65rem 1rem;margin:1rem 0}.lesson-path p{margin:.4rem 0}.lesson-path a{display:inline-block;padding:.35rem 0}

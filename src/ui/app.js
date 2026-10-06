@@ -1,5 +1,5 @@
 import {pageReady,pageFailed} from './page-ready.js';
-import { setupPreferences, language } from './preferences.js';
+import { setupPreferences, language, translate } from './preferences.js';
 setupPreferences();
 import { Runtime } from '../runtime/graph.js';
 import { createTerminals } from './terminals.js';
@@ -7,7 +7,7 @@ import { loadLesson,checkSolution } from '../exercises/lesson.js';
 const $=id=>document.getElementById(id), runtime=new Runtime();
 let lesson, terminals, hints=0, trail=[], last=0, accumulator=0;
 function localLesson(){return {...lesson,...lesson.translations?.[language()]};}
-function renderLesson(){if(!lesson)return;const text=localLesson();$('hint').disabled=hints>=text.hints.length;$('mission-title').textContent=text.title;$('description').textContent=text.description;$('steps').replaceChildren();for(const step of text.steps){const li=document.createElement('li');li.textContent=step;$('steps').append(li);}$('hints').replaceChildren();for(const hint of text.hints.slice(0,hints)){const p=document.createElement('p');p.textContent=hint;$('hints').append(p);}}
+function renderLesson(){if(!lesson)return;let path=$('lesson-path');if(!path){path=document.createElement('aside');path.id='lesson-path';path.className='lesson-path';$('description').after(path);}path.replaceChildren();const label=document.createElement('strong');label.textContent=translate('Core exercise');const next=document.createElement('a');next.href='./session-02.html?lesson=session-02-01-subscriber';next.textContent=translate('Next Core exercise');path.append(label,document.createElement('br'),next);const text=localLesson();$('hint').disabled=hints>=text.hints.length;$('mission-title').textContent=text.title;$('description').textContent=text.description;$('steps').replaceChildren();for(const step of text.steps){const li=document.createElement('li');li.textContent=step;$('steps').append(li);}$('hints').replaceChildren();for(const hint of text.hints.slice(0,hints)){const p=document.createElement('p');p.textContent=hint;$('hints').append(p);}}
 window.addEventListener('languagechange',renderLesson);
 function render() {
   const r=runtime.robot, x=320+r.x*40, y=180-r.y*40;

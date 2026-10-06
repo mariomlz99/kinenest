@@ -1,3 +1,4 @@
+import {isFurther,CORE_EXERCISES,FURTHER_PREREQUISITES,lessonHref} from './curriculum.js';
 import {pageReady} from './page-ready.js';
 import {CodeWorkspace} from './code-workspace.js';
 import {sensorPose,ROBOT_RADIUS,SENSORS} from '../simulator/sensors.js';
@@ -43,6 +44,7 @@ async function selectLesson(id){
     workspace.load(lesson);
     renderLesson();
     document.body.dataset.lessonId=id;
+    const url=new URL(location.href);url.searchParams.set('lesson',id);history.replaceState(null,'',url);
     document.body.dataset.lessonState='ready';
     for(const control of ['run-python','restore-code','reset','check','hint'])$(control).disabled=false;workspace.render();
   }catch(error){
@@ -60,10 +62,32 @@ function renderLesson(){
   if(!definition){definition=document.createElement('pre');definition.id='lesson-interface';definition.setAttribute('translate','no');$('description').after(definition);}
   definition.hidden=lesson.id!=='session-04-03-custom';
   definition.textContent=definition.hidden?'':'TargetInfo.msg\n'+interfaceType('ros2learn_interfaces/msg/TargetInfo').definition;
+  renderPath();
   $('steps').replaceChildren();for(const step of text.steps){const li=document.createElement('li');li.textContent=step;$('steps').append(li);}
   $('hints').replaceChildren();for(const hint of text.hints.slice(0,hints)){const p=document.createElement('p');p.textContent=hint;$('hints').append(p);}
 }
-window.addEventListener('languagechange',()=>{renderLesson();for(const option of $('lesson-select').options){const entry=catalog.find(e=>e.id===option.value);option.textContent=entry.number+' — '+(entry.translations?.[language()]??entry.title);}});
+function renderPath(){
+  let path=$('lesson-path');
+  if(!path){path=document.createElement('aside');path.id='lesson-path';path.className='lesson-path';$('description').after(path);}
+  const optional=isFurther(lesson.id);
+  path.replaceChildren();
+  const label=document.createElement('strong');label.textContent=translate(optional?'Further exercises — optional':'Core exercise');path.append(label);
+  const note=document.createElement('p');note.textContent=translate(optional?'Optional practice. You can complete Core without this exercise.':'Follow the Core exercises, then continue to Build & launch. Further exercises are optional.');path.append(note);
+  if(optional){const preparation=document.createElement('p');preparation.append(translate('Preparation')+': ');for(const [i,id] of (FURTHER_PREREQUISITES[lesson.id]??[]).entries()){if(i)preparation.append(' · ');const a=document.createElement('a');a.href=lessonHref(id);a.textContent=Number(id.slice(8,10))+'.'+Number(id.slice(11,13));preparation.append(a);}path.append(preparation);}
+  const next=optional?CORE_EXERCISES.find(id=>id.slice(0,10)===lesson.id.slice(0,10)):CORE_EXERCISES[CORE_EXERCISES.indexOf(lesson.id)+1];
+  const link=document.createElement('a');link.href=next?lessonHref(next):'./bridge.html';link.textContent=translate(optional?'Return to Core':'Next Core exercise');path.append(link);
+}
+function renderCatalog(){
+  const select=$('lesson-select'),selected=select.value;select.replaceChildren();
+  for(const optional of [false,true]){
+    const entries=catalog.filter(entry=>isFurther(entry.id)===optional);if(!entries.length)continue;
+    const group=document.createElement('optgroup');group.label=translate(optional?'Further exercises — optional':'Core exercises');
+    for(const entry of entries){const option=document.createElement('option');option.value=entry.id;option.textContent=entry.number+' — '+(entry.translations?.[language()]??entry.title);group.append(option);}
+    select.append(group);
+  }
+  if(selected)select.value=selected;
+}
+window.addEventListener('languagechange',()=>{renderLesson();renderCatalog();});
 function showResults(){const results=session===3?sessionChecks(runtime,lesson):courseChecks(runtime,lesson);$('feedback').replaceChildren();for(const result of results){const p=document.createElement('p');p.className=result.passed?'pass':'fail';p.textContent=(result.passed?'✓ ':'○ ')+result.label;$('feedback').append(p);}$('feedback').hidden=false;$('status').textContent=results.every(r=>r.passed)?'Exercise complete. Your code passed the behavioural checks.':'Not complete yet. Review the checks, output and hints.';}
 const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function testScenes(){
@@ -162,7 +186,10 @@ function frame(now){if(last)accumulator+=Math.min((now-last)/1000,.1);last=now;w
 document.addEventListener('visibilitychange',()=>{last=0;accumulator=0;});
 setupPreferences();updateWorldColors();arrangeSession(session);tfView=createTFView(runtime,session);workspace=new CodeWorkspace({onRunCpp:()=>executeCode('cpp'),onChange:()=>renderLesson()});
 const names=Object.fromEntries(SESSIONS.map((name,i)=>[i+1,name]));
-document.querySelector('.intro .eyebrow').textContent='Python · 90 min';
+document.querySelector('.intro .eyebrow').textContent='Core + Further exercises · Python / C++';
 $('session-title').textContent=names[session];$('session-tag').textContent='SESSION 0'+session;
-catalog=await json('session-0'+session+'.json');for(const entry of catalog){const option=document.createElement('option');option.value=entry.id;option.textContent=entry.number+' — '+(entry.translations?.[language()]??entry.title);$('lesson-select').append(option);}
-await selectLesson(catalog[0].id);requestAnimationFrame(frame);await pageReady();
+catalog=await json('session-0'+session+'.json');renderCatalog();
+const requested=new URLSearchParams(location.search).get('lesson');
+const initial=catalog.some(entry=>entry.id===requested)?requested:catalog.find(entry=>!isFurther(entry.id)).id;
+$('lesson-select').value=initial;
+await selectLesson(initial);requestAnimationFrame(frame);await pageReady();

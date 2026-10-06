@@ -12,6 +12,7 @@ test('first parameter exercise requires declaration on the controller and motion
  for(let i=0;i<3;i++)a.handle({kind:'publish',topic:'/cmd_vel',type:'geometry_msgs/msg/Twist',message:{linear:{x:.2}}});
  assert.equal(passes(r,'configured'),false);
  a.handle({kind:'node',node:'/student_controller'});a.handle({kind:'parameter_declare',node:'/student_controller',name:'speed',value:.2});
+ assert.equal(passes(r,'configured'),false);r.step(.2);
  assert.equal(passes(r,'configured'),true);
 });
 test('custom interface exercise counts the requested endpoint only',()=>{
@@ -52,4 +53,15 @@ test('callback lesson counts typed chatter publications, not self-subscriptions 
  for(let i=0;i<3;i++)a.handle({kind:'publish',topic:'/chatter',type:'std_msgs/msg/String',message:{data:'hello'}});
  assert.equal(passes(r,'chatter_published'),true);
  r.reset();assert.equal(passes(r,'chatter_published'),false);
+});
+
+test('parameter declaration plus zero commands cannot claim motion, even after external movement',()=>{
+ const [r,a]=setup();
+ a.handle({kind:'node',node:'/student_controller'});
+ a.handle({kind:'parameter_declare',node:'/student_controller',name:'speed',value:.2});
+ for(let i=0;i<3;i++)a.handle({kind:'publish',topic:'/cmd_vel',type:'geometry_msgs/msg/Twist',message:{linear:{x:0},angular:{z:0}}});
+ r.step(.2);assert.equal(passes(r,'configured'),false);
+ r.robot.command(.2,0);r.step(.2);assert.equal(passes(r,'configured'),false);
+ for(let i=0;i<3;i++)a.handle({kind:'publish',topic:'/cmd_vel',type:'geometry_msgs/msg/Twist',message:{linear:{x:.2},angular:{z:0}}});
+ r.step(.2);assert.equal(passes(r,'configured'),true);
 });

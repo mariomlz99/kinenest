@@ -77,11 +77,11 @@ jobs:
         env:
           FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
         run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=terminal-browser
-      - name: Changed starter learning path in Python
+      - name: All 15 Core coding starters in Python
         env:
           FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
         run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=starter-path
-      - name: Changed starter learning path in C++
+      - name: All 15 Core coding starters in C++
         env:
           FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
         run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=starter-path --query=language=cpp
