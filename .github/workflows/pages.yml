@@ -5,11 +5,18 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      full_acceptance:
+        description: Run the complete release matrix (required before freeze)
+        type: boolean
+        default: true
 permissions:
   contents: read
 concurrency:
-  group: pages-${{ github.ref }}
-  cancel-in-progress: true
+  group: pages-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+env:
+  FULL_ACCEPTANCE: ${{ github.event_name != 'pull_request' && (github.event_name != 'workflow_dispatch' || inputs.full_acceptance) || github.ref == 'refs/heads/main' }}
 jobs:
   test-build:
     runs-on: ubuntu-24.04
@@ -66,18 +73,28 @@ jobs:
         with:
           name: release-dist
           path: dist
+      - name: PR browser smoke — navigation, Compare and responsive
+        if: ${{ !cancelled() && steps.release-artifact.outcome == 'success' && env.FULL_ACCEPTANCE != 'true' }}
+        env:
+          FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
+        run: node scripts/check-course.mjs ${{ matrix.browser }} --built --smoke
+      - name: PR C++ runtime smoke — compilation, callbacks and cleanup
+        if: ${{ !cancelled() && steps.release-artifact.outcome == 'success' && env.FULL_ACCEPTANCE != 'true' }}
+        env:
+          FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
+        run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=cpp-runtime
       - name: Full Python course, checkers and responsive acceptance
-        if: ${{ !cancelled() && steps.release-artifact.outcome == 'success' }}
+        if: ${{ !cancelled() && steps.release-artifact.outcome == 'success' && env.FULL_ACCEPTANCE == 'true' }}
         env:
           FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
         run: node scripts/check-course.mjs ${{ matrix.browser }} --built
       - name: Real browser C++ acceptance
-        if: ${{ !cancelled() && steps.release-artifact.outcome == 'success' }}
+        if: ${{ !cancelled() && steps.release-artifact.outcome == 'success' && env.FULL_ACCEPTANCE == 'true' }}
         env:
           FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
         run: node scripts/check-cpp.mjs ${{ matrix.browser }} --built
       - name: Full real C++ course — 25 exercises and API recovery
-        if: ${{ !cancelled() && steps.release-artifact.outcome == 'success' }}
+        if: ${{ !cancelled() && steps.release-artifact.outcome == 'success' && env.FULL_ACCEPTANCE == 'true' }}
         env:
           FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
         run: npm run test:cpp-course -- ${{ matrix.browser }} --built --output="$RUNNER_TEMP/cpp-course"
@@ -97,47 +114,47 @@ jobs:
           FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
         run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=terminal-browser
       - name: All 15 Core coding starters in Python
-        if: ${{ !cancelled() && steps.release-artifact.outcome == 'success' }}
+        if: ${{ !cancelled() && steps.release-artifact.outcome == 'success' && env.FULL_ACCEPTANCE == 'true' }}
         env:
           FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
         run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=starter-path
       - name: All 15 Core coding starters in C++
-        if: ${{ !cancelled() && steps.release-artifact.outcome == 'success' }}
+        if: ${{ !cancelled() && steps.release-artifact.outcome == 'success' && env.FULL_ACCEPTANCE == 'true' }}
         env:
           FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
         run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=starter-path --query=language=cpp
       - name: Sensor provenance and standard C++ buffer access
-        if: ${{ !cancelled() && steps.release-artifact.outcome == 'success' }}
+        if: ${{ !cancelled() && steps.release-artifact.outcome == 'success' && env.FULL_ACCEPTANCE == 'true' }}
         env:
           FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
         run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=cpp-buffer-probe --query=expect=fixed
       - name: C++ network failure and cache recovery
-        if: ${{ !cancelled() && steps.release-artifact.outcome == 'success' }}
+        if: ${{ !cancelled() && steps.release-artifact.outcome == 'success' && env.FULL_ACCEPTANCE == 'true' }}
         env:
           FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
         run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=cpp-network
       - name: Bounded C++ output and Stop/Reset during compilation
-        if: ${{ !cancelled() && steps.release-artifact.outcome == 'success' }}
+        if: ${{ !cancelled() && steps.release-artifact.outcome == 'success' && env.FULL_ACCEPTANCE == 'true' }}
         env:
           FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
         run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=cpp-ui-stress
       - name: All C++ drafts, Compare, translations and mobile controls
-        if: ${{ !cancelled() && steps.release-artifact.outcome == 'success' }}
+        if: ${{ !cancelled() && steps.release-artifact.outcome == 'success' && env.FULL_ACCEPTANCE == 'true' }}
         env:
           FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
         run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=cpp-parity-ui --query=wave=9
       - name: Real slow C++ camera callbacks and bounded sensor queues
-        if: ${{ !cancelled() && steps.release-artifact.outcome == 'success' }}
+        if: ${{ !cancelled() && steps.release-artifact.outcome == 'success' && env.FULL_ACCEPTANCE == 'true' }}
         env:
           FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
         run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=cpp-camera-stress
       - name: Visible transitions, first click and history
-        if: ${{ !cancelled() && steps.release-artifact.outcome == 'success' }}
+        if: ${{ !cancelled() && steps.release-artifact.outcome == 'success' && env.FULL_ACCEPTANCE == 'true' }}
         env:
           FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
         run: node scripts/check-transitions.mjs ${{ matrix.browser }} --output="$RUNNER_TEMP/transitions"
       - name: Destination first paint, readiness and failure recovery
-        if: ${{ !cancelled() && steps.release-artifact.outcome == 'success' }}
+        if: ${{ !cancelled() && steps.release-artifact.outcome == 'success' && env.FULL_ACCEPTANCE == 'true' }}
         env:
           FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
         run: node scripts/check-boot.mjs ${{ matrix.browser }} --output="$RUNNER_TEMP/boot-handoff"
@@ -150,6 +167,7 @@ jobs:
         if: always()
         with:
           name: transitions-${{ matrix.browser }}
+          if-no-files-found: ignore
           path: |
             ${{ runner.temp }}/transitions
             ${{ runner.temp }}/boot-handoff

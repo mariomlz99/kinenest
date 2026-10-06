@@ -1,3 +1,17 @@
+# CI cadence update — 2026-10-07
+
+Routine pull requests now run unit/build/identity/routing checks plus Chrome and Firefox smoke coverage: Core navigation, Compare/history, responsive layout, real C++ runtime/cleanup, both bridge languages, shared terminals and the existing deployed-artifact smoke (including real Python/C++ execution). This is PR feedback, not full release certification.
+
+All 16 original browser acceptance commands remain intact for full runs. Before freezing, use Actions → Test and deploy KineNest → Run workflow on the intended candidate branch, leaving **full_acceptance = true**. Record the run's exact SHA, artifact identity and all full-step results. A green PR smoke run cannot substitute for that release run. Main always runs full acceptance, including if a manual input requests smoke, and the existing deployment dependencies remain unchanged. Manual runs on a non-main branch do not deploy production.
+
+Concurrency is separated by event and ref: new PR pushes cancel obsolete PR runs, but cannot cancel a manually dispatched release run. The manual release run still certifies only its original SHA; later changes need their own validation. Expected absent screenshot/report artifacts during cancellation or smoke runs no longer produce upload warnings; this does not suppress failing tests.
+
+Run #39's downloaded Chrome log confirms `FAIL: Test must use ordinary URL`; commit `0feb726c1e1052cfcb123453650ae415785d738b` corrected this obsolete assertion and its equivalents. Run #39 was subsequently cancelled by the newer PR run; cancellation is distinct from the earlier test failure. Run #40 was already running before this cadence change and retains the full old workflow.
+
+Local validation: workflow YAML parsed; all 16 original release commands and deployment dependencies were compared to the previous version; no continue-on-error was introduced; JavaScript syntax and diff checks passed. The revised cadence has not executed in GitHub yet and no wall-clock speed claim is made. **CORE READY TO FREEZE: NO** until all mandatory full-release and human gates below have evidence.
+
+---
+
 # Final Core freeze gate addendum — 2026-10-06
 
 **CORE READY TO FREEZE: NO.** This pass is based on `46311aaf7179fa98a48b4e421510d78783348a51`. The release candidate becomes the clean commit containing this addendum and its test-only/CI changes; earlier SHA evidence does not certify the new candidate.
