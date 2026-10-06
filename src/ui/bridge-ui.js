@@ -14,10 +14,11 @@ const terminals=new Map(),edited=new Set(),observed=new Set();let selected=null,
 const processes=new ProcessManager(runtime,workspace,{onChange:renderGraph,onOutput:(process,line)=>terminals.get(process.terminal)?.write('['+process.name+'/'+process.executable+'] '+line)});
 
 const status=()=>BRIDGE_STATUS[language()]??BRIDGE_STATUS.en;
-function localize(){const rows=BRIDGE_TEXT[language()]??BRIDGE_TEXT.en;for(const node of document.querySelectorAll('[data-bridge]'))node.textContent=rows[node.dataset.bridge]??BRIDGE_TEXT.en[node.dataset.bridge];for(const {panel,terminal} of terminals.values()){panel.querySelector('.session-state').textContent=terminal.running?status().active:status().ready;panel.querySelector('.bridge-cwd').textContent=terminal.cwd.replace('/home/learner','~');panel.querySelector('.bridge-stop').textContent=status().stop;panel.querySelector('.bridge-close').setAttribute('aria-label',status().close+' '+terminal.id);panel.querySelector('pre').setAttribute('aria-label','Terminal '+terminal.id+' '+status().output);panel.querySelector('form button').textContent=status().execute;panel.querySelector('.terminal-tip').textContent=status().tip;}if(!selected)$('bridge-path').textContent=status().selected;$('bridge-file-explainer').textContent=rows[filePurpose(selected)]??BRIDGE_TEXT.en[filePurpose(selected)];if($('bridge-results').children.length)check();}
+function localize(){const rows=BRIDGE_TEXT[language()]??BRIDGE_TEXT.en;for(const node of document.querySelectorAll('[data-bridge]'))node.textContent=rows[node.dataset.bridge]??BRIDGE_TEXT.en[node.dataset.bridge];for(const {panel,terminal} of terminals.values()){panel.querySelector('.session-state').textContent=terminal.running?status().active:status().ready;panel.querySelector('.bridge-cwd').textContent=terminal.cwd.replace('/home/learner','~');panel.querySelector('.bridge-stop').textContent=status().stop;panel.querySelector('.bridge-close').setAttribute('aria-label',status().close+' '+terminal.id);panel.querySelector('pre').setAttribute('aria-label','Terminal '+terminal.id+' '+status().output);panel.querySelector('form button').textContent=status().execute;panel.querySelector('.terminal-tip').textContent=status().tip;}if(!selected)$('bridge-path').textContent=status().selected;$('bridge-file-explainer').textContent=rows[filePurpose(selected)]??BRIDGE_TEXT.en[filePurpose(selected)];if($('bridge-results').children.length)check();renderCheckpoints(evaluateChecks());}
 window.addEventListener('languagechange',localize);localize();
 function relative(path){return path.replace('/home/learner/','~/');}
 function renderFiles(){
+  if(selected&&!workspace.exists(selected)){selected=null;$('bridge-code').value='';$('bridge-code').disabled=true;$('bridge-save').disabled=true;$('bridge-path').textContent=status().selected;$('bridge-file-explainer').textContent=(BRIDGE_TEXT[language()]??BRIDGE_TEXT.en).filePurposeDefault;$('bridge-save-state').textContent='';}
   $('bridge-language').disabled=workspace.packages().length>0;
   const tree=$('bridge-tree');tree.replaceChildren();
   function descend(path,level=0){
@@ -39,7 +40,7 @@ $('bridge-export').onclick=()=>{const name=workspace.packages()[0];if(!name){$('
 function createTerminal(){
   const id=++nextTerminal,panel=document.createElement('section');panel.className='panel terminal bridge-terminal';panel.innerHTML='<div class="panel-head"><h3>Terminal '+id+'</h3><span class="bridge-cwd">~/ros2_ws</span><span class="session-state" role="status">'+status().ready+'</span><button type="button" class="bridge-stop">'+status().stop+'</button><button type="button" class="bridge-close" aria-label="'+status().close+' '+id+'">×</button></div><pre role="log" tabindex="0" aria-label="Terminal '+id+' '+status().output+'"></pre><form><label for="bridge-command-'+id+'">$</label><input id="bridge-command-'+id+'" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" placeholder="help"><button type="submit">'+status().execute+'</button></form><p class="terminal-tip">'+status().tip+'</p>';
   const output=panel.querySelector('pre'),input=panel.querySelector('input'),stop=panel.querySelector('.bridge-stop');
-  const write=line=>{const follow=output.scrollHeight-output.scrollTop-output.clientHeight<35;output.textContent=(output.textContent+'\n'+line+'\n').slice(-30000);if(follow)output.scrollTop=output.scrollHeight;};
+  const write=line=>{if(line==='\f'){output.textContent='';return;}const follow=output.scrollHeight-output.scrollTop-output.clientHeight<35;output.textContent=(output.textContent+'\n'+line+'\n').slice(-30000);if(follow)output.scrollTop=output.scrollHeight;};
   const terminal=new BridgeTerminal(id,runtime,workspace,builder,processes,write,()=>{panel.querySelector('.session-state').textContent=terminal.running?status().active:status().ready;panel.querySelector('.bridge-cwd').textContent=terminal.cwd.replace('/home/learner','~');stop.disabled=!terminal.running;renderGraph();});
   let history=[],cursor=0;
   panel.querySelector('form').onsubmit=async event=>{event.preventDefault();const command=input.value.trim();if(!command)return;input.value='';history.push(command);cursor=history.length;
@@ -60,8 +61,9 @@ function renderGraph(){
   if(currentGroup&&connected?.publishers.size&&runtime.topics.get('/other_chatter')?.subscribers.size)faultSeen=true;
   const lines=['Processes: '+(active.length||'none'),...active.map(p=>'  #'+p.id+' '+p.name+'/'+p.executable+' · '+p.state+(p.group?' · '+p.group:'')), 'Nodes: '+[...runtime.nodes].sort().join(', '), 'Topics:', ...[...runtime.topics].sort(([a],[b])=>a.localeCompare(b)).map(([name,t])=>'  '+name+' ['+t.type+']  pub: '+([...t.publishers].join(', ')||'—')+'  sub: '+([...t.subscribers].join(', ')||'—')), 'Delivered student messages: '+runtime.course.messages];
   $('bridge-graph').textContent=lines.join('\n');
+  renderCheckpoints(evaluateChecks());
 }
-function check(){
+function evaluateChecks(){
   const records=[...workspace.installed.values()],names=workspace.packages(),active=processes.active();
   const group=active.find(p=>p.group)?.group,launched=active.filter(p=>p.group===group),owned=new Set(launched.flatMap(p=>[...(p.adapter?.nodes??[])]));
   const linked=[...runtime.topics].filter(([,topic])=>[...topic.publishers].some(node=>owned.has(node))&&[...topic.subscribers].some(node=>owned.has(node)));
@@ -79,6 +81,20 @@ function check(){
     ['One launch starts both nodes and remaps a communicating topic',launchPass],
     ['The launch parameter reaches a running node',parameter&&launchPass]
   ];
+  return checks;
+}
+function renderCheckpoints(checks){
+  for(let group=0;group<3;group++){
+    const items=checks.slice(group*3,group*3+3),list=$('bridge-checkpoint-'+group);
+    const signature=language()+items.map(([,passed])=>Number(passed)).join('');
+    if(list.dataset.state===signature)continue;
+    list.dataset.state=signature;list.replaceChildren();
+    $('bridge-progress-'+group).value=items.filter(([,passed])=>passed).length;
+    items.forEach(([,passed],offset)=>{const item=document.createElement('li');item.className=passed?'pass':'pending';item.textContent=(passed?'✓ ':'○ ')+status().checks[group*3+offset];list.append(item);});
+  }
+}
+function check(){
+  const checks=evaluateChecks();renderCheckpoints(checks);
   const list=$('bridge-results');list.replaceChildren();checks.forEach(([,passed],index)=>{const item=document.createElement('li');item.className=passed?'pass':'fail';item.textContent=(passed?'✓ ':'○ ')+status().checks[index];list.append(item);});
   return checks.every(([,passed])=>passed);
 }

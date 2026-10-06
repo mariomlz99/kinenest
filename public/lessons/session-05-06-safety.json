@@ -7,13 +7,13 @@
   "steps": [
     "Keep the most recent forward-sector distance as callback state.",
     "Use TF to steer toward the target; override forward motion and turn left when the sector is within 0.8 m.",
-    "After turning clear, advance briefly (about 1.5 s) before resuming goal steering; this prevents repeatedly turning back into the same obstacle. Stop at the goal and discuss the limits of this reactive policy."
+    "After turning clear, keep moving briefly before resuming goal steering; this is one simple memory strategy to avoid turning back into the block. Stop at the goal and discuss its limits."
   ],
   "hints": [
     "Use ±30° for the forward safety sector.",
     "Safety overrides the goal controller when close to an obstacle.",
     "Try zero linear.x and angular.z = 0.8 while blocked; resume goal control when clear.",
-    "Keep a bypass counter: set it to 15 while blocked; once clear, move at 0.45 m/s for 15 callbacks of a 0.1 s timer, then resume goal control."
+    "One option is AVOID → CLEAR → SEEK: keep a short bypass timer after the front sector clears, then resume goal steering. A counter of about 15 callbacks at 0.1 s is only an example; other safe strategies can pass."
   ],
   "checks": [
     {
@@ -56,7 +56,7 @@
         "Gebruik een sector van ±30°.",
         "Veiligheid heeft voorrang op de doelregelaar.",
         "Bij blokkering: linear.x = 0 en angular.z = 0.8.",
-        "Gebruik een teller van 15 callbacks van 0.1 s; rijd tijdens die periode met 0.45 m/s zodra de sector vrij is."
+        "Een mogelijke strategie is AVOID → CLEAR → SEEK: onthoud kort dat je een obstakel ontwijkt voordat je weer naar het doel stuurt. Een teller van 15 callbacks is één voorbeeld, geen vereiste."
       ]
     },
     "fr": {
@@ -71,7 +71,7 @@
         "Utilisez un secteur de ±30°.",
         "La sécurité prend le dessus sur la commande vers la cible.",
         "Si bloqué : linear.x = 0 et angular.z = 0.8.",
-        "Utilisez un compteur de 15 callbacks de 0.1 s ; avancez à 0.45 m/s pendant cette période lorsque le secteur est libre."
+        "Une stratégie possible est AVOID → CLEAR → SEEK : mémorisez brièvement le contournement avant de reprendre la cible. Un compteur de 15 callbacks est un exemple, pas une obligation."
       ]
     },
     "es": {
@@ -86,7 +86,7 @@
         "Usa ±30° para el sector de seguridad.",
         "La seguridad tiene prioridad sobre el objetivo.",
         "Mientras haya obstáculo, prueba linear.x = 0 y angular.z = 0.8.",
-        "Usa un contador de 15 callbacks: al despejarse, avanza a 0.45 m/s durante 15 períodos de 0.1 s antes de retomar TF."
+        "Una estrategia posible es AVOID → CLEAR → SEEK: conserva brevemente el estado de evasión antes de volver al objetivo. Un contador de 15 callbacks es un ejemplo, no un requisito."
       ]
     },
     "de": {
@@ -101,7 +101,7 @@
         "Nutze ±30° für den Sicherheitssektor.",
         "Hindernisschutz hat Vorrang vor Zielregelung.",
         "Versuche bei Blockierung linear.x = 0 und angular.z = 0.8.",
-        "Setze einen Zähler auf 15: Nach dem Freidrehen 15 Timer-Callbacks von 0.1 s mit 0.45 m/s fahren, dann TF fortsetzen."
+        "Eine mögliche Strategie ist AVOID → CLEAR → SEEK: Merke dir das Ausweichen kurz, bevor du wieder zum Ziel steuerst. Ein Zähler mit 15 Callbacks ist ein Beispiel, keine Vorgabe."
       ]
     },
     "pt": {
@@ -116,7 +116,7 @@
         "Usa ±30° para o setor de segurança.",
         "A segurança tem prioridade sobre o objetivo.",
         "Enquanto bloqueado, experimenta linear.x = 0 e angular.z = 0.8.",
-        "Usa um contador de 15 callbacks: ao libertar, avança a 0.45 m/s durante 15 períodos de 0.1 s antes de retomar TF."
+        "Uma estratégia possível é AVOID → CLEAR → SEEK: mantém brevemente o estado de desvio antes de retomar o alvo. Um contador de 15 callbacks é um exemplo, não um requisito."
       ]
     },
     "it": {
@@ -131,7 +131,7 @@
         "Usa ±30° per il settore frontale di sicurezza.",
         "Vicino a un ostacolo la sicurezza ha priorità sul controllore del goal.",
         "Prova linear.x zero e angular.z = 0.8 quando sei bloccato; riprendi verso il goal quando la strada è libera.",
-        "Usa un contatore di aggiramento: impostalo a 15 quando sei bloccato; poi avanza a 0.45 m/s per 15 callback da 0.1 s prima di riprendere verso il goal."
+        "Una strategia possibile è AVOID → CLEAR → SEEK: ricorda brevemente l’aggiramento prima di riprendere verso il goal. Un contatore di 15 callback è un esempio, non un requisito."
       ]
     }
   },
@@ -150,13 +150,13 @@
         "steps": [
           "Keep the most recent forward-sector distance as callback state.",
           "Use TF to steer toward the target; override forward motion and turn left when the sector is within 0.8 m.",
-          "After turning clear, advance briefly (about 1.5 s) before resuming goal steering; this prevents repeatedly turning back into the same obstacle. Stop at the goal and discuss the limits of this reactive policy."
+          "After turning clear, keep moving briefly before resuming goal steering; this is one simple memory strategy to avoid turning back into the block. Stop at the goal and discuss its limits."
         ],
         "hints": [
           "Use ±30° for the forward safety sector.",
           "Safety overrides the goal controller when close to an obstacle.",
           "Try zero linear.x and angular.z = 0.8 while blocked; resume goal control when clear.",
-          "Keep a bypass counter: set it to 15 while blocked; once clear, move at 0.45 m/s for 15 callbacks of a 0.1 s timer, then resume goal control."
+          "One option is AVOID → CLEAR → SEEK: keep a short bypass timer after the front sector clears, then resume goal steering. A counter of about 15 callbacks at 0.1 s is only an example; other safe strategies can pass."
         ],
         "translations": {
           "nl": {
@@ -171,7 +171,7 @@
               "Gebruik een sector van ±30°.",
               "Veiligheid heeft voorrang op de doelregelaar.",
               "Bij blokkering: linear.x = 0 en angular.z = 0.8.",
-              "Gebruik een teller van 15 callbacks van 0.1 s; rijd tijdens die periode met 0.45 m/s zodra de sector vrij is."
+              "Een mogelijke strategie is AVOID → CLEAR → SEEK: onthoud kort dat je een obstakel ontwijkt voordat je weer naar het doel stuurt. Een teller van 15 callbacks is één voorbeeld, geen vereiste."
             ]
           },
           "fr": {
@@ -186,7 +186,7 @@
               "Utilisez un secteur de ±30°.",
               "La sécurité prend le dessus sur la commande vers la cible.",
               "Si bloqué : linear.x = 0 et angular.z = 0.8.",
-              "Utilisez un compteur de 15 callbacks de 0.1 s ; avancez à 0.45 m/s pendant cette période lorsque le secteur est libre."
+              "Une stratégie possible est AVOID → CLEAR → SEEK : mémorisez brièvement le contournement avant de reprendre la cible. Un compteur de 15 callbacks est un exemple, pas une obligation."
             ]
           },
           "es": {
@@ -201,7 +201,7 @@
               "Usa ±30° para el sector de seguridad.",
               "La seguridad tiene prioridad sobre el objetivo.",
               "Mientras haya obstáculo, prueba linear.x = 0 y angular.z = 0.8.",
-              "Usa un contador de 15 callbacks: al despejarse, avanza a 0.45 m/s durante 15 períodos de 0.1 s antes de retomar TF."
+              "Una estrategia posible es AVOID → CLEAR → SEEK: conserva brevemente el estado de evasión antes de volver al objetivo. Un contador de 15 callbacks es un ejemplo, no un requisito."
             ]
           },
           "de": {
@@ -216,7 +216,7 @@
               "Nutze ±30° für den Sicherheitssektor.",
               "Hindernisschutz hat Vorrang vor Zielregelung.",
               "Versuche bei Blockierung linear.x = 0 und angular.z = 0.8.",
-              "Setze einen Zähler auf 15: Nach dem Freidrehen 15 Timer-Callbacks von 0.1 s mit 0.45 m/s fahren, dann TF fortsetzen."
+              "Eine mögliche Strategie ist AVOID → CLEAR → SEEK: Merke dir das Ausweichen kurz, bevor du wieder zum Ziel steuerst. Ein Zähler mit 15 Callbacks ist ein Beispiel, keine Vorgabe."
             ]
           },
           "pt": {
@@ -231,7 +231,7 @@
               "Usa ±30° para o setor de segurança.",
               "A segurança tem prioridade sobre o objetivo.",
               "Enquanto bloqueado, experimenta linear.x = 0 e angular.z = 0.8.",
-              "Usa um contador de 15 callbacks: ao libertar, avança a 0.45 m/s durante 15 períodos de 0.1 s antes de retomar TF."
+              "Uma estratégia possível é AVOID → CLEAR → SEEK: mantém brevemente o estado de desvio antes de retomar o alvo. Um contador de 15 callbacks é um exemplo, não um requisito."
             ]
           },
           "it": {
@@ -246,7 +246,7 @@
               "Usa ±30° per il settore frontale di sicurezza.",
               "Vicino a un ostacolo la sicurezza ha priorità sul controllore del goal.",
               "Prova linear.x zero e angular.z = 0.8 quando sei bloccato; riprendi verso il goal quando la strada è libera.",
-              "Usa un contatore di aggiramento: impostalo a 15 quando sei bloccato; poi avanza a 0.45 m/s per 15 callback da 0.1 s prima di riprendere verso il goal."
+              "Una strategia possibile è AVOID → CLEAR → SEEK: ricorda brevemente l’aggiramento prima di riprendere verso il goal. Un contatore di 15 callback è un esempio, non un requisito."
             ]
           }
         }

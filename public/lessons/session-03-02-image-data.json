@@ -123,7 +123,7 @@
   "programming": {
     "python": {
       "supported": true,
-      "starterCode": "import rclpy\nimport numpy as np\nfrom rclpy.node import Node\nfrom sensor_msgs.msg import Image\nfrom cv_bridge import CvBridge\nfrom ros2learn import report_detection, report_image_stats\n\nclass CameraReader(Node):\n    def __init__(self):\n        super().__init__('camera_reader')\n        self.bridge = CvBridge()\n        self.subscription = self.create_subscription(\n            Image, '/camera/image_raw', self.image_callback, 10)\n\n    def image_callback(self, msg):\n        image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='rgb8')\n        # TODO: print image.shape and calculate the three channel means.\n        # Send your calculated values to the checker:\n        # report_image_stats(image.shape, channel_means)\n        pass\n\nrclpy.init()\nnode = CameraReader()\nrclpy.spin(node)\n"
+      "starterCode": "import rclpy\nimport numpy as np\nfrom rclpy.node import Node\nfrom sensor_msgs.msg import Image\nfrom cv_bridge import CvBridge\nfrom ros2learn import report_image_stats\n\nclass CameraReader(Node):\n    def __init__(self):\n        super().__init__('camera_reader')\n        self.bridge = CvBridge()\n        self.subscription = self.create_subscription(\n            Image, '/camera/image_raw', self.image_callback, 10)\n\n    def image_callback(self, msg):\n        image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='rgb8')\n        # TODO: print image.shape and calculate the three channel means.\n        # Send your calculated values to the checker:\n        # report_image_stats(image.shape, channel_means)\n        pass\n\nrclpy.init()\nnode = CameraReader()\nrclpy.spin(node)\n"
     },
     "cpp": {
       "supported": true,

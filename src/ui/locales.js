@@ -1,13 +1,14 @@
 // Rows: NL, FR, ES, DE, PT, IT. Code and ROS identifiers stay English.
 export const LANGUAGES = ["en","nl","fr","es","de","pt","it"];
 export const UI = {
+  "KineNest checker helper: report_*() records your computed result for this exercise. It is not a ROS 2 API.": ["KineNest-controlehulp: report_*() meldt je berekende resultaat voor deze oefening. Het is geen ROS 2-API.","Outil de vérification KineNest : report_*() transmet votre résultat calculé pour cet exercice. Ce n’est pas une API ROS 2.","Ayuda de verificación de KineNest: report_*() registra el resultado calculado para este ejercicio. No es una API de ROS 2.","KineNest-Prüfhilfe: report_*() meldet dein berechnetes Ergebnis für diese Übung. Es ist keine ROS-2-API.","Ajuda de verificação do KineNest: report_*() regista o resultado calculado neste exercício. Não é uma API do ROS 2.","Funzione di verifica KineNest: report_*() registra il risultato calcolato per questo esercizio. Non è un’API ROS 2."],
   "Real Python and browser-compiled C++ throughout the coding course.": ["Echte Python en in de browser gecompileerd C++ in alle programmeeroefeningen.","Du vrai Python et du C++ compilé dans le navigateur dans tous les exercices de programmation.","Python real y C++ compilado en el navegador en todos los ejercicios de programación.","Echtes Python und im Browser kompiliertes C++ in allen Programmierübungen.","Python real e C++ compilado no navegador em todos os exercícios de programação.","Python reale e C++ compilato nel browser in tutti gli esercizi di programmazione."],
   "Write real Python and compile C++ throughout Sessions 2–6. Inspect topics, process sensors and control a robot in one browser tab.": ["Schrijf echte Python en compileer C++ in alle oefeningen van sessies 2–6. Bekijk topics, verwerk sensoren en bestuur een robot in één browsertab.","Écrivez du vrai Python et compilez du C++ dans toutes les sessions 2–6. Inspectez les topics, traitez les capteurs et contrôlez un robot dans un seul onglet.","Escribe Python real y compila C++ en todas las sesiones 2–6. Inspecciona topics, procesa sensores y controla un robot en una pestaña del navegador.","Schreibe echtes Python und kompiliere C++ in allen Übungen der Sessions 2–6. Untersuche Topics, verarbeite Sensordaten und steuere einen Roboter in einem Browser-Tab.","Escreve Python real e compila C++ em todas as sessões 2–6. Inspeciona tópicos, processa sensores e controla um robô num separador do navegador.","Scrivi Python reale e compila C++ in tutte le sessioni 2–6. Esamina i topic, elabora i sensori e controlla un robot in una scheda del browser."],
   "Python, NumPy, the C++ compiler and your algorithms are real. The rclpy/rclcpp-shaped APIs, CLI and sensors are educational implementations for these exercises.": ["Python, NumPy, de C++-compiler en je algoritmen zijn echt. De API’s naar het model van rclpy/rclcpp, de CLI en de sensoren zijn educatieve implementaties voor deze oefeningen.","Python, NumPy, le compilateur C++ et vos algorithmes sont réels. Les API inspirées de rclpy/rclcpp, la CLI et les capteurs sont des implémentations pédagogiques pour ces exercices.","Python, NumPy, el compilador C++ y tus algoritmos son reales. Las API inspiradas en rclpy/rclcpp, la CLI y los sensores son implementaciones educativas para estos ejercicios.","Python, NumPy, der C++-Compiler und deine Algorithmen sind echt. Die APIs nach dem Vorbild von rclpy/rclcpp, die CLI und die Sensoren sind didaktische Implementierungen für diese Übungen.","Python, NumPy, o compilador C++ e os teus algoritmos são reais. As APIs inspiradas em rclpy/rclcpp, a CLI e os sensores são implementações educativas para estes exercícios.","Python, NumPy, il compilatore C++ e i tuoi algoritmi sono reali. Le API ispirate a rclpy/rclcpp, la CLI e i sensori sono implementazioni didattiche per questi esercizi."],
   "Real Python and browser-compiled C++ with an educational robotics runtime.": ["Echte Python en C++ gecompileerd in de browser, met een educatieve robotica-runtime.","Du vrai Python et du C++ compilé dans le navigateur, avec un environnement robotique pédagogique.","Python real y C++ compilado en el navegador, con un entorno educativo de robótica.","Echtes Python und im Browser kompiliertes C++ mit einer didaktischen Robotik-Laufzeit.","Python real e C++ compilado no navegador, com um ambiente educativo de robótica.","Python reale e C++ compilato nel browser, con un runtime didattico di robotica."],
   "On a real ROS 2 machine, use an ament_python package for Python or an ament_cmake package with rclcpp for C++. Declare dependencies in package.xml.": ["Gebruik op een echte ROS 2-machine een ament_python-package voor Python of een ament_cmake-package met rclcpp voor C++. Declareer afhankelijkheden in package.xml.","Sur une vraie machine ROS 2, utilisez un package ament_python pour Python ou un package ament_cmake avec rclcpp pour C++. Déclarez les dépendances dans package.xml.","En una máquina con ROS 2, usa un paquete ament_python para Python o un paquete ament_cmake con rclcpp para C++. Declara las dependencias en package.xml.","Verwende auf einem echten ROS-2-System ein ament_python-Paket für Python oder ein ament_cmake-Paket mit rclcpp für C++. Deklariere Abhängigkeiten in package.xml.","Numa máquina com ROS 2, usa um pacote ament_python para Python ou um pacote ament_cmake com rclcpp para C++. Declara as dependências em package.xml.","Su una macchina con ROS 2, usa un pacchetto ament_python per Python oppure ament_cmake con rclcpp per C++. Dichiara le dipendenze in package.xml."],
   "For C++, CMakeLists.txt uses find_package, add_executable, ament_target_dependencies and install(TARGETS ...) to build and install the node. Build with colcon build, source the workspace setup, then launch with ros2 run.": ["Voor C++ gebruikt CMakeLists.txt find_package, add_executable, ament_target_dependencies en install(TARGETS ...) om de node te bouwen en te installeren. Bouw met colcon build, laad de workspace-setup en start met ros2 run.","Pour C++, CMakeLists.txt utilise find_package, add_executable, ament_target_dependencies et install(TARGETS ...) pour compiler et installer le nœud. Compilez avec colcon build, chargez la configuration du workspace, puis lancez avec ros2 run.","En C++, CMakeLists.txt usa find_package, add_executable, ament_target_dependencies e install(TARGETS ...) para compilar e instalar el nodo. Compila con colcon build, carga la configuración del workspace y ejecuta con ros2 run.","Für C++ verwendet CMakeLists.txt find_package, add_executable, ament_target_dependencies und install(TARGETS ...), um den Knoten zu bauen und zu installieren. Baue mit colcon build, lade die Workspace-Umgebung und starte mit ros2 run.","Em C++, CMakeLists.txt usa find_package, add_executable, ament_target_dependencies e install(TARGETS ...) para compilar e instalar o nó. Compila com colcon build, carrega a configuração do workspace e executa com ros2 run.","Per C++, CMakeLists.txt usa find_package, add_executable, ament_target_dependencies e install(TARGETS ...) per compilare e installare il nodo. Compila con colcon build, carica l’ambiente del workspace e avvia con ros2 run."],
-  "KineNest provides educational compatibility headers in the browser. The kinenest::report_* helpers record learning evidence; they are not native ROS 2 APIs. No package build runs here.": ["KineNest biedt educatieve compatibiliteitsheaders in de browser. De kinenest::report_*-hulpfuncties registreren leerevidentie; het zijn geen native ROS 2-API’s. Hier worden geen packages gebouwd.","KineNest fournit des en-têtes de compatibilité pédagogiques dans le navigateur. Les fonctions kinenest::report_* recueillent les observations pour les vérifications ; ce ne sont pas des API ROS 2 natives. Aucun package n’est compilé ici.","KineNest proporciona cabeceras educativas de compatibilidad en el navegador. Las funciones kinenest::report_* registran evidencias para las comprobaciones; no son API nativas de ROS 2. Aquí no se compilan paquetes.","KineNest stellt didaktische Kompatibilitätsheader im Browser bereit. Die Hilfsfunktionen kinenest::report_* erfassen Nachweise für die Übungen; sie sind keine nativen ROS-2-APIs. Hier werden keine Pakete gebaut.","KineNest fornece cabeçalhos educativos de compatibilidade no navegador. As funções kinenest::report_* registam evidências para as verificações; não são APIs nativas do ROS 2. Não se compilam pacotes aqui.","KineNest fornisce header didattici di compatibilità nel browser. Le funzioni kinenest::report_* registrano evidenze per le verifiche; non sono API native di ROS 2. Qui non si compilano pacchetti."],
+  "KineNest provides educational compatibility headers in the browser. The kinenest::report_* helpers record learning evidence; they are not native ROS 2 APIs. Package builds in the learning terminal are bounded browser models, not native colcon builds.": ["KineNest biedt educatieve compatibiliteitsheaders in de browser. De kinenest::report_*-hulpfuncties registreren leerevidentie; het zijn geen native ROS 2-API’s. Package-builds in de leerterminal zijn begrensde browsermodellen, geen native colcon-builds.","KineNest fournit des en-têtes de compatibilité pédagogiques dans le navigateur. Les fonctions kinenest::report_* recueillent les observations pour les vérifications ; ce ne sont pas des API ROS 2 natives. Les builds de packages dans le terminal pédagogique sont des modèles limités du navigateur, pas des builds colcon natifs.","KineNest proporciona cabeceras educativas de compatibilidad en el navegador. Las funciones kinenest::report_* registran evidencias para las comprobaciones; no son API nativas de ROS 2. Los builds de paquetes en el terminal de aprendizaje son modelos limitados del navegador, no builds colcon nativos.","KineNest stellt didaktische Kompatibilitätsheader im Browser bereit. Die Hilfsfunktionen kinenest::report_* erfassen Nachweise für die Übungen; sie sind keine nativen ROS-2-APIs. Paket-Builds im Lernterminal sind begrenzte Browsermodelle, keine nativen colcon-Builds.","KineNest fornece cabeçalhos educativos de compatibilidade no navegador. As funções kinenest::report_* registam evidências para as verificações; não são APIs nativas do ROS 2. As builds de pacotes no terminal de aprendizagem são modelos limitados no navegador, não builds colcon nativas.","KineNest fornisce header didattici di compatibilità nel browser. Le funzioni kinenest::report_* registrano evidenze per le verifiche; non sono API native di ROS 2. Le build dei pacchetti nel terminale didattico sono modelli limitati nel browser, non build colcon native."],
   "Native custom messages and actions use interface files, package.xml and rosidl_generate_interfaces in CMakeLists.txt. The browser uses local headers shaped like generated interfaces; it does not run rosidl.": ["Eigen berichten en actions in native ROS 2 gebruiken interfacebestanden, package.xml en rosidl_generate_interfaces in CMakeLists.txt. De browser gebruikt lokale headers naar het model van gegenereerde interfaces; rosidl draait hier niet.","Les messages et actions personnalisés natifs utilisent des fichiers d’interface, package.xml et rosidl_generate_interfaces dans CMakeLists.txt. Le navigateur utilise des en-têtes locaux inspirés des interfaces générées ; il n’exécute pas rosidl.","Los mensajes y acciones personalizados nativos usan archivos de interfaz, package.xml y rosidl_generate_interfaces en CMakeLists.txt. El navegador usa cabeceras locales con la estructura de interfaces generadas; no ejecuta rosidl.","Native eigene Nachrichten und Actions verwenden Interfacedateien, package.xml und rosidl_generate_interfaces in CMakeLists.txt. Der Browser nutzt lokale Header nach dem Muster generierter Interfaces; rosidl wird hier nicht ausgeführt.","As mensagens e ações personalizadas nativas usam ficheiros de interface, package.xml e rosidl_generate_interfaces em CMakeLists.txt. O navegador usa cabeçalhos locais semelhantes às interfaces geradas; não executa rosidl.","Messaggi e azioni personalizzati nativi usano file di interfaccia, package.xml e rosidl_generate_interfaces in CMakeLists.txt. Il browser usa header locali con la struttura delle interfacce generate; non esegue rosidl."],
   "Experimental C++ · compiled in your browser.": ["Experimentele C++ · gecompileerd in je browser.","C++ expérimental · compilé dans votre navigateur.","C++ experimental · compilado en tu navegador.","Experimentelles C++ · in deinem Browser kompiliert.","C++ experimental · compilado no teu navegador.","C++ sperimentale · compilato nel tuo browser."],
   "Ready. Complete the TODOs and Run.": ["Klaar. Vul de TODO’s in en klik op Uitvoeren.","Prêt. Complétez les TODO et lancez le programme.","Listo. Completa los TODO y ejecuta.","Bereit. Ergänze die TODOs und starte das Programm.","Pronto. Completa os TODOs e executa.","Pronto. Completa i TODO ed esegui."],
@@ -1532,4 +1533,74 @@ export const ATTRIBUTION = Object.freeze({
   de: ['Mit Liebe in Belgien 🇧🇪 entwickelt von ', ', mit {flag} Seele, mit Entwicklungsunterstützung durch ', ' von ', 'italienisch'],
   pt: ['Feito com amor na Bélgica 🇧🇪 por ', ', de alma {flag}, com apoio ao desenvolvimento de ', ' da ', 'italiana'],
   it: ['Realizzato con amore in Belgio 🇧🇪 da ', ', dall’anima {flag}, con il supporto allo sviluppo di ', ' di ', 'italiana']
+});
+
+Object.assign(UI, {
+  "KineNest Core": [
+    "KineNest Core",
+    "KineNest Core",
+    "KineNest Core",
+    "KineNest Core",
+    "KineNest Core",
+    "KineNest Core"
+  ],
+  "Core finale": [
+    "Core-finale",
+    "Finale du Core",
+    "Final del Core",
+    "Core-Finale",
+    "Final do Core",
+    "Finale del Core"
+  ],
+  "Explore next": [
+    "Ontdek hierna",
+    "À explorer ensuite",
+    "Explora después",
+    "Als Nächstes entdecken",
+    "Explora a seguir",
+    "Esplora dopo"
+  ],
+  "Complete the Core with workspace, packages, build, ros2 run, launch and the native Jazzy transition.": [
+    "Rond de Core af met werkruimte, pakketten, build, ros2 run, launch en de overstap naar native Jazzy.",
+    "Terminez le Core avec espace de travail, paquets, compilation, ros2 run, launch et transition vers Jazzy natif.",
+    "Completa el Core con espacio de trabajo, paquetes, compilación, ros2 run, launch y transición a Jazzy nativo.",
+    "Schließe den Core mit Arbeitsbereich, Paketen, Build, ros2 run, Launch und dem Übergang zu nativem Jazzy ab.",
+    "Conclui o Core com workspace, pacotes, compilação, ros2 run, launch e transição para Jazzy nativo.",
+    "Completa il Core con workspace, pacchetti, build, ros2 run, launch e passaggio a Jazzy nativo."
+  ],
+  "No new ROS concepts from here. Diagnose and combine what you learned in the previous sessions.": [
+    "Vanaf hier geen nieuwe ROS-concepten. Zoek fouten en combineer wat je in de vorige sessies leerde.",
+    "Plus de nouveaux concepts ROS ici. Diagnostiquez et combinez les acquis des sessions précédentes.",
+    "Aquí no hay conceptos ROS nuevos. Diagnostica y combina lo aprendido en las sesiones anteriores.",
+    "Ab hier kommen keine neuen ROS-Konzepte hinzu. Finde Fehler und kombiniere das Wissen aus den bisherigen Sitzungen.",
+    "A partir daqui não há novos conceitos ROS. Diagnostica e combina o que aprendeste nas sessões anteriores.",
+    "Da qui nessun nuovo concetto ROS. Diagnostica e combina ciò che hai imparato nelle sessioni precedenti."
+  ]
+});
+
+Object.assign(UI, {
+  "Timer published 3 String messages on /chatter": [
+    "Timer publiceerde 3 String-berichten op /chatter",
+    "Le timer a publié 3 messages String sur /chatter",
+    "El temporizador publicó 3 mensajes String en /chatter",
+    "Timer hat 3 String-Nachrichten auf /chatter gesendet",
+    "O temporizador publicou 3 mensagens String em /chatter",
+    "Il timer ha pubblicato 3 messaggi String su /chatter"
+  ],
+  "Declared speed on /student_controller and published motion": [
+    "speed gedeclareerd op /student_controller en beweging gepubliceerd",
+    "speed déclaré sur /student_controller et commande de mouvement publiée",
+    "speed declarado en /student_controller y movimiento publicado",
+    "speed auf /student_controller deklariert und Bewegung gesendet",
+    "speed declarado em /student_controller e movimento publicado",
+    "speed dichiarato su /student_controller e moto pubblicato"
+  ],
+  "Odometry callback reported correct x and y": [
+    "Odometrie-callback meldde correcte x en y",
+    "Le callback d’odométrie a transmis x et y corrects",
+    "El callback de odometría informó x e y correctos",
+    "Odometrie-Callback meldete korrekte x und y",
+    "O callback de odometria comunicou x e y corretos",
+    "Il callback di odometria ha riportato x e y corretti"
+  ]
 });

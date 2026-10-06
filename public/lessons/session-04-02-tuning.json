@@ -3,16 +3,16 @@
   "session": 4,
   "number": "4.2",
   "title": "Tune without restarting",
-  "description": "Declare a speed parameter and read it on every timer callback. Change it live from a terminal while Python keeps running.",
+  "description": "Start from the fixed controller in 4.1. Read speed on every timer callback so ros2 param set changes robot motion without restarting the node.",
   "steps": [
     "Declare speed with default 0.2 on /student_controller.",
-    "Read node.get_parameter(\"speed\").value inside the timer, clamp it to 0–0.8, and publish Twist.",
-    "While running: ros2 param list; ros2 param get /student_controller speed; ros2 param set /student_controller speed 0.6. Observe the change, then check."
+    "Replace the fixed command with a current parameter read in each timer callback; clamp it to 0–0.8.",
+    "While the node keeps running, set /student_controller speed to 0.6 from a terminal. Observe the speed change without a restart."
   ],
   "hints": [
-    "Parameters belong to nodes, not topics.",
-    "Reading once during startup will not apply later updates to your controller.",
-    "Keep the timer running; use node.get_parameter(\"speed\").value inside tick."
+    "A parameter belongs to the node, not to /cmd_vel.",
+    "Reading once at startup will not apply a later ros2 param set.",
+    "Keep the timer running and read get_parameter(\"speed\").value inside tick."
   ],
   "checks": [
     {
@@ -27,194 +27,194 @@
   "translations": {
     "nl": {
       "title": "Bijregelen zonder herschrijven",
-      "description": "Verander de snelheid via de terminal terwijl Python blijft draaien.",
+      "description": "Begin met de vaste controller uit 4.1. Lees speed bij elke timer-callback, zodat ros2 param set de robot zonder herstart sneller laat rijden.",
       "steps": [
-        "Gebruik een speed-parameter in de timer.",
-        "Voer ros2 param set /student_controller speed 0.6 uit.",
-        "Observeer de verandering en controleer de oplossing."
+        "Declareer speed met standaardwaarde 0.2 op /student_controller.",
+        "Vervang de vaste opdracht door een actuele parameterlezing in elke timer-callback; begrens tot 0–0.8.",
+        "Zet speed tijdens het draaien via een terminal op 0.6. Bekijk de snelheidsverandering zonder herstart."
       ],
       "hints": [
-        "Een waarde die je alleen bij de start leest, verandert je regelaar niet automatisch.",
-        "Lees de parameter bij elke timer-callback.",
-        "Laat Python lopen terwijl je de terminal gebruikt."
+        "De parameter hoort bij de node, niet bij /cmd_vel.",
+        "Eén keer bij het starten lezen past latere wijzigingen niet toe.",
+        "Laat de timer draaien en lees get_parameter(\"speed\").value in tick."
       ]
     },
     "fr": {
       "title": "Ajuster sans réécrire",
-      "description": "Modifiez la vitesse depuis le terminal pendant que Python continue.",
+      "description": "Reprenez le contrôleur fixe de 4.1. Lisez speed à chaque callback du timer pour que ros2 param set change le mouvement sans redémarrer le nœud.",
       "steps": [
-        "Utilisez un paramètre speed dans le timer.",
-        "Exécutez ros2 param set /student_controller speed 0.6.",
-        "Observez le changement puis vérifiez la solution."
+        "Déclarez speed avec la valeur par défaut 0.2 sur /student_controller.",
+        "Remplacez la commande fixe par une lecture du paramètre à chaque callback ; limitez-la à 0–0.8.",
+        "Pendant que le nœud tourne, réglez speed à 0.6 dans un terminal. Observez le changement sans redémarrage."
       ],
       "hints": [
-        "Lire uniquement au démarrage ne met pas le contrôleur à jour.",
-        "Relisez le paramètre à chaque callback du timer.",
-        "Laissez Python actif pendant l’utilisation du terminal."
+        "Le paramètre appartient au nœud, pas à /cmd_vel.",
+        "Une lecture au démarrage ne prend pas en compte les changements ultérieurs.",
+        "Laissez le timer actif et lisez get_parameter(\"speed\").value dans tick."
       ]
     },
     "es": {
       "title": "Ajustar sin reiniciar",
-      "description": "Lee speed en cada callback del temporizador. Cámbialo desde el terminal mientras Python sigue ejecutándose.",
+      "description": "Parte del controlador fijo de 4.1. Lee speed en cada callback del temporizador para que ros2 param set cambie el movimiento sin reiniciar el nodo.",
       "steps": [
         "Declara speed con valor inicial 0.2 en /student_controller.",
-        "Lee node.get_parameter(\"speed\").value dentro del temporizador, limita a 0–0.8 y publica Twist.",
-        "Usa ros2 param list, ros2 param get /student_controller speed y ros2 param set /student_controller speed 0.6. Observa el cambio y comprueba."
+        "Sustituye la orden fija por la lectura actual del parámetro en cada callback; limita a 0–0.8.",
+        "Mientras el nodo sigue activo, establece speed en 0.6 desde un terminal. Observa el cambio sin reiniciar."
       ],
       "hints": [
-        "Los parámetros pertenecen a nodos, no a topics.",
-        "Leer solo al arrancar no aplica cambios posteriores.",
-        "Dentro de tick, consulta node.get_parameter(\"speed\").value en cada ejecución."
+        "El parámetro pertenece al nodo, no a /cmd_vel.",
+        "Leerlo una vez al inicio no aplica cambios posteriores.",
+        "Mantén el temporizador activo y lee get_parameter(\"speed\").value dentro de tick."
       ]
     },
     "de": {
       "title": "Ohne Neustart anpassen",
-      "description": "Lies speed in jedem Timer-Callback. Ändere den Wert im Terminal, während Python weiterläuft.",
+      "description": "Beginne mit dem festen Controller aus 4.1. Lies speed bei jedem Timer-Callback, damit ros2 param set die Bewegung ohne Neustart ändert.",
       "steps": [
         "Deklariere speed mit Standardwert 0.2 auf /student_controller.",
-        "Lies node.get_parameter(\"speed\").value im Timer, begrenze auf 0–0.8 und sende Twist.",
-        "Nutze ros2 param list, ros2 param get /student_controller speed und ros2 param set /student_controller speed 0.6. Beobachte und prüfe die Änderung."
+        "Ersetze den festen Befehl durch den aktuellen Parameterwert in jedem Callback; begrenze auf 0–0.8.",
+        "Setze speed bei laufendem Knoten im Terminal auf 0.6. Beobachte die Änderung ohne Neustart."
       ],
       "hints": [
-        "Parameter gehören zu Knoten, nicht zu Topics.",
-        "Einmaliges Lesen beim Start berücksichtigt spätere Änderungen nicht.",
-        "Lies node.get_parameter(\"speed\").value bei jedem Aufruf von tick."
+        "Der Parameter gehört zum Knoten, nicht zu /cmd_vel.",
+        "Einmaliges Lesen beim Start übernimmt spätere Änderungen nicht.",
+        "Lass den Timer laufen und lies get_parameter(\"speed\").value in tick."
       ]
     },
     "pt": {
       "title": "Ajustar sem reiniciar",
-      "description": "Lê speed em cada callback do temporizador. Altera-o no terminal enquanto Python continua a executar.",
+      "description": "Parte do controlador fixo de 4.1. Lê speed em cada callback do temporizador para que ros2 param set altere o movimento sem reiniciar o nó.",
       "steps": [
         "Declara speed com valor inicial 0.2 em /student_controller.",
-        "Lê node.get_parameter(\"speed\").value no temporizador, limita a 0–0.8 e publica Twist.",
-        "Usa ros2 param list, ros2 param get /student_controller speed e ros2 param set /student_controller speed 0.6. Observa a alteração e verifica."
+        "Troca o comando fixo pela leitura atual do parâmetro em cada callback; limita a 0–0.8.",
+        "Com o nó a funcionar, define speed como 0.6 no terminal. Observa a mudança sem reiniciar."
       ],
       "hints": [
-        "Os parâmetros pertencem a nós, não a topics.",
-        "Ler apenas no arranque não aplica alterações posteriores.",
-        "Consulta node.get_parameter(\"speed\").value em cada execução de tick."
+        "O parâmetro pertence ao nó, não a /cmd_vel.",
+        "Ler uma vez no início não aplica alterações posteriores.",
+        "Mantém o temporizador ativo e lê get_parameter(\"speed\").value em tick."
       ]
     },
     "it": {
       "title": "Regolare senza riavviare",
-      "description": "Dichiara speed e leggilo a ogni callback del timer. Modificalo dal terminale mentre Python continua a girare.",
+      "description": "Parti dal controllore a velocità fissa di 4.1. Leggi speed a ogni callback del timer, così ros2 param set cambia il movimento senza riavviare il nodo.",
       "steps": [
         "Dichiara speed con valore iniziale 0.2 su /student_controller.",
-        "Leggi node.get_parameter(\"speed\").value nel timer, limitalo a 0–0.8 e pubblica Twist.",
-        "Durante l’esecuzione: ros2 param list; ros2 param get /student_controller speed; ros2 param set /student_controller speed 0.6. Osserva il cambiamento e verifica."
+        "Sostituisci il comando fisso con la lettura attuale del parametro a ogni callback; limita a 0–0.8.",
+        "Mentre il nodo è attivo, imposta speed a 0.6 dal terminale. Osserva il cambiamento senza riavvio."
       ],
       "hints": [
-        "I parametri appartengono ai nodi, non ai topic.",
-        "Leggere il parametro solo all’avvio non applica gli aggiornamenti successivi al controllore.",
-        "Mantieni il timer attivo; usa node.get_parameter(\"speed\").value dentro tick."
+        "Il parametro appartiene al nodo, non a /cmd_vel.",
+        "Leggerlo solo all’avvio non applica modifiche successive.",
+        "Lascia attivo il timer e leggi get_parameter(\"speed\").value in tick."
       ]
     }
   },
   "programming": {
     "python": {
       "supported": true,
-      "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom geometry_msgs.msg import Twist\n\nrclpy.init()\nnode = Node('student_controller')\n\n# TODO: declare the speed parameter\npublisher = node.create_publisher(Twist, '/cmd_vel', 10)\ndef tick():\n    # TODO: read speed, clamp, publish\n    pass\nnode.create_timer(0.2, tick)\nrclpy.spin(node)\n"
+      "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom geometry_msgs.msg import Twist\n\nrclpy.init()\nnode = Node('student_controller')\nnode.declare_parameter('speed', 0.2)\npublisher = node.create_publisher(Twist, '/cmd_vel', 10)\ndef tick():\n    command = Twist()\n    # TODO: replace this fixed speed with the current speed parameter.\n    command.linear.x = 0.2\n    publisher.publish(command)\nnode.create_timer(0.2, tick)\nrclpy.spin(node)\n"
     },
     "cpp": {
       "supported": true,
       "experimental": true,
-      "starterCode": "#include <rclcpp/rclcpp.hpp>\n#include <geometry_msgs/msg/twist.hpp>\n#include <algorithm>\n\nclass Driver : public rclcpp::Node {\npublic:\n  Driver() : Node(\"student_controller\") {\n    // TODO: declare speed with default 0.2.\n    publisher_ = create_publisher<geometry_msgs::msg::Twist>(\"/cmd_vel\", 10);\n    timer_ = create_wall_timer(std::chrono::milliseconds(200), [this]() {\n      // TODO: read the current speed parameter.\n      // TODO: limit speed to 0.0–0.8 and publish a Twist.\n    });\n  }\nprivate:\n  rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr publisher_;\n  rclcpp::TimerBase::SharedPtr timer_;\n};\nint main(int argc, char **argv) {\n  rclcpp::init(argc, argv);\n  rclcpp::spin(std::make_shared<Driver>());\n}\n",
+      "starterCode": "#include <rclcpp/rclcpp.hpp>\n#include <geometry_msgs/msg/twist.hpp>\n#include <algorithm>\n\nclass Driver : public rclcpp::Node {\npublic:\n  Driver() : Node(\"student_controller\") {\n    declare_parameter<double>(\"speed\", 0.2);\n    publisher_ = create_publisher<geometry_msgs::msg::Twist>(\"/cmd_vel\", 10);\n    timer_ = create_wall_timer(std::chrono::milliseconds(200), [this]() {\n      geometry_msgs::msg::Twist command;\n      // TODO: replace this fixed speed with the current parameter value.\n      command.linear.x = 0.2;\n      publisher_->publish(command);\n    });\n  }\nprivate:\n  rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr publisher_;\n  rclcpp::TimerBase::SharedPtr timer_;\n};\nint main(int argc, char **argv) {\n  rclcpp::init(argc, argv);\n  rclcpp::spin(std::make_shared<Driver>());\n}\n",
       "content": {
         "title": "Tune without restarting",
-        "description": "Declare a speed parameter and read it on every timer callback. Change it live from a terminal while C++ keeps running.",
+        "description": "Start from the fixed controller in 4.1. Read speed on every timer callback so ros2 param set changes robot motion without restarting the node. Native ROS 2 distinguishes integer and double parameters.",
         "steps": [
           "Declare speed with default 0.2 on /student_controller.",
-          "Read get_parameter(\"speed\").as_double() inside the timer, clamp it to 0–0.8, and publish Twist.",
-          "While running: ros2 param list; ros2 param get /student_controller speed; ros2 param set /student_controller speed 0.6. Observe the change, then check."
+          "Replace the fixed command with a current parameter read in each timer callback; clamp it to 0–0.8.",
+          "While the node keeps running, set /student_controller speed to 0.6 from a terminal. Observe the speed change without a restart."
         ],
         "hints": [
-          "Parameters belong to nodes, not topics.",
-          "Reading once during startup will not apply later updates to your controller.",
-          "Keep the timer running; use get_parameter(\"speed\").as_double() inside tick."
+          "The parameter belongs to /student_controller, not /cmd_vel.",
+          "Read get_parameter(\"speed\").as_double() inside the timer, then clamp to 0.0–0.8.",
+          "Keep the node running while ros2 param set changes its behavior."
         ],
         "translations": {
           "nl": {
             "title": "Bijregelen zonder herschrijven",
-            "description": "Verander de snelheid via de terminal terwijl C++ blijft draaien.",
+            "description": "Begin met de vaste controller uit 4.1. Lees speed bij elke timer-callback, zodat ros2 param set de robot zonder herstart sneller laat rijden.",
             "steps": [
-              "Gebruik een speed-parameter in de timer.",
-              "Voer ros2 param set /student_controller speed 0.6 uit.",
-              "Observeer de verandering en controleer de oplossing."
+              "Declareer speed met standaardwaarde 0.2 op /student_controller.",
+              "Vervang de vaste opdracht door een actuele parameterlezing in elke timer-callback; begrens tot 0–0.8.",
+              "Zet speed tijdens het draaien via een terminal op 0.6. Bekijk de snelheidsverandering zonder herstart."
             ],
             "hints": [
-              "Een waarde die je alleen bij de start leest, verandert je regelaar niet automatisch.",
-              "Lees de parameter bij elke timer-callback.",
-              "Laat C++ lopen terwijl je de terminal gebruikt."
+              "De parameter hoort bij de node, niet bij /cmd_vel.",
+              "Eén keer bij het starten lezen past latere wijzigingen niet toe.",
+              "Laat de timer draaien en lees get_parameter(\"speed\").as_double() in tick."
             ]
           },
           "fr": {
             "title": "Ajuster sans réécrire",
-            "description": "Modifiez la vitesse depuis le terminal pendant que C++ continue.",
+            "description": "Reprenez le contrôleur fixe de 4.1. Lisez speed à chaque callback du timer pour que ros2 param set change le mouvement sans redémarrer le nœud.",
             "steps": [
-              "Utilisez un paramètre speed dans le timer.",
-              "Exécutez ros2 param set /student_controller speed 0.6.",
-              "Observez le changement puis vérifiez la solution."
+              "Déclarez speed avec la valeur par défaut 0.2 sur /student_controller.",
+              "Remplacez la commande fixe par une lecture du paramètre à chaque callback ; limitez-la à 0–0.8.",
+              "Pendant que le nœud tourne, réglez speed à 0.6 dans un terminal. Observez le changement sans redémarrage."
             ],
             "hints": [
-              "Lire uniquement au démarrage ne met pas le contrôleur à jour.",
-              "Relisez le paramètre à chaque callback du timer.",
-              "Laissez C++ actif pendant l’utilisation du terminal."
+              "Le paramètre appartient au nœud, pas à /cmd_vel.",
+              "Une lecture au démarrage ne prend pas en compte les changements ultérieurs.",
+              "Laissez le timer actif et lisez get_parameter(\"speed\").as_double() dans tick."
             ]
           },
           "es": {
             "title": "Ajustar sin reiniciar",
-            "description": "Lee speed en cada callback del temporizador. Cámbialo desde el terminal mientras C++ sigue ejecutándose.",
+            "description": "Parte del controlador fijo de 4.1. Lee speed en cada callback del temporizador para que ros2 param set cambie el movimiento sin reiniciar el nodo.",
             "steps": [
               "Declara speed con valor inicial 0.2 en /student_controller.",
-              "Lee get_parameter(\"speed\").as_double() dentro del temporizador, limita a 0–0.8 y publica Twist.",
-              "Usa ros2 param list, ros2 param get /student_controller speed y ros2 param set /student_controller speed 0.6. Observa el cambio y comprueba."
+              "Sustituye la orden fija por la lectura actual del parámetro en cada callback; limita a 0–0.8.",
+              "Mientras el nodo sigue activo, establece speed en 0.6 desde un terminal. Observa el cambio sin reiniciar."
             ],
             "hints": [
-              "Los parámetros pertenecen a nodos, no a topics.",
-              "Leer solo al arrancar no aplica cambios posteriores.",
-              "Dentro de tick, consulta get_parameter(\"speed\").as_double() en cada ejecución."
+              "El parámetro pertenece al nodo, no a /cmd_vel.",
+              "Leerlo una vez al inicio no aplica cambios posteriores.",
+              "Mantén el temporizador activo y lee get_parameter(\"speed\").as_double() dentro de tick."
             ]
           },
           "de": {
             "title": "Ohne Neustart anpassen",
-            "description": "Lies speed in jedem Timer-Callback. Ändere den Wert im Terminal, während C++ weiterläuft.",
+            "description": "Beginne mit dem festen Controller aus 4.1. Lies speed bei jedem Timer-Callback, damit ros2 param set die Bewegung ohne Neustart ändert.",
             "steps": [
               "Deklariere speed mit Standardwert 0.2 auf /student_controller.",
-              "Lies get_parameter(\"speed\").as_double() im Timer, begrenze auf 0–0.8 und sende Twist.",
-              "Nutze ros2 param list, ros2 param get /student_controller speed und ros2 param set /student_controller speed 0.6. Beobachte und prüfe die Änderung."
+              "Ersetze den festen Befehl durch den aktuellen Parameterwert in jedem Callback; begrenze auf 0–0.8.",
+              "Setze speed bei laufendem Knoten im Terminal auf 0.6. Beobachte die Änderung ohne Neustart."
             ],
             "hints": [
-              "Parameter gehören zu Knoten, nicht zu Topics.",
-              "Einmaliges Lesen beim Start berücksichtigt spätere Änderungen nicht.",
-              "Lies get_parameter(\"speed\").as_double() bei jedem Aufruf von tick."
+              "Der Parameter gehört zum Knoten, nicht zu /cmd_vel.",
+              "Einmaliges Lesen beim Start übernimmt spätere Änderungen nicht.",
+              "Lass den Timer laufen und lies get_parameter(\"speed\").as_double() in tick."
             ]
           },
           "pt": {
             "title": "Ajustar sem reiniciar",
-            "description": "Lê speed em cada callback do temporizador. Altera-o no terminal enquanto C++ continua a executar.",
+            "description": "Parte do controlador fixo de 4.1. Lê speed em cada callback do temporizador para que ros2 param set altere o movimento sem reiniciar o nó.",
             "steps": [
               "Declara speed com valor inicial 0.2 em /student_controller.",
-              "Lê get_parameter(\"speed\").as_double() no temporizador, limita a 0–0.8 e publica Twist.",
-              "Usa ros2 param list, ros2 param get /student_controller speed e ros2 param set /student_controller speed 0.6. Observa a alteração e verifica."
+              "Troca o comando fixo pela leitura atual do parâmetro em cada callback; limita a 0–0.8.",
+              "Com o nó a funcionar, define speed como 0.6 no terminal. Observa a mudança sem reiniciar."
             ],
             "hints": [
-              "Os parâmetros pertencem a nós, não a topics.",
-              "Ler apenas no arranque não aplica alterações posteriores.",
-              "Consulta get_parameter(\"speed\").as_double() em cada execução de tick."
+              "O parâmetro pertence ao nó, não a /cmd_vel.",
+              "Ler uma vez no início não aplica alterações posteriores.",
+              "Mantém o temporizador ativo e lê get_parameter(\"speed\").as_double() em tick."
             ]
           },
           "it": {
             "title": "Regolare senza riavviare",
-            "description": "Dichiara speed e leggilo a ogni callback del timer. Modificalo dal terminale mentre C++ continua a girare.",
+            "description": "Parti dal controllore a velocità fissa di 4.1. Leggi speed a ogni callback del timer, così ros2 param set cambia il movimento senza riavviare il nodo.",
             "steps": [
               "Dichiara speed con valore iniziale 0.2 su /student_controller.",
-              "Leggi get_parameter(\"speed\").as_double() nel timer, limitalo a 0–0.8 e pubblica Twist.",
-              "Durante l’esecuzione: ros2 param list; ros2 param get /student_controller speed; ros2 param set /student_controller speed 0.6. Osserva il cambiamento e verifica."
+              "Sostituisci il comando fisso con la lettura attuale del parametro a ogni callback; limita a 0–0.8.",
+              "Mentre il nodo è attivo, imposta speed a 0.6 dal terminale. Osserva il cambiamento senza riavvio."
             ],
             "hints": [
-              "I parametri appartengono ai nodi, non ai topic.",
-              "Leggere il parametro solo all’avvio non applica gli aggiornamenti successivi al controllore.",
-              "Mantieni il timer attivo; usa get_parameter(\"speed\").as_double() dentro tick."
+              "Il parametro appartiene al nodo, non a /cmd_vel.",
+              "Leggerlo solo all’avvio non applica modifiche successive.",
+              "Lascia attivo il timer e leggi get_parameter(\"speed\").as_double() in tick."
             ]
           }
         }

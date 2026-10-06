@@ -78,7 +78,7 @@ export function associateReport(message, {sample = null, frame = null} = {}) {
     throw new Error('Invalid C++ report');
   }
   if (message.kind === 'course_report') {
-    const arities = {range: 1, sectors: 3, pose: 3, relative: 2, transform: 2};
+    const arities = {range: 1, sectors: 3, position: 2, pose: 3, relative: 2, transform: 2};
     if (!own(arities, message.report)) throw new Error('Unknown C++ course report: ' + String(message.report));
     const values = finiteValues(message.values, arities[message.report], 'C++ ' + message.report + ' report');
     const boundSample = message.report === 'relative' || message.report === 'transform'

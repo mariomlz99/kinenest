@@ -34,7 +34,7 @@ Session catalogs and JSON lessons specify text/translations, starter code, check
 
 ## CLI and lifecycle
 
-An explicit parser supports the documented ROS subset; it is not a shell or full YAML parser. TerminalSession owns one foreground publisher, echo, measurement or action goal. Stop/Close/Reset dispose its resources. Measurements use simulated time; bw reports estimated payload bytes rather than DDS traffic. All text output is escaped through textContent and bounded.
+An explicit parser supports the documented ROS subset; it is not a shell or full YAML parser. Every course page uses a bounded `BridgeTerminal` and shared virtual workspace for familiar file and package commands; `TerminalSession` handles the graph CLI and owns one foreground publisher, echo, measurement or action goal. Stop/Close/Reset dispose its resources. Measurements use simulated time; bw reports estimated payload bytes rather than DDS traffic. All text output is escaped through textContent and bounded.
 
 ## Spatial transforms and disclosure
 

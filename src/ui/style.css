@@ -91,3 +91,6 @@ footer .footer-contact{flex-basis:100%;margin:0;line-height:1.6}footer .footer-c
 
 .session-nav .nav-home{padding-inline:12px}
 .core-bridge-card{padding:20px 24px;margin:20px 0}.core-bridge-card h2,.future-tracks h2{font-size:19px;margin:0 0 8px}.core-bridge-card p,.future-tracks p,.course-overview p{color:var(--text-muted);line-height:1.6}.core-bridge-card .start-course{margin-bottom:0}.future-tracks{margin:30px 0}.future-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:16px 0}.future-card-grid article{padding:18px;opacity:.8}.future-card-grid article span{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted)}.future-card-grid article h3{font-size:16px;margin:12px 0}.future-card-grid article p{font-size:13px;margin:0}@media(max-width:650px){.future-card-grid{grid-template-columns:1fr}}
+:root .terminal-cwd{font:11px ui-monospace,monospace;color:var(--text-muted);overflow-wrap:anywhere}
+.checker-helper-note{margin:8px 0 0;padding:7px 10px;border-left:3px solid var(--accent);background:var(--accent-soft);color:var(--text-muted);font-size:12px;line-height:1.45}
+.checker-helper-note[hidden]{display:none}

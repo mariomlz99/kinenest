@@ -1,28 +1,28 @@
 [
   {
     "id": "session-05-01-odometry",
-    "title": "Read the robot pose",
+    "title": "Read odometry structure",
     "number": "5.1",
     "translations": {
-      "nl": "Lees de robotpose",
-      "fr": "Lire la pose du robot",
-      "es": "Leer la pose del robot",
-      "de": "Die Roboterpose lesen",
-      "pt": "Ler a pose do robô",
-      "it": "Leggere la posa del robot"
+      "nl": "De structuur van odometrie lezen",
+      "fr": "Lire la structure de l’odométrie",
+      "es": "Leer la estructura de odometría",
+      "de": "Odometriestruktur lesen",
+      "pt": "Ler a estrutura da odometria",
+      "it": "Leggere la struttura dell’odometria"
     }
   },
   {
     "id": "session-05-02-heading",
-    "title": "Position plus orientation",
+    "title": "Convert orientation to yaw",
     "number": "5.2",
     "translations": {
-      "nl": "Positie plus oriëntatie",
-      "fr": "Position et orientation",
-      "es": "Posición y orientación",
-      "de": "Position und Orientierung",
-      "pt": "Posição e orientação",
-      "it": "Posizione e orientamento"
+      "nl": "Oriëntatie omzetten naar yaw",
+      "fr": "Convertir l’orientation en yaw",
+      "es": "Convertir orientación a yaw",
+      "de": "Orientierung in Yaw umrechnen",
+      "pt": "Converter orientação em yaw",
+      "it": "Convertire l’orientamento in yaw"
     }
   },
   {

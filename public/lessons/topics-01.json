@@ -1,13 +1,13 @@
 {
   "id": "topics-01",
   "title": "Discover and use /cmd_vel",
-  "description": "Mission: discover the topic that controls the robot. Publish a velocity command and travel at least 1 metre.",
+  "description": "Mission: discover the topic that controls the robot. Publish a velocity command and travel at least 1 metre. KineNest stops stale velocity commands after 2 s; real robot bases may use different safety behavior.",
   "steps": [
     "Inspect the nodes and list the available topics.",
     "Find the velocity topic and inspect its message type.",
     "Inspect the Twist interface, then publish a single command.",
     "Watch the robot move, then check your solution.",
-    "Optional: echo /odom in another terminal to watch pose and velocity change."
+    "Optional: echo /odom in another terminal to watch pose and velocity change. Then explicitly stop with ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \"{linear: {x: 0.0}, angular: {z: 0.0}}\"."
   ],
   "hints": [
     "Start with ros2 node list. Nodes are participants in the ROS graph.",
@@ -30,13 +30,13 @@
   "translations": {
     "nl": {
       "title": "Ontdek het besturingstopic",
-      "description": "Ontdek welk topic de robot bestuurt. Publiceer een Twist en laat de robot minstens één meter rijden.",
+      "description": "Ontdek welk topic de robot bestuurt. Publiceer een Twist en laat de robot minstens één meter rijden. KineNest stopt oude snelheidsopdrachten na 2 s; echte robotbases kunnen ander veiligheidsgedrag hebben.",
       "steps": [
         "Inspecteer de nodes en toon de beschikbare topics.",
         "Vind het snelheidstopic en inspecteer het berichttype.",
         "Inspecteer Twist en publiceer één opdracht.",
         "Bekijk de beweging en controleer je oplossing.",
-        "Optioneel: volg /odom in een andere terminal om positie en snelheid te zien."
+        "Optioneel: volg /odom in een andere terminal om positie en snelheid te zien. Stop daarna expliciet met een Twist met linear.x = 0 en angular.z = 0 (--once)."
       ],
       "hints": [
         "Welke opdracht toont alle topics?",
@@ -47,13 +47,13 @@
     },
     "fr": {
       "title": "Découvrir le topic de commande",
-      "description": "Trouvez le topic qui commande le robot. Publiez un Twist pour lui faire parcourir au moins un mètre.",
+      "description": "Trouvez le topic qui commande le robot. Publiez un Twist pour lui faire parcourir au moins un mètre. KineNest arrête les commandes de vitesse périmées après 2 s ; les bases réelles peuvent se comporter autrement.",
       "steps": [
         "Inspectez les nœuds et listez les topics disponibles.",
         "Trouvez le topic de vitesse et inspectez son type.",
         "Inspectez Twist puis publiez une seule commande.",
         "Observez le mouvement et vérifiez la solution.",
-        "Facultatif : observez /odom dans un autre terminal pour suivre pose et vitesse."
+        "Facultatif : observez /odom dans un autre terminal pour suivre pose et vitesse. Arrêtez ensuite explicitement avec un Twist dont linear.x = 0 et angular.z = 0 (--once)."
       ],
       "hints": [
         "Quelle commande liste les topics ?",
@@ -64,13 +64,13 @@
     },
     "es": {
       "title": "Descubrir y usar /cmd_vel",
-      "description": "Encuentra el topic que controla el robot. Publica una velocidad y recorre al menos 1 metro.",
+      "description": "Encuentra el topic que controla el robot. Publica una velocidad y recorre al menos 1 metro. KineNest detiene órdenes de velocidad antiguas tras 2 s; las bases reales pueden tener otra conducta de seguridad.",
       "steps": [
         "Inspecciona los nodos y enumera los topics disponibles.",
         "Encuentra el topic de velocidad y consulta su tipo de mensaje.",
         "Inspecciona Twist y publica un único comando.",
         "Observa el movimiento y comprueba la solución.",
-        "Opcional: observa /odom en otro terminal para ver posición y velocidad."
+        "Opcional: observa /odom en otro terminal para ver posición y velocidad. Detén después explícitamente con un Twist con linear.x = 0 y angular.z = 0 (--once)."
       ],
       "hints": [
         "Empieza con ros2 node list. Los nodos participan en el grafo ROS.",
@@ -81,13 +81,13 @@
     },
     "de": {
       "title": "/cmd_vel entdecken und nutzen",
-      "description": "Finde das Topic zur Robotersteuerung. Sende eine Geschwindigkeit und fahre mindestens 1 Meter.",
+      "description": "Finde das Topic zur Robotersteuerung. Sende eine Geschwindigkeit und fahre mindestens 1 Meter. KineNest stoppt veraltete Geschwindigkeitsbefehle nach 2 s; echte Roboterbasen können sich anders verhalten.",
       "steps": [
         "Untersuche die Knoten und liste die Topics auf.",
         "Finde das Geschwindigkeits-Topic und seinen Nachrichtentyp.",
         "Untersuche Twist und sende einen einzelnen Befehl.",
         "Beobachte die Bewegung und prüfe deine Lösung.",
-        "Optional: Beobachte Position und Geschwindigkeit mit echo auf /odom in einem zweiten Terminal."
+        "Optional: Beobachte Position und Geschwindigkeit mit echo auf /odom in einem zweiten Terminal. Stoppe danach ausdrücklich mit einem Twist mit linear.x = 0 und angular.z = 0 (--once)."
       ],
       "hints": [
         "Beginne mit ros2 node list. Knoten sind Teilnehmer im ROS-Graphen.",
@@ -98,13 +98,13 @@
     },
     "pt": {
       "title": "Descobrir e usar /cmd_vel",
-      "description": "Encontra o topic que controla o robô. Publica uma velocidade e percorre pelo menos 1 metro.",
+      "description": "Encontra o topic que controla o robô. Publica uma velocidade e percorre pelo menos 1 metro. KineNest para comandos de velocidade antigos após 2 s; bases reais podem ter outro comportamento de segurança.",
       "steps": [
         "Inspeciona os nós e lista os topics disponíveis.",
         "Encontra o topic de velocidade e consulta o tipo de mensagem.",
         "Inspeciona Twist e publica um único comando.",
         "Observa o movimento e verifica a solução.",
-        "Opcional: observa /odom noutro terminal para acompanhar posição e velocidade."
+        "Opcional: observa /odom noutro terminal para acompanhar posição e velocidade. Para depois explicitamente com um Twist com linear.x = 0 e angular.z = 0 (--once)."
       ],
       "hints": [
         "Começa com ros2 node list. Os nós participam no grafo ROS.",
@@ -115,13 +115,13 @@
     },
     "it": {
       "title": "Scoprire e usare /cmd_vel",
-      "description": "Missione: trova il topic che controlla il robot. Pubblica un comando di velocità e percorri almeno un metro.",
+      "description": "Missione: trova il topic che controlla il robot. Pubblica un comando di velocità e percorri almeno un metro. KineNest ferma i comandi di velocità scaduti dopo 2 s; le basi reali possono avere un comportamento di sicurezza diverso.",
       "steps": [
         "Ispeziona i nodi ed elenca i topic disponibili.",
         "Trova il topic di velocità e leggi il tipo di messaggio.",
         "Ispeziona l’interfaccia Twist, poi pubblica un comando singolo.",
         "Osserva il robot muoversi, poi verifica la soluzione.",
-        "Opzionale: usa echo /odom in un altro terminale per osservare posa e velocità."
+        "Opzionale: usa echo /odom in un altro terminale per osservare posa e velocità. Ferma poi esplicitamente con un Twist con linear.x = 0 e angular.z = 0 (--once)."
       ],
       "hints": [
         "Inizia con ros2 node list. I nodi partecipano al grafo ROS.",

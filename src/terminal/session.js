@@ -30,11 +30,11 @@ export class TerminalSession {
     this.unsubscribe=null;this.history=[];this.cursor=0;
   }
   get running(){return this.unsubscribe!==null;}
-  run(input) {
+  run(input,{echo=true}={}) {
     if(this.running) throw new Error('Stop the running command with Ctrl+C before entering another command.');
     const command=input.trim();if(!command)return;
     this.history.push(command);if(this.history.length>100)this.history.shift();this.cursor=this.history.length;
-    this.write('$ '+command);
+    if(echo)this.write('$ '+command);
     const parts=command.split(/\s+/);
     if(parts.slice(0,3).join(' ')==='ros2 action send_goal'){
       const args=tokens(command),feedback=args.at(-1)==='--feedback';if(feedback)args.pop();

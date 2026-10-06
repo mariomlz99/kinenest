@@ -1,5 +1,9 @@
 # Core bridge release report — review candidate, 2026-10-06
 
+## Final hardening follow-up
+
+The ecosystem terminal and external teaching-review follow-up is documented in [PEDAGOGY_HARDENING.md](PEDAGOGY_HARDENING.md). It supersedes the earlier unchanged-curriculum description below. The tables below record the earlier bridge candidate; current hardening validation belongs to the latest PR checks and review summary. Core freeze remains gated by current CI and maintainer review.
+
 ## Identity and disposition
 
 - Branch: `core-real-ros-bridge`, based on main `b23b2ca1ae4a7742a41bc9426f33c8c888bf12dc`.

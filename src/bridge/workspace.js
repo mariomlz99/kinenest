@@ -120,12 +120,38 @@ export class WorkspaceModel {
   constructor(){this.entries=new Map([[ROOT,{kind:'dir'}],[ROOT+'/src',{kind:'dir'}]]);this.revision=0;this.installed=new Map();this.buildLog=[];this.packageRevisions=new Map();}
   exists(path){return this.entries.has(normalizePath(path));}
   entry(path){const full=normalizePath(path);const entry=this.entries.get(full);if(!entry)throw Error('No such workspace path: '+path);return entry;}
-  mkdir(path){const full=normalizePath(path);if(this.entries.has(full))throw Error('Already exists: '+path);if(this.entry(full.slice(0,full.lastIndexOf('/'))).kind!=='dir')throw Error('Parent is not a directory.');this.entries.set(full,{kind:'dir'});}
-  write(path,content){const full=normalizePath(path);if(this.entry(full.slice(0,full.lastIndexOf('/'))).kind!=='dir')throw Error('Parent is not a directory.');this.entries.set(full,{kind:'file',content:String(content)});this.revision++;const name=full.slice((ROOT+'/src/').length).split('/')[0];if(full.startsWith(ROOT+'/src/')&&name){this.packageRevisions.set(name,this.revision);this.removeInstalled(name);}}
-  ensureDir(path){const full=normalizePath(path);let current=ROOT;for(const part of full.slice(ROOT.length).split('/').filter(Boolean)){current+='/'+part;if(!this.exists(current))this.mkdir(current);}}
+  mkdir(path,{parents=false}={}){const full=normalizePath(path);if(parents){this.ensureDir(full);return;}if(this.entries.has(full))throw Error('Already exists: '+path);if(this.entry(full.slice(0,full.lastIndexOf('/'))).kind!=='dir')throw Error('Parent is not a directory.');this.entries.set(full,{kind:'dir'});this.changed(full);}
+  changed(path){if(!path.startsWith(ROOT+'/src/'))return;const name=path.slice((ROOT+'/src/').length).split('/')[0];if(name){this.packageRevisions.set(name,++this.revision);this.removeInstalled(name);}}
+  write(path,content){const full=normalizePath(path);if(this.exists(full)&&this.entry(full).kind!=='file')throw Error('Is a directory: '+path);if(this.entry(full.slice(0,full.lastIndexOf('/'))).kind!=='dir')throw Error('Parent is not a directory.');this.entries.set(full,{kind:'file',content:String(content)});this.revision++;const name=full.slice((ROOT+'/src/').length).split('/')[0];if(full.startsWith(ROOT+'/src/')&&name){this.packageRevisions.set(name,this.revision);this.removeInstalled(name);}}
+  ensureDir(path){const full=normalizePath(path);let current=ROOT;for(const part of full.slice(ROOT.length).split('/').filter(Boolean)){current+='/'+part;if(!this.exists(current))this.mkdir(current);else if(this.entry(current).kind!=='dir')throw Error('Not a directory: '+current);}}
   removeInstalled(name){this.installed.delete(name);const base=ROOT+'/install/'+name;for(const path of [...this.entries.keys()])if(path===base||path.startsWith(base+'/'))this.entries.delete(path);}
   read(path){const entry=this.entry(path);if(entry.kind!=='file')throw Error('Not a file: '+path);return entry.content;}
   list(path){const full=normalizePath(path);if(this.entry(full).kind!=='dir')throw Error('Not a directory: '+path);return [...this.entries].filter(([p])=>p.startsWith(full+'/')&&!p.slice(full.length+1).includes('/')).map(([p,e])=>({name:p.slice(full.length+1),...e})).sort((a,b)=>a.name.localeCompare(b.name));}
+  touch(path){const full=normalizePath(path);if(this.exists(full)&&this.entry(full).kind!=='file')throw Error('Not a file: '+path);this.write(full,this.exists(full)?this.read(full):'');}
+  remove(path,{recursive=false,force=false}={}){
+    const full=normalizePath(path);if(full===ROOT)throw Error('Cannot remove the workspace root.');
+    if(!this.exists(full)){if(force)return false;throw Error('No such workspace path: '+path);}
+    if(this.entry(full).kind==='dir'&&!recursive)throw Error('Is a directory: '+path+' (use rm -r).');
+    const removed=[...this.entries.keys()].filter(p=>p===full||p.startsWith(full+'/'));
+    const sourceNames=new Set(removed.filter(p=>p.startsWith(ROOT+'/src/')).map(p=>p.slice((ROOT+'/src/').length).split('/')[0]));
+    for(const p of removed)this.entries.delete(p);
+    this.revision++;
+    for(const name of sourceNames){this.packageRevisions.set(name,this.revision);this.removeInstalled(name);}
+    if(full===ROOT+'/install')this.installed.clear();
+    else if(full.startsWith(ROOT+'/install/')){const name=full.slice((ROOT+'/install/').length).split('/')[0];if(this.installed.has(name))this.removeInstalled(name);}
+    return true;
+  }
+  copy(source,destination,{recursive=false}={}){
+    const from=normalizePath(source),to=normalizePath(destination),item=this.entry(from);
+    if(from===ROOT)throw Error('Cannot copy the workspace root.');
+    if(item.kind==='dir'&&!recursive)throw Error('Omitting directory: '+source+' (use cp -r).');
+    if(to===from||to.startsWith(from+'/'))throw Error('Cannot copy a directory into itself.');
+    if(this.exists(to)&&this.entry(to).kind!==item.kind)throw Error('Source and destination types differ: '+destination);
+    if(this.entry(to.slice(0,to.lastIndexOf('/'))).kind!=='dir')throw Error('Parent is not a directory.');
+    const entries=[...this.entries].filter(([p])=>p===from||p.startsWith(from+'/'));
+    for(const [p,e] of entries){const target=to+p.slice(from.length);if(e.kind==='dir')this.ensureDir(target);else this.write(target,e.content);}
+  }
+  move(source,destination){const from=normalizePath(source),to=normalizePath(destination);if(from===ROOT)throw Error('Cannot move the workspace root.');const item=this.entry(from);this.copy(from,to,{recursive:item.kind==='dir'});this.remove(from,{recursive:item.kind==='dir'});}
   createPackage(name,type){
     if(!PACKAGE.test(name))throw Error('Use a lowercase ROS package name with letters, digits and underscores.');
     if(!['ament_python','ament_cmake'].includes(type))throw Error('Supported build types: ament_python, ament_cmake.');
@@ -141,7 +167,7 @@ export class WorkspaceModel {
     this.mkdir(base+'/launch');this.write(base+'/launch/system_launch.py',`from launch import LaunchDescription\nfrom launch_ros.actions import Node\n\ndef generate_launch_description():\n    return LaunchDescription([\n        Node(package='${name}', executable='publisher', name='talker', remappings=[('chatter', 'bridge_chatter')]),\n        Node(package='${name}', executable='subscriber', name='listener', parameters=[{'prefix': 'received'}], remappings=[('chatter', 'other_chatter')]),\n    ])\n`);
     return base;
   }
-  packages(){return this.list(ROOT+'/src').filter(e=>e.kind==='dir'&&this.exists(ROOT+'/src/'+e.name+'/package.xml')).map(e=>e.name);}
+  packages(){return this.exists(ROOT+'/src')?this.list(ROOT+'/src').filter(e=>e.kind==='dir'&&this.exists(ROOT+'/src/'+e.name+'/package.xml')).map(e=>e.name):[];}
   markBuilt(name,record){
     try{
       for(const dir of ['build/'+name,'install/'+name,'log','install/'+name+'/lib/'+name,'install/'+name+'/share/'+name+'/launch'])this.ensureDir(ROOT+'/'+dir);

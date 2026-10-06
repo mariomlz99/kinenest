@@ -3,7 +3,7 @@
   "session": 2,
   "number": "2.1",
   "title": "Your first subscriber",
-  "description": "A sensor publishes repeatedly. Subscribe to /scan and inspect the range samples arriving in your callback.",
+  "description": "A sensor publishes repeatedly. Subscribe to /scan and inspect the range samples arriving in your callback. In this fixed KineNest scan, ray 60 happens to face forward. In 2.3 you will calculate directions from angle metadata.",
   "steps": [
     "Inspect /scan with topic type and echo --once.",
     "Create a LaserScan subscription and print the number of beams and the forward range.",
@@ -24,7 +24,7 @@
   "translations": {
     "nl": {
       "title": "Je eerste subscriber",
-      "description": "Ontvang LaserScan-berichten via een callback en bekijk de afstandsmetingen.",
+      "description": "Ontvang LaserScan-berichten via een callback en bekijk de afstandsmetingen. In deze vaste scan kijkt straal 60 vooruit. In 2.3 bereken je richtingen uit de hoekmetadata.",
       "steps": [
         "Inspecteer /scan met ros2 topic type en echo --once.",
         "Maak een LaserScan-subscription en print het aantal stralen en de afstand vooruit.",
@@ -38,7 +38,7 @@
     },
     "fr": {
       "title": "Votre premier abonnement",
-      "description": "Recevez des messages LaserScan dans un callback et observez les distances.",
+      "description": "Recevez des messages LaserScan dans un callback et observez les distances. Dans ce scan fixe, le rayon 60 pointe vers l’avant. En 2.3, vous calculerez les directions à partir des métadonnées angulaires.",
       "steps": [
         "Inspectez /scan avec ros2 topic type et echo --once.",
         "Créez une subscription LaserScan et affichez le nombre de rayons et la distance devant.",
@@ -52,7 +52,7 @@
     },
     "es": {
       "title": "Tu primer subscriber",
-      "description": "Suscríbete a /scan y lee los datos de LaserScan en un callback.",
+      "description": "Suscríbete a /scan y lee los datos de LaserScan en un callback. En este scan fijo, el rayo 60 mira al frente. En 2.3 calcularás direcciones con los metadatos angulares.",
       "steps": [
         "Inspecciona /scan con ros2 topic info y ros2 interface show sensor_msgs/msg/LaserScan.",
         "Crea una subscription LaserScan e imprime el número de rayos y la distancia frontal.",
@@ -66,7 +66,7 @@
     },
     "de": {
       "title": "Dein erster Subscriber",
-      "description": "Abonniere /scan und lies LaserScan-Daten in einem Callback.",
+      "description": "Abonniere /scan und lies LaserScan-Daten in einem Callback. In diesem festen Scan zeigt Strahl 60 nach vorn. In 2.3 berechnest du Richtungen aus den Winkelmetadaten.",
       "steps": [
         "Untersuche /scan mit ros2 topic info und ros2 interface show sensor_msgs/msg/LaserScan.",
         "Erstelle eine LaserScan-Subscription und gib Strahlanzahl und Abstand nach vorne aus.",
@@ -80,7 +80,7 @@
     },
     "pt": {
       "title": "O primeiro subscriber",
-      "description": "Subscreve /scan e lê dados LaserScan num callback.",
+      "description": "Subscreve /scan e lê dados LaserScan num callback. Neste scan fixo, o raio 60 aponta em frente. Em 2.3 calcularás direções a partir dos metadados angulares.",
       "steps": [
         "Inspeciona /scan com ros2 topic info e ros2 interface show sensor_msgs/msg/LaserScan.",
         "Cria uma subscription LaserScan e mostra o número de raios e a distância à frente.",
@@ -94,7 +94,7 @@
     },
     "it": {
       "title": "Il primo subscriber",
-      "description": "Un sensore pubblica ripetutamente. Sottoscrivi /scan e leggi le distanze ricevute dal callback.",
+      "description": "Un sensore pubblica ripetutamente. Sottoscrivi /scan e leggi le distanze ricevute dal callback. In questa scansione fissa il raggio 60 guarda avanti. In 2.3 calcolerai le direzioni dai metadati angolari.",
       "steps": [
         "Ispeziona /scan con topic type ed echo --once.",
         "Crea una subscription LaserScan e stampa il numero di raggi e la distanza frontale.",

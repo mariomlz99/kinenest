@@ -5,6 +5,7 @@ import { createTFView } from './tf-view.js';
 import { arrangeSession } from './workstation.js';
 import { SESSIONS } from './product.js';
 import { Runtime } from '../runtime/graph.js';
+import { interfaceType } from '../runtime/interfaces.js';
 import { ExecutionHost } from '../runtime/languages.js';
 import { createTerminals } from './terminals.js';
 import { sessionChecks } from '../exercises/perception.js';
@@ -55,6 +56,10 @@ async function selectLesson(id){
 function localLesson(){const base={...lesson,...lesson.translations?.[language()]};const content=workspace?.mode==='cpp'?lesson.programming?.cpp?.content:null;return content?{...base,...content,...content.translations?.[language()]}:base;}
 function renderLesson(){
   if(!lesson)return;const text=localLesson();$('hint').disabled=hints>=text.hints.length;$('lesson-number').textContent='EXERCISE '+lesson.number;$('mission-title').textContent=text.title;$('description').textContent=text.description;
+  let definition=$('lesson-interface');
+  if(!definition){definition=document.createElement('pre');definition.id='lesson-interface';definition.setAttribute('translate','no');$('description').after(definition);}
+  definition.hidden=lesson.id!=='session-04-03-custom';
+  definition.textContent=definition.hidden?'':'TargetInfo.msg\n'+interfaceType('ros2learn_interfaces/msg/TargetInfo').definition;
   $('steps').replaceChildren();for(const step of text.steps){const li=document.createElement('li');li.textContent=step;$('steps').append(li);}
   $('hints').replaceChildren();for(const hint of text.hints.slice(0,hints)){const p=document.createElement('p');p.textContent=hint;$('hints').append(p);}
 }
@@ -128,6 +133,20 @@ function draw(){
         });ctx.stroke();
       }
       ctx.setLineDash([]);
+      if(lesson.id==='session-02-03-sectors'){
+        ctx.save();ctx.font='11px system-ui';ctx.textAlign='center';
+        for(const [center,label] of [[0,'0° ±15°'],[Math.PI/2,'+90° ±15°'],[-Math.PI/2,'−90° ±15°']]){
+          const angle=sensor.yaw+center,radius=1.1;
+          ctx.beginPath();ctx.moveTo(sx(sensor.x),sy(sensor.y));
+          for(let step=0;step<=12;step++){
+            const ray=angle-Math.PI/12+step*Math.PI/72;
+            ctx.lineTo(sx(sensor.x+radius*Math.cos(ray)),sy(sensor.y+radius*Math.sin(ray)));
+          }
+          ctx.closePath();ctx.globalAlpha=.22;ctx.fillStyle=worldColors.heading;ctx.fill();ctx.globalAlpha=1;
+          ctx.fillStyle=worldColors.heading;ctx.fillText(label,sx(sensor.x+1.65*Math.cos(angle)),sy(sensor.y+1.65*Math.sin(angle)));
+        }
+        ctx.restore();
+      }
     }
     for(const t of runtime.targets??[{x:5,y:0,color:[235,45,45]},{x:6,y:-2,color:[40,85,230]}]){ctx.fillStyle='rgb('+(t.color??[235,45,45]).join(',')+')';ctx.fillRect(sx(t.x)-6,sy(t.y)-6,12,12);}
     if(lesson.goal){ctx.strokeStyle=worldColors.goal;ctx.beginPath();ctx.arc(sx(lesson.goal[0]),sy(lesson.goal[1]),8,0,Math.PI*2);ctx.stroke();}

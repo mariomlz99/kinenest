@@ -13,10 +13,10 @@ const flagLabels={en:'Italian',nl:'Italiaans',fr:'italienne',es:'italiana',de:'i
 const contactLabels={en:'Questions?',nl:'Vragen?',fr:'Des questions ?',es:'¿Preguntas?',de:'Fragen?',pt:'Dúvidas?',it:'Domande?'};
 try{for(const page of ['index.html','session-01.html','session-02.html','session-03.html','session-04.html','session-05.html','session-06.html','bridge.html','about.html','licences.html','real-ros.html']){
  localStorage.setItem('ros2learn-language','en');await new Promise(resolve=>{frame.onload=resolve;frame.src='../'+page;});let d;
- for(let i=0;i<150;i++){d=frame.contentDocument;if(d?.getElementById('language')&&d?.querySelector('footer .attribution'))break;await wait(50);}
+ for(let i=0;i<250;i++){d=frame.contentDocument;if(d?.documentElement.dataset.kinenestReady==='true'&&d.getElementById('language')&&d.querySelector('footer .attribution'))break;if(d?.documentElement.dataset.kinenestBoot==='error')break;await wait(50);}
  const support=d.querySelector('footer a.support-link');if(support?.href!=='https://buymeacoffee.com/mariomlz99'||support.target!=='_blank'||!['noopener','noreferrer'].every(x=>support.relList.contains(x))||!support.querySelector('svg'))throw Error('Support link '+page);
  if([...d.scripts].some(s=>/buymeacoffee/i.test(s.src)))throw Error('Support widget loaded');
- const l=d.getElementById('language');if(!l)throw Error('Language selector missing on '+page+' (boot '+d.documentElement.dataset.kinenestBoot+')');
+ const l=d.getElementById('language');if(!l)throw Error('Language selector missing on '+page+' (boot '+d.documentElement.dataset.kinenestBoot+': '+(d.querySelector('.boot-error-detail')?.textContent??'no detail')+')');
  for(const lang of Object.keys(expected)){
   l.value=lang;l.dispatchEvent(new Event('change'));await wait(30);
   const p=d.querySelector('footer .attribution'),text=p?.textContent.replace(/\s+/g,' ').trim();

@@ -367,6 +367,9 @@ def report_range(distance):
 def report_pose(x, y, yaw):
     _send('course_report', sample=_current_sample, report='pose', values=[float(x), float(y), float(yaw)])
 
+def report_position(x, y):
+    _send('course_report', sample=_current_sample, report='position', values=[float(x), float(y)])
+
 def report_transform(x, y):
     _send('course_report', sample=_current_sample, report='transform', values=[float(x), float(y)])
 
@@ -476,6 +479,7 @@ _module('ros2learn_interfaces')
 _module('ros2learn_interfaces.action', DriveDistance=DriveDistance)
 sys.modules['ros2learn'].report_range = report_range
 sys.modules['ros2learn'].report_pose = report_pose
+sys.modules['ros2learn'].report_position = report_position
 sys.modules['ros2learn'].report_transform = report_transform
 
 def report_sectors(front, left, right):

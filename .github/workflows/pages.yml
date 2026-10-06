@@ -73,6 +73,18 @@ jobs:
         env:
           FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
         run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=bridge-browser --query=language=cpp
+      - name: Shared terminal commands across Foundations
+        env:
+          FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
+        run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=terminal-browser
+      - name: Changed starter learning path in Python
+        env:
+          FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
+        run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=starter-path
+      - name: Changed starter learning path in C++
+        env:
+          FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
+        run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=starter-path --query=language=cpp
       - name: Sensor provenance and standard C++ buffer access
         env:
           FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}

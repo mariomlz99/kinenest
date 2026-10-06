@@ -5,7 +5,7 @@
   "title": "Where is the target relative to me?",
   "description": "Request the target in base_link. Positive x means ahead; positive y means left. The same world target has different coordinates when the robot turns.",
   "steps": [
-    "Inspect the actual TF tree panel: world → odom → base_link, plus sensor and target frames.",
+    "Inspect the actual TF tree panel: world → odom → base_link, plus sensor and target frames. Before running, predict whether target y in base_link should be positive or negative.",
     "Look up target with base_link as the target_frame argument.",
     "Report translation.x and .y with report_relative, then compare with the visible target marker."
   ],
@@ -31,7 +31,7 @@
       "title": "Waar is het doel ten opzichte van mij?",
       "description": "Vraag het doel in base_link. Positieve x is vooruit; positieve y is links van de robot.",
       "steps": [
-        "Bekijk de echte TF-boom en het target-frame.",
+        "Bekijk de echte TF-boom en het target-frame. Voorspel vooraf of de y van het doel in base_link positief of negatief is.",
         "Gebruik base_link als target_frame in lookup_transform.",
         "Rapporteer translation.x en .y met report_relative."
       ],
@@ -45,7 +45,7 @@
       "title": "Où est la cible par rapport à moi ?",
       "description": "Demandez la cible dans base_link. x positif signifie devant ; y positif signifie à gauche du robot.",
       "steps": [
-        "Observez l’arbre TF réel et le repère target.",
+        "Observez l’arbre TF réel et le repère target. Avant de lancer, prédisez si y de la cible dans base_link est positif ou négatif.",
         "Utilisez base_link comme target_frame dans lookup_transform.",
         "Rapportez translation.x et .y avec report_relative."
       ],
@@ -59,7 +59,7 @@
       "title": "Objetivo relativo al robot",
       "description": "Consulta target en base_link: x positivo es delante, y positivo es izquierda. Las coordenadas cambian al girar.",
       "steps": [
-        "Inspecciona el árbol TF con world, odom, base_link, sensores y target.",
+        "Inspecciona el árbol TF con world, odom, base_link, sensores y target. Antes de ejecutar, predice si y del objetivo en base_link será positivo o negativo.",
         "Consulta target usando base_link como target_frame.",
         "Llama a report_relative con translation.x y translation.y y compara con el objetivo visible."
       ],
@@ -73,7 +73,7 @@
       "title": "Das Ziel relativ zum Roboter",
       "description": "Frage target in base_link ab: positives x ist vorne, positives y links. Die Werte ändern sich beim Drehen.",
       "steps": [
-        "Untersuche den TF-Baum mit world, odom, base_link, Sensoren und target.",
+        "Untersuche den TF-Baum mit world, odom, base_link, Sensoren und target. Sage vor dem Start voraus, ob Ziel-y in base_link positiv oder negativ ist.",
         "Frage target mit base_link als target_frame ab.",
         "Melde translation.x und translation.y mit report_relative und vergleiche die Zielmarkierung."
       ],
@@ -87,7 +87,7 @@
       "title": "Alvo relativo ao robô",
       "description": "Consulta target em base_link: x positivo é em frente, y positivo é à esquerda. As coordenadas mudam ao rodar.",
       "steps": [
-        "Inspeciona a árvore TF com world, odom, base_link, sensores e target.",
+        "Inspeciona a árvore TF com world, odom, base_link, sensores e target. Antes de executar, prevê se y do alvo em base_link será positivo ou negativo.",
         "Consulta target usando base_link como target_frame.",
         "Chama report_relative com translation.x e translation.y e compara com o alvo visível."
       ],
@@ -101,7 +101,7 @@
       "title": "Dov’è il target rispetto al robot?",
       "description": "Richiedi il target in base_link. x positivo significa avanti; y positivo significa sinistra. Lo stesso target nel mondo cambia coordinate quando il robot ruota.",
       "steps": [
-        "Ispeziona l’albero TF: world → odom → base_link, più sensori e target.",
+        "Ispeziona l’albero TF: world → odom → base_link, più sensori e target. Prima di eseguire, prevedi se y del target in base_link sarà positivo o negativo.",
         "Cerca target usando base_link come argomento target_frame.",
         "Riporta translation.x e .y con report_relative e confrontali con il target visibile."
       ],
@@ -125,7 +125,7 @@
         "title": "Where is the target relative to me?",
         "description": "Request the target in base_link. Positive x means ahead; positive y means left. The same world target has different coordinates when the robot turns.",
         "steps": [
-          "Inspect the actual TF tree panel: world → odom → base_link, plus sensor and target frames.",
+          "Inspect the actual TF tree panel: world → odom → base_link, plus sensor and target frames. Before running, predict whether target y in base_link should be positive or negative.",
           "Look up target with base_link as the target_frame argument.",
           "Report translation.x and .y with kinenest::report_relative, then compare with the visible target marker."
         ],
@@ -139,7 +139,7 @@
             "title": "Waar is het doel ten opzichte van mij?",
             "description": "Vraag het doel in base_link. Positieve x is vooruit; positieve y is links van de robot.",
             "steps": [
-              "Bekijk de echte TF-boom en het target-frame.",
+              "Bekijk de echte TF-boom en het target-frame. Voorspel vooraf of de y van het doel in base_link positief of negatief is.",
               "Gebruik base_link als target_frame in lookupTransform.",
               "Rapporteer translation.x en .y met kinenest::report_relative."
             ],
@@ -153,7 +153,7 @@
             "title": "Où est la cible par rapport à moi ?",
             "description": "Demandez la cible dans base_link. x positif signifie devant ; y positif signifie à gauche du robot.",
             "steps": [
-              "Observez l’arbre TF réel et le repère target.",
+              "Observez l’arbre TF réel et le repère target. Avant de lancer, prédisez si y de la cible dans base_link est positif ou négatif.",
               "Utilisez base_link comme target_frame dans lookupTransform.",
               "Rapportez translation.x et .y avec kinenest::report_relative."
             ],
@@ -167,7 +167,7 @@
             "title": "Objetivo relativo al robot",
             "description": "Consulta target en base_link: x positivo es delante, y positivo es izquierda. Las coordenadas cambian al girar.",
             "steps": [
-              "Inspecciona el árbol TF con world, odom, base_link, sensores y target.",
+              "Inspecciona el árbol TF con world, odom, base_link, sensores y target. Antes de ejecutar, predice si y del objetivo en base_link será positivo o negativo.",
               "Consulta target usando base_link como target_frame.",
               "Llama a kinenest::report_relative con translation.x y translation.y y compara con el objetivo visible."
             ],
@@ -181,7 +181,7 @@
             "title": "Das Ziel relativ zum Roboter",
             "description": "Frage target in base_link ab: positives x ist vorne, positives y links. Die Werte ändern sich beim Drehen.",
             "steps": [
-              "Untersuche den TF-Baum mit world, odom, base_link, Sensoren und target.",
+              "Untersuche den TF-Baum mit world, odom, base_link, Sensoren und target. Sage vor dem Start voraus, ob Ziel-y in base_link positiv oder negativ ist.",
               "Frage target mit base_link als target_frame ab.",
               "Melde translation.x und translation.y mit kinenest::report_relative und vergleiche die Zielmarkierung."
             ],
@@ -195,7 +195,7 @@
             "title": "Alvo relativo ao robô",
             "description": "Consulta target em base_link: x positivo é em frente, y positivo é à esquerda. As coordenadas mudam ao rodar.",
             "steps": [
-              "Inspeciona a árvore TF com world, odom, base_link, sensores e target.",
+              "Inspeciona a árvore TF com world, odom, base_link, sensores e target. Antes de executar, prevê se y do alvo em base_link será positivo ou negativo.",
               "Consulta target usando base_link como target_frame.",
               "Chama kinenest::report_relative com translation.x e translation.y e compara com o alvo visível."
             ],
@@ -209,7 +209,7 @@
             "title": "Dov’è il target rispetto al robot?",
             "description": "Richiedi il target in base_link. x positivo significa avanti; y positivo significa sinistra. Lo stesso target nel mondo cambia coordinate quando il robot ruota.",
             "steps": [
-              "Ispeziona l’albero TF: world → odom → base_link, più sensori e target.",
+              "Ispeziona l’albero TF: world → odom → base_link, più sensori e target. Prima di eseguire, prevedi se y del target in base_link sarà positivo o negativo.",
               "Cerca target usando base_link come argomento target_frame.",
               "Riporta translation.x e .y con kinenest::report_relative e confrontali con il target visibile."
             ],

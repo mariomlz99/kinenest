@@ -2,7 +2,7 @@
   "id": "session-03-03-color-detection",
   "title": "Detect red pixels",
   "number": "3.3",
-  "description": "Detect a red object from RGB pixels. Report your boolean using report_detection(visible), then Check solution tests four varied scenes.",
+  "description": "Use a deliberately simple RGB threshold to detect red pixels, not a robust vision detector. Report whether the target is visible with report_detection(visible); Check solution tests varied scenes.",
   "steps": [
     "Convert each image to an RGB array.",
     "Build a red-pixel mask and report whether more than 500 pixels match.",
@@ -31,7 +31,7 @@
   "translations": {
     "nl": {
       "title": "Rode pixels detecteren",
-      "description": "Verwerk echte pixels om te beslissen of er een rood object zichtbaar is. De controle varieert de scène.",
+      "description": "Verwerk echte pixels om te beslissen of er een rood object zichtbaar is. De controle varieert de scène. Dit is eenvoudige drempeldetectie om te leren, geen robuuste detector voor elke scène.",
       "steps": [
         "Converteer elk beeld naar een RGB-array.",
         "Maak een masker voor rode pixels en rapporteer of er meer dan 500 overeenkomen.",
@@ -46,7 +46,7 @@
     },
     "fr": {
       "title": "Détecter les pixels rouges",
-      "description": "Traitez les pixels réels pour décider si un objet rouge est visible. La vérification varie la scène.",
+      "description": "Traitez les pixels réels pour décider si un objet rouge est visible. La vérification varie la scène. Il s’agit d’un seuillage simple pour apprendre, pas d’un détecteur robuste pour toute scène.",
       "steps": [
         "Convertissez chaque image en tableau RGB.",
         "Créez un masque rouge et signalez si plus de 500 pixels correspondent.",
@@ -61,7 +61,7 @@
     },
     "es": {
       "title": "Detectar píxeles rojos",
-      "description": "Detecta un objeto rojo a partir de píxeles RGB. Informa con report_detection(visible); la comprobación usa cuatro escenas.",
+      "description": "Detecta un objeto rojo a partir de píxeles RGB. Informa con report_detection(visible); la comprobación usa cuatro escenas. Es una detección sencilla por umbrales para aprender, no un detector robusto para cualquier escena.",
       "steps": [
         "Convierte cada imagen en un array RGB.",
         "Crea una máscara roja e indica si contiene más de 500 píxeles.",
@@ -76,7 +76,7 @@
     },
     "de": {
       "title": "Rote Pixel erkennen",
-      "description": "Erkenne ein rotes Objekt anhand von RGB-Pixeln. Melde report_detection(visible); die Prüfung nutzt vier Szenen.",
+      "description": "Erkenne ein rotes Objekt anhand von RGB-Pixeln. Melde report_detection(visible); die Prüfung nutzt vier Szenen. Dies ist einfache Schwellwerterkennung zum Lernen, kein robuster Detektor für jede Szene.",
       "steps": [
         "Wandle jedes Bild in ein RGB-Array um.",
         "Erzeuge eine Rotmaske und prüfe, ob mehr als 500 Pixel passen.",
@@ -91,7 +91,7 @@
     },
     "pt": {
       "title": "Detetar píxeis vermelhos",
-      "description": "Deteta um objeto vermelho pelos píxeis RGB. Usa report_detection(visible); a verificação apresenta quatro cenas.",
+      "description": "Deteta um objeto vermelho pelos píxeis RGB. Usa report_detection(visible); a verificação apresenta quatro cenas. É uma deteção simples por limiares para aprender, não um detetor robusto para todas as cenas.",
       "steps": [
         "Converte cada imagem num array RGB.",
         "Cria uma máscara vermelha e indica se contém mais de 500 píxeis.",
@@ -106,7 +106,7 @@
     },
     "it": {
       "title": "Rilevare pixel rossi",
-      "description": "Rileva un oggetto rosso dai pixel RGB. Riporta il booleano con report_detection(visible); Verifica soluzione prova quattro scene diverse.",
+      "description": "Rileva un oggetto rosso dai pixel RGB. Riporta il booleano con report_detection(visible); Verifica soluzione prova quattro scene diverse. È una semplice rilevazione a soglie per imparare, non un rilevatore robusto per ogni scena.",
       "steps": [
         "Converti ogni immagine in un array RGB.",
         "Crea una maschera di pixel rossi e indica se contiene più di 500 pixel.",
@@ -131,7 +131,7 @@
       "starterCode": "#include <rclcpp/rclcpp.hpp>\n#include <sensor_msgs/msg/image.hpp>\n#include <kinenest/reports.hpp>\n#include <cstdint>\n\nclass CameraReader : public rclcpp::Node {\npublic:\n  CameraReader() : Node(\"camera_reader\") {\n    subscription_ = create_subscription<sensor_msgs::msg::Image>(\n      \"/camera/image_raw\", 10, [this](sensor_msgs::msg::Image::SharedPtr msg) { receive(msg); });\n  }\nprivate:\n  void receive(sensor_msgs::msg::Image::SharedPtr msg) {\n    const std::uint32_t width = msg->width;\n    const std::uint32_t height = msg->height;\n    const auto &pixels = msg->data;\n    // TODO: count pixels with high red and low green/blue channels.\n    // TODO: report whether more than 500 pixels match using kinenest::report_detection.\n  }\n  rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr subscription_;\n};\nint main(int argc, char **argv) {\n  rclcpp::init(argc, argv);\n  rclcpp::spin(std::make_shared<CameraReader>());\n}\n",
       "content": {
         "title": "Detect red pixels",
-        "description": "Detect a red object from RGB pixels. Report your boolean using kinenest::report_detection(visible), then Check solution tests four varied scenes.",
+        "description": "Use a deliberately simple RGB threshold to detect red pixels, not a robust vision detector. Report whether the target is visible with report_detection(visible); Check solution tests varied scenes.",
         "steps": [
           "Read the RGB bytes from msg->data using width, height and step.",
           "Build a red-pixel mask and report whether more than 500 pixels match.",
@@ -145,7 +145,7 @@
         "translations": {
           "nl": {
             "title": "Rode pixels detecteren",
-            "description": "Verwerk echte pixels om te beslissen of er een rood object zichtbaar is. De controle varieert de scène.",
+            "description": "Verwerk echte pixels om te beslissen of er een rood object zichtbaar is. De controle varieert de scène. Dit is eenvoudige drempeldetectie om te leren, geen robuuste detector voor elke scène.",
             "steps": [
               "Lees de RGB-bytes uit msg->data met width, height en step.",
               "Maak een masker voor rode pixels en rapporteer of er meer dan 500 overeenkomen.",
@@ -159,7 +159,7 @@
           },
           "fr": {
             "title": "Détecter les pixels rouges",
-            "description": "Traitez les pixels réels pour décider si un objet rouge est visible. La vérification varie la scène.",
+            "description": "Traitez les pixels réels pour décider si un objet rouge est visible. La vérification varie la scène. Il s’agit d’un seuillage simple pour apprendre, pas d’un détecteur robuste pour toute scène.",
             "steps": [
               "Lisez les octets RGB de msg->data avec width, height et step.",
               "Créez un masque rouge et signalez si plus de 500 pixels correspondent.",
@@ -173,7 +173,7 @@
           },
           "es": {
             "title": "Detectar píxeles rojos",
-            "description": "Detecta un objeto rojo a partir de píxeles RGB. Informa con kinenest::report_detection(visible); la comprobación usa cuatro escenas.",
+            "description": "Detecta un objeto rojo a partir de píxeles RGB. Informa con kinenest::report_detection(visible); la comprobación usa cuatro escenas. Es una detección sencilla por umbrales para aprender, no un detector robusto para cualquier escena.",
             "steps": [
               "Lee los bytes RGB de msg->data usando width, height y step.",
               "Crea una máscara roja e indica si contiene más de 500 píxeles.",
@@ -187,7 +187,7 @@
           },
           "de": {
             "title": "Rote Pixel erkennen",
-            "description": "Erkenne ein rotes Objekt anhand von RGB-Pixeln. Melde kinenest::report_detection(visible); die Prüfung nutzt vier Szenen.",
+            "description": "Erkenne ein rotes Objekt anhand von RGB-Pixeln. Melde kinenest::report_detection(visible); die Prüfung nutzt vier Szenen. Dies ist einfache Schwellwerterkennung zum Lernen, kein robuster Detektor für jede Szene.",
             "steps": [
               "Lies die RGB-Bytes aus msg->data anhand von width, height und step.",
               "Erzeuge eine Rotmaske und prüfe, ob mehr als 500 Pixel passen.",
@@ -201,7 +201,7 @@
           },
           "pt": {
             "title": "Detetar píxeis vermelhos",
-            "description": "Deteta um objeto vermelho pelos píxeis RGB. Usa kinenest::report_detection(visible); a verificação apresenta quatro cenas.",
+            "description": "Deteta um objeto vermelho pelos píxeis RGB. Usa kinenest::report_detection(visible); a verificação apresenta quatro cenas. É uma deteção simples por limiares para aprender, não um detetor robusto para todas as cenas.",
             "steps": [
               "Lê os bytes RGB de msg->data usando width, height e step.",
               "Cria uma máscara vermelha e indica se contém mais de 500 píxeis.",
@@ -215,7 +215,7 @@
           },
           "it": {
             "title": "Rilevare pixel rossi",
-            "description": "Rileva un oggetto rosso dai pixel RGB. Riporta il booleano con kinenest::report_detection(visible); Verifica soluzione prova quattro scene diverse.",
+            "description": "Rileva un oggetto rosso dai pixel RGB. Riporta il booleano con kinenest::report_detection(visible); Verifica soluzione prova quattro scene diverse. È una semplice rilevazione a soglie per imparare, non un rilevatore robusto per ogni scena.",
             "steps": [
               "Leggi i byte RGB da msg->data usando width, height e step.",
               "Crea una maschera di pixel rossi e indica se contiene più di 500 pixel.",

@@ -47,7 +47,7 @@ test('C++ field access rejects missing, inherited and malformed fields without c
 });
 
 test('C++ sample reports bind the active callback and cannot inject sample IDs', () => {
-  for (const [report, values] of [['range', [1]], ['sectors', [1, 2, 3]], ['pose', [1, 2, 0]]]) {
+  for (const [report, values] of [['range', [1]], ['sectors', [1, 2, 3]], ['position', [1, 2]], ['pose', [1, 2, 0]]]) {
     const original = {kind: 'course_report', report, values, sample: 999, frame: 999};
     const bound = associateReport(original, {sample: 42});
     assert.deepEqual(bound, {kind: 'course_report', report, values, sample: 42});

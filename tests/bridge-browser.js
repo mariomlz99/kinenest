@@ -14,6 +14,7 @@ try{
   timings.workspaceReadyMs=Math.round(performance.now()-openedAt);
   if(frame.contentDocument.querySelector('.bridge-cwd')?.textContent!=='~/ros2_ws')throw Error('Terminal did not show its initial workspace directory');
   if(!frame.contentDocument.querySelector('.bridge-command-guide')?.textContent.includes('cd src'))throw Error('Command explanations are missing');
+  if([...frame.contentDocument.querySelectorAll('.bridge-checkpoints progress')].length!==3||[...frame.contentDocument.querySelectorAll('.bridge-checkpoints progress')].some(p=>p.value!==0))throw Error('Checkpoints must begin empty');
   await report('opened');
   await command(1,'cd src','~/ros2_ws/src');
   await command(1,'ros2 pkg create --build-type '+(target==='cpp'?'ament_cmake':'ament_python')+' --license Apache-2.0 my_robot_pkg','Created my_robot_pkg');
@@ -58,6 +59,7 @@ try{
   frame.contentDocument.getElementById('bridge-check').click();
   const failures=[...frame.contentDocument.querySelectorAll('#bridge-results .fail')].map(el=>el.textContent);
   if(failures.length)throw Error('Checks failed: '+failures.join('; '));
+  if([...frame.contentDocument.querySelectorAll('.bridge-checkpoints progress')].some(p=>p.value!==3))throw Error('Completed system did not complete all checkpoints');
   frame.contentDocument.getElementById('bridge-stop-all').click();await until(()=>!graph().includes('/talker'),'launch stop',10000);
   await command(1,'ros2 launch my_robot_pkg system_launch.py','Started 2 processes');await until(()=>graph().includes('/listener'),'launch rerun',10000);
   frame.contentDocument.querySelector('.bridge-terminal .bridge-close').click();await until(()=>!graph().includes('/talker')&&!graph().includes('/listener'),'closing launch terminal',10000);
@@ -66,6 +68,7 @@ try{
   await command(1,'ros2 launch my_robot_pkg system_launch.py','Started 2 processes');await until(()=>graph().includes('/listener'),'launch after navigation cleanup',10000);
   started=performance.now();frame.contentDocument.getElementById('bridge-reset').click();
   await until(()=>!graph().includes('/talker')&&!graph().includes('/listener')&&frame.contentDocument.querySelectorAll('#bridge-tree button').length===0,'reset cleanup',10000);
+  if([...frame.contentDocument.querySelectorAll('.bridge-checkpoints progress')].some(p=>p.value!==0))throw Error('Reset retained checkpoint evidence');
   timings.resetMs=Math.round(performance.now()-started);
   await report('timings '+JSON.stringify(timings));
   await fetch('/done',{method:'POST',body:'PASS bridge '+target+' create/build/source/manual/echo/fault/relaunch/reset'});

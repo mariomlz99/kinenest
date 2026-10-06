@@ -106,6 +106,26 @@ test('terminal requires build and source before run and rejects shell syntax',as
   await terminal.run('source install/local_setup.bash');assert.equal(terminal.sourced,true);assert(lines.some(x=>x.includes('Finished <<< robot')));
 });
 
+test('workspace file commands behave consistently and invalidate removed builds',async()=>{
+  const w=new WorkspaceModel(),r=new Runtime(),lines=[],builder=new BuildSystemAdapter(w,async()=>({imports:['rclpy','std_msgs']}));
+  const manager=new ProcessManager(r,w),terminal=new BridgeTerminal(1,r,w,builder,manager,line=>lines.push(line));
+  await terminal.run('pwd');assert.equal(lines.at(-1),ROOT);
+  await terminal.run('rm -f');
+  await terminal.run('touch .hidden');await terminal.run('ls');assert(!lines.at(-1).includes('.hidden'));await terminal.run('ls -a');assert(lines.at(-1).includes('.hidden'));
+  await terminal.run('mkdir -p src');await terminal.run('mkdir build');await terminal.run('ls -la');
+  assert(lines.some(line=>line.includes('build/')&&line.includes('src/')));
+  await terminal.run('touch "my notes.txt"');await terminal.run('cp "my notes.txt" copied.txt');await terminal.run('mv copied.txt moved.txt');
+  w.write(ROOT+'/moved.txt','original');await terminal.run('cp \"my notes.txt\" moved.txt');assert.equal(w.read(ROOT+'/moved.txt'),'');
+  assert(w.exists(ROOT+'/moved.txt'));await terminal.run('rm moved.txt "my notes.txt"');assert(!w.exists(ROOT+'/moved.txt'));
+  await terminal.run('cd src');await terminal.run('ros2 pkg create --build-type ament_python --license Apache-2.0 robot');await terminal.run('cd ..');await terminal.run('colcon build');
+  assert.equal(w.installed.size,1);await terminal.run('rm -rf build install log');assert.equal(w.installed.size,0);assert(w.exists(ROOT+'/src/robot/package.xml'));
+  await assert.rejects(terminal.run('rm src/robot'),/use rm -r/);
+  await terminal.run('rm -r src/robot');assert.deepEqual(w.packages(),[]);
+  await terminal.run('rm -rf absent');await terminal.run('ros2 topic list');assert(lines.some(line=>line.includes('/cmd_vel')));
+  await assert.rejects(terminal.run('rm -rf .'),/workspace root/);
+  await terminal.run('touch src/file');await assert.rejects(terminal.run('mkdir -p src/file/child'),/Not a directory/);
+});
+
 test('stopping a build cannot install a late compiler result',async()=>{
   const w=new WorkspaceModel();w.createPackage('robot','ament_cmake');
   let finish;const compile=()=>new Promise(resolve=>{finish=resolve;});

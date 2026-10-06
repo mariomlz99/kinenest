@@ -3,7 +3,7 @@ import {SENSORS} from '../simulator/sensors.js';
 export const DRIVE='ros2learn_interfaces/action/DriveDistance';
 export function resetCourse(r){
   r.parameters=new Map();r.parameterListeners=new Set();r.actions=new Map();r.goals=new Map();r.goalCounter=0;
-  r.course={timers:0,messages:0,scan:0,range:0,odom:0,pose:0,tf:0,transform:0,paramReads:0,paramChanges:0,paramValues:new Set(),feedback:0,results:0,cancelled:0,actionAccepted:0,stopped:0,waypoints:0};
+  r.course={timers:0,messages:0,chatterPublished:0,scan:0,range:0,odom:0,position:0,pose:0,tf:0,transform:0,paramReads:0,paramChanges:0,paramValues:new Set(),feedback:0,results:0,cancelled:0,actionAccepted:0,stopped:0,waypoints:0};
   r.samples=new Map();r.sampleCounter=0;
 }
 export function enableCourse(r){

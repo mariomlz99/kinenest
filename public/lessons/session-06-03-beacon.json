@@ -3,15 +3,15 @@
   "session": 6,
   "number": "6.3",
   "title": "Final mission: find the red beacon",
-  "description": "Use the camera to center the red beacon and LiDAR to stop at a safe distance. Combine two sensor callbacks with one command publisher.",
+  "description": "Use the camera and LiDAR to find, center and approach the red beacon safely. Keep sensing callbacks separate from a timer that publishes commands.",
   "steps": [
-    "Keep the latest forward scan sector as node state.",
-    "In each image callback, detect red pixels and find their centroid. Turn toward the beacon; advance only when centered and the scan says it is safe.",
-    "Stop 0.55–1.10 m before the beacon surface, keep it centered, and check. Use terminals to explain your graph and control decisions."
+    "Let the scan callback update the latest forward distance.",
+    "Let the image callback detect red pixels and update visibility and centroid.",
+    "In a control timer, search, turn, advance only when centered and safe, then stop 0.55–1.10 m before the beacon surface. Use terminals to explain your graph and decisions."
   ],
   "hints": [
     "Positive angular.z turns left. A centroid left of image center requires a positive turn.",
-    "Separate sensing state from the controller: scan updates distance; image callback decides motion.",
+    "Keep scan and image callbacks focused on sensing; the timer decides and publishes at a steady rate.",
     "No visible target: rotate slowly. Visible but off-center: turn. Centered and clear: move. Centered and close: publish zero."
   ],
   "checks": [
@@ -60,7 +60,7 @@
       "description": "Centreer het rode baken met camerabeelden en stop met LiDAR op een veilige afstand.",
       "steps": [
         "Bewaar de voorste scansector als toestand.",
-        "Detecteer rood en stuur met het zwaartepunt. Rijd alleen als gecentreerd en veilig.",
+        "Bewaar zichtbaarheid en zwaartepunt in de camera-callback. Laat een aparte timer sturen en alleen rijden als het baken gecentreerd is en de scan veilig is.",
         "Stop 0.55–1.10 m voor het baken, houd het gecentreerd en leg de graaf en beslissingen uit."
       ],
       "hints": [
@@ -74,7 +74,7 @@
       "description": "Centrez la balise rouge avec les images et utilisez le LiDAR pour vous arrêter à distance sûre.",
       "steps": [
         "Conservez le secteur avant comme état.",
-        "Détectez le rouge et dirigez-vous avec le centroïde. Avancez seulement si centré et sûr.",
+        "Mémorisez visibilité et centroïde dans le callback caméra. Un timer séparé dirige le robot et avance seulement si la balise est centrée et le scan sûr.",
         "Arrêtez à 0.55–1.10 m de la balise, gardez-la centrée et expliquez le graphe et les décisions."
       ],
       "hints": [
@@ -88,7 +88,7 @@
       "description": "Centra la baliza con la cámara y usa LiDAR para parar a distancia segura. Combina dos callbacks y un publisher.",
       "steps": [
         "Guarda el último sector frontal del scan en el nodo.",
-        "Detecta píxeles rojos y su centroide en cada imagen. Gira hacia la baliza y avanza solo si está centrada y el scan permite avanzar.",
+        "Guarda visibilidad y centroide en el callback de cámara. Un temporizador separado dirige el robot y avanza solo si la baliza está centrada y el scan es seguro.",
         "Detente a 0.55–1.10 m de la superficie, mantén la baliza centrada y comprueba. Explica el grafo desde los terminales."
       ],
       "hints": [
@@ -102,7 +102,7 @@
       "description": "Zentriere die Bake mit der Kamera und stoppe mit LiDAR im sicheren Abstand. Kombiniere zwei Callbacks und einen Publisher.",
       "steps": [
         "Speichere den aktuellen Frontsektor des Scans im Knoten.",
-        "Erkenne rote Pixel und ihren Schwerpunkt. Drehe zur Bake und fahre nur bei mittigem Bild und freiem Scan.",
+        "Speichere Sichtbarkeit und Schwerpunkt im Kamera-Callback. Ein separater Timer lenkt und fährt nur bei mittiger Bake und freiem Scan.",
         "Stoppe 0.55–1.10 m vor der Oberfläche, halte die Bake mittig und prüfe. Erkläre Graph und Steuerung im Terminal."
       ],
       "hints": [
@@ -116,7 +116,7 @@
       "description": "Centra a baliza com a câmara e usa LiDAR para parar a uma distância segura. Combina dois callbacks e um publisher.",
       "steps": [
         "Guarda o último setor frontal do scan no nó.",
-        "Deteta píxeis vermelhos e o centroide em cada imagem. Roda para a baliza; avança apenas se estiver centrada e o scan permitir.",
+        "Guarda visibilidade e centroide no callback da câmara. Um temporizador separado dirige e avança apenas com a baliza centrada e o scan seguro.",
         "Para a 0.55–1.10 m da superfície, mantém a baliza centrada e verifica. Explica o grafo e o controlo nos terminais."
       ],
       "hints": [
@@ -130,7 +130,7 @@
       "description": "Usa la camera per centrare il segnale rosso e LiDAR per fermarti a distanza sicura. Combina due callback di sensori con un publisher di comandi.",
       "steps": [
         "Conserva il settore frontale più recente nello stato del nodo.",
-        "In ogni callback della camera rileva i pixel rossi e il centroide. Gira verso il segnale; avanza solo se è centrato e la scansione lo consente.",
+        "Salva visibilità e centroide nel callback della camera. Un timer separato decide il moto e avanza solo con il segnale centrato e la scansione sicura.",
         "Fermati a 0,55–1,10 m dalla superficie del segnale, mantienilo centrato e verifica. Usa i terminali per spiegare grafo e decisioni di controllo."
       ],
       "hints": [
@@ -143,7 +143,7 @@
   "programming": {
     "python": {
       "supported": true,
-      "starterCode": "import rclpy\nfrom rclpy.node import Node\nimport numpy as np\nfrom sensor_msgs.msg import Image, LaserScan\nfrom geometry_msgs.msg import Twist\nfrom cv_bridge import CvBridge\nfrom ros2learn import report_detection\n\nrclpy.init()\nnode = Node('student_controller')\n\n# TODO: combine your camera detector and scan safety controller\n# Keep the latest forward distance between callbacks.\n# Use pixels, not hard-coded target coordinates, to steer.\n# Stop when centered and close enough.\nrclpy.spin(node)\n"
+      "starterCode": "import rclpy\nfrom rclpy.node import Node\nimport numpy as np\nfrom sensor_msgs.msg import Image, LaserScan\nfrom geometry_msgs.msg import Twist\nfrom cv_bridge import CvBridge\nfrom ros2learn import report_detection\n\nrclpy.init()\nnode = Node('student_controller')\nbridge = CvBridge()\npublisher = node.create_publisher(Twist, '/cmd_vel', 10)\nfront = 0.0\nvisible = False\ncentroid = 0.0\nimage_center = 0.0\n\ndef on_scan(msg):\n    # TODO: update front from the latest forward scan sector.\n    pass\ndef on_image(msg):\n    # TODO: detect red pixels and update visible, centroid, image_center.\n    # TODO: report_detection here.\n    pass\ndef control():\n    # TODO: use sensor state to search, turn, approach or stop.\n    # TODO: publish one bounded Twist every timer callback.\n    pass\nnode.create_subscription(LaserScan, '/scan', on_scan, 10)\nnode.create_subscription(Image, '/camera/image_raw', on_image, 10)\nnode.create_timer(0.1, control)\nrclpy.spin(node)\n"
     },
     "cpp": {
       "supported": true,
@@ -151,15 +151,15 @@
       "starterCode": "#include <rclcpp/rclcpp.hpp>\n#include <sensor_msgs/msg/image.hpp>\n#include <sensor_msgs/msg/laser_scan.hpp>\n#include <geometry_msgs/msg/twist.hpp>\n#include <kinenest/reports.hpp>\n#include <algorithm>\n#include <cmath>\n#include <cstdint>\n#include <limits>\n\nclass DockingController : public rclcpp::Node {\npublic:\n  DockingController() : Node(\"student_controller\") {\n    publisher_ = create_publisher<geometry_msgs::msg::Twist>(\"/cmd_vel\", 10);\n    scan_ = create_subscription<sensor_msgs::msg::LaserScan>(\"/scan\", 10,\n      [this](sensor_msgs::msg::LaserScan::SharedPtr msg) { receive_scan(msg); });\n    image_ = create_subscription<sensor_msgs::msg::Image>(\"/camera/image_raw\", 10,\n      [this](sensor_msgs::msg::Image::SharedPtr msg) { receive_image(msg); });\n    timer_ = create_wall_timer(std::chrono::milliseconds(100), [this]() { control(); });\n  }\nprivate:\n  void receive_scan(sensor_msgs::msg::LaserScan::SharedPtr message) {\n    // TODO: update front_ from the latest forward scan sector.\n    // TODO: set have_scan_ only after processing real ranges.\n  }\n  void receive_image(sensor_msgs::msg::Image::SharedPtr message) {\n    // TODO: process RGB bytes, count red pixels and calculate their centroid.\n    // TODO: update visible_, centroid_, image_center_ and have_image_.\n    // TODO: call kinenest::report_detection inside this callback.\n  }\n  void control() {\n    // TODO: wait for both sensors, then search, turn, approach or stop.\n    // TODO: use image state for steering and front_ for stopping distance.\n    // TODO: publish one bounded Twist every timer callback.\n  }\n  double front_ = 0.0, centroid_ = 0.0, image_center_ = 0.0;\n  bool visible_ = false, have_scan_ = false, have_image_ = false;\n  rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr publisher_;\n  rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_;\n  rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_;\n  rclcpp::TimerBase::SharedPtr timer_;\n};\nint main(int argc, char **argv) {\n  rclcpp::init(argc, argv);\n  rclcpp::spin(std::make_shared<DockingController>());\n}\n",
       "content": {
         "title": "Final mission: find the red beacon",
-        "description": "Use the camera to center the red beacon and LiDAR to stop at a safe distance. Combine two sensor callbacks with one command publisher.",
+        "description": "Use the camera and LiDAR to find, center and approach the red beacon safely. Keep sensing callbacks separate from a timer that publishes commands.",
         "steps": [
-          "Keep the latest forward scan sector as node state.",
-          "In each image callback, process RGB bytes and store the red-pixel centroid. Use the latest image and scan state to steer and approach only when centered and safe.",
-          "Stop 0.55–1.10 m before the beacon surface, keep it centered, and check. Use terminals to explain your graph and control decisions."
+          "Let the scan callback update the latest forward distance.",
+          "Let the image callback detect red pixels and update visibility and centroid.",
+          "In a control timer, search, turn, advance only when centered and safe, then stop 0.55–1.10 m before the beacon surface. Use terminals to explain your graph and decisions."
         ],
         "hints": [
           "Positive angular.z turns left. A centroid left of image center requires a positive turn.",
-          "Keep sensor state in node members. A timer or image callback can run the controller; kinenest::report_detection belongs inside the image callback.",
+          "Keep scan and image callbacks focused on sensing; the timer decides and publishes at a steady rate.",
           "No visible target: rotate slowly. Visible but off-center: turn. Centered and clear: move. Centered and close: publish zero."
         ],
         "translations": {
@@ -168,7 +168,7 @@
             "description": "Centreer het rode baken met camerabeelden en stop met LiDAR op een veilige afstand.",
             "steps": [
               "Bewaar de voorste scansector als toestand.",
-              "Verwerk RGB-bytes in elke image-callback en bewaar het zwaartepunt van rode pixels. Stuur met de laatste beeld- en scantoestand; nader alleen als gecentreerd en veilig.",
+              "Bewaar zichtbaarheid en zwaartepunt in de camera-callback. Laat een aparte timer sturen en alleen rijden als het baken gecentreerd is en de scan veilig is.",
               "Stop 0.55–1.10 m voor het baken, houd het gecentreerd en leg de graaf en beslissingen uit."
             ],
             "hints": [
@@ -182,7 +182,7 @@
             "description": "Centrez la balise rouge avec les images et utilisez le LiDAR pour vous arrêter à distance sûre.",
             "steps": [
               "Conservez le secteur avant comme état.",
-              "Dans chaque callback image, traitez les octets RGB et mémorisez le centroïde rouge. Utilisez les derniers états image et scan pour diriger le robot ; avancez seulement si centré et sûr.",
+              "Mémorisez visibilité et centroïde dans le callback caméra. Un timer séparé dirige le robot et avance seulement si la balise est centrée et le scan sûr.",
               "Arrêtez à 0.55–1.10 m de la balise, gardez-la centrée et expliquez le graphe et les décisions."
             ],
             "hints": [
@@ -196,7 +196,7 @@
             "description": "Centra la baliza con la cámara y usa LiDAR para parar a distancia segura. Combina dos callbacks y un publisher.",
             "steps": [
               "Guarda el último sector frontal del scan en el nodo.",
-              "Procesa bytes RGB en cada callback de imagen y guarda el centroide rojo. Usa el último estado de imagen y scan para dirigir el robot; avanza solo si está centrado y es seguro.",
+              "Guarda visibilidad y centroide en el callback de cámara. Un temporizador separado dirige el robot y avanza solo si la baliza está centrada y el scan es seguro.",
               "Detente a 0.55–1.10 m de la superficie, mantén la baliza centrada y comprueba. Explica el grafo desde los terminales."
             ],
             "hints": [
@@ -210,7 +210,7 @@
             "description": "Zentriere die Bake mit der Kamera und stoppe mit LiDAR im sicheren Abstand. Kombiniere zwei Callbacks und einen Publisher.",
             "steps": [
               "Speichere den aktuellen Frontsektor des Scans im Knoten.",
-              "Verarbeite RGB-Bytes in jedem Bild-Callback und speichere den roten Schwerpunkt. Steuere mit dem aktuellen Bild- und Scan-Zustand; fahre nur bei mittigem Ziel und freiem Weg.",
+              "Speichere Sichtbarkeit und Schwerpunkt im Kamera-Callback. Ein separater Timer lenkt und fährt nur bei mittiger Bake und freiem Scan.",
               "Stoppe 0.55–1.10 m vor der Oberfläche, halte die Bake mittig und prüfe. Erkläre Graph und Steuerung im Terminal."
             ],
             "hints": [
@@ -224,7 +224,7 @@
             "description": "Centra a baliza com a câmara e usa LiDAR para parar a uma distância segura. Combina dois callbacks e um publisher.",
             "steps": [
               "Guarda o último setor frontal do scan no nó.",
-              "Processa bytes RGB em cada callback de imagem e guarda o centroide vermelho. Usa o último estado da imagem e do scan para orientar; avança só se estiver centrado e for seguro.",
+              "Guarda visibilidade e centroide no callback da câmara. Um temporizador separado dirige e avança apenas com a baliza centrada e o scan seguro.",
               "Para a 0.55–1.10 m da superfície, mantém a baliza centrada e verifica. Explica o grafo e o controlo nos terminais."
             ],
             "hints": [
@@ -238,7 +238,7 @@
             "description": "Usa la camera per centrare il segnale rosso e LiDAR per fermarti a distanza sicura. Combina due callback di sensori con un publisher di comandi.",
             "steps": [
               "Conserva il settore frontale più recente nello stato del nodo.",
-              "In ogni callback della camera elabora i byte RGB e conserva il centroide rosso. Usa lo stato più recente di immagine e scan per sterzare; avanza solo quando il target è centrato e la distanza è sicura.",
+              "Salva visibilità e centroide nel callback della camera. Un timer separato decide il moto e avanza solo con il segnale centrato e la scansione sicura.",
               "Fermati a 0,55–1,10 m dalla superficie del segnale, mantienilo centrato e verifica. Usa i terminali per spiegare grafo e decisioni di controllo."
             ],
             "hints": [

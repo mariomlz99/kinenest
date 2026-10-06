@@ -3,7 +3,7 @@
   "session": 4,
   "number": "4.4",
   "title": "Send an action goal",
-  "description": "Ask /drive_distance_server to move one metre and receive its final result. The server controls the actual simulated robot.",
+  "description": "Send a goal to the /drive_distance action, served by the drive-distance server, to move one metre and receive its final result. The server controls the actual simulated robot.",
   "steps": [
     "Use action list, action type /drive_distance and interface show ros2learn_interfaces/action/DriveDistance.",
     "Send DriveDistance.Goal with distance = 1.0.",
@@ -24,7 +24,7 @@
   "translations": {
     "nl": {
       "title": "Verstuur een actiedoel",
-      "description": "Vraag /drive_distance_server om één meter te rijden en ontvang het eindresultaat.",
+      "description": "Stuur een goal naar de actie /drive_distance, uitgevoerd door de drive-distance-server.",
       "steps": [
         "Ontdek /drive_distance met action list, type en interface show.",
         "Verstuur DriveDistance.Goal met distance = 1.0.",
@@ -38,7 +38,7 @@
     },
     "fr": {
       "title": "Envoyer un objectif d’action",
-      "description": "Demandez à /drive_distance_server de parcourir un mètre et recevez le résultat final.",
+      "description": "Envoyez un objectif à l’action /drive_distance, exécutée par le serveur drive-distance.",
       "steps": [
         "Découvrez /drive_distance avec action list, type et interface show.",
         "Envoyez DriveDistance.Goal avec distance = 1.0.",
@@ -52,7 +52,7 @@
     },
     "es": {
       "title": "Enviar un objetivo de acción",
-      "description": "Pide a /drive_distance_server que avance un metro y recibe el resultado. El servidor mueve el robot simulado.",
+      "description": "Envía un objetivo a la acción /drive_distance, atendida por el servidor drive-distance.",
       "steps": [
         "Usa ros2 action list, ros2 action type /drive_distance y ros2 interface show ros2learn_interfaces/action/DriveDistance.",
         "Envía DriveDistance.Goal con distance = 1.0.",
@@ -66,7 +66,7 @@
     },
     "de": {
       "title": "Ein Aktionsziel senden",
-      "description": "Lass /drive_distance_server einen Meter fahren und empfange das Ergebnis. Der Server bewegt den simulierten Roboter.",
+      "description": "Sende ein Ziel an die Aktion /drive_distance, die vom drive-distance-Server ausgeführt wird.",
       "steps": [
         "Nutze ros2 action list, ros2 action type /drive_distance und ros2 interface show ros2learn_interfaces/action/DriveDistance.",
         "Sende DriveDistance.Goal mit distance = 1.0.",
@@ -80,7 +80,7 @@
     },
     "pt": {
       "title": "Enviar um objetivo de ação",
-      "description": "Pede a /drive_distance_server para avançar um metro e recebe o resultado. O servidor move o robô simulado.",
+      "description": "Envia um objetivo à ação /drive_distance, servida pelo servidor drive-distance.",
       "steps": [
         "Usa ros2 action list, ros2 action type /drive_distance e ros2 interface show ros2learn_interfaces/action/DriveDistance.",
         "Envia DriveDistance.Goal com distance = 1.0.",
@@ -94,7 +94,7 @@
     },
     "it": {
       "title": "Inviare un goal a un’action",
-      "description": "Chiedi a /drive_distance_server di percorrere un metro e ricevi il risultato finale. Il server controlla il robot simulato.",
+      "description": "Invia un goal all’azione /drive_distance, gestita dal server drive-distance.",
       "steps": [
         "Usa action list, action type /drive_distance e interface show ros2learn_interfaces/action/DriveDistance.",
         "Invia DriveDistance.Goal con distance = 1.0.",
@@ -118,7 +118,7 @@
       "starterCode": "#include <rclcpp/rclcpp.hpp>\n#include <rclcpp_action/rclcpp_action.hpp>\n#include <ros2learn_interfaces/action/drive_distance.hpp>\n\nusing Action = ros2learn_interfaces::action::DriveDistance;\nusing GoalHandle = rclcpp_action::ClientGoalHandle<Action>;\n\nint main(int argc, char **argv) {\n  rclcpp::init(argc, argv);\n  auto node = std::make_shared<rclcpp::Node>(\"student_controller\");\n  auto client = rclcpp_action::create_client<Action>(node, \"/drive_distance\");\n  rclcpp_action::Client<Action>::SendGoalOptions options;\n  // TODO: check whether goal_response_callback receives an accepted handle.\n  // TODO: attach result_callback and inspect code, success and final_distance.\n  // TODO: send an Action::Goal with distance = 1.0.\n  rclcpp::spin(node);\n}\n",
       "content": {
         "title": "Send an action goal",
-        "description": "Ask /drive_distance_server to move one metre and receive its final result. The server controls the actual simulated robot.",
+        "description": "Send a goal to the /drive_distance action, served by the drive-distance server, to move one metre and receive its final result. The server controls the actual simulated robot.",
         "steps": [
           "Use action list, action type /drive_distance and interface show ros2learn_interfaces/action/DriveDistance.",
           "Create Action::Goal with distance = 1.0 and send it with async_send_goal(goal, options).",
@@ -132,7 +132,7 @@
         "translations": {
           "nl": {
             "title": "Verstuur een actiedoel",
-            "description": "Vraag /drive_distance_server om één meter te rijden en ontvang het eindresultaat.",
+            "description": "Stuur een goal naar de actie /drive_distance, uitgevoerd door de drive-distance-server.",
             "steps": [
               "Ontdek /drive_distance met action list, type en interface show.",
               "Maak Action::Goal met distance = 1.0 en verstuur het met async_send_goal(goal, options).",
@@ -146,7 +146,7 @@
           },
           "fr": {
             "title": "Envoyer un objectif d’action",
-            "description": "Demandez à /drive_distance_server de parcourir un mètre et recevez le résultat final.",
+            "description": "Envoyez un objectif à l’action /drive_distance, exécutée par le serveur drive-distance.",
             "steps": [
               "Découvrez /drive_distance avec action list, type et interface show.",
               "Créez Action::Goal avec distance = 1.0 et envoyez-le avec async_send_goal(goal, options).",
@@ -160,7 +160,7 @@
           },
           "es": {
             "title": "Enviar un objetivo de acción",
-            "description": "Pide a /drive_distance_server que avance un metro y recibe el resultado. El servidor mueve el robot simulado.",
+            "description": "Envía un objetivo a la acción /drive_distance, atendida por el servidor drive-distance.",
             "steps": [
               "Usa ros2 action list, ros2 action type /drive_distance y ros2 interface show ros2learn_interfaces/action/DriveDistance.",
               "Crea Action::Goal con distance = 1.0 y envíalo mediante async_send_goal(goal, options).",
@@ -174,7 +174,7 @@
           },
           "de": {
             "title": "Ein Aktionsziel senden",
-            "description": "Lass /drive_distance_server einen Meter fahren und empfange das Ergebnis. Der Server bewegt den simulierten Roboter.",
+            "description": "Sende ein Ziel an die Aktion /drive_distance, die vom drive-distance-Server ausgeführt wird.",
             "steps": [
               "Nutze ros2 action list, ros2 action type /drive_distance und ros2 interface show ros2learn_interfaces/action/DriveDistance.",
               "Erstelle Action::Goal mit distance = 1.0 und sende es mit async_send_goal(goal, options).",
@@ -188,7 +188,7 @@
           },
           "pt": {
             "title": "Enviar um objetivo de ação",
-            "description": "Pede a /drive_distance_server para avançar um metro e recebe o resultado. O servidor move o robô simulado.",
+            "description": "Envia um objetivo à ação /drive_distance, servida pelo servidor drive-distance.",
             "steps": [
               "Usa ros2 action list, ros2 action type /drive_distance e ros2 interface show ros2learn_interfaces/action/DriveDistance.",
               "Cria Action::Goal com distance = 1.0 e envia-o com async_send_goal(goal, options).",
@@ -202,7 +202,7 @@
           },
           "it": {
             "title": "Inviare un goal a un’action",
-            "description": "Chiedi a /drive_distance_server di percorrere un metro e ricevi il risultato finale. Il server controlla il robot simulato.",
+            "description": "Invia un goal all’azione /drive_distance, gestita dal server drive-distance.",
             "steps": [
               "Usa action list, action type /drive_distance e interface show ros2learn_interfaces/action/DriveDistance.",
               "Crea Action::Goal con distance = 1.0 e invialo con async_send_goal(goal, options).",

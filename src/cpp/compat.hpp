@@ -213,6 +213,9 @@ template<> struct MessageTraits<nav_msgs::msg::Odometry>{
 inline void report_pose(double x,double y,double yaw){
  emit("{\"kind\":\"course_report\",\"report\":\"pose\",\"values\":["+number(x,"Pose.x")+","+number(y,"Pose.y")+","+number(yaw,"Pose.yaw")+"]}");
 }
+inline void report_position(double x,double y){
+ emit("{\"kind\":\"course_report\",\"report\":\"position\",\"values\":["+number(x,"Position.x")+","+number(y,"Position.y")+"]}");
+}
 
 
 template<> struct MessageTraits<tf2_msgs::msg::TFMessage>{

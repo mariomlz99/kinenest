@@ -6,20 +6,20 @@
   "description": "Let incoming scans update node state, then use a timer to publish a status message. Sensor events and timer events are separate callbacks.",
   "steps": [
     "Store the most recent forward distance when a scan arrives.",
-    "Use a 0.2-second timer to publish that distance as String on /chatter. Subscribe to /chatter and print each message.",
+    "Use a 0.2-second timer to publish that distance as String on /chatter.",
     "Observe topic hz /scan and topic echo /chatter in separate terminals. Explain which callback updates the state and which publishes it."
   ],
   "hints": [
     "Keep a variable or self.front between callbacks.",
     "A timer runs periodically; a subscription runs on message arrival.",
-    "Create publishers and subscriptions once, then let rclpy.spin dispatch events."
+    "Create the scan subscription and publisher once, then let rclpy.spin dispatch the scan and timer callbacks."
   ],
   "checks": [
     {
       "type": "subscriber"
     },
     {
-      "type": "chatter"
+      "type": "chatter_published"
     },
     {
       "type": "timer"
@@ -33,7 +33,7 @@
       "description": "Bewaar de laatste afstand uit de scan. Een aparte timer publiceert die toestand als String.",
       "steps": [
         "Werk front bij in de scan-callback.",
-        "Publiceer front elke 0.2 s op /chatter en print ontvangen berichten in een subscriber.",
+        "Publiceer front elke 0.2 s op /chatter. Bekijk berichten met ros2 topic echo /chatter in een terminal.",
         "Vergelijk ros2 topic hz /scan met ros2 topic echo /chatter."
       ],
       "hints": [
@@ -47,7 +47,7 @@
       "description": "Mémorisez la dernière distance du scan. Un timer séparé publie cet état dans un String.",
       "steps": [
         "Mettez front à jour dans le callback du scan.",
-        "Publiez front toutes les 0.2 s sur /chatter et affichez les messages reçus dans un abonnement.",
+        "Publiez front toutes les 0.2 s sur /chatter. Observez les messages avec ros2 topic echo /chatter dans un terminal.",
         "Comparez ros2 topic hz /scan et ros2 topic echo /chatter."
       ],
       "hints": [
@@ -61,7 +61,7 @@
       "description": "Guarda el último scan en el estado del nodo. Usa un temporizador para publicar un mensaje de estado.",
       "steps": [
         "Guarda la última distancia frontal al recibir un scan.",
-        "Publica esa distancia como String en /chatter cada 0.2 s. Suscríbete a /chatter y muestra los mensajes.",
+        "Publica front cada 0.2 s en /chatter. Observa los mensajes con ros2 topic echo /chatter en un terminal.",
         "Observa ros2 topic hz /scan y ros2 topic echo /chatter en terminales separados. Explica qué callback actualiza el estado y cuál publica."
       ],
       "hints": [
@@ -75,7 +75,7 @@
       "description": "Speichere Scandaten im Knotenzustand. Veröffentliche den Zustand mit einem Timer.",
       "steps": [
         "Speichere bei jedem Scan den aktuellen Abstand nach vorne.",
-        "Sende den Abstand alle 0.2 s als String auf /chatter. Abonniere /chatter und gib die Nachrichten aus.",
+        "Sende front alle 0.2 s auf /chatter. Beobachte die Nachrichten mit ros2 topic echo /chatter im Terminal.",
         "Beobachte ros2 topic hz /scan und ros2 topic echo /chatter getrennt. Welcher Callback aktualisiert den Zustand, welcher sendet?"
       ],
       "hints": [
@@ -89,7 +89,7 @@
       "description": "Guarda o último scan no estado do nó. Usa um temporizador para publicar esse estado.",
       "steps": [
         "Guarda a última distância frontal ao receber um scan.",
-        "Publica a distância como String em /chatter a cada 0.2 s. Subscreve /chatter e mostra as mensagens.",
+        "Publica front a cada 0.2 s em /chatter. Observa as mensagens com ros2 topic echo /chatter num terminal.",
         "Observa ros2 topic hz /scan e ros2 topic echo /chatter em terminais separados. Explica qual callback atualiza o estado e qual publica."
       ],
       "hints": [
@@ -103,7 +103,7 @@
       "description": "Aggiorna lo stato del nodo quando arriva una scansione. Usa un timer per pubblicare un messaggio di stato: sensore e timer hanno callback distinti.",
       "steps": [
         "Salva la distanza frontale più recente quando arriva una scansione.",
-        "Ogni 0,2 secondi pubblica la distanza come String su /chatter. Sottoscrivi /chatter e stampa ogni messaggio.",
+        "Pubblica front ogni 0,2 s su /chatter. Osserva i messaggi con ros2 topic echo /chatter in un terminale.",
         "Osserva topic hz /scan e topic echo /chatter in terminali separati. Spiega quale callback aggiorna lo stato e quale lo pubblica."
       ],
       "hints": [
@@ -116,24 +116,24 @@
   "programming": {
     "python": {
       "supported": true,
-      "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom sensor_msgs.msg import LaserScan\nfrom std_msgs.msg import String\n\nrclpy.init()\nnode = Node('student_controller')\n\nfront = 0.0\n# TODO: scan callback updates front\n# TODO: timer publishes front as String on /chatter\n# TODO: subscriber prints /chatter messages\nrclpy.spin(node)\n"
+      "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom sensor_msgs.msg import LaserScan\nfrom std_msgs.msg import String\n\nrclpy.init()\nnode = Node('student_controller')\n\nfront = 0.0\n# TODO: scan callback updates front\n# TODO: timer publishes front as String on /chatter\nrclpy.spin(node)\n"
     },
     "cpp": {
       "supported": true,
       "experimental": true,
-      "starterCode": "#include <rclcpp/rclcpp.hpp>\n#include <sensor_msgs/msg/laser_scan.hpp>\n#include <std_msgs/msg/string.hpp>\n\nclass StudentNode : public rclcpp::Node {\npublic:\n  StudentNode() : Node(\"student_controller\") {\n    // TODO: scan callback updates latest_range_.\n    // TODO: publish latest_range_ as String on /chatter every 200 ms.\n    // TODO: subscribe to /chatter and print each received message.\n  }\nprivate:\n  double latest_range_ = 0.0;\n  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;\n  rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_;\n  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr chatter_;\n  rclcpp::TimerBase::SharedPtr timer_;\n};\nint main(int argc, char **argv) {\n  rclcpp::init(argc, argv);\n  rclcpp::spin(std::make_shared<StudentNode>());\n}\n",
+      "starterCode": "#include <rclcpp/rclcpp.hpp>\n#include <sensor_msgs/msg/laser_scan.hpp>\n#include <std_msgs/msg/string.hpp>\n\nclass StudentNode : public rclcpp::Node {\npublic:\n  StudentNode() : Node(\"student_controller\") {\n    // TODO: scan callback updates latest_range_.\n    // TODO: publish latest_range_ as String on /chatter every 200 ms.\n  }\nprivate:\n  double latest_range_ = 0.0;\n  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;\n  rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_;\n  rclcpp::TimerBase::SharedPtr timer_;\n};\nint main(int argc, char **argv) {\n  rclcpp::init(argc, argv);\n  rclcpp::spin(std::make_shared<StudentNode>());\n}\n",
       "content": {
         "title": "Callbacks are reactions",
         "description": "Let incoming scans update node state, then use a timer to publish a status message. Sensor events and timer events are separate callbacks.",
         "steps": [
-          "Store the latest forward range in a node member when a LaserScan arrives.",
-          "Publish that state as std_msgs::msg::String on /chatter every 200 ms. Subscribe to /chatter and print each received message.",
-          "Compare ros2 topic hz /scan and ros2 topic echo /chatter. Identify the state-update callback and the publication callback."
+          "Store the most recent forward distance when a scan arrives.",
+          "Use a 0.2-second timer to publish that distance as String on /chatter.",
+          "Observe topic hz /scan and topic echo /chatter in separate terminals. Explain which callback updates the state and which publishes it."
         ],
         "hints": [
           "Keep latest_range_ as a node member; the scan callback updates it and the timer reads it.",
           "Use create_wall_timer(std::chrono::milliseconds(200), ...) and a String publisher. Retain subscription and timer handles.",
-          "Capture this in the callbacks. Assign std::to_string(latest_range_) to message.data before publish(message)."
+          "Create the scan subscription and publisher once; inspect /chatter with a second terminal."
         ],
         "translations": {
           "nl": {
@@ -141,7 +141,7 @@
             "description": "Bewaar de laatste afstand uit de scan. Een aparte timer publiceert die toestand als String.",
             "steps": [
               "Werk front bij in de scan-callback.",
-              "Publiceer front elke 0.2 s op /chatter en print ontvangen berichten in een subscriber.",
+              "Publiceer front elke 0.2 s op /chatter. Bekijk berichten met ros2 topic echo /chatter in een terminal.",
               "Vergelijk ros2 topic hz /scan met ros2 topic echo /chatter."
             ],
             "hints": [
@@ -155,7 +155,7 @@
             "description": "Mémorisez la dernière distance du scan. Un timer séparé publie cet état dans un String.",
             "steps": [
               "Mettez front à jour dans le callback du scan.",
-              "Publiez front toutes les 0.2 s sur /chatter et affichez les messages reçus dans un abonnement.",
+              "Publiez front toutes les 0.2 s sur /chatter. Observez les messages avec ros2 topic echo /chatter dans un terminal.",
               "Comparez ros2 topic hz /scan et ros2 topic echo /chatter."
             ],
             "hints": [
@@ -169,7 +169,7 @@
             "description": "Guarda el último scan en el estado del nodo. Usa un temporizador para publicar un mensaje de estado.",
             "steps": [
               "Guarda la última distancia frontal al recibir un scan.",
-              "Publica esa distancia como String en /chatter cada 0.2 s. Suscríbete a /chatter y muestra los mensajes.",
+              "Publica front cada 0.2 s en /chatter. Observa los mensajes con ros2 topic echo /chatter en un terminal.",
               "Observa ros2 topic hz /scan y ros2 topic echo /chatter en terminales separados. Explica qué callback actualiza el estado y cuál publica."
             ],
             "hints": [
@@ -183,7 +183,7 @@
             "description": "Speichere Scandaten im Knotenzustand. Veröffentliche den Zustand mit einem Timer.",
             "steps": [
               "Speichere bei jedem Scan den aktuellen Abstand nach vorne.",
-              "Sende den Abstand alle 0.2 s als String auf /chatter. Abonniere /chatter und gib die Nachrichten aus.",
+              "Sende front alle 0.2 s auf /chatter. Beobachte die Nachrichten mit ros2 topic echo /chatter im Terminal.",
               "Beobachte ros2 topic hz /scan und ros2 topic echo /chatter getrennt. Welcher Callback aktualisiert den Zustand, welcher sendet?"
             ],
             "hints": [
@@ -197,7 +197,7 @@
             "description": "Guarda o último scan no estado do nó. Usa um temporizador para publicar esse estado.",
             "steps": [
               "Guarda a última distância frontal ao receber um scan.",
-              "Publica a distância como String em /chatter a cada 0.2 s. Subscreve /chatter e mostra as mensagens.",
+              "Publica front a cada 0.2 s em /chatter. Observa as mensagens com ros2 topic echo /chatter num terminal.",
               "Observa ros2 topic hz /scan e ros2 topic echo /chatter em terminais separados. Explica qual callback atualiza o estado e qual publica."
             ],
             "hints": [
@@ -211,7 +211,7 @@
             "description": "Aggiorna lo stato del nodo quando arriva una scansione. Usa un timer per pubblicare un messaggio di stato: sensore e timer hanno callback distinti.",
             "steps": [
               "Salva la distanza frontale più recente quando arriva una scansione.",
-              "Ogni 0,2 secondi pubblica la distanza come String su /chatter. Sottoscrivi /chatter e stampa ogni messaggio.",
+              "Pubblica front ogni 0,2 s su /chatter. Osserva i messaggi con ros2 topic echo /chatter in un terminale.",
               "Osserva topic hz /scan e topic echo /chatter in terminali separati. Spiega quale callback aggiorna lo stato e quale lo pubblica."
             ],
             "hints": [

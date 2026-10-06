@@ -3,7 +3,7 @@
   "session": 5,
   "number": "5.5",
   "title": "Close the loop with TF",
-  "description": "Reach the target at (1, 1) using its relative position. Recalculate, steer, move and stop: no fixed-duration driving script.",
+  "description": "Reach the target at (1, 1) using its relative position. Recalculate, steer, move and stop: no fixed-duration driving script. This is simple educational steering, not a general robot controller.",
   "steps": [
     "Look up target in base_link inside a timer.",
     "Calculate distance = hypot(x,y), angle = atan2(y,x); turn toward the target and move when aligned.",
@@ -29,7 +29,7 @@
   "translations": {
     "nl": {
       "title": "Sluit de regellus met TF",
-      "description": "Bereik het doel op (1, 1) met robotrelatieve feedback en stop.",
+      "description": "Bereik het doel op (1, 1) met robotrelatieve feedback en stop. Gebruik een eenvoudige didactische stuurregelaar.",
       "steps": [
         "Zoek target in base_link vanuit een timer.",
         "Bereken hypot(x,y) en atan2(y,x); draai eerst en rijd wanneer uitgelijnd.",
@@ -43,7 +43,7 @@
     },
     "fr": {
       "title": "Fermer la boucle avec TF",
-      "description": "Atteignez la cible en (1, 1) avec une commande relative au robot, puis arrêtez-vous.",
+      "description": "Atteignez la cible en (1, 1) avec une commande relative au robot, puis arrêtez-vous. Utilisez une commande de direction pédagogique simple.",
       "steps": [
         "Cherchez target dans base_link depuis un timer.",
         "Calculez hypot(x,y) et atan2(y,x) ; tournez puis avancez lorsque vous êtes aligné.",
@@ -57,7 +57,7 @@
     },
     "es": {
       "title": "Control en bucle cerrado con TF",
-      "description": "Alcanza (1, 1) usando la posición relativa. Recalcula, gira, avanza y para; evita conducir durante un tiempo fijo.",
+      "description": "Alcanza (1, 1) usando la posición relativa. Recalcula, gira, avanza y para; evita conducir durante un tiempo fijo. Usa un controlador de dirección educativo sencillo.",
       "steps": [
         "Consulta target en base_link dentro de un temporizador.",
         "Calcula distance = hypot(x,y) y angle = atan2(y,x). Gira y avanza cuando estés alineado.",
@@ -71,7 +71,7 @@
     },
     "de": {
       "title": "Mit TF regeln",
-      "description": "Erreiche (1, 1) anhand der relativen Position. Berechne laufend neu, drehe, fahre und stoppe.",
+      "description": "Erreiche (1, 1) anhand der relativen Position. Berechne laufend neu, drehe, fahre und stoppe. Nutze eine einfache Lenkregelung zum Lernen.",
       "steps": [
         "Frage target in base_link in einem Timer ab.",
         "Berechne distance = hypot(x,y) und angle = atan2(y,x). Drehe zum Ziel und fahre erst bei Ausrichtung.",
@@ -85,7 +85,7 @@
     },
     "pt": {
       "title": "Controlo em malha fechada com TF",
-      "description": "Alcança (1, 1) usando a posição relativa. Recalcula, roda, avança e para; evita conduzir por um tempo fixo.",
+      "description": "Alcança (1, 1) usando a posição relativa. Recalcula, roda, avança e para; evita conduzir por um tempo fixo. Usa um controlador de direção educativo simples.",
       "steps": [
         "Consulta target em base_link num temporizador.",
         "Calcula distance = hypot(x,y) e angle = atan2(y,x). Roda e avança quando estiveres alinhado.",
@@ -99,7 +99,7 @@
     },
     "it": {
       "title": "Chiudere il ciclo con TF",
-      "description": "Raggiungi il target in (1, 1) usando la sua posizione relativa. Ricalcola, sterza, avanza e fermati, senza comandi a durata fissa.",
+      "description": "Raggiungi il target in (1, 1) usando la sua posizione relativa. Ricalcola, sterza, avanza e fermati, senza comandi a durata fissa. Usa un semplice controllore di sterzata didattico.",
       "steps": [
         "Cerca target in base_link dentro un timer.",
         "Calcola distance = hypot(x,y), angle = atan2(y,x); gira verso il target e avanza quando sei allineato.",
@@ -123,7 +123,7 @@
       "starterCode": "#include <rclcpp/rclcpp.hpp>\n#include <tf2_ros/buffer.h>\n#include <tf2_ros/transform_listener.h>\n#include <tf2/time.h>\n#include <cmath>\n#include <geometry_msgs/msg/twist.hpp>\n#include <algorithm>\n\nint main(int argc, char **argv) {\n  rclcpp::init(argc, argv);\n  auto node = std::make_shared<rclcpp::Node>(\"student_controller\");\n  auto buffer = std::make_shared<tf2_ros::Buffer>(node->get_clock());\n  auto listener = std::make_shared<tf2_ros::TransformListener>(*buffer, node);\n  auto publisher = node->create_publisher<geometry_msgs::msg::Twist>(\"/cmd_vel\", 10);\n  auto timer = node->create_wall_timer(std::chrono::milliseconds(100), [buffer, listener, publisher]() {\n    // TODO: guard canTransform, then look up target in base_link.\n    // TODO: calculate distance and bearing, publish a bounded Twist.\n    // TODO: publish zero near the goal or when TF is unavailable.\n  });\n  rclcpp::spin(node);\n}\n",
       "content": {
         "title": "Close the loop with TF",
-        "description": "Reach the target at (1, 1) using its relative position. Recalculate, steer, move and stop: no fixed-duration driving script.",
+        "description": "Reach the target at (1, 1) using its relative position. Recalculate, steer, move and stop: no fixed-duration driving script. This is simple educational steering, not a general robot controller.",
         "steps": [
           "Look up target in base_link inside a timer.",
           "Calculate distance = hypot(x,y), angle = atan2(y,x); turn toward the target and move when aligned.",
@@ -137,7 +137,7 @@
         "translations": {
           "nl": {
             "title": "Sluit de regellus met TF",
-            "description": "Bereik het doel op (1, 1) met robotrelatieve feedback en stop.",
+            "description": "Bereik het doel op (1, 1) met robotrelatieve feedback en stop. Gebruik een eenvoudige didactische stuurregelaar.",
             "steps": [
               "Zoek target in base_link vanuit een timer.",
               "Bereken hypot(x,y) en atan2(y,x); draai eerst en rijd wanneer uitgelijnd.",
@@ -151,7 +151,7 @@
           },
           "fr": {
             "title": "Fermer la boucle avec TF",
-            "description": "Atteignez la cible en (1, 1) avec une commande relative au robot, puis arrêtez-vous.",
+            "description": "Atteignez la cible en (1, 1) avec une commande relative au robot, puis arrêtez-vous. Utilisez une commande de direction pédagogique simple.",
             "steps": [
               "Cherchez target dans base_link depuis un timer.",
               "Calculez hypot(x,y) et atan2(y,x) ; tournez puis avancez lorsque vous êtes aligné.",
@@ -165,7 +165,7 @@
           },
           "es": {
             "title": "Control en bucle cerrado con TF",
-            "description": "Alcanza (1, 1) usando la posición relativa. Recalcula, gira, avanza y para; evita conducir durante un tiempo fijo.",
+            "description": "Alcanza (1, 1) usando la posición relativa. Recalcula, gira, avanza y para; evita conducir durante un tiempo fijo. Usa un controlador de dirección educativo sencillo.",
             "steps": [
               "Consulta target en base_link dentro de un temporizador.",
               "Calcula distance = hypot(x,y) y angle = atan2(y,x). Gira y avanza cuando estés alineado.",
@@ -179,7 +179,7 @@
           },
           "de": {
             "title": "Mit TF regeln",
-            "description": "Erreiche (1, 1) anhand der relativen Position. Berechne laufend neu, drehe, fahre und stoppe.",
+            "description": "Erreiche (1, 1) anhand der relativen Position. Berechne laufend neu, drehe, fahre und stoppe. Nutze eine einfache Lenkregelung zum Lernen.",
             "steps": [
               "Frage target in base_link in einem Timer ab.",
               "Berechne distance = hypot(x,y) und angle = atan2(y,x). Drehe zum Ziel und fahre erst bei Ausrichtung.",
@@ -193,7 +193,7 @@
           },
           "pt": {
             "title": "Controlo em malha fechada com TF",
-            "description": "Alcança (1, 1) usando a posição relativa. Recalcula, roda, avança e para; evita conduzir por um tempo fixo.",
+            "description": "Alcança (1, 1) usando a posição relativa. Recalcula, roda, avança e para; evita conduzir por um tempo fixo. Usa um controlador de direção educativo simples.",
             "steps": [
               "Consulta target em base_link num temporizador.",
               "Calcula distance = hypot(x,y) e angle = atan2(y,x). Roda e avança quando estiveres alinhado.",
@@ -207,7 +207,7 @@
           },
           "it": {
             "title": "Chiudere il ciclo con TF",
-            "description": "Raggiungi il target in (1, 1) usando la sua posizione relativa. Ricalcola, sterza, avanza e fermati, senza comandi a durata fissa.",
+            "description": "Raggiungi il target in (1, 1) usando la sua posizione relativa. Ricalcola, sterza, avanza e fermati, senza comandi a durata fissa. Usa un semplice controllore di sterzata didattico.",
             "steps": [
               "Cerca target in base_link dentro un timer.",
               "Calcola distance = hypot(x,y), angle = atan2(y,x); gira verso il target e avanza quando sei allineato.",

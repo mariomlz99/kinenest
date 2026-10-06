@@ -7,7 +7,7 @@
   "steps": [
     "Reuse the previous action client and retain its accepted goal handle.",
     "In the feedback callback, cancel once when distance_travelled exceeds 0.3.",
-    "Inspect the final result: status 5 means cancelled. The robot should stop before completing two metres."
+    "Inspect the final result: KineNest represents cancellation as status 5. In native ROS 2, prefer the symbolic canceled status. The robot should stop before two metres."
   ],
   "hints": [
     "Cancelling is a request; observe the final action result too.",
@@ -34,7 +34,7 @@
       "hints": [
         "Annuleren is een verzoek; controleer ook het resultaat.",
         "Gebruik een boolean om herhaling te voorkomen.",
-        "handle.cancel_goal_async() verstuurt het verzoek."
+        "handle.cancel_goal_async() verstuurt het verzoek. Status 5 betekent hier geannuleerd; gebruik in native Python GoalStatus.STATUS_CANCELED en in C++ rclcpp_action::ResultCode::CANCELED."
       ]
     },
     "fr": {
@@ -48,7 +48,7 @@
       "hints": [
         "L’annulation est une requête ; vérifiez aussi le résultat.",
         "Utilisez un booléen pour éviter les répétitions.",
-        "handle.cancel_goal_async() envoie la demande."
+        "handle.cancel_goal_async() envoie la demande. Ici, le statut 5 signifie annulé ; en Python natif, utilisez GoalStatus.STATUS_CANCELED et en C++ rclcpp_action::ResultCode::CANCELED."
       ]
     },
     "es": {
@@ -62,7 +62,7 @@
       "hints": [
         "Cancelar envía una petición; observa también el resultado final.",
         "Usa un booleano para no cancelar en cada callback.",
-        "handle.cancel_goal_async() solicita la cancelación; conserva el callback del resultado."
+        "handle.cancel_goal_async() solicita la cancelación; conserva el callback del resultado. Aquí el estado 5 significa cancelado; en Python nativo usa GoalStatus.STATUS_CANCELED y en C++ rclcpp_action::ResultCode::CANCELED."
       ]
     },
     "de": {
@@ -76,7 +76,7 @@
       "hints": [
         "Abbruch ist eine Anfrage; beobachte auch das Endergebnis.",
         "Verhindere wiederholte Anfragen mit einer booleschen Variable.",
-        "handle.cancel_goal_async() fordert den Abbruch an; behalte den Ergebnis-Callback."
+        "handle.cancel_goal_async() fordert den Abbruch an; behalte den Ergebnis-Callback. Status 5 bedeutet hier abgebrochen; nutze in nativem Python GoalStatus.STATUS_CANCELED und in C++ rclcpp_action::ResultCode::CANCELED."
       ]
     },
     "pt": {
@@ -90,7 +90,7 @@
       "hints": [
         "Cancelar envia um pedido; observa também o resultado final.",
         "Usa um booleano para não cancelar em cada callback.",
-        "handle.cancel_goal_async() pede o cancelamento; mantém o callback do resultado."
+        "handle.cancel_goal_async() pede o cancelamento; mantém o callback do resultado. Aqui o estado 5 significa cancelado; em Python nativo usa GoalStatus.STATUS_CANCELED e em C++ rclcpp_action::ResultCode::CANCELED."
       ]
     },
     "it": {
@@ -104,7 +104,7 @@
       "hints": [
         "L’annullamento è una richiesta; osserva anche il risultato finale.",
         "Usa un booleano per non annullare a ogni messaggio di feedback.",
-        "handle.cancel_goal_async() richiede l’annullamento; conserva il callback del risultato dell’esercizio precedente."
+        "handle.cancel_goal_async() richiede l’annullamento; conserva il callback del risultato dell’esercizio precedente. Qui lo stato 5 significa annullato; in Python nativo usa GoalStatus.STATUS_CANCELED e in C++ rclcpp_action::ResultCode::CANCELED."
       ]
     }
   },
@@ -123,7 +123,7 @@
         "steps": [
           "Retain the accepted GoalHandle::SharedPtr in goal_response_callback. Send a two-metre goal.",
           "In feedback_callback, request client->async_cancel_goal(handle) once after distance_travelled exceeds 0.3 m.",
-          "Wait for result.code == rclcpp_action::ResultCode::CANCELED and verify that the robot stops before two metres."
+          "Inspect the final canceled result and verify the robot stops before two metres. Prefer symbolic result codes."
         ],
         "hints": [
           "A cancellation request is not the final result; keep the result callback.",
@@ -142,7 +142,7 @@
             "hints": [
               "Een annuleringsverzoek is niet het eindresultaat; behoud de resultaatcallback.",
               "Gebruik een boolean om herhaalde annuleringsverzoeken te voorkomen.",
-              "Bewaar de goal handle na acceptatie; stel de boolean in vóór async_cancel_goal."
+              "Bewaar de goal handle na acceptatie; stel de boolean in vóór async_cancel_goal. Status 5 betekent hier geannuleerd; gebruik in native Python GoalStatus.STATUS_CANCELED en in C++ rclcpp_action::ResultCode::CANCELED."
             ]
           },
           "fr": {
@@ -156,7 +156,7 @@
             "hints": [
               "Une demande d’annulation n’est pas le résultat final ; conservez le callback de résultat.",
               "Utilisez un booléen pour éviter les demandes d’annulation répétées.",
-              "Conservez le goal handle après acceptation ; positionnez le booléen avant async_cancel_goal."
+              "Conservez le goal handle après acceptation ; positionnez le booléen avant async_cancel_goal. Ici, le statut 5 signifie annulé ; en Python natif, utilisez GoalStatus.STATUS_CANCELED et en C++ rclcpp_action::ResultCode::CANCELED."
             ]
           },
           "es": {
@@ -170,7 +170,7 @@
             "hints": [
               "La petición de cancelación no es el resultado final; conserva el callback del resultado.",
               "Usa un booleano para evitar peticiones de cancelación repetidas.",
-              "Conserva el manejador tras la aceptación; cambia el booleano antes de llamar a async_cancel_goal."
+              "Conserva el manejador tras la aceptación; cambia el booleano antes de llamar a async_cancel_goal. Aquí el estado 5 significa cancelado; en Python nativo usa GoalStatus.STATUS_CANCELED y en C++ rclcpp_action::ResultCode::CANCELED."
             ]
           },
           "de": {
@@ -184,7 +184,7 @@
             "hints": [
               "Eine Abbruchanfrage ist nicht das Endergebnis; behalte den Ergebnis-Callback.",
               "Verhindere wiederholte Abbruchanfragen mit einer booleschen Variable.",
-              "Bewahre das Goal-Handle nach Annahme auf; setze die boolesche Variable vor async_cancel_goal."
+              "Bewahre das Goal-Handle nach Annahme auf; setze die boolesche Variable vor async_cancel_goal. Status 5 bedeutet hier abgebrochen; nutze in nativem Python GoalStatus.STATUS_CANCELED und in C++ rclcpp_action::ResultCode::CANCELED."
             ]
           },
           "pt": {
@@ -198,7 +198,7 @@
             "hints": [
               "Um pedido de cancelamento não é o resultado final; mantém o callback do resultado.",
               "Usa um booleano para evitar pedidos de cancelamento repetidos.",
-              "Guarda o identificador após a aceitação; altera o booleano antes de chamar async_cancel_goal."
+              "Guarda o identificador após a aceitação; altera o booleano antes de chamar async_cancel_goal. Aqui o estado 5 significa cancelado; em Python nativo usa GoalStatus.STATUS_CANCELED e em C++ rclcpp_action::ResultCode::CANCELED."
             ]
           },
           "it": {
@@ -212,7 +212,7 @@
             "hints": [
               "La richiesta di annullamento non è il risultato finale; conserva il callback del risultato.",
               "Usa un booleano per evitare richieste di annullamento ripetute.",
-              "Conserva il goal handle dopo l’accettazione; imposta il booleano prima di chiamare async_cancel_goal."
+              "Conserva il goal handle dopo l’accettazione; imposta il booleano prima di chiamare async_cancel_goal. Qui lo stato 5 significa annullato; in Python nativo usa GoalStatus.STATUS_CANCELED e in C++ rclcpp_action::ResultCode::CANCELED."
             ]
           }
         }

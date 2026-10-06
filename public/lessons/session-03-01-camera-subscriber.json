@@ -2,7 +2,7 @@
   "id": "session-03-01-camera-subscriber",
   "title": "Camera subscriber",
   "number": "3.1",
-  "description": "Subscribe to /camera/image_raw and print the width and height of each received image.",
+  "description": "Use the same subscription pattern as the LiDAR lesson with a different sensor and Image message. Print each image width and height.",
   "steps": [
     "Inspect /camera/image_raw with ros2 topic info.",
     "Subscribe to Image and print msg.width and msg.height in the callback.",
@@ -28,7 +28,7 @@
   "translations": {
     "nl": {
       "title": "Camera-subscriber",
-      "description": "Abonneer je op /camera/image_raw en print de afmetingen van elk ontvangen beeld.",
+      "description": "Abonneer je op /camera/image_raw en print de afmetingen van elk ontvangen beeld. Hetzelfde ROS-abonnementspatroon, een andere sensor en berichtsoort.",
       "steps": [
         "Inspecteer /camera/image_raw met ros2 topic info.",
         "Abonneer op Image en print msg.width en msg.height in de callback.",
@@ -43,7 +43,7 @@
     },
     "fr": {
       "title": "Subscriber caméra",
-      "description": "Abonnez-vous à /camera/image_raw et affichez les dimensions de chaque image reçue.",
+      "description": "Abonnez-vous à /camera/image_raw et affichez les dimensions de chaque image reçue. Même modèle d’abonnement ROS, autre capteur et autre message.",
       "steps": [
         "Inspectez /camera/image_raw avec ros2 topic info.",
         "Abonnez-vous à Image et affichez msg.width et msg.height dans le callback.",
@@ -58,7 +58,7 @@
     },
     "es": {
       "title": "Subscriber de cámara",
-      "description": "Suscríbete a /camera/image_raw y muestra la anchura y altura de cada imagen.",
+      "description": "Suscríbete a /camera/image_raw y muestra la anchura y altura de cada imagen. El mismo patrón de suscripción ROS, con otro sensor y mensaje.",
       "steps": [
         "Inspecciona /camera/image_raw con ros2 topic info.",
         "Suscríbete a Image y muestra msg.width y msg.height en el callback.",
@@ -73,7 +73,7 @@
     },
     "de": {
       "title": "Kamera-Subscriber",
-      "description": "Abonniere /camera/image_raw und gib Breite und Höhe jedes Bildes aus.",
+      "description": "Abonniere /camera/image_raw und gib Breite und Höhe jedes Bildes aus. Dasselbe ROS-Subscription-Muster, ein anderer Sensor und Nachrichtentyp.",
       "steps": [
         "Untersuche /camera/image_raw mit ros2 topic info.",
         "Abonniere Image und gib msg.width und msg.height im Callback aus.",
@@ -88,7 +88,7 @@
     },
     "pt": {
       "title": "Subscriber da câmara",
-      "description": "Subscreve /camera/image_raw e mostra a largura e a altura de cada imagem.",
+      "description": "Subscreve /camera/image_raw e mostra a largura e a altura de cada imagem. O mesmo padrão de subscrição ROS, com outro sensor e mensagem.",
       "steps": [
         "Inspeciona /camera/image_raw com ros2 topic info.",
         "Subscreve Image e mostra msg.width e msg.height no callback.",
@@ -103,7 +103,7 @@
     },
     "it": {
       "title": "Subscriber della camera",
-      "description": "Sottoscrivi /camera/image_raw e stampa larghezza e altezza di ogni immagine ricevuta.",
+      "description": "Sottoscrivi /camera/image_raw e stampa larghezza e altezza di ogni immagine ricevuta. Lo stesso schema di subscription ROS, con un sensore e un messaggio diversi.",
       "steps": [
         "Ispeziona /camera/image_raw con ros2 topic info.",
         "Sottoscrivi Image e stampa msg.width e msg.height nel callback.",
@@ -128,7 +128,7 @@
       "starterCode": "#include <rclcpp/rclcpp.hpp>\n#include <sensor_msgs/msg/image.hpp>\n#include <cstdint>\n\nclass CameraReader : public rclcpp::Node {\npublic:\n  CameraReader() : Node(\"camera_reader\") {\n    // TODO: subscribe to Image on /camera/image_raw, call receive, and retain the handle.\n  }\nprivate:\n  void receive(sensor_msgs::msg::Image::SharedPtr msg) {\n    // TODO: read and print width and height.\n  }\n  rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr subscription_;\n};\nint main(int argc, char **argv) {\n  rclcpp::init(argc, argv);\n  rclcpp::spin(std::make_shared<CameraReader>());\n}\n",
       "content": {
         "title": "Camera subscriber",
-        "description": "Subscribe to /camera/image_raw and print the width and height of each received image.",
+        "description": "Use the same subscription pattern as the LiDAR lesson with a different sensor and Image message. Print each image width and height.",
         "steps": [
           "Inspect /camera/image_raw with ros2 topic info.",
           "Subscribe to Image and print msg->width and msg->height in the callback.",
@@ -142,7 +142,7 @@
         "translations": {
           "nl": {
             "title": "Camera-subscriber",
-            "description": "Abonneer je op /camera/image_raw en print de afmetingen van elk ontvangen beeld.",
+            "description": "Abonneer je op /camera/image_raw en print de afmetingen van elk ontvangen beeld. Hetzelfde ROS-abonnementspatroon, een andere sensor en berichtsoort.",
             "steps": [
               "Inspecteer /camera/image_raw met ros2 topic info.",
               "Abonneer op Image en print msg->width en msg->height in de callback.",
@@ -156,7 +156,7 @@
           },
           "fr": {
             "title": "Subscriber caméra",
-            "description": "Abonnez-vous à /camera/image_raw et affichez les dimensions de chaque image reçue.",
+            "description": "Abonnez-vous à /camera/image_raw et affichez les dimensions de chaque image reçue. Même modèle d’abonnement ROS, autre capteur et autre message.",
             "steps": [
               "Inspectez /camera/image_raw avec ros2 topic info.",
               "Abonnez-vous à Image et affichez msg->width et msg->height dans le callback.",
@@ -170,7 +170,7 @@
           },
           "es": {
             "title": "Subscriber de cámara",
-            "description": "Suscríbete a /camera/image_raw y muestra la anchura y altura de cada imagen.",
+            "description": "Suscríbete a /camera/image_raw y muestra la anchura y altura de cada imagen. El mismo patrón de suscripción ROS, con otro sensor y mensaje.",
             "steps": [
               "Inspecciona /camera/image_raw con ros2 topic info.",
               "Suscríbete a Image y muestra msg->width y msg->height en el callback.",
@@ -184,7 +184,7 @@
           },
           "de": {
             "title": "Kamera-Subscriber",
-            "description": "Abonniere /camera/image_raw und gib Breite und Höhe jedes Bildes aus.",
+            "description": "Abonniere /camera/image_raw und gib Breite und Höhe jedes Bildes aus. Dasselbe ROS-Subscription-Muster, ein anderer Sensor und Nachrichtentyp.",
             "steps": [
               "Untersuche /camera/image_raw mit ros2 topic info.",
               "Abonniere Image und gib msg->width und msg->height im Callback aus.",
@@ -198,7 +198,7 @@
           },
           "pt": {
             "title": "Subscriber da câmara",
-            "description": "Subscreve /camera/image_raw e mostra a largura e a altura de cada imagem.",
+            "description": "Subscreve /camera/image_raw e mostra a largura e a altura de cada imagem. O mesmo padrão de subscrição ROS, com outro sensor e mensagem.",
             "steps": [
               "Inspeciona /camera/image_raw com ros2 topic info.",
               "Subscreve Image e mostra msg->width e msg->height no callback.",
@@ -212,7 +212,7 @@
           },
           "it": {
             "title": "Subscriber della camera",
-            "description": "Sottoscrivi /camera/image_raw e stampa larghezza e altezza di ogni immagine ricevuta.",
+            "description": "Sottoscrivi /camera/image_raw e stampa larghezza e altezza di ogni immagine ricevuta. Lo stesso schema di subscription ROS, con un sensore e un messaggio diversi.",
             "steps": [
               "Ispeziona /camera/image_raw con ros2 topic info.",
               "Sottoscrivi Image e stampa msg->width e msg->height nel callback.",

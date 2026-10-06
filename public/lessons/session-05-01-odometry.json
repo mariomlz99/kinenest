@@ -2,216 +2,216 @@
   "id": "session-05-01-odometry",
   "session": 5,
   "number": "5.1",
-  "title": "Read the robot pose",
-  "description": "Read position and orientation from Odometry. Pose is different from the velocity command that made the robot move.",
+  "title": "Read odometry structure",
+  "description": "Find position, velocity and the raw orientation quaternion in Odometry. Converting that quaternion to yaw is the next exercise.",
   "steps": [
-    "Inspect /odom with echo --field pose.pose.",
-    "Subscribe in Python. Read position and calculate yaw from quaternion orientation.",
-    "Report your calculation with report_pose(x, y, yaw). Try a one-shot Twist in another terminal and observe changes."
+    "Inspect /odom with echo --field pose.pose, then compare pose with twist.twist velocity.",
+    "Subscribe to Odometry. Read position.x and position.y; inspect orientation.z and orientation.w without converting them yet.",
+    "Report x and y with report_position(x, y). Try a one-shot Twist in another terminal and observe position versus velocity."
   ],
   "hints": [
     "Position is msg.pose.pose.position; orientation is msg.pose.pose.orientation.",
-    "For planar motion yaw = 2 * atan2(q.z, q.w) also works.",
-    "The general yaw expression is atan2(2*(w*z+x*y), 1-2*(y*y+z*z))."
+    "Velocity is in msg.twist.twist, which is different from the accumulated pose.",
+    "Use report_position(position.x, position.y). Quaternion-to-yaw conversion comes in 5.2."
   ],
   "checks": [
     {
-      "type": "pose"
+      "type": "position"
     }
   ],
   "startX": 1,
   "startYaw": 0.4,
   "translations": {
     "nl": {
-      "title": "Lees de robotpose",
-      "description": "Lees positie en oriëntatie uit Odometry. Een pose is iets anders dan een snelheidscommando.",
+      "title": "De structuur van odometrie lezen",
+      "description": "Zoek positie, snelheid en de ruwe oriëntatiequaternion in Odometry. Omzetten naar yaw volgt in 5.2.",
       "steps": [
-        "Inspecteer /odom met echo --field pose.pose.",
-        "Lees positie en bereken yaw uit de quaternion.",
-        "Rapporteer x, y en yaw met report_pose; probeer een Twist in een andere terminal."
+        "Inspecteer /odom met echo --field pose.pose en vergelijk pose met twist.twist-snelheid.",
+        "Abonneer je op Odometry. Lees position.x en position.y; bekijk orientation.z en orientation.w zonder ze al om te zetten.",
+        "Meld x en y met report_position(x, y). Stuur in een ander terminal een Twist met --once en vergelijk positie met snelheid."
       ],
       "hints": [
-        "De positie staat in msg.pose.pose.position.",
-        "Voor vlakke beweging werkt 2 * atan2(q.z, q.w).",
-        "Yaw wordt in radialen gemeten."
+        "Positie staat in msg.pose.pose.position; oriëntatie in msg.pose.pose.orientation.",
+        "Snelheid staat in msg.twist.twist en is iets anders dan de opgebouwde pose.",
+        "Gebruik report_position(position.x, position.y). Quaternion naar yaw volgt in 5.2."
       ]
     },
     "fr": {
-      "title": "Lire la pose du robot",
-      "description": "Lisez position et orientation dans Odometry. Une pose n’est pas une commande de vitesse.",
+      "title": "Lire la structure de l’odométrie",
+      "description": "Repérez position, vitesse et quaternion brut dans Odometry. La conversion en yaw vient en 5.2.",
       "steps": [
-        "Inspectez /odom avec echo --field pose.pose.",
-        "Lisez la position et calculez yaw depuis le quaternion.",
-        "Rapportez x, y et yaw avec report_pose ; essayez un Twist dans un autre terminal."
+        "Inspectez /odom avec echo --field pose.pose, puis comparez pose et vitesse twist.twist.",
+        "Abonnez-vous à Odometry. Lisez position.x et position.y ; observez orientation.z et orientation.w sans les convertir.",
+        "Transmettez x et y avec report_position(x, y). Envoyez un Twist --once dans un autre terminal et comparez position et vitesse."
       ],
       "hints": [
-        "La position est dans msg.pose.pose.position.",
-        "Pour le mouvement plan, 2 * atan2(q.z, q.w) convient.",
-        "Yaw est mesuré en radians."
+        "La position est dans msg.pose.pose.position ; l’orientation dans msg.pose.pose.orientation.",
+        "La vitesse est dans msg.twist.twist, distincte de la pose accumulée.",
+        "Utilisez report_position(position.x, position.y). La conversion quaternion→yaw vient en 5.2."
       ]
     },
     "es": {
-      "title": "Leer la pose del robot",
-      "description": "Lee posición y orientación desde Odometry. La pose es distinta del comando de velocidad.",
+      "title": "Leer la estructura de odometría",
+      "description": "Localiza posición, velocidad y el cuaternión bruto en Odometry. La conversión a yaw viene en 5.2.",
       "steps": [
-        "Inspecciona /odom con ros2 topic echo /odom --field pose.pose.",
-        "Suscríbete en Python y calcula yaw a partir del cuaternión.",
-        "Llama a report_pose(x, y, yaw). Publica un Twist con --once en otro terminal y observa el cambio."
+        "Inspecciona /odom con echo --field pose.pose y compara pose con la velocidad twist.twist.",
+        "Suscríbete a Odometry. Lee position.x y position.y; observa orientation.z y orientation.w sin convertirlos aún.",
+        "Informa x e y con report_position(x, y). Envía un Twist --once desde otro terminal y compara posición y velocidad."
       ],
       "hints": [
-        "Posición: msg.pose.pose.position; orientación: msg.pose.pose.orientation.",
-        "En movimiento plano también sirve yaw = 2 * atan2(q.z, q.w).",
-        "La expresión general es atan2(2*(w*z+x*y), 1-2*(y*y+z*z))."
+        "La posición está en msg.pose.pose.position; la orientación en msg.pose.pose.orientation.",
+        "La velocidad está en msg.twist.twist y no es la pose acumulada.",
+        "Usa report_position(position.x, position.y). La conversión de cuaternión a yaw viene en 5.2."
       ]
     },
     "de": {
-      "title": "Die Roboterpose lesen",
-      "description": "Lies Position und Orientierung aus Odometry. Die Pose unterscheidet sich vom Geschwindigkeitsbefehl.",
+      "title": "Odometriestruktur lesen",
+      "description": "Finde Position, Geschwindigkeit und das rohe Orientierungsquaternion in Odometry. Die Umrechnung in Yaw folgt in 5.2.",
       "steps": [
-        "Untersuche /odom mit ros2 topic echo /odom --field pose.pose.",
-        "Abonniere in Python und berechne yaw aus dem Quaternion.",
-        "Melde report_pose(x, y, yaw). Sende einen Twist mit --once in einem anderen Terminal und beobachte die Änderung."
+        "Untersuche /odom mit echo --field pose.pose und vergleiche Pose mit der Geschwindigkeit in twist.twist.",
+        "Abonniere Odometry. Lies position.x und position.y; betrachte orientation.z und orientation.w noch ohne Umrechnung.",
+        "Melde x und y mit report_position(x, y). Sende in einem anderen Terminal einen Twist --once und vergleiche Position und Geschwindigkeit."
       ],
       "hints": [
-        "Position: msg.pose.pose.position; Orientierung: msg.pose.pose.orientation.",
-        "Für ebene Bewegung funktioniert auch yaw = 2 * atan2(q.z, q.w).",
-        "Allgemein gilt atan2(2*(w*z+x*y), 1-2*(y*y+z*z))."
+        "Position steht in msg.pose.pose.position; Orientierung in msg.pose.pose.orientation.",
+        "Geschwindigkeit steht in msg.twist.twist und ist nicht die aufsummierte Pose.",
+        "Nutze report_position(position.x, position.y). Quaternion zu Yaw folgt in 5.2."
       ]
     },
     "pt": {
-      "title": "Ler a pose do robô",
-      "description": "Lê posição e orientação em Odometry. A pose é diferente do comando de velocidade.",
+      "title": "Ler a estrutura da odometria",
+      "description": "Encontra posição, velocidade e o quaternion bruto em Odometry. A conversão para yaw vem em 5.2.",
       "steps": [
-        "Inspeciona /odom com ros2 topic echo /odom --field pose.pose.",
-        "Subscreve em Python e calcula yaw a partir do quaternião.",
-        "Chama report_pose(x, y, yaw). Publica um Twist com --once noutro terminal e observa as alterações."
+        "Inspeciona /odom com echo --field pose.pose e compara pose com a velocidade em twist.twist.",
+        "Subscreve Odometry. Lê position.x e position.y; observa orientation.z e orientation.w sem converter ainda.",
+        "Reporta x e y com report_position(x, y). Envia um Twist --once noutro terminal e compara posição e velocidade."
       ],
       "hints": [
-        "Posição: msg.pose.pose.position; orientação: msg.pose.pose.orientation.",
-        "Para movimento plano também funciona yaw = 2 * atan2(q.z, q.w).",
-        "A expressão geral é atan2(2*(w*z+x*y), 1-2*(y*y+z*z))."
+        "A posição está em msg.pose.pose.position; a orientação em msg.pose.pose.orientation.",
+        "A velocidade está em msg.twist.twist e difere da pose acumulada.",
+        "Usa report_position(position.x, position.y). A conversão de quaternion para yaw vem em 5.2."
       ]
     },
     "it": {
-      "title": "Leggere la posa del robot",
-      "description": "Leggi posizione e orientamento da Odometry. La posa è diversa dal comando di velocità che ha mosso il robot.",
+      "title": "Leggere la struttura dell’odometria",
+      "description": "Trova posizione, velocità e quaternione grezzo in Odometry. La conversione in yaw arriva in 5.2.",
       "steps": [
-        "Ispeziona /odom con echo --field pose.pose.",
-        "Sottoscrivi in Python. Leggi la posizione e calcola yaw dal quaternione.",
-        "Riporta il calcolo con report_pose(x, y, yaw). Prova un Twist singolo in un altro terminale e osserva le variazioni."
+        "Esamina /odom con echo --field pose.pose e confronta pose con la velocità in twist.twist.",
+        "Iscriviti a Odometry. Leggi position.x e position.y; osserva orientation.z e orientation.w senza convertirli.",
+        "Riporta x e y con report_position(x, y). Invia un Twist --once da un altro terminale e confronta posizione e velocità."
       ],
       "hints": [
-        "La posizione è msg.pose.pose.position; l’orientamento è msg.pose.pose.orientation.",
-        "Per il moto planare funziona anche yaw = 2 * atan2(q.z, q.w).",
-        "L’espressione generale per yaw è atan2(2*(w*z+x*y), 1-2*(y*y+z*z))."
+        "La posizione è in msg.pose.pose.position; l’orientamento in msg.pose.pose.orientation.",
+        "La velocità è in msg.twist.twist ed è diversa dalla pose accumulata.",
+        "Usa report_position(position.x, position.y). La conversione da quaternione a yaw arriva in 5.2."
       ]
     }
   },
   "programming": {
     "python": {
       "supported": true,
-      "starterCode": "import rclpy\nfrom rclpy.node import Node\nimport math\nfrom nav_msgs.msg import Odometry\nfrom ros2learn import report_pose\n\nrclpy.init()\nnode = Node('student_controller')\n\ndef receive(msg):\n    # TODO: read position, convert orientation to yaw, report_pose\n    pass\nnode.create_subscription(Odometry, '/odom', receive, 10)\nrclpy.spin(node)\n"
+      "starterCode": "import rclpy\nfrom rclpy.node import Node\nfrom nav_msgs.msg import Odometry\nfrom ros2learn import report_position\n\nrclpy.init()\nnode = Node('student_controller')\ndef receive(msg):\n    # TODO: inspect msg.pose.pose.position and orientation, plus msg.twist.twist.\n    # TODO: report_position(position.x, position.y); do not calculate yaw yet.\n    pass\nnode.create_subscription(Odometry, '/odom', receive, 10)\nrclpy.spin(node)\n"
     },
     "cpp": {
       "supported": true,
       "experimental": true,
-      "starterCode": "#include <rclcpp/rclcpp.hpp>\n#include <nav_msgs/msg/odometry.hpp>\n#include <kinenest/reports.hpp>\n#include <cmath>\n\nclass PoseReader : public rclcpp::Node {\npublic:\n  PoseReader() : Node(\"student_controller\") {\n    subscription_ = create_subscription<nav_msgs::msg::Odometry>(\"/odom\", 10,\n      [this](nav_msgs::msg::Odometry::SharedPtr msg) { receive(msg); });\n  }\nprivate:\n  void receive(nav_msgs::msg::Odometry::SharedPtr msg) {\n    // TODO: read position and orientation from msg->pose.pose.\n    // TODO: compute yaw from the quaternion.\n    // TODO: kinenest::report_pose(x, y, yaw);\n  }\n  rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr subscription_;\n};\nint main(int argc, char **argv) {\n  rclcpp::init(argc, argv);\n  rclcpp::spin(std::make_shared<PoseReader>());\n}\n",
+      "starterCode": "#include <rclcpp/rclcpp.hpp>\n#include <nav_msgs/msg/odometry.hpp>\n#include <kinenest/reports.hpp>\n\nclass PoseReader : public rclcpp::Node {\npublic:\n  PoseReader() : Node(\"student_controller\") {\n    subscription_ = create_subscription<nav_msgs::msg::Odometry>(\"/odom\", 10,\n      [this](nav_msgs::msg::Odometry::SharedPtr msg) { receive(msg); });\n  }\nprivate:\n  void receive(nav_msgs::msg::Odometry::SharedPtr msg) {\n    // TODO: read position and orientation from msg->pose.pose.\n    // TODO: inspect raw quaternion and velocity; do not calculate yaw yet.\n    // TODO: kinenest::report_position(x, y);\n  }\n  rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr subscription_;\n};\nint main(int argc, char **argv) {\n  rclcpp::init(argc, argv);\n  rclcpp::spin(std::make_shared<PoseReader>());\n}\n",
       "content": {
-        "title": "Read the robot pose",
-        "description": "Read position and orientation from Odometry. Pose is different from the velocity command that made the robot move.",
+        "title": "Read odometry structure",
+        "description": "Find position, velocity and the raw orientation quaternion in Odometry. Converting that quaternion to yaw is the next exercise.",
         "steps": [
-          "Inspect /odom with echo --field pose.pose.",
-          "Subscribe in C++. Read position and calculate yaw from quaternion orientation.",
-          "Report your calculation with kinenest::report_pose(x, y, yaw). Try a one-shot Twist in another terminal and observe changes."
+          "Inspect /odom with echo --field pose.pose, then compare pose with twist.twist velocity.",
+          "Subscribe to Odometry. Read position.x and position.y; inspect orientation.z and orientation.w without converting them yet.",
+          "Report x and y with kinenest::report_position(x, y). Try a one-shot Twist in another terminal and observe position versus velocity."
         ],
         "hints": [
           "Position is msg->pose.pose.position; orientation is msg->pose.pose.orientation.",
-          "For planar motion yaw = 2 * atan2(q.z, q.w) also works.",
-          "The general yaw expression is atan2(2*(w*z+x*y), 1-2*(y*y+z*z))."
+          "Velocity is in msg->twist.twist, which is different from the accumulated pose.",
+          "Use kinenest::report_position(position.x, position.y). Quaternion-to-yaw conversion comes in 5.2."
         ],
         "translations": {
           "nl": {
-            "title": "Lees de robotpose",
-            "description": "Lees positie en oriëntatie uit Odometry. Een pose is iets anders dan een snelheidscommando.",
+            "title": "De structuur van odometrie lezen",
+            "description": "Zoek positie, snelheid en de ruwe oriëntatiequaternion in Odometry. Omzetten naar yaw volgt in 5.2.",
             "steps": [
-              "Inspecteer /odom met echo --field pose.pose.",
-              "Lees positie en bereken yaw uit de quaternion.",
-              "Rapporteer x, y en yaw met kinenest::report_pose; probeer een Twist in een andere terminal."
+              "Inspecteer /odom met echo --field pose.pose en vergelijk pose met twist.twist-snelheid.",
+              "Abonneer je op Odometry. Lees position.x en position.y; bekijk orientation.z en orientation.w zonder ze al om te zetten.",
+              "Meld x en y met kinenest::report_position(x, y). Stuur in een ander terminal een Twist met --once en vergelijk positie met snelheid."
             ],
             "hints": [
-              "De positie staat in msg->pose.pose.position.",
-              "Voor vlakke beweging werkt 2 * atan2(q.z, q.w).",
-              "Yaw wordt in radialen gemeten."
+              "Positie staat in msg->pose.pose.position; oriëntatie in msg->pose.pose.orientation.",
+              "Snelheid staat in msg->twist.twist en is iets anders dan de opgebouwde pose.",
+              "Gebruik report_position(position.x, position.y). Quaternion naar yaw volgt in 5.2."
             ]
           },
           "fr": {
-            "title": "Lire la pose du robot",
-            "description": "Lisez position et orientation dans Odometry. Une pose n’est pas une commande de vitesse.",
+            "title": "Lire la structure de l’odométrie",
+            "description": "Repérez position, vitesse et quaternion brut dans Odometry. La conversion en yaw vient en 5.2.",
             "steps": [
-              "Inspectez /odom avec echo --field pose.pose.",
-              "Lisez la position et calculez yaw depuis le quaternion.",
-              "Rapportez x, y et yaw avec kinenest::report_pose ; essayez un Twist dans un autre terminal."
+              "Inspectez /odom avec echo --field pose.pose, puis comparez pose et vitesse twist.twist.",
+              "Abonnez-vous à Odometry. Lisez position.x et position.y ; observez orientation.z et orientation.w sans les convertir.",
+              "Transmettez x et y avec kinenest::report_position(x, y). Envoyez un Twist --once dans un autre terminal et comparez position et vitesse."
             ],
             "hints": [
-              "La position est dans msg->pose.pose.position.",
-              "Pour le mouvement plan, 2 * atan2(q.z, q.w) convient.",
-              "Yaw est mesuré en radians."
+              "La position est dans msg->pose.pose.position ; l’orientation dans msg->pose.pose.orientation.",
+              "La vitesse est dans msg->twist.twist, distincte de la pose accumulée.",
+              "Utilisez report_position(position.x, position.y). La conversion quaternion→yaw vient en 5.2."
             ]
           },
           "es": {
-            "title": "Leer la pose del robot",
-            "description": "Lee posición y orientación desde Odometry. La pose es distinta del comando de velocidad.",
+            "title": "Leer la estructura de odometría",
+            "description": "Localiza posición, velocidad y el cuaternión bruto en Odometry. La conversión a yaw viene en 5.2.",
             "steps": [
-              "Inspecciona /odom con ros2 topic echo /odom --field pose.pose.",
-              "Suscríbete en C++ y calcula yaw a partir del cuaternión.",
-              "Llama a kinenest::report_pose(x, y, yaw). Publica un Twist con --once en otro terminal y observa el cambio."
+              "Inspecciona /odom con echo --field pose.pose y compara pose con la velocidad twist.twist.",
+              "Suscríbete a Odometry. Lee position.x y position.y; observa orientation.z y orientation.w sin convertirlos aún.",
+              "Informa x e y con kinenest::report_position(x, y). Envía un Twist --once desde otro terminal y compara posición y velocidad."
             ],
             "hints": [
-              "Posición: msg->pose.pose.position; orientación: msg->pose.pose.orientation.",
-              "En movimiento plano también sirve yaw = 2 * atan2(q.z, q.w).",
-              "La expresión general es atan2(2*(w*z+x*y), 1-2*(y*y+z*z))."
+              "La posición está en msg->pose.pose.position; la orientación en msg->pose.pose.orientation.",
+              "La velocidad está en msg->twist.twist y no es la pose acumulada.",
+              "Usa report_position(position.x, position.y). La conversión de cuaternión a yaw viene en 5.2."
             ]
           },
           "de": {
-            "title": "Die Roboterpose lesen",
-            "description": "Lies Position und Orientierung aus Odometry. Die Pose unterscheidet sich vom Geschwindigkeitsbefehl.",
+            "title": "Odometriestruktur lesen",
+            "description": "Finde Position, Geschwindigkeit und das rohe Orientierungsquaternion in Odometry. Die Umrechnung in Yaw folgt in 5.2.",
             "steps": [
-              "Untersuche /odom mit ros2 topic echo /odom --field pose.pose.",
-              "Abonniere in C++ und berechne yaw aus dem Quaternion.",
-              "Melde kinenest::report_pose(x, y, yaw). Sende einen Twist mit --once in einem anderen Terminal und beobachte die Änderung."
+              "Untersuche /odom mit echo --field pose.pose und vergleiche Pose mit der Geschwindigkeit in twist.twist.",
+              "Abonniere Odometry. Lies position.x und position.y; betrachte orientation.z und orientation.w noch ohne Umrechnung.",
+              "Melde x und y mit kinenest::report_position(x, y). Sende in einem anderen Terminal einen Twist --once und vergleiche Position und Geschwindigkeit."
             ],
             "hints": [
-              "Position: msg->pose.pose.position; Orientierung: msg->pose.pose.orientation.",
-              "Für ebene Bewegung funktioniert auch yaw = 2 * atan2(q.z, q.w).",
-              "Allgemein gilt atan2(2*(w*z+x*y), 1-2*(y*y+z*z))."
+              "Position steht in msg->pose.pose.position; Orientierung in msg->pose.pose.orientation.",
+              "Geschwindigkeit steht in msg->twist.twist und ist nicht die aufsummierte Pose.",
+              "Nutze report_position(position.x, position.y). Quaternion zu Yaw folgt in 5.2."
             ]
           },
           "pt": {
-            "title": "Ler a pose do robô",
-            "description": "Lê posição e orientação em Odometry. A pose é diferente do comando de velocidade.",
+            "title": "Ler a estrutura da odometria",
+            "description": "Encontra posição, velocidade e o quaternion bruto em Odometry. A conversão para yaw vem em 5.2.",
             "steps": [
-              "Inspeciona /odom com ros2 topic echo /odom --field pose.pose.",
-              "Subscreve em C++ e calcula yaw a partir do quaternião.",
-              "Chama kinenest::report_pose(x, y, yaw). Publica um Twist com --once noutro terminal e observa as alterações."
+              "Inspeciona /odom com echo --field pose.pose e compara pose com a velocidade em twist.twist.",
+              "Subscreve Odometry. Lê position.x e position.y; observa orientation.z e orientation.w sem converter ainda.",
+              "Reporta x e y com kinenest::report_position(x, y). Envia um Twist --once noutro terminal e compara posição e velocidade."
             ],
             "hints": [
-              "Posição: msg->pose.pose.position; orientação: msg->pose.pose.orientation.",
-              "Para movimento plano também funciona yaw = 2 * atan2(q.z, q.w).",
-              "A expressão geral é atan2(2*(w*z+x*y), 1-2*(y*y+z*z))."
+              "A posição está em msg->pose.pose.position; a orientação em msg->pose.pose.orientation.",
+              "A velocidade está em msg->twist.twist e difere da pose acumulada.",
+              "Usa report_position(position.x, position.y). A conversão de quaternion para yaw vem em 5.2."
             ]
           },
           "it": {
-            "title": "Leggere la posa del robot",
-            "description": "Leggi posizione e orientamento da Odometry. La posa è diversa dal comando di velocità che ha mosso il robot.",
+            "title": "Leggere la struttura dell’odometria",
+            "description": "Trova posizione, velocità e quaternione grezzo in Odometry. La conversione in yaw arriva in 5.2.",
             "steps": [
-              "Ispeziona /odom con echo --field pose.pose.",
-              "Sottoscrivi in C++. Leggi la posizione e calcola yaw dal quaternione.",
-              "Riporta il calcolo con kinenest::report_pose(x, y, yaw). Prova un Twist singolo in un altro terminale e osserva le variazioni."
+              "Esamina /odom con echo --field pose.pose e confronta pose con la velocità in twist.twist.",
+              "Iscriviti a Odometry. Leggi position.x e position.y; osserva orientation.z e orientation.w senza convertirli.",
+              "Riporta x e y con kinenest::report_position(x, y). Invia un Twist --once da un altro terminale e confronta posizione e velocità."
             ],
             "hints": [
-              "La posizione è msg->pose.pose.position; l’orientamento è msg->pose.pose.orientation.",
-              "Per il moto planare funziona anche yaw = 2 * atan2(q.z, q.w).",
-              "L’espressione generale per yaw è atan2(2*(w*z+x*y), 1-2*(y*y+z*z))."
+              "La posizione è in msg->pose.pose.position; l’orientamento in msg->pose.pose.orientation.",
+              "La velocità è in msg->twist.twist ed è diversa dalla pose accumulata.",
+              "Usa report_position(position.x, position.y). La conversione da quaternione a yaw arriva in 5.2."
             ]
           }
         }

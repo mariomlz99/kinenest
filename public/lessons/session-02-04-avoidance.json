@@ -7,7 +7,7 @@
   "steps": [
     "Combine a /scan subscriber and a /cmd_vel publisher.",
     "If the front ±15° sector is closer than 1.1 m, stop forward motion and turn left at about 0.9 rad/s; otherwise move at about 0.6 m/s.",
-    "Let it run at least 8 seconds. Observe the rays and graph; explain why a blind constant command is unsafe."
+    "Run until the robot has reacted and travelled at least 2 m without a collision. Observe the rays and graph; explain why a blind constant command is unsafe."
   ],
   "hints": [
     "The robot has a collision guard, but touching an obstacle still fails the check.",
@@ -28,7 +28,7 @@
       "steps": [
         "Combineer /scan en een /cmd_vel-publisher.",
         "Draai links met 0.9 rad/s als de voorste sector dichterbij is dan 1.1 m; rijd anders met 0.6 m/s.",
-        "Laat minstens 8 s lopen en leg uit waarom een constante snelheid onveilig is."
+        "Laat de checker voldoende rij- en draaigedrag waarnemen. Leg uit waarom een constante opdracht zonder sensoren onveilig is."
       ],
       "hints": [
         "De botsingsbeveiliging voorkomt doorrijden, maar een botsing faalt de oefening.",
@@ -42,7 +42,7 @@
       "steps": [
         "Combinez /scan et un publisher /cmd_vel.",
         "Tournez à gauche à 0.9 rad/s si le secteur avant est à moins de 1.1 m ; sinon avancez à 0.6 m/s.",
-        "Laissez tourner au moins 8 s et expliquez le danger d’une vitesse constante."
+        "Laissez le vérificateur observer assez de déplacements et de virages. Expliquez le danger d’une commande constante sans capteurs."
       ],
       "hints": [
         "La protection empêche de traverser un obstacle, mais une collision fait échouer l’exercice.",
@@ -56,7 +56,7 @@
       "steps": [
         "Combina un subscriber de /scan y un publisher de /cmd_vel.",
         "Si el sector frontal ±15° está a menos de 1.1 m, detente y gira a la izquierda a unos 0.9 rad/s; si no, avanza a unos 0.6 m/s.",
-        "Ejecuta al menos 8 s. Observa los rayos y explica el riesgo de un comando constante sin sensores."
+        "Deja que el comprobador observe suficiente avance y giro. Explica el riesgo de una orden constante sin sensores."
       ],
       "hints": [
         "La protección impide atravesar obstáculos, pero tocarlos hace fallar la comprobación.",
@@ -70,7 +70,7 @@
       "steps": [
         "Kombiniere einen /scan-Subscriber mit einem /cmd_vel-Publisher.",
         "Unter 1.1 m im vorderen ±15°-Sektor: Vorwärtsfahrt stoppen und mit etwa 0.9 rad/s links drehen. Sonst mit etwa 0.6 m/s fahren.",
-        "Mindestens 8 s laufen lassen. Beobachte Strahlen und Graph und erkläre das Risiko eines konstanten Befehls ohne Sensoren."
+        "Lass die Prüfung ausreichend Fahrt und Drehung beobachten. Erkläre das Risiko konstanter Befehle ohne Sensoren."
       ],
       "hints": [
         "Der Kollisionsschutz verhindert Durchfahren; Berührungen lassen die Prüfung trotzdem scheitern.",
@@ -84,7 +84,7 @@
       "steps": [
         "Combina um subscriber de /scan com um publisher de /cmd_vel.",
         "Se o setor frontal ±15° estiver a menos de 1.1 m, para e roda à esquerda a cerca de 0.9 rad/s; caso contrário, avança a cerca de 0.6 m/s.",
-        "Executa durante pelo menos 8 s. Observa os raios e explica o risco de um comando constante sem sensores."
+        "Deixa o verificador observar avanço e rotação suficientes. Explica o risco de um comando constante sem sensores."
       ],
       "hints": [
         "A proteção impede atravessar obstáculos, mas tocar neles faz falhar a verificação.",
@@ -98,7 +98,7 @@
       "steps": [
         "Combina un subscriber /scan e un publisher /cmd_vel.",
         "Se il settore frontale ±15° è sotto 1,1 m, ferma l’avanzamento e gira a sinistra a circa 0,9 rad/s; altrimenti avanza a circa 0,6 m/s.",
-        "Esegui per almeno 8 secondi. Osserva raggi e grafo; spiega perché un comando costante senza sensori non è sicuro."
+        "Lascia che il checker osservi avanzamento e rotazione sufficienti. Spiega il rischio di un comando costante senza sensori."
       ],
       "hints": [
         "La protezione dalle collisioni impedisce di attraversare i blocchi, ma un contatto fa comunque fallire la verifica.",

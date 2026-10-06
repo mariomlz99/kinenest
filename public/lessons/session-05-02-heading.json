@@ -2,8 +2,8 @@
   "id": "session-05-02-heading",
   "session": 5,
   "number": "5.2",
-  "title": "Position plus orientation",
-  "description": "Use a quaternion helper to obtain yaw. Compare a turned robot with a translated robot: both have a pose, but their heading differs.",
+  "title": "Convert orientation to yaw",
+  "description": "Now convert the raw odometry quaternion from 5.1 into a heading angle. Compare turning with translation.",
   "steps": [
     "Import euler_from_quaternion from tf_transformations.",
     "Pass [q.x, q.y, q.z, q.w]; the third returned value is yaw in radians.",
@@ -23,8 +23,8 @@
   "startYaw": 1.2,
   "translations": {
     "nl": {
-      "title": "Positie plus oriëntatie",
-      "description": "Gebruik een quaternionhelper om de koers te vinden. Vergelijk draaien met verplaatsen.",
+      "title": "Oriëntatie omzetten naar yaw",
+      "description": "Zet nu de ruwe odometriequaternion uit 5.1 om naar een koershoek. Vergelijk draaien met verplaatsen.",
       "steps": [
         "Importeer euler_from_quaternion uit tf_transformations.",
         "Geef [q.x, q.y, q.z, q.w] door; de derde waarde is yaw.",
@@ -37,8 +37,8 @@
       ]
     },
     "fr": {
-      "title": "Position et orientation",
-      "description": "Utilisez un helper quaternion pour trouver le cap. Comparez rotation et translation.",
+      "title": "Convertir l’orientation en yaw",
+      "description": "Convertissez maintenant le quaternion brut de 5.1 en angle de cap. Comparez rotation et translation.",
       "steps": [
         "Importez euler_from_quaternion depuis tf_transformations.",
         "Passez [q.x, q.y, q.z, q.w] ; la troisième valeur est yaw.",
@@ -51,8 +51,8 @@
       ]
     },
     "es": {
-      "title": "Posición y orientación",
-      "description": "Obtén yaw con una función de cuaterniones. Compara una traslación con un giro del robot.",
+      "title": "Convertir orientación a yaw",
+      "description": "Convierte ahora el cuaternión bruto de 5.1 en un ángulo de rumbo. Compara giro y traslación.",
       "steps": [
         "Importa euler_from_quaternion de tf_transformations.",
         "Pasa [q.x, q.y, q.z, q.w]; el tercer valor devuelto es yaw en radianes.",
@@ -65,8 +65,8 @@
       ]
     },
     "de": {
-      "title": "Position und Orientierung",
-      "description": "Berechne yaw mit einer Quaternion-Hilfsfunktion. Vergleiche Drehen und Verschieben des Roboters.",
+      "title": "Orientierung in Yaw umrechnen",
+      "description": "Rechne nun das rohe Odometriequaternion aus 5.1 in einen Richtungswinkel um. Vergleiche Drehen und Verschieben.",
       "steps": [
         "Importiere euler_from_quaternion aus tf_transformations.",
         "Übergib [q.x, q.y, q.z, q.w]; der dritte Rückgabewert ist yaw im Bogenmaß.",
@@ -79,8 +79,8 @@
       ]
     },
     "pt": {
-      "title": "Posição e orientação",
-      "description": "Obtém yaw com uma função de quaterniões. Compara a translação com a rotação do robô.",
+      "title": "Converter orientação em yaw",
+      "description": "Converte agora o quaternion bruto de 5.1 num ângulo de rumo. Compara rotação e translação.",
       "steps": [
         "Importa euler_from_quaternion de tf_transformations.",
         "Passa [q.x, q.y, q.z, q.w]; o terceiro valor devolvido é yaw em radianos.",
@@ -93,8 +93,8 @@
       ]
     },
     "it": {
-      "title": "Posizione e orientamento",
-      "description": "Usa un helper per ottenere yaw dal quaternione. Confronta un robot ruotato con uno traslato: entrambi hanno una posa, ma la direzione è diversa.",
+      "title": "Convertire l’orientamento in yaw",
+      "description": "Converti ora il quaternione grezzo di 5.1 in un angolo di direzione. Confronta rotazione e traslazione.",
       "steps": [
         "Importa euler_from_quaternion da tf_transformations.",
         "Passa [q.x, q.y, q.z, q.w]; il terzo valore restituito è yaw in radianti.",
@@ -117,8 +117,8 @@
       "experimental": true,
       "starterCode": "#include <rclcpp/rclcpp.hpp>\n#include <nav_msgs/msg/odometry.hpp>\n#include <kinenest/reports.hpp>\n#include <tf2/utils.h>\n\nclass PoseReader : public rclcpp::Node {\npublic:\n  PoseReader() : Node(\"student_controller\") {\n    subscription_ = create_subscription<nav_msgs::msg::Odometry>(\"/odom\", 10,\n      [this](nav_msgs::msg::Odometry::SharedPtr msg) { receive(msg); });\n  }\nprivate:\n  void receive(nav_msgs::msg::Odometry::SharedPtr msg) {\n    // TODO: read position and orientation from msg->pose.pose.\n    // TODO: use tf2::getYaw on the quaternion.\n    // TODO: kinenest::report_pose(x, y, yaw);\n  }\n  rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr subscription_;\n};\nint main(int argc, char **argv) {\n  rclcpp::init(argc, argv);\n  rclcpp::spin(std::make_shared<PoseReader>());\n}\n",
       "content": {
-        "title": "Position plus orientation",
-        "description": "Use a quaternion helper to obtain yaw. Compare a turned robot with a translated robot: both have a pose, but their heading differs.",
+        "title": "Convert orientation to yaw",
+        "description": "Now convert the raw odometry quaternion from 5.1 into a heading angle. Compare turning with translation.",
         "steps": [
           "Include <tf2/utils.h> and read msg->pose.pose.orientation.",
           "Pass the quaternion to tf2::getYaw(q); the returned angle is in radians.",
@@ -131,8 +131,8 @@
         ],
         "translations": {
           "nl": {
-            "title": "Positie plus oriëntatie",
-            "description": "Gebruik een quaternionhelper om de koers te vinden. Vergelijk draaien met verplaatsen.",
+            "title": "Oriëntatie omzetten naar yaw",
+            "description": "Zet nu de ruwe odometriequaternion uit 5.1 om naar een koershoek. Vergelijk draaien met verplaatsen.",
             "steps": [
               "Voeg <tf2/utils.h> toe en lees msg->pose.pose.orientation.",
               "Geef de quaternion door aan tf2::getYaw(q); de teruggegeven hoek is in radialen.",
@@ -145,8 +145,8 @@
             ]
           },
           "fr": {
-            "title": "Position et orientation",
-            "description": "Utilisez un helper quaternion pour trouver le cap. Comparez rotation et translation.",
+            "title": "Convertir l’orientation en yaw",
+            "description": "Convertissez maintenant le quaternion brut de 5.1 en angle de cap. Comparez rotation et translation.",
             "steps": [
               "Incluez <tf2/utils.h> et lisez msg->pose.pose.orientation.",
               "Passez le quaternion à tf2::getYaw(q) ; l’angle retourné est en radians.",
@@ -159,8 +159,8 @@
             ]
           },
           "es": {
-            "title": "Posición y orientación",
-            "description": "Obtén yaw con una función de cuaterniones. Compara una traslación con un giro del robot.",
+            "title": "Convertir orientación a yaw",
+            "description": "Convierte ahora el cuaternión bruto de 5.1 en un ángulo de rumbo. Compara giro y traslación.",
             "steps": [
               "Incluye <tf2/utils.h> y lee msg->pose.pose.orientation.",
               "Pasa el cuaternión a tf2::getYaw(q); el ángulo devuelto está en radianes.",
@@ -173,8 +173,8 @@
             ]
           },
           "de": {
-            "title": "Position und Orientierung",
-            "description": "Berechne yaw mit einer Quaternion-Hilfsfunktion. Vergleiche Drehen und Verschieben des Roboters.",
+            "title": "Orientierung in Yaw umrechnen",
+            "description": "Rechne nun das rohe Odometriequaternion aus 5.1 in einen Richtungswinkel um. Vergleiche Drehen und Verschieben.",
             "steps": [
               "Binde <tf2/utils.h> ein und lies msg->pose.pose.orientation.",
               "Übergib das Quaternion an tf2::getYaw(q); der zurückgegebene Winkel ist im Bogenmaß.",
@@ -187,8 +187,8 @@
             ]
           },
           "pt": {
-            "title": "Posição e orientação",
-            "description": "Obtém yaw com uma função de quaterniões. Compara a translação com a rotação do robô.",
+            "title": "Converter orientação em yaw",
+            "description": "Converte agora o quaternion bruto de 5.1 num ângulo de rumo. Compara rotação e translação.",
             "steps": [
               "Inclui <tf2/utils.h> e lê msg->pose.pose.orientation.",
               "Passa o quaternião a tf2::getYaw(q); o ângulo devolvido está em radianos.",
@@ -201,8 +201,8 @@
             ]
           },
           "it": {
-            "title": "Posizione e orientamento",
-            "description": "Usa un helper per ottenere yaw dal quaternione. Confronta un robot ruotato con uno traslato: entrambi hanno una posa, ma la direzione è diversa.",
+            "title": "Convertire l’orientamento in yaw",
+            "description": "Converti ora il quaternione grezzo di 5.1 in un angolo di direzione. Confronta rotazione e traslazione.",
             "steps": [
               "Includi <tf2/utils.h> e leggi msg->pose.pose.orientation.",
               "Passa il quaternione a tf2::getYaw(q); l’angolo restituito è in radianti.",

@@ -3,10 +3,10 @@
   "session": 4,
   "number": "4.3",
   "title": "Publish a custom message",
-  "description": "A named interface makes a message contract explicit. Publish TargetInfo: visibility, position label and confidence.",
+  "description": "A named interface makes a message contract explicit. Publish TargetInfo: visibility, position label and confidence. KineNest supplies this interface in the browser; native ROS 2 generates it during a package build.",
   "steps": [
     "Inspect ros2 interface show ros2learn_interfaces/msg/TargetInfo.",
-    "Publish at least three valid messages on /target_info from Python. Confidence must be between 0 and 1.",
+    "Publish at least three valid messages on /target_info from your node. Confidence must be between 0 and 1.",
     "Echo /target_info in a terminal. Change one field and explain why a Twist cannot be published on that same typed topic."
   ],
   "hints": [
@@ -24,7 +24,7 @@
   "translations": {
     "nl": {
       "title": "Publiceer een eigen bericht",
-      "description": "TargetInfo beschrijft zichtbaarheid, positie en betrouwbaarheid met benoemde velden.",
+      "description": "TargetInfo beschrijft zichtbaarheid, positie en betrouwbaarheid met benoemde velden. KineNest levert deze gegenereerde interface; native ROS genereert interfaces tijdens de pakketbuild.",
       "steps": [
         "Inspecteer ros2 interface show ros2learn_interfaces/msg/TargetInfo.",
         "Publiceer minstens drie berichten op /target_info met confidence tussen 0 en 1.",
@@ -38,7 +38,7 @@
     },
     "fr": {
       "title": "Publier un message personnalisé",
-      "description": "TargetInfo décrit la visibilité, la position et la confiance avec des champs nommés.",
+      "description": "TargetInfo décrit la visibilité, la position et la confiance avec des champs nommés. KineNest fournit cette interface générée ; ROS natif génère les interfaces lors de la compilation du paquet.",
       "steps": [
         "Inspectez ros2 interface show ros2learn_interfaces/msg/TargetInfo.",
         "Publiez au moins trois messages sur /target_info, avec confidence entre 0 et 1.",
@@ -52,7 +52,7 @@
     },
     "es": {
       "title": "Publicar un mensaje propio",
-      "description": "Una interfaz define los campos del mensaje. Publica TargetInfo con visibilidad, posición y confianza.",
+      "description": "Una interfaz define los campos del mensaje. Publica TargetInfo con visibilidad, posición y confianza. KineNest proporciona esta interfaz generada; ROS nativo genera las interfaces al compilar el paquete.",
       "steps": [
         "Inspecciona ros2 interface show ros2learn_interfaces/msg/TargetInfo.",
         "Publica al menos tres mensajes válidos en /target_info. La confianza debe estar entre 0 y 1.",
@@ -66,7 +66,7 @@
     },
     "de": {
       "title": "Eigene Nachrichten senden",
-      "description": "Eine Schnittstelle legt Nachrichtenfelder fest. Sende TargetInfo mit Sichtbarkeit, Positionsangabe und Konfidenz.",
+      "description": "Eine Schnittstelle legt Nachrichtenfelder fest. Sende TargetInfo mit Sichtbarkeit, Positionsangabe und Konfidenz. KineNest stellt diese generierte Schnittstelle bereit; natives ROS generiert Schnittstellen beim Paketbuild.",
       "steps": [
         "Untersuche ros2 interface show ros2learn_interfaces/msg/TargetInfo.",
         "Sende mindestens drei gültige Nachrichten auf /target_info. confidence muss zwischen 0 und 1 liegen.",
@@ -80,7 +80,7 @@
     },
     "pt": {
       "title": "Publicar uma mensagem própria",
-      "description": "Uma interface define os campos da mensagem. Publica TargetInfo com visibilidade, posição e confiança.",
+      "description": "Uma interface define os campos da mensagem. Publica TargetInfo com visibilidade, posição e confiança. KineNest fornece esta interface gerada; ROS nativo gera interfaces durante a compilação do pacote.",
       "steps": [
         "Inspeciona ros2 interface show ros2learn_interfaces/msg/TargetInfo.",
         "Publica pelo menos três mensagens válidas em /target_info. confidence deve estar entre 0 e 1.",
@@ -94,10 +94,10 @@
     },
     "it": {
       "title": "Pubblicare un messaggio personalizzato",
-      "description": "Un’interfaccia definisce il contenuto di un messaggio. Pubblica TargetInfo: visibilità, posizione e confidenza.",
+      "description": "Un’interfaccia definisce il contenuto di un messaggio. Pubblica TargetInfo: visibilità, posizione e confidenza. KineNest fornisce questa interfaccia generata; ROS nativo genera le interfacce durante la build del pacchetto.",
       "steps": [
         "Ispeziona ros2 interface show ros2learn_interfaces/msg/TargetInfo.",
-        "Pubblica almeno tre messaggi validi su /target_info da Python. La confidenza deve essere tra 0 e 1.",
+        "Pubblica almeno tre messaggi validi su /target_info dal tuo nodo. La confidenza deve essere tra 0 e 1.",
         "Osserva /target_info con echo. Modifica un campo e spiega perché non puoi pubblicare Twist sullo stesso topic tipizzato."
       ],
       "hints": [
@@ -132,7 +132,7 @@
         "translations": {
           "nl": {
             "title": "Publiceer een eigen bericht",
-            "description": "TargetInfo beschrijft zichtbaarheid, positie en betrouwbaarheid met benoemde velden.",
+            "description": "TargetInfo beschrijft zichtbaarheid, positie en betrouwbaarheid met benoemde velden. KineNest levert deze gegenereerde interface; native ROS genereert interfaces tijdens de pakketbuild.",
             "steps": [
               "Inspecteer ros2 interface show ros2learn_interfaces/msg/TargetInfo.",
               "Publiceer minstens drie berichten op /target_info met confidence tussen 0 en 1.",
@@ -146,7 +146,7 @@
           },
           "fr": {
             "title": "Publier un message personnalisé",
-            "description": "TargetInfo décrit la visibilité, la position et la confiance avec des champs nommés.",
+            "description": "TargetInfo décrit la visibilité, la position et la confiance avec des champs nommés. KineNest fournit cette interface générée ; ROS natif génère les interfaces lors de la compilation du paquet.",
             "steps": [
               "Inspectez ros2 interface show ros2learn_interfaces/msg/TargetInfo.",
               "Publiez au moins trois messages sur /target_info, avec confidence entre 0 et 1.",
@@ -160,7 +160,7 @@
           },
           "es": {
             "title": "Publicar un mensaje propio",
-            "description": "Una interfaz define los campos del mensaje. Publica TargetInfo con visibilidad, posición y confianza.",
+            "description": "Una interfaz define los campos del mensaje. Publica TargetInfo con visibilidad, posición y confianza. KineNest proporciona esta interfaz generada; ROS nativo genera las interfaces al compilar el paquete.",
             "steps": [
               "Inspecciona ros2 interface show ros2learn_interfaces/msg/TargetInfo.",
               "Publica al menos tres mensajes válidos en /target_info. La confianza debe estar entre 0 y 1.",
@@ -174,7 +174,7 @@
           },
           "de": {
             "title": "Eigene Nachrichten senden",
-            "description": "Eine Schnittstelle legt Nachrichtenfelder fest. Sende TargetInfo mit Sichtbarkeit, Positionsangabe und Konfidenz.",
+            "description": "Eine Schnittstelle legt Nachrichtenfelder fest. Sende TargetInfo mit Sichtbarkeit, Positionsangabe und Konfidenz. KineNest stellt diese generierte Schnittstelle bereit; natives ROS generiert Schnittstellen beim Paketbuild.",
             "steps": [
               "Untersuche ros2 interface show ros2learn_interfaces/msg/TargetInfo.",
               "Sende mindestens drei gültige Nachrichten auf /target_info. confidence muss zwischen 0 und 1 liegen.",
@@ -188,7 +188,7 @@
           },
           "pt": {
             "title": "Publicar uma mensagem própria",
-            "description": "Uma interface define os campos da mensagem. Publica TargetInfo com visibilidade, posição e confiança.",
+            "description": "Uma interface define os campos da mensagem. Publica TargetInfo com visibilidade, posição e confiança. KineNest fornece esta interface gerada; ROS nativo gera interfaces durante a compilação do pacote.",
             "steps": [
               "Inspeciona ros2 interface show ros2learn_interfaces/msg/TargetInfo.",
               "Publica pelo menos três mensagens válidas em /target_info. confidence deve estar entre 0 e 1.",
@@ -202,7 +202,7 @@
           },
           "it": {
             "title": "Pubblicare un messaggio personalizzato",
-            "description": "Un’interfaccia definisce il contenuto di un messaggio. Pubblica TargetInfo: visibilità, posizione e confidenza.",
+            "description": "Un’interfaccia definisce il contenuto di un messaggio. Pubblica TargetInfo: visibilità, posizione e confidenza. KineNest fornisce questa interfaccia generata; ROS nativo genera le interfacce durante la build del pacchetto.",
             "steps": [
               "Ispeziona ros2 interface show ros2learn_interfaces/msg/TargetInfo.",
               "Pubblica almeno tre messaggi validi su /target_info da C++. La confidenza deve essere tra 0 e 1.",

@@ -63,7 +63,7 @@ export class RuntimeAdapter {
         r.nodes.add(data.node);this.nodes.add(data.node);break;
       case 'destroy':this.cleanupNode(data.node);break;
       case 'publisher':r.ensureTopic(data.topic,data.type??TWIST).publishers.add(data.node);break;
-      case 'publish':r.publish(data.topic,data.type??TWIST,data.message);e.codePublications++;if(data.topic==='/cmd_vel'){r.course.commandPublications=(r.course.commandPublications??0)+1;(r.course.commandSpeeds??=new Set()).add(data.message.linear?.x??0);}if(data.type==='ros2learn_interfaces/msg/TargetInfo'&&data.topic==='/target_info')r.course.customCode=(r.course.customCode??0)+1;break;
+      case 'publish':r.publish(data.topic,data.type??TWIST,data.message);e.codePublications++;if(data.topic==='/chatter'&&data.type==='std_msgs/msg/String')r.course.chatterPublished++;if(data.topic==='/cmd_vel'){r.course.commandPublications=(r.course.commandPublications??0)+1;(r.course.commandSpeeds??=new Set()).add(data.message.linear?.x??0);}if(data.type==='ros2learn_interfaces/msg/TargetInfo'&&data.topic==='/target_info')r.course.customCode=(r.course.customCode??0)+1;break;
       case 'timer':{
         const dispose=r.every(data.period,()=>{const key='timer-'+data.id;if(!this.worker||this.pending.has(key))return;this.pending.add(key);this.worker.postMessage({kind:'timer',id:data.id});if(this.pending.size===1)this.watchdog(5000,'Timer callback took too long; stopped.');});
         this.jobs.set(data.id,{dispose,node:data.node});break;
@@ -123,7 +123,7 @@ export class RuntimeAdapter {
     const {report,values}=sample.report,m=sample.message,c=this.runtime.course;
     if(report==='range'&&sample.topic==='/scan'&&sample.access?.has('ranges')){const nearest=Math.min(...m.ranges.filter(Number.isFinite));if(Number.isFinite(nearest)&&Number.isFinite(values[0])&&Math.abs(nearest-values[0])<.05)c.range++;}
     if(report==='sectors'&&sample.topic==='/scan'&&sample.access?.has('ranges')){const sector=center=>Math.min(...m.ranges.filter((v,i)=>Number.isFinite(v)&&Math.abs(Math.atan2(Math.sin(m.angle_min+i*m.angle_increment-center),Math.cos(m.angle_min+i*m.angle_increment-center)))<=Math.PI/12+1e-9));const truth=[sector(0),sector(Math.PI/2),sector(-Math.PI/2)];if(values.length===3&&values.every((v,i)=>Number.isFinite(v)&&Math.abs(v-truth[i])<.05))c.sectors=(c.sectors??0)+1;}
-    if(report==='pose'&&sample.topic==='/odom'){const p=m.pose.pose.position,q=m.pose.pose.orientation,yaw=2*Math.atan2(q.z,q.w);if(values.length===3&&values.every(Number.isFinite)&&Math.hypot(values[0]-p.x,values[1]-p.y)<.03&&Math.abs(Math.atan2(Math.sin(values[2]-yaw),Math.cos(values[2]-yaw)))<.03)c.pose++;}
+    if((report==='position'||report==='pose')&&sample.topic==='/odom'){const p=m.pose.pose.position,q=m.pose.pose.orientation,yaw=2*Math.atan2(q.z,q.w);if(values.length>=(report==='pose'?3:2)&&values.every(Number.isFinite)&&Math.hypot(values[0]-p.x,values[1]-p.y)<.03){c.position++;if(report==='pose'&&Math.abs(Math.atan2(Math.sin(values[2]-yaw),Math.cos(values[2]-yaw)))<.03)c.pose++;}}
     delete sample.report;
   }
   assess(frame){

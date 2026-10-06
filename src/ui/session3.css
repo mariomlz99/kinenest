@@ -29,3 +29,4 @@ body[data-session] main{padding-top:16px}.intro{display:grid;grid-template-colum
 /* Long translated headings must not set the grid minimum on narrow screens. */
 .intro>h1{min-width:0;overflow-wrap:anywhere}
 @media(max-width:850px){.intro{grid-template-columns:minmax(0,1fr)}.exercise-picker{min-width:0}}
+#lesson-interface{white-space:pre-wrap;overflow-wrap:anywhere;padding:12px;background:var(--world-background);border:1px solid var(--border);border-radius:6px;font:13px/1.6 ui-monospace,monospace}

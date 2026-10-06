@@ -13,10 +13,8 @@ private:
   void receive(nav_msgs::msg::Odometry::SharedPtr msg) {
     const auto &position = msg->pose.pose.position;
     const auto &q = msg->pose.pose.orientation;
-    const double yaw = std::atan2(2 * (q.w * q.z + q.x * q.y),
-                                  1 - 2 * (q.y * q.y + q.z * q.z));
-    RCLCPP_INFO(get_logger(), "Pose: %.3f %.3f %.3f", position.x, position.y, yaw);
-    kinenest::report_pose(position.x, position.y, yaw);
+    RCLCPP_INFO(get_logger(), "Position: %.3f %.3f, quaternion z/w: %.3f %.3f", position.x, position.y, q.z, q.w);
+    kinenest::report_position(position.x, position.y);
   }
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr subscription_;
 };

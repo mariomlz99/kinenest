@@ -11,8 +11,8 @@
   "hints": [
     "Reuse your mask and centroid calculation. The robot starts facing away from the target.",
     "A target to the left needs positive angular.z. A target to the right needs negative angular.z.",
-    "Use an error such as (160 - cx) / 160; clamp the angular speed to ±1 rad/s.",
-    "If abs(160 - cx) < 10, publish angular.z = 0. If no red pixels are visible, rotate slowly to search."
+    "Use error = (image.shape[1] / 2 - cx) / (image.shape[1] / 2); clamp angular speed to ±1 rad/s. In C++, use msg->width / 2.",
+    "If abs(image.shape[1] / 2 - cx) < 10, publish angular.z = 0. If no red pixels are visible, rotate slowly to search."
   ],
   "checks": [
     {
@@ -41,10 +41,10 @@
         "Publiceer nul als het doel in het midden staat en controleer na het stoppen."
       ],
       "hints": [
-        "Positieve angular.z draait links.",
-        "Gebruik het verschil 160 − cx als stuurfout.",
+        "center = image.shape[1] / 2. Positieve angular.z draait links.",
+        "Gebruik het verschil center − cx als stuurfout.",
         "Beperk de snelheid en gebruik een kleine dode zone rond het midden.",
-        "Bij abs(160 - cx) < 10: publiceer angular.z = 0. Zonder rode pixels: draai langzaam om te zoeken."
+        "Bij abs(center - cx) < 10: publiceer angular.z = 0. Zonder rode pixels: draai langzaam om te zoeken."
       ]
     },
     "fr": {
@@ -56,10 +56,10 @@
         "Publiez zéro lorsque la cible est centrée, puis vérifiez après l’arrêt."
       ],
       "hints": [
-        "Une angular.z positive tourne à gauche.",
-        "Utilisez 160 − cx comme erreur de direction.",
+        "center = image.shape[1] / 2. Une angular.z positive tourne à gauche.",
+        "Utilisez center − cx comme erreur de direction.",
         "Limitez la vitesse et prévoyez une petite zone d’arrêt au centre.",
-        "Si abs(160 - cx) < 10, publiez angular.z = 0. Sans pixels rouges, tournez lentement pour chercher."
+        "Si abs(center - cx) < 10, publiez angular.z = 0. Sans pixels rouges, tournez lentement pour chercher."
       ]
     },
     "es": {
@@ -71,10 +71,10 @@
         "Publica cero cuando esté centrado y comprueba después de parar."
       ],
       "hints": [
-        "Reutiliza máscara y centroide. El robot empieza mirando fuera del objetivo.",
+        "center = image.shape[1] / 2. Reutiliza máscara y centroide. El robot empieza mirando fuera del objetivo.",
         "Objetivo a la izquierda: angular.z positivo; a la derecha: negativo.",
-        "Usa (160 - cx) / 160 y limita la velocidad angular a ±1 rad/s.",
-        "Si abs(160 - cx) < 10, publica angular.z = 0. Sin píxeles rojos, gira despacio para buscar."
+        "Usa (center - cx) / center y limita la velocidad angular a ±1 rad/s.",
+        "Si abs(center - cx) < 10, publica angular.z = 0. Sin píxeles rojos, gira despacio para buscar."
       ]
     },
     "de": {
@@ -86,10 +86,10 @@
         "Sende null bei mittigem Ziel und prüfe nach dem Stillstand."
       ],
       "hints": [
-        "Nutze Maske und Schwerpunkt erneut. Der Roboter startet vom Ziel weggedreht.",
+        "center = image.shape[1] / 2. Nutze Maske und Schwerpunkt erneut. Der Roboter startet vom Ziel weggedreht.",
         "Ziel links: angular.z positiv; rechts: negativ.",
-        "Nutze (160 - cx) / 160 und begrenze die Winkelgeschwindigkeit auf ±1 rad/s.",
-        "Bei abs(160 - cx) < 10 sende angular.z = 0. Ohne rote Pixel langsam suchen."
+        "Nutze (center - cx) / center und begrenze die Winkelgeschwindigkeit auf ±1 rad/s.",
+        "Bei abs(center - cx) < 10 sende angular.z = 0. Ohne rote Pixel langsam suchen."
       ]
     },
     "pt": {
@@ -101,10 +101,10 @@
         "Publica zero quando estiver centrado e verifica após parar."
       ],
       "hints": [
-        "Reutiliza máscara e centroide. O robô começa virado para fora do alvo.",
+        "center = image.shape[1] / 2. Reutiliza máscara e centroide. O robô começa virado para fora do alvo.",
         "Alvo à esquerda: angular.z positivo; à direita: negativo.",
-        "Usa (160 - cx) / 160 e limita a velocidade angular a ±1 rad/s.",
-        "Se abs(160 - cx) < 10, publica angular.z = 0. Sem píxeis vermelhos, roda devagar para procurar."
+        "Usa (center - cx) / center e limita a velocidade angular a ±1 rad/s.",
+        "Se abs(center - cx) < 10, publica angular.z = 0. Sem píxeis vermelhos, roda devagar para procurar."
       ]
     },
     "it": {
@@ -116,17 +116,17 @@
         "Pubblica zero quando è centrato e verifica dopo l’arresto."
       ],
       "hints": [
-        "Riusa maschera e centroide. All’inizio il robot non guarda il target.",
+        "center = image.shape[1] / 2. Riusa maschera e centroide. All’inizio il robot non guarda il target.",
         "Un target a sinistra richiede angular.z positivo; a destra negativo.",
-        "Usa un errore come (160 - cx) / 160 e limita la velocità angolare a ±1 rad/s.",
-        "Se abs(160 - cx) < 10, pubblica angular.z = 0. Se non vedi pixel rossi, ruota lentamente per cercarli."
+        "Usa un errore come (center - cx) / center e limita la velocità angolare a ±1 rad/s.",
+        "Se abs(center - cx) < 10, pubblica angular.z = 0. Se non vedi pixel rossi, ruota lentamente per cercarli."
       ]
     }
   },
   "programming": {
     "python": {
       "supported": true,
-      "starterCode": "import rclpy\nimport numpy as np\nfrom rclpy.node import Node\nfrom sensor_msgs.msg import Image\nfrom cv_bridge import CvBridge\nfrom geometry_msgs.msg import Twist\nfrom ros2learn import report_detection, report_image_stats\n\nclass CameraReader(Node):\n    def __init__(self):\n        super().__init__('camera_reader')\n        self.publisher = self.create_publisher(Twist, '/cmd_vel', 10)\n        self.bridge = CvBridge()\n        self.subscription = self.create_subscription(\n            Image, '/camera/image_raw', self.image_callback, 10)\n\n    def image_callback(self, msg):\n        image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='rgb8')\n        # TODO: find the red target's centroid using the pixels.\n        # Positive angular.z turns left; negative turns right.\n        # Stop when the target is close to x = 160.\n        # Publish a Twist each callback and report_detection(visible, cx).\n        pass\n\nrclpy.init()\nnode = CameraReader()\nrclpy.spin(node)\n"
+      "starterCode": "import rclpy\nimport numpy as np\nfrom rclpy.node import Node\nfrom sensor_msgs.msg import Image\nfrom cv_bridge import CvBridge\nfrom geometry_msgs.msg import Twist\nfrom ros2learn import report_detection\n\nclass CameraReader(Node):\n    def __init__(self):\n        super().__init__('camera_reader')\n        self.publisher = self.create_publisher(Twist, '/cmd_vel', 10)\n        self.bridge = CvBridge()\n        self.subscription = self.create_subscription(\n            Image, '/camera/image_raw', self.image_callback, 10)\n\n    def image_callback(self, msg):\n        image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='rgb8')\n        # TODO: find the red target's centroid using the pixels.\n        # Positive angular.z turns left; negative turns right.\n        # Stop when the target is near image.shape[1] / 2.\n        # Publish a Twist each callback and report_detection(visible, cx).\n        pass\n\nrclpy.init()\nnode = CameraReader()\nrclpy.spin(node)\n"
     },
     "cpp": {
       "supported": true,
@@ -143,8 +143,8 @@
         "hints": [
           "Reuse your mask and centroid calculation. The robot starts facing away from the target.",
           "A target to the left needs positive angular.z. A target to the right needs negative angular.z.",
-          "Use an error such as (160 - cx) / 160; clamp the angular speed to ±1 rad/s.",
-          "If abs(160 - cx) < 10, publish angular.z = 0. If no red pixels are visible, rotate slowly to search."
+          "Use msg->width / 2 as the image center; normalize the centroid error by that value and clamp the turn rate.",
+          "If the centroid is within 10 pixels of msg->width / 2, publish zero angular velocity. Search slowly when no red pixels are visible."
         ],
         "translations": {
           "nl": {
@@ -156,10 +156,10 @@
               "Publiceer nul als het doel in het midden staat en controleer na het stoppen."
             ],
             "hints": [
-              "Positieve angular.z draait links.",
-              "Gebruik het verschil 160 − cx als stuurfout.",
+              "center = msg->width / 2.0. Positieve angular.z draait links.",
+              "Gebruik het verschil center − cx als stuurfout.",
               "Beperk de snelheid en gebruik een kleine dode zone rond het midden.",
-              "Bij abs(160 - cx) < 10: publiceer angular.z = 0. Zonder rode pixels: draai langzaam om te zoeken."
+              "Bij abs(center - cx) < 10: publiceer angular.z = 0. Zonder rode pixels: draai langzaam om te zoeken."
             ]
           },
           "fr": {
@@ -171,10 +171,10 @@
               "Publiez zéro lorsque la cible est centrée, puis vérifiez après l’arrêt."
             ],
             "hints": [
-              "Une angular.z positive tourne à gauche.",
-              "Utilisez 160 − cx comme erreur de direction.",
+              "center = msg->width / 2.0. Une angular.z positive tourne à gauche.",
+              "Utilisez center − cx comme erreur de direction.",
               "Limitez la vitesse et prévoyez une petite zone d’arrêt au centre.",
-              "Si abs(160 - cx) < 10, publiez angular.z = 0. Sans pixels rouges, tournez lentement pour chercher."
+              "Si abs(center - cx) < 10, publiez angular.z = 0. Sans pixels rouges, tournez lentement pour chercher."
             ]
           },
           "es": {
@@ -186,10 +186,10 @@
               "Publica cero cuando esté centrado y comprueba después de parar."
             ],
             "hints": [
-              "Reutiliza máscara y centroide. El robot empieza mirando fuera del objetivo.",
+              "center = msg->width / 2.0. Reutiliza máscara y centroide. El robot empieza mirando fuera del objetivo.",
               "Objetivo a la izquierda: angular.z positivo; a la derecha: negativo.",
-              "Usa (160 - cx) / 160 y limita la velocidad angular a ±1 rad/s.",
-              "Si abs(160 - cx) < 10, publica angular.z = 0. Sin píxeles rojos, gira despacio para buscar."
+              "Usa (center - cx) / center y limita la velocidad angular a ±1 rad/s.",
+              "Si abs(center - cx) < 10, publica angular.z = 0. Sin píxeles rojos, gira despacio para buscar."
             ]
           },
           "de": {
@@ -201,10 +201,10 @@
               "Sende null bei mittigem Ziel und prüfe nach dem Stillstand."
             ],
             "hints": [
-              "Nutze Maske und Schwerpunkt erneut. Der Roboter startet vom Ziel weggedreht.",
+              "center = msg->width / 2.0. Nutze Maske und Schwerpunkt erneut. Der Roboter startet vom Ziel weggedreht.",
               "Ziel links: angular.z positiv; rechts: negativ.",
-              "Nutze (160 - cx) / 160 und begrenze die Winkelgeschwindigkeit auf ±1 rad/s.",
-              "Bei abs(160 - cx) < 10 sende angular.z = 0. Ohne rote Pixel langsam suchen."
+              "Nutze (center - cx) / center und begrenze die Winkelgeschwindigkeit auf ±1 rad/s.",
+              "Bei abs(center - cx) < 10 sende angular.z = 0. Ohne rote Pixel langsam suchen."
             ]
           },
           "pt": {
@@ -216,10 +216,10 @@
               "Publica zero quando estiver centrado e verifica após parar."
             ],
             "hints": [
-              "Reutiliza máscara e centroide. O robô começa virado para fora do alvo.",
+              "center = msg->width / 2.0. Reutiliza máscara e centroide. O robô começa virado para fora do alvo.",
               "Alvo à esquerda: angular.z positivo; à direita: negativo.",
-              "Usa (160 - cx) / 160 e limita a velocidade angular a ±1 rad/s.",
-              "Se abs(160 - cx) < 10, publica angular.z = 0. Sem píxeis vermelhos, roda devagar para procurar."
+              "Usa (center - cx) / center e limita a velocidade angular a ±1 rad/s.",
+              "Se abs(center - cx) < 10, publica angular.z = 0. Sem píxeis vermelhos, roda devagar para procurar."
             ]
           },
           "it": {
@@ -231,10 +231,10 @@
               "Pubblica zero quando è centrato e verifica dopo l’arresto."
             ],
             "hints": [
-              "Riusa maschera e centroide. All’inizio il robot non guarda il target.",
+              "center = msg->width / 2.0. Riusa maschera e centroide. All’inizio il robot non guarda il target.",
               "Un target a sinistra richiede angular.z positivo; a destra negativo.",
-              "Usa un errore come (160 - cx) / 160 e limita la velocità angolare a ±1 rad/s.",
-              "Se abs(160 - cx) < 10, pubblica angular.z = 0. Se non vedi pixel rossi, ruota lentamente per cercarli."
+              "Usa un errore come (center - cx) / center e limita la velocità angolare a ±1 rad/s.",
+              "Se abs(center - cx) < 10, pubblica angular.z = 0. Se non vedi pixel rossi, ruota lentamente per cercarli."
             ]
           }
         }

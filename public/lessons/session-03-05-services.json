@@ -2,10 +2,10 @@
   "id": "session-03-05-services",
   "title": "Call a service",
   "number": "3.5",
-  "description": "Discover /reset_robot, then create a Python Trigger client and receive its response. The robot starts displaced so you can see the reset.",
+  "description": "Discover /reset_robot, then create a Trigger client and receive its response. The robot starts displaced so you can see the reset.",
   "steps": [
     "Discover the service in a terminal.",
-    "Create the Python client and call_async with an empty Trigger.Request.",
+    "Create a client and call_async with an empty Trigger.Request.",
     "Attach a completion callback and inspect the response."
   ],
   "hints": [
@@ -100,7 +100,7 @@
     },
     "it": {
       "title": "Chiamare un servizio",
-      "description": "Individua /reset_robot, crea un client Python Trigger e ricevi la risposta. Il robot parte spostato per rendere visibile il ripristino.",
+      "description": "Individua /reset_robot, crea un client Trigger Trigger e ricevi la risposta. Il robot parte spostato per rendere visibile il ripristino.",
       "steps": [
         "Individua il servizio dal terminale.",
         "Crea il client Python e chiama call_async con una Trigger.Request vuota.",

@@ -27,3 +27,7 @@ The native manual and launch checks used separate `ROS_DOMAIN_ID` values and bou
 - Exported starter packages passed the exact native checks above. Changed source, build definitions, ROS installations and hardware require their own native verification.
 
 Reference: [Jazzy package tutorial](https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Creating-Your-First-ROS2-Package.html), [Jazzy launch tutorial](https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Launch/Launch-system.html).
+
+## Terminal / pedagogy follow-up revalidation
+
+Fresh exports were validated again on 2026-10-06 after the ecosystem terminal changes, in `/tmp/kinenest-core-final-python` and `/tmp/kinenest-core-final-cpp`, with ROS domains 141 and 142. Both ZIP archives were valid. Native `colcon build` passed; both manual publisher/subscriber pairs logged `heard: hello`, and both launches delivered `/bridge_chatter` messages, logged `received: hello` and exposed `prefix = received` on `/listener`. Processes were stopped with bounded process-group cleanup. This rerun covers build, source, manual execution, launch, remapping and parameter propagation; the intentional disconnected-graph test remains covered by the earlier validation above.

@@ -14,6 +14,5 @@ def scan(msg):
 def tick():
     publisher.publish(String(data=str(front)))
 node.create_subscription(LaserScan, '/scan', scan, 10)
-node.create_subscription(String, '/chatter', lambda msg: print(msg.data), 10)
 node.create_timer(0.2, tick)
 rclpy.spin(node)

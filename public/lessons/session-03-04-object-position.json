@@ -6,7 +6,7 @@
   "steps": [
     "Find the red pixels with a mask.",
     "Calculate their horizontal centroid and print LEFT, CENTER or RIGHT.",
-    "Call report_detection(visible, cx), then check on varied scenes."
+    "Call report_detection(visible, cx), then check on varied scenes. Before running a varied scene, predict LEFT, CENTER or RIGHT."
   ],
   "hints": [
     "Build a red-pixel mask first.",
@@ -35,7 +35,7 @@
       "steps": [
         "Vind de rode pixels met een masker.",
         "Bereken hun horizontale zwaartepunt en print LEFT, CENTER of RIGHT.",
-        "Roep report_detection(visible, cx) aan en test op verschillende scènes."
+        "Roep report_detection(visible, cx) aan en test op verschillende scènes. Voorspel vóór een nieuwe scène LEFT, CENTER of RIGHT."
       ],
       "hints": [
         "np.where geeft eerst y en daarna x.",
@@ -50,7 +50,7 @@
       "steps": [
         "Trouvez les pixels rouges avec un masque.",
         "Calculez leur centroïde horizontal et affichez LEFT, CENTER ou RIGHT.",
-        "Appelez report_detection(visible, cx), puis testez sur plusieurs scènes."
+        "Appelez report_detection(visible, cx), puis testez sur plusieurs scènes. Avant une nouvelle scène, prédisez LEFT, CENTER ou RIGHT."
       ],
       "hints": [
         "np.where renvoie y puis x.",
@@ -65,7 +65,7 @@
       "steps": [
         "Encuentra píxeles rojos mediante una máscara.",
         "Calcula el centroide horizontal y muestra LEFT, CENTER o RIGHT.",
-        "Llama a report_detection(visible, cx) y comprueba varias escenas."
+        "Llama a report_detection(visible, cx) y comprueba varias escenas. Antes de una escena nueva, predice LEFT, CENTER o RIGHT."
       ],
       "hints": [
         "Primero crea la máscara roja.",
@@ -80,7 +80,7 @@
       "steps": [
         "Finde rote Pixel mit einer Maske.",
         "Berechne ihren horizontalen Schwerpunkt und gib LEFT, CENTER oder RIGHT aus.",
-        "Rufe report_detection(visible, cx) auf und prüfe mehrere Szenen."
+        "Rufe report_detection(visible, cx) auf und prüfe mehrere Szenen. Sage vor einer neuen Szene LEFT, CENTER oder RIGHT voraus."
       ],
       "hints": [
         "Erzeuge zuerst die Rotmaske.",
@@ -95,7 +95,7 @@
       "steps": [
         "Encontra píxeis vermelhos com uma máscara.",
         "Calcula o centroide horizontal e mostra LEFT, CENTER ou RIGHT.",
-        "Chama report_detection(visible, cx) e verifica várias cenas."
+        "Chama report_detection(visible, cx) e verifica várias cenas. Antes de uma nova cena, prevê LEFT, CENTER ou RIGHT."
       ],
       "hints": [
         "Cria primeiro a máscara vermelha.",
@@ -110,7 +110,7 @@
       "steps": [
         "Trova i pixel rossi con una maschera.",
         "Calcola il centroide orizzontale e stampa LEFT, CENTER o RIGHT.",
-        "Chiama report_detection(visible, cx), poi verifica su scene diverse."
+        "Chiama report_detection(visible, cx), poi verifica su scene diverse. Prima di una nuova scena, prevedi LEFT, CENTER o RIGHT."
       ],
       "hints": [
         "Crea prima una maschera di pixel rossi.",
@@ -135,7 +135,7 @@
         "steps": [
           "Find the red pixels with a mask.",
           "Calculate their horizontal centroid and print LEFT, CENTER or RIGHT.",
-          "Call kinenest::report_detection(visible, cx), then check on varied scenes."
+          "Call kinenest::report_detection(visible, cx), then check on varied scenes. Before running a varied scene, predict LEFT, CENTER or RIGHT."
         ],
         "hints": [
           "Reuse your red-pixel threshold and count.",
@@ -149,7 +149,7 @@
             "steps": [
               "Vind de rode pixels met een masker.",
               "Bereken hun horizontale zwaartepunt en print LEFT, CENTER of RIGHT.",
-              "Roep kinenest::report_detection(visible, cx) aan en test op verschillende scènes."
+              "Roep kinenest::report_detection(visible, cx) aan en test op verschillende scènes. Voorspel vóór een nieuwe scène LEFT, CENTER of RIGHT."
             ],
             "hints": [
               "Hergebruik de drempels en telling voor rode pixels.",
@@ -163,7 +163,7 @@
             "steps": [
               "Trouvez les pixels rouges avec un masque.",
               "Calculez leur centroïde horizontal et affichez LEFT, CENTER ou RIGHT.",
-              "Appelez kinenest::report_detection(visible, cx), puis testez sur plusieurs scènes."
+              "Appelez kinenest::report_detection(visible, cx), puis testez sur plusieurs scènes. Avant une nouvelle scène, prédisez LEFT, CENTER ou RIGHT."
             ],
             "hints": [
               "Réutilisez les seuils et le comptage des pixels rouges.",
@@ -177,7 +177,7 @@
             "steps": [
               "Encuentra píxeles rojos mediante una máscara.",
               "Calcula el centroide horizontal y muestra LEFT, CENTER o RIGHT.",
-              "Llama a kinenest::report_detection(visible, cx) y comprueba varias escenas."
+              "Llama a kinenest::report_detection(visible, cx) y comprueba varias escenas. Antes de una escena nueva, predice LEFT, CENTER o RIGHT."
             ],
             "hints": [
               "Reutiliza los umbrales y el recuento de píxeles rojos.",
@@ -191,7 +191,7 @@
             "steps": [
               "Finde rote Pixel mit einer Maske.",
               "Berechne ihren horizontalen Schwerpunkt und gib LEFT, CENTER oder RIGHT aus.",
-              "Rufe kinenest::report_detection(visible, cx) auf und prüfe mehrere Szenen."
+              "Rufe kinenest::report_detection(visible, cx) auf und prüfe mehrere Szenen. Sage vor einer neuen Szene LEFT, CENTER oder RIGHT voraus."
             ],
             "hints": [
               "Verwende die Schwellwerte und Zählung für rote Pixel erneut.",
@@ -205,7 +205,7 @@
             "steps": [
               "Encontra píxeis vermelhos com uma máscara.",
               "Calcula o centroide horizontal e mostra LEFT, CENTER ou RIGHT.",
-              "Chama kinenest::report_detection(visible, cx) e verifica várias cenas."
+              "Chama kinenest::report_detection(visible, cx) e verifica várias cenas. Antes de uma nova cena, prevê LEFT, CENTER ou RIGHT."
             ],
             "hints": [
               "Reutiliza os limiares e a contagem de píxeis vermelhos.",
@@ -219,7 +219,7 @@
             "steps": [
               "Trova i pixel rossi con una maschera.",
               "Calcola il centroide orizzontale e stampa LEFT, CENTER o RIGHT.",
-              "Chiama kinenest::report_detection(visible, cx), poi verifica su scene diverse."
+              "Chiama kinenest::report_detection(visible, cx), poi verifica su scene diverse. Prima di una nuova scena, prevedi LEFT, CENTER o RIGHT."
             ],
             "hints": [
               "Riusa le soglie e il conteggio dei pixel rossi.",
