@@ -7,7 +7,8 @@ try{
  await until(()=>frame.contentDocument?.body?.dataset.lessonState==='ready');
  const d=frame.contentDocument,$=id=>d.getElementById(id),mode=name=>d.querySelector('[data-code-language="'+name+'"]').click();
  const choose=async id=>{$('lesson-select').value=id;$('lesson-select').dispatchEvent(new Event('change'));await until(()=>d.body.dataset.lessonState==='ready'&&d.body.dataset.lessonId===id);};
- assert(!frame.contentWindow.location.search,'Camera acceptance must use an ordinary URL');
+ assert(d.body.dataset.lessonId==='session-03-01-camera-subscriber','Ordinary camera URL must load the default Core lesson');
+ assert(new URL(frame.contentWindow.location.href).searchParams.get('lesson')===d.body.dataset.lessonId,'Camera lesson URL must identify the selected exercise');
  const cases=[['session-03-01-camera-subscriber','3.1'],['session-03-02-image-data','3.2'],['session-03-03-color-detection','3.3'],['session-03-04-object-position','3.4'],['session-03-05-services','3.5'],['session-03-06-target-challenge','3.6']];
  let retainedSource,serviceSource;
  for(const [id,label]of cases){

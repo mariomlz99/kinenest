@@ -94,7 +94,6 @@ async function load(id) {
     d = frame.contentDocument;
     currentSession = session;
   }
-  assert(!frame.contentWindow.location.search, 'Acceptance requires ordinary URLs');
   preference('language', 'en');
   preference('layout', 'split');
   if (d.body.dataset.lessonId !== id) {
@@ -102,6 +101,7 @@ async function load(id) {
     await until(() => d.body.dataset.lessonState === 'ready' && d.body.dataset.lessonId === id, 30, 'exercise selection');
   }
   assert(d.body.dataset.lessonId === id, 'Unexpected exercise loaded');
+  assert(new URL(frame.contentWindow.location.href).searchParams.get('lesson') === id, 'Lesson URL must identify the selected exercise');
   const boot = d.querySelector('script[src*="session3-boot.js"]');
   assert(boot, 'Missing versioned session boot script');
   const lessonURL = new URL('../../public/lessons/' + id + '.json', boot.src);

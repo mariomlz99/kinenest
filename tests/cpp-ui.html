@@ -11,7 +11,7 @@ try{
  for(const [id,label]of cases){
   if(id.startsWith('session-06-')){const previous=d;f.src='../session-06.html';await until(()=>f.contentDocument!==previous&&f.contentDocument?.body?.dataset.lessonState==='ready');d=f.contentDocument;}
   else if(d.body.dataset.lessonId!==id)await choose(id);
-  assert(!f.contentWindow.location.search,'Test must use ordinary URL');
+  assert(new URL(f.contentWindow.location.href).searchParams.get('lesson')===id,'Lesson URL must identify the selected exercise '+id);
   assert(d.body.dataset.lessonId===id,'Wrong loaded lesson '+id);
   for(const mode of ['python','cpp','compare'])assert(!d.querySelector('[data-code-language="'+mode+'"]').hidden,'Missing public mode '+mode+' '+label);
   d.querySelector('[data-code-language="compare"]').click();$('python-code').value='# retained draft';

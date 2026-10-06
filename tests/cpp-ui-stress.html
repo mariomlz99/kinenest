@@ -9,7 +9,8 @@ async function progress(row){results.push(row);await fetch('/progress',{method:'
 try{
  await until(()=>f.contentDocument?.body?.dataset.lessonState==='ready'&&f.contentDocument.documentElement.dataset.kinenestBoot==='ready');
  d=f.contentDocument;$=id=>d.getElementById(id);const win=f.contentWindow;
- assert(!win.location.search,'Use ordinary public URL');
+ assert(d.body.dataset.lessonId==='session-02-01-subscriber','Ordinary public URL must load the default Core lesson');
+ assert(new URL(win.location.href).searchParams.get('lesson')===d.body.dataset.lessonId,'Stress lesson URL must identify the selected exercise');
  d.querySelector('[data-code-language="compare"]').click();
  $('python-code').value='# retained Python stress-test draft';$('python-code').dispatchEvent(new win.Event('input',{bubbles:true}));
  const initialPose=$('pose').textContent,baselineGraph=$('graph').textContent;
