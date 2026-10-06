@@ -1,0 +1,5 @@
+# Differences from native ROS 2
+
+Real student Python runs in CPython through Pyodide. Student C++ is compiled with browser Clang/LLD to WASM. The rclpy/rclcpp-shaped shims, graph, messages, services, parameters, actions, TF and the new workspace/build/launch layers are educational subsets. `colcon build` performs meaningful language compilation and model validation, but does not execute native colcon, ament or CMake. A C++ run recompiles the installed source snapshot in its execution worker; there is no persisted native binary artifact. The terminal is not Bash, the workspace is not a Linux filesystem, and each browser worker is not an OS process.
+
+KineNest has no native DDS/RMW, discovery or QoS negotiation; no real hardware timing, network, full TF history or arbitrary ROS packages. The purpose is to make the development workflow and programming model familiar before the learner follows [official Jazzy tutorials](https://docs.ros.org/en/jazzy/Tutorials.html). Native validation status is tracked separately in `RELEASE_REPORT.md`.

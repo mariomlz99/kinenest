@@ -1,0 +1,7 @@
+# Package model
+
+The lesson supports `ros2 pkg create --build-type ament_python|ament_cmake --license Apache-2.0 NAME` from `ros2_ws/src`. It creates a Jazzy-shaped Python package (`package.xml`, `resource/NAME`, `setup.py`, `setup.cfg`, `NAME/__init__.py`, node modules) or C++ package (`package.xml`, `CMakeLists.txt`, `include/NAME`, `src/*.cpp`). Both include an installed launch file.
+
+The bounded structural `package.xml` reader checks package name, version, description, maintainer, license, build type and declared supported dependencies. It does not validate the full package manifest specification. The Python configuration reader recognizes literal `console_scripts` and the standard lib install location; entry modules are compiled and imported by CPython. The C++ reader recognizes the CMake subset documented separately, and actual source is compiled by browser Clang.
+
+References: [Jazzy package creation](https://github.com/ros2/ros2_documentation/blob/jazzy/source/Tutorials/Beginner-Client-Libraries/Creating-Your-First-ROS2-Package.rst), [Jazzy Python publisher/subscriber](https://github.com/ros2/ros2_documentation/blob/jazzy/source/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Py-Publisher-And-Subscriber.rst), [Jazzy C++ publisher/subscriber](https://github.com/ros2/ros2_documentation/blob/jazzy/source/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Cpp-Publisher-And-Subscriber.rst). Lyrical retains the same beginner package structure in its current tutorial; its documentation tree moved to `ROS-Framework/...`.

@@ -11,7 +11,7 @@ const expected={
 };
 const flagLabels={en:'Italian',nl:'Italiaans',fr:'italienne',es:'italiana',de:'italienisch',pt:'italiana',it:'italiana'};
 const contactLabels={en:'Questions?',nl:'Vragen?',fr:'Des questions ?',es:'¿Preguntas?',de:'Fragen?',pt:'Dúvidas?',it:'Domande?'};
-try{for(const page of ['index.html','session-01.html','session-02.html','session-03.html','session-04.html','session-05.html','session-06.html','about.html','licences.html','real-ros.html']){
+try{for(const page of ['index.html','session-01.html','session-02.html','session-03.html','session-04.html','session-05.html','session-06.html','bridge.html','about.html','licences.html','real-ros.html']){
  localStorage.setItem('ros2learn-language','en');await new Promise(resolve=>{frame.onload=resolve;frame.src='../'+page;});let d;
  for(let i=0;i<150;i++){d=frame.contentDocument;if(d?.getElementById('language')&&d?.querySelector('footer .attribution'))break;await wait(50);}
  const support=d.querySelector('footer a.support-link');if(support?.href!=='https://buymeacoffee.com/mariomlz99'||support.target!=='_blank'||!['noopener','noreferrer'].every(x=>support.relList.contains(x))||!support.querySelector('svg'))throw Error('Support link '+page);
@@ -27,5 +27,5 @@ try{for(const page of ['index.html','session-01.html','session-02.html','session
   if(contact?.querySelector('span')?.textContent!==contactLabels[lang]||link?.getAttribute('href')!=='mailto:hello@kinenest.com'||link.textContent!=='hello@kinenest.com')throw Error('Contact link '+page+' '+lang);
  }
  if(page==='about.html'){for(let i=0;i<100&&!d.getElementById('build-info').textContent.includes('Commit:');i++)await wait(50);if(!d.getElementById('build-info').textContent.includes('Commit:'))throw Error('About build identity missing');}
-}out.textContent='PASS: translated attribution, links and contact in seven languages on all ten public pages';}catch(e){out.textContent='FAIL: '+e.message;}await fetch('/done',{method:'POST',body:out.textContent});
+}out.textContent='PASS: translated attribution, links and contact in seven languages on all eleven public pages';}catch(e){out.textContent='FAIL: '+e.message;}await fetch('/done',{method:'POST',body:out.textContent});
 </script>

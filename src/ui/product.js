@@ -1,5 +1,6 @@
 import {pageShell} from './page-shell.js';
 import {ATTRIBUTION} from './locales.js';
+import {TRACKS} from './curriculum.js';
 // Public identity; repository paths and educational API names are independent.
 export const PRODUCT = Object.freeze({
   name: 'KineNest',
@@ -12,10 +13,10 @@ export const PRODUCT = Object.freeze({
   socialImage: 'public/assets/brand/social-preview.png',
   institutionalBranding: Object.freeze({enabled:false,logos:[]})
 });
-export const SESSIONS = ['Nodes & Topics','Callbacks & LiDAR','Perception & Services','Parameters & Actions','Odometry & Frames','Debugging Challenge'];
+export const SESSIONS = TRACKS[0].sessions.map(session=>session.title);
 export function pageSession(path){return /session-0([1-6])\.html$/.exec(path)?.[1]??null;}
-export function pageTitle(session,page='index.html'){return PRODUCT.name+' — '+(session?'Session '+session+' · '+SESSIONS[Number(session)-1]:({'about.html':'About','licences.html':'Licences','real-ros.html':'From browser to real robot'}[page]??PRODUCT.tagline));}
-export function navigation(session,page=session?'session-0'+session+'.html':'index.html'){return '<nav class="session-nav" aria-label="Course sessions"><a class="nav-home" href="./" aria-label="Home"'+(page==='index.html'?' aria-current="page"':'')+'>Home</a>'+SESSIONS.map((title,i)=>'<a href="'+('./session-0'+(i+1)+'.html')+'" aria-label="Session '+(i+1)+'"'+(String(i+1)===String(session)?' aria-current="page"':'')+'>'+(i+1)+'</a>').join('')+'<a href="./real-ros.html">Real environment</a></nav>';}
+export function pageTitle(session,page='index.html'){return PRODUCT.name+' — '+(session?'Session '+session+' · '+SESSIONS[Number(session)-1]:({'about.html':'About','licences.html':'Licences','bridge.html':'From KineNest to ROS 2','real-ros.html':'Transition to native ROS 2'}[page]??PRODUCT.tagline));}
+export function navigation(session,page=session?'session-0'+session+'.html':'index.html'){return '<nav class="session-nav" aria-label="Course sessions"><a class="nav-home" href="./" aria-label="Home"'+(page==='index.html'?' aria-current="page"':'')+'>Home</a>'+SESSIONS.map((title,i)=>'<a href="'+('./session-0'+(i+1)+'.html')+'" aria-label="Session '+(i+1)+'"'+(String(i+1)===String(session)?' aria-current="page"':'')+'>'+(i+1)+'</a>').join('')+'<a href="./bridge.html"'+(page==='bridge.html'?' aria-current="page"':'')+'>Build & launch</a><a href="./real-ros.html"'+(page==='real-ros.html'?' aria-current="page"':'')+'>Native ROS 2</a></nav>';}
 export const brandAsset=name=>new URL('../../public/assets/brand/'+name,import.meta.url).href;
 export function brandMark(icon='./public/assets/brand/kinenest-icon.png'){return '<img class="brand-icon" src="'+icon+'" alt="" width="38" height="38"><span class="brand-copy"><span class="brand-name" translate="no">'+PRODUCT.name+'</span><span class="brand-tagline" data-product-tagline>'+PRODUCT.tagline+'</span></span>';}
 export function supportLink(){return '<a class="support-link" href="'+PRODUCT.support+'" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7h12v8a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5Zm12 1h2a3 3 0 0 1 0 6h-2M2 22h18M7 2v2m6-2v2"/></svg><span>Support KineNest</span></a>';}

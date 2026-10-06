@@ -1,0 +1,7 @@
+# Build and environment model
+
+`colcon build` discovers direct packages in `src`, parses manifests/configuration, checks supported dependencies, compiles and imports Python modules with Pyodide or compiles C++ targets with browser Clang/LLD, then records modeled build/install/log state. The registry is populated only after every target in a package succeeds. Edits invalidate the appropriate package. A failed rebuild cannot leave a current executable available to `ros2 run`.
+
+The terminal command `source install/local_setup.bash` is modeled per terminal. The [Jazzy package tutorial](https://github.com/ros2/ros2_documentation/blob/jazzy/source/Tutorials/Beginner-Client-Libraries/Creating-Your-First-ROS2-Package.rst) uses this command after sourcing the base ROS installation in a new terminal. KineNest starts with its educational base environment available and models only the workspace overlay. `install/setup.bash` is accepted as a familiar equivalent, but lessons lead with `local_setup.bash`.
+
+`ros2 run` resolves only a current installed executable visible through that terminal's sourced overlay. The executable is run by its real language adapter. C++ `ros2 run` recompiles the installed source snapshot in a runtime worker; the build has already compiled and validated each target, but the browser does not persist a native-style binary artifact. Neither native colcon nor native ament runs in the browser.

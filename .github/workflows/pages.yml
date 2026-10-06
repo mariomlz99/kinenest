@@ -65,6 +65,14 @@ jobs:
         env:
           FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
         run: npm run test:cpp-course -- ${{ matrix.browser }} --built --output="$RUNNER_TEMP/cpp-course"
+      - name: Core bridge Python workspace, build, run and launch
+        env:
+          FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
+        run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=bridge-browser
+      - name: Core bridge C++ workspace, build, run and launch
+        env:
+          FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
+        run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=bridge-browser --query=language=cpp
       - name: Sensor provenance and standard C++ buffer access
         env:
           FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}

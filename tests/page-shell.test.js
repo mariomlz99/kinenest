@@ -9,11 +9,12 @@ test('landing and explicit session routes have distinct identity',()=>{
  for(let i=1;i<=6;i++)assert.equal(pageSession('/prefix/session-0'+i+'.html'),String(i));
  assert.equal(pageSession('/session-07.html'),null);
  assert.equal(pageTitle(null,'about.html'),'KineNest — About');
- assert.equal(pageTitle(null,'real-ros.html'),'KineNest — From browser to real robot');
+ assert.equal(pageTitle(null,'real-ros.html'),'KineNest — Transition to native ROS 2');
+ assert.equal(pageTitle(null,'bridge.html'),'KineNest — From KineNest to ROS 2');
  assert.match(brandMark(),/class="brand-tagline" data-product-tagline>A safe place/);
 });
 test('every public source has a synchronized first-paint shell and no-JS escape',async()=>{
- for(const name of ['index.html','session-01.html','session-02.html','session-03.html','session-04.html','session-05.html','session-06.html','about.html','licences.html','real-ros.html']){
+ for(const name of ['index.html','session-01.html','session-02.html','session-03.html','session-04.html','session-05.html','session-06.html','bridge.html','about.html','licences.html','real-ros.html']){
   const html=await readFile(new URL('../'+name,import.meta.url),'utf8');
   assert.equal(pageShell(html),html,name+': run scripts/sync-page-shell.mjs');
   assert.ok(html.indexOf('<meta charset="utf-8">')<100,name+': declare encoding before the bootstrap');

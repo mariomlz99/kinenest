@@ -10,19 +10,43 @@ async function teachingAPI(){
     catch(error){if(attempt===2)throw Error('Python teaching API failed to load: '+url.pathname+' ('+error.message+'). Reload the page and try again.');await new Promise(resolve=>setTimeout(resolve,500*(attempt+1)));}
   }
 }
+async function preparePython(){
+  postMessage({kind:'loading',text:'Loading Python runtime…'});
+  const source=await teachingAPI();
+  importScripts(INDEX+'pyodide.js');
+  pyodide=await loadPyodide({indexURL:INDEX,stdout:output,stderr:output});
+  postMessage({kind:'loading',text:'Loading NumPy…'});
+  for(let attempt=0;attempt<3;attempt++){
+    try{await pyodide.loadPackage('numpy');pyodide.runPython('import numpy');break;}
+    catch(error){if(attempt===2)throw new Error('NumPy download failed. Check the connection and try again. '+error);await new Promise(resolve=>setTimeout(resolve,500*(attempt+1)));}
+  }
+  await pyodide.runPythonAsync(source);
+}
+function installFiles(files){
+  pyodide.FS.mkdirTree('/workspace');
+  for(const [path,content] of Object.entries(files)){
+    if(path.includes('..')||path.startsWith('/'))throw Error('Invalid package path: '+path);
+    const full='/workspace/'+path,dir=full.slice(0,full.lastIndexOf('/'));
+    pyodide.FS.mkdirTree(dir);pyodide.FS.writeFile(full,content);
+  }
+  pyodide.runPython("import sys\nsys.path.insert(0, '/workspace')");
+}
 async function handle(data){
-  if(data.kind==='start'){
-    postMessage({kind:'loading',text:'Loading Python runtime…'});
-    const source=await teachingAPI();
-    importScripts(INDEX+'pyodide.js');
-    pyodide=await loadPyodide({indexURL:INDEX,stdout:output,stderr:output});
-    postMessage({kind:'loading',text:'Loading NumPy…'});
-    for(let attempt=0;attempt<3;attempt++){
-      try{await pyodide.loadPackage('numpy');pyodide.runPython('import numpy');break;}
-      catch(error){if(attempt===2)throw new Error('NumPy download failed. Check the connection and press Run again. '+error);await new Promise(resolve=>setTimeout(resolve,500*(attempt+1)));}
+  if(data.kind==='start'||data.kind==='build'){
+    await preparePython();
+    if(data.kind==='build'){
+      installFiles(data.files);
+      pyodide.globals.set('bridge_files',data.files);
+      pyodide.globals.set('bridge_entries',data.entries);
+      pyodide.globals.set('bridge_name',data.name);
+      const imports=pyodide.runPython(`import ast, importlib, json\n_imports = set()\nfor _path, _source in bridge_files.to_py().items():\n    if _path.startswith(bridge_name + '/') and _path.endswith('.py'):\n        _tree = ast.parse(_source, filename=_path)\n        compile(_tree, _path, 'exec')\n        for _node in ast.walk(_tree):\n            if isinstance(_node, ast.Import):\n                _imports.update(_alias.name for _alias in _node.names)\n            elif isinstance(_node, ast.ImportFrom) and _node.module and _node.level == 0:\n                _imports.add(_node.module)\nfor _entry in bridge_entries.to_py():\n    _module = importlib.import_module(_entry['module'])\n    if not callable(getattr(_module, _entry['function'], None)):\n        raise ValueError('Entry point ' + _entry['module'] + ':' + _entry['function'] + ' is not callable')\njson.dumps(sorted(_imports))`);
+      postMessage({kind:'build_ok',imports:JSON.parse(imports)});return;
     }
-    await pyodide.runPythonAsync(source);
-    pyodide.globals.set('student_source',data.code);
+    if(data.files&&data.entry){
+      installFiles(data.files);
+      const {module, function:callable}=data.entry;
+      pyodide.globals.set('student_source',`from ${module} import ${callable} as _bridge_main\n_bridge_main()`);
+    }else pyodide.globals.set('student_source',data.code);
     postMessage({kind:'executing'});
     pyodide.runPython('_run_student(student_source)');
     postMessage({kind:'ready'});

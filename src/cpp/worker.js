@@ -17,12 +17,13 @@ function emit(ptr,length){
 }
 async function handle(data){
  if(failed)return;
- if(data.kind==='start'){
+ if(data.kind==='start'||data.kind==='build'){
   tool=await loadToolchain({output,stage:text=>postMessage({kind:'stage',text})});
   const response=await fetch(new URL('./compat.hpp',import.meta.url),{signal:AbortSignal.timeout(15000)});if(!response.ok)throw Error('C++ compatibility header: HTTP '+response.status);const header=await response.text();
   const headers={'/include/kinenest.hpp':header};
   for(const path of ['rclcpp/rclcpp.hpp','geometry_msgs/msg/twist.hpp','sensor_msgs/msg/laser_scan.hpp','sensor_msgs/msg/image.hpp','std_msgs/msg/string.hpp','kinenest/reports.hpp','std_srvs/srv/trigger.hpp','ros2learn_interfaces/msg/target_info.hpp','nav_msgs/msg/odometry.hpp','geometry_msgs/msg/quaternion.hpp','tf2/utils.h','tf2/utils.hpp','tf2/time.h','tf2/time.hpp','tf2_ros/buffer.h','tf2_ros/buffer.hpp','tf2_ros/transform_listener.h','tf2_ros/transform_listener.hpp','geometry_msgs/msg/transform_stamped.hpp','tf2_msgs/msg/tf_message.hpp','rclcpp_action/rclcpp_action.hpp','ros2learn_interfaces/action/drive_distance.hpp'])headers['/include/'+path]='#include <kinenest.hpp>';
   const module=await tool.compile(data.code,headers);
+  if(data.kind==='build'){postMessage({kind:'build_ok',metrics:tool.metrics});return;}
   const imports={kinenest:{
    image_access:(frame,field)=>{if(frame===currentFrame){const name={1:'width',2:'height',3:'data'}[field];if(name)imageAccess.add(name);}},
    emit,spin:()=>{throw SPIN;},range_access:sample=>{if(sample===currentSample)rangeAccess=true;},

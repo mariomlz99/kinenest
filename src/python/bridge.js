@@ -9,7 +9,7 @@ export class PythonBridge extends RuntimeAdapter {
     worker.onerror=event=>{if(this.worker!==worker)return;this.output('Python worker error: '+event.message);this.stop();};
     this.status('Loading real Python and NumPy… first load requires internet.');
     this.watchdog(120000,'Python download timed out. Check your connection and try Run again.');
-    this.parameterListener=(node,name,value)=>{if(this.nodes.has(node))worker.postMessage({kind:'parameter_update',node,name,value});};this.runtime.parameterListeners.add(this.parameterListener);
-    worker.postMessage({kind:'start',code});
+    this.parameterListener=(node,name,value)=>{if(this.nodes.has(node))worker.postMessage({kind:'parameter_update',node:this.sourceNames.get(node)??node,name,value});};this.runtime.parameterListeners.add(this.parameterListener);
+    worker.postMessage(typeof code==='string'?{kind:'start',code}:{kind:'start',...code});
   }
 }

@@ -13,6 +13,6 @@ test('public source and generated branding preserve independent identity',async(
  assert.ok(html.includes('an <span role="img" aria-label="Italian">🇮🇹</span> soul'));
  assert.doesNotMatch(html,/an Italian soul/);
  assert.ok(html.includes('href="mailto:hello@kinenest.com" translate="no"'));
- assert.ok(html.includes(PRODUCT.name));assert.ok(html.includes('og:title'));assert.ok(html.includes('aria-current="page"'));assert.ok(navigation(5).includes('Real environment'));assert.ok(navigation(5).includes('class="nav-home" href="./"'));assert.ok(navigation(null,'index.html').includes('class="nav-home" href="./" aria-label="Home" aria-current="page"'));assert.ok(!navigation(null,'about.html').includes('aria-current="page"'));
+ assert.ok(html.includes(PRODUCT.name));assert.ok(html.includes('og:title'));assert.ok(html.includes('aria-current="page"'));assert.ok(navigation(5).includes('Build & launch'));assert.ok(navigation(5).includes('Native ROS 2'));assert.ok(navigation(5).includes('class="nav-home" href="./"'));assert.ok(navigation(null,'index.html').includes('class="nav-home" href="./" aria-label="Home" aria-current="page"'));assert.ok(!navigation(null,'about.html').includes('aria-current="page"'));
  const about=await readFile(new URL('about.html',root),'utf8');assert.ok(about.includes('ROS™ 2'));assert.ok(about.includes('not affiliated with or endorsed by Open Robotics'));
 });
