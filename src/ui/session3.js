@@ -106,6 +106,13 @@ async function testScenes(){
   runtime.testCase=null;runtime.targets=undefined;testing=false;$('check').disabled=false;showResults();
 }
 $('lesson-select').addEventListener('change',()=>selectLesson($('lesson-select').value).catch(error=>{$('status').textContent=error.message;}));
+window.addEventListener('popstate',()=>{
+  const requested=new URLSearchParams(location.search).get('lesson');
+  const id=catalog.find(entry=>entry.id===requested)?.id??catalog.find(entry=>!isFurther(entry.id))?.id;
+  if(!id||id===lesson?.id)return;
+  $('lesson-select').value=id;
+  selectLesson(id).catch(error=>{$('status').textContent=error.message;});
+});
 async function executeCode(language){
   const code=workspace.code(language);reset();const token=epoch;$('stop-python').disabled=false;
   try{await execution.run(language,code);}

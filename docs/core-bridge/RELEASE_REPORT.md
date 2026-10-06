@@ -1,3 +1,17 @@
+# External review follow-up — validation pending, 2026-10-06
+
+Reviewed base: `a2c4b58f77810d1d5ee30e5ee3d3d1aa59465efd`. Follow-up changes are local and uncommitted; they have no deployed commit or verified live build identity yet. **CORE READY TO FREEZE: NO — required gates remain pending.**
+
+- Replaced the obsolete empty-query Compare assertion with explicit default Core lesson and canonical lesson URL checks. Added direct frame-debug deep-link and same-document Back/Forward draft checks. Existing Compare, language preference and Session 6 round-trip checks remain.
+- Added the missing lesson-history listener, keeping in-memory drafts when history restores another exercise.
+- Added `wrong-topic-graph-debugging` within the existing terminal-browser CI suite, on Session 1's initial graph. Echo receives repeated typo-topic Twist messages while the robot stays still. Echo is stopped before asserting zero subscribers; stopping the publisher then removes the empty dynamic topic. The five requested terminal error cases are also checked.
+- Curriculum, lesson starters, bridge and package export files are unchanged. The bridge already has localized Package & Build, Run & Inspect, Launch & Debug headings and progress indicators. Existing native Jazzy evidence in [NATIVE_JAZZY_VALIDATION.md](NATIVE_JAZZY_VALIDATION.md) is retained; native revalidation was not required by this change.
+- Source inspection confirms 6.1/6.2 explicitly supply their controllers and require topic/frame repairs; 4.4 starters contain no feedback implementation. Existing Core starter coverage uses supplied starters and edits, not imported reference programs. This inspection does not substitute for a new four-way browser walkthrough.
+
+Local verification: VS Code's bundled Node 24.21.0 ran 85 tests with isolation disabled: 84 passed; the build-identity test failed because this environment's bundled runtime could not obtain Git metadata (`commit: null`). A direct runtime smoke passed repeated typo publication, echo, stationary robot, endpoint counts and topic cleanup. Changed JavaScript syntax and `git diff --check` passed. The generated local build is not release evidence.
+
+Environment blockers: outbound GitHub access fails; even Python socket creation returns `PermissionError: Operation not permitted`, so a local HTTP browser harness cannot start. The Chrome/Firefox matrix, all downstream acceptance steps, Python/C++ starter walkthroughs and live build-info verification remain unrun for this patch. No merge or deployment was performed. Run the complete existing workflow against the eventual exact commit, require every acceptance step in both browsers to pass, and record its CI URL and preview build-info before changing the freeze verdict.
+
 # Latest curriculum follow-up
 
 The reviewed Core/Further split is documented in [CORE_PATH_IMPLEMENTATION.md](CORE_PATH_IMPLEMENTATION.md), including complete required coding-starter coverage and remaining human-review/CI gates. The earlier candidate evidence below is retained as historical evidence.

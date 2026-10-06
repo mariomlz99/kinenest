@@ -24,7 +24,8 @@ try{
  assert(d.querySelector('[data-code-language="cpp"]').getAttribute('aria-pressed')==='true','Preference not retained');
  await choose('session-02-02-callbacks');assert(cpp.value==='// callback draft'&&py.value==='# callback draft','Second supported exercise lost drafts');
  const previous=d;f.src='../session-06.html';await until(()=>f.contentDocument!==previous&&f.contentDocument?.body?.dataset.lessonState==='ready');d=f.contentDocument;py=$('python-code');cpp=$('cpp-code');
- assert(!f.contentWindow.location.search,'Debugging test must use ordinary URL');
+ assert(d.body.dataset.lessonId==='session-06-01-topic-debug','Ordinary Session 6 URL must select the default Core lesson');
+ assert(new URL(f.contentWindow.location.href).searchParams.get('lesson')==='session-06-01-topic-debug','Default lesson URL must identify the selected exercise');
  assert(!d.querySelector('[data-code-language="cpp"]').hidden,'Tested debugging C++ missing');select('cpp');
  py.value='# debugging Python draft';cpp.value='// debugging C++ draft';
  await choose('session-06-02-frame-debug');
@@ -37,6 +38,22 @@ try{
  assert(d.querySelector('[data-code-language="cpp"]').getAttribute('aria-pressed')==='true','Supported round trip lost preference');
  await choose('session-06-02-frame-debug');
  assert(cpp.value==='// frame-debug C++ draft'&&py.value==='# frame-debug Python draft','Supported round trip lost frame-debug drafts');
+ // Add a same-document history entry, then select the other deep-linked lesson.
+ // Back/Forward must restore the selected lesson without discarding either draft.
+ f.contentWindow.history.pushState(null,'',f.contentWindow.location.href);
+ await choose('session-06-01-topic-debug');
+ f.contentWindow.history.back();
+ await until(()=>d.body.dataset.lessonState==='ready'&&d.body.dataset.lessonId==='session-06-02-frame-debug');
+ assert(cpp.value==='// frame-debug C++ draft'&&py.value==='# frame-debug Python draft','Back lost frame-debug drafts');
+ f.contentWindow.history.forward();
+ await until(()=>d.body.dataset.lessonState==='ready'&&d.body.dataset.lessonId==='session-06-01-topic-debug');
+ assert(cpp.value==='// debugging C++ draft'&&py.value==='# debugging Python draft','Forward lost topic-debug drafts');
+ const beforeDeepLink=d;f.src='../session-06.html?lesson=session-06-02-frame-debug';
+ await until(()=>f.contentDocument!==beforeDeepLink&&f.contentDocument?.body?.dataset.lessonState==='ready');
+ d=f.contentDocument;py=$('python-code');cpp=$('cpp-code');
+ assert(d.body.dataset.lessonId==='session-06-02-frame-debug','Direct frame-debug deep link selected wrong lesson');
+ assert(d.querySelector('[data-code-language="cpp"]').getAttribute('aria-pressed')==='true','Deep link lost code language preference');
+ select('compare');assert(!py.closest('[data-code-pane]').hidden&&!cpp.closest('[data-code-pane]').hidden,'Direct deep-link Compare panes');
  out.textContent='PASS: independent drafts, Compare layout, UI language, public supported exercise preference and Session 6 draft round trips';
 }catch(e){out.textContent='FAIL: '+e.message;}
 await fetch('/done',{method:'POST',body:out.textContent});
