@@ -1,6 +1,6 @@
 # Python launch subset
 
-The parser accepts literal `from launch import LaunchDescription`, `from launch_ros.actions import Node`, and `generate_launch_description()` returning a `LaunchDescription` list of `Node(...)` actions. Node supports package, executable, optional name, namespace, scalar parameter maps and topic remapping pairs. It parses data and never executes arbitrary launch Python. The package must be built, sourced and contain an installed `launch/*.launch.py` file.
+The parser accepts literal `from launch import LaunchDescription`, `from launch_ros.actions import Node`, and `generate_launch_description()` returning a `LaunchDescription` list of `Node(...)` actions. Node supports package, executable, optional name, namespace, scalar parameter maps and topic remapping pairs. It parses data and never executes arbitrary launch Python. The package must be built, sourced and contain an installed Python file ending in `launch.py`. The generated file is `launch/system_launch.py`: `_launch.py` is the [official Jazzy package-launch tutorial](https://github.com/ros2/ros2_documentation/blob/jazzy/source/Tutorials/Intermediate/Launch/Launch-system.rst) recommendation. A name such as `system.launch.py` is also accepted by native ROS 2 because it ends in `launch.py`, but KineNest uses the tutorial's recommended spelling.
 
 | Native ROS 2 feature | KineNest support | Notes / limitation |
 |---|---|---|

@@ -17,13 +17,15 @@ function checkSetupCfg(source,name){
 export function inspectPackage(workspace,name){
   const base=ROOT+'/src/'+name,manifest=parsePackageXml(need(workspace,base+'/package.xml'));
   if(manifest.name!==name)throw Error('package.xml name must match its package directory: '+name+'.');
-  const files=workspace.filesUnder(base),launch=Object.keys(files).filter(path=>path.startsWith('launch/')&&path.endsWith('.launch.py'));
-  if(!launch.length)throw Error('Add a launch/*.launch.py file.');
+  const files=workspace.filesUnder(base),launch=Object.keys(files).filter(path=>path.startsWith('launch/')&&path.endsWith('launch.py'));
+  if(!launch.length)throw Error('Add a Python launch file ending in launch.py.');
   checkDependency(manifest,'ros2launch');
   if(manifest.buildType==='ament_python'){
     checkDependency(manifest,'rclpy');need(workspace,base+'/resource/'+name);need(workspace,base+'/'+name+'/__init__.py');
     checkSetupCfg(need(workspace,base+'/setup.cfg'),name);
     const scripts=parsePythonSetup(need(workspace,base+'/setup.py'),name);
+    for(const file of launch)if(!scripts.launchFiles.has(file))throw Error('Launch file '+file+' is not installed by setup.py.');
+    for(const file of scripts.launchFiles)if(!Object.hasOwn(files,file))throw Error('setup.py refers to missing launch file '+file+'.');
     for(const [executable,spec] of scripts){
       const path=spec.module.replaceAll('.','/')+'.py';if(!Object.hasOwn(files,path))throw Error('Entry point '+executable+' refers to missing '+path+'.');
     }

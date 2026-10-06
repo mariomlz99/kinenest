@@ -5,8 +5,9 @@ const PACKAGE=/^[a-z][a-z0-9_]*$/;
 
 export function normalizePath(path,cwd=ROOT){
   if(typeof path!=='string'||!path||path.includes('\0'))throw Error('Enter a workspace path.');
-  if(path==='~')path=ROOT;
-  else if(path.startsWith('~/'))path=ROOT+path.slice(1);
+  if(path==='~'||path==='~/ros2_ws')path=ROOT;
+  else if(path.startsWith('~/ros2_ws/'))path=ROOT+path.slice('~/ros2_ws'.length);
+  else if(path.startsWith('~/'))throw Error('This learning workspace is limited to ~/ros2_ws.');
   const parts=(path.startsWith('/')?path:cwd+'/'+path).split('/');
   const out=[];
   for(const part of parts){if(!part||part==='.')continue;if(part==='..')out.pop();else out.push(part);}
@@ -97,8 +98,15 @@ export function parsePythonSetup(source,packageName){
     if(values[cursor]===',')cursor++;else if(values[cursor]!==']')throw Error('Expected comma in console_scripts list.');
   }
   if(!scripts.size)throw Error('setup.py has no console scripts.');
-  const launchInstall=tokens.some((token,index)=>token.kind==='string'&&token.value==='/launch'&&values[index-1]==='+'&&values[index-2]==='package_name'&&values[index-3]==='+'&&tokens[index-4]?.kind==='string'&&tokens[index-4].value==='share/');
-  if(!launchInstall)throw Error('setup.py must install the launch directory in this lesson.');
+  const launchAt=tokens.findIndex((token,index)=>token.kind==='string'&&token.value==='/launch'&&values[index-1]==='+'&&values[index-2]==='package_name'&&values[index-3]==='+'&&tokens[index-4]?.kind==='string'&&tokens[index-4].value==='share/');
+  if(launchAt<0||values[launchAt+1]!==','||values[launchAt+2]!=='[')throw Error('setup.py must install a literal launch file list in this lesson.');
+  scripts.launchFiles=new Set();let fileAt=launchAt+3;
+  while(values[fileAt]!==']'){
+    const token=tokens[fileAt++];if(!token||token.kind!=='string'||!token.value.startsWith('launch/')||!token.value.endsWith('launch.py'))throw Error('setup.py launch installation needs literal launch/*.py filenames.');
+    scripts.launchFiles.add(token.value);
+    if(values[fileAt]===',')fileAt++;else if(values[fileAt]!==']')throw Error('Expected comma in setup.py launch file list.');
+  }
+  if(!scripts.launchFiles.size)throw Error('setup.py must install at least one launch file.');
   return scripts;
 }
 
@@ -125,12 +133,12 @@ export class WorkspaceModel {
     if(type==='ament_python'){
       this.mkdir(base+'/resource');this.write(base+'/resource/'+name,'');this.mkdir(base+'/'+name);this.write(base+'/'+name+'/__init__.py','');this.write(base+'/'+name+'/publisher.py',pythonPublisher);this.write(base+'/'+name+'/subscriber.py',pythonSubscriber);
       this.write(base+'/setup.cfg',`[develop]\nscript_dir=$base/lib/${name}\n[install]\ninstall_scripts=$base/lib/${name}\n`);
-      this.write(base+'/setup.py',`from setuptools import find_packages, setup\n\npackage_name = '${name}'\nsetup(\n    name=package_name,\n    version='0.0.0',\n    packages=find_packages(exclude=['test']),\n    data_files=[('share/ament_index/resource_index/packages', ['resource/' + package_name]), ('share/' + package_name, ['package.xml']), ('share/' + package_name + '/launch', ['launch/system.launch.py'])],\n    install_requires=['setuptools'],\n    zip_safe=True,\n    maintainer='Learner',\n    maintainer_email='learner@example.com',\n    description='Two-node learning system',\n    license='Apache-2.0',\n    entry_points={'console_scripts': ['publisher = ${name}.publisher:main', 'subscriber = ${name}.subscriber:main']},\n)\n`);
+      this.write(base+'/setup.py',`from setuptools import find_packages, setup\n\npackage_name = '${name}'\nsetup(\n    name=package_name,\n    version='0.0.0',\n    packages=find_packages(exclude=['test']),\n    data_files=[('share/ament_index/resource_index/packages', ['resource/' + package_name]), ('share/' + package_name, ['package.xml']), ('share/' + package_name + '/launch', ['launch/system_launch.py'])],\n    install_requires=['setuptools'],\n    zip_safe=True,\n    maintainer='Learner',\n    maintainer_email='learner@example.com',\n    description='Two-node learning system',\n    license='Apache-2.0',\n    entry_points={'console_scripts': ['publisher = ${name}.publisher:main', 'subscriber = ${name}.subscriber:main']},\n)\n`);
     }else{
       this.mkdir(base+'/include');this.mkdir(base+'/include/'+name);this.mkdir(base+'/src');this.write(base+'/src/publisher.cpp',cppPublisher);this.write(base+'/src/subscriber.cpp',cppSubscriber);
       this.write(base+'/CMakeLists.txt',`cmake_minimum_required(VERSION 3.8)\nproject(${name})\nfind_package(ament_cmake REQUIRED)\nfind_package(rclcpp REQUIRED)\nfind_package(std_msgs REQUIRED)\nadd_executable(publisher src/publisher.cpp)\nadd_executable(subscriber src/subscriber.cpp)\nament_target_dependencies(publisher rclcpp std_msgs)\nament_target_dependencies(subscriber rclcpp std_msgs)\ninstall(TARGETS publisher subscriber DESTINATION lib/\${PROJECT_NAME})\ninstall(DIRECTORY launch DESTINATION share/\${PROJECT_NAME})\nament_package()\n`);
     }
-    this.mkdir(base+'/launch');this.write(base+'/launch/system.launch.py',`from launch import LaunchDescription\nfrom launch_ros.actions import Node\n\ndef generate_launch_description():\n    return LaunchDescription([\n        Node(package='${name}', executable='publisher', name='talker', remappings=[('chatter', 'bridge_chatter')]),\n        Node(package='${name}', executable='subscriber', name='listener', parameters=[{'prefix': 'received'}], remappings=[('chatter', 'other_chatter')]),\n    ])\n`);
+    this.mkdir(base+'/launch');this.write(base+'/launch/system_launch.py',`from launch import LaunchDescription\nfrom launch_ros.actions import Node\n\ndef generate_launch_description():\n    return LaunchDescription([\n        Node(package='${name}', executable='publisher', name='talker', remappings=[('chatter', 'bridge_chatter')]),\n        Node(package='${name}', executable='subscriber', name='listener', parameters=[{'prefix': 'received'}], remappings=[('chatter', 'other_chatter')]),\n    ])\n`);
     return base;
   }
   packages(){return this.list(ROOT+'/src').filter(e=>e.kind==='dir'&&this.exists(ROOT+'/src/'+e.name+'/package.xml')).map(e=>e.name);}

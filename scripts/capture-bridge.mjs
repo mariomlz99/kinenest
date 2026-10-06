@@ -21,10 +21,10 @@ try{
       await command(1,'ros2 pkg create --build-type '+type+' --license Apache-2.0 my_robot_pkg','Created my_robot_pkg');
       await command(1,'cd ..','~/ros2_ws');
       await command(1,'colcon build','Summary: 1 package(s) built');
-      for(let n=1;n<=3;n++)await command(n,'source install/local_setup.bash','Workspace packages are discoverable');
-      const file=[...doc.querySelectorAll('#bridge-tree button')].find(el=>el.title.endsWith('/system.launch.py'));file.click();const editor=doc.getElementById('bridge-code');editor.value=editor.value.replace('other_chatter','bridge_chatter');doc.getElementById('bridge-save').click();
+      for(let n=1;n<=3;n++)await command(n,'source ~/ros2_ws/install/local_setup.bash','Workspace packages are discoverable');
+      const file=[...doc.querySelectorAll('#bridge-tree button')].find(el=>el.title.endsWith('/system_launch.py'));file.click();const editor=doc.getElementById('bridge-code');editor.value=editor.value.replace('other_chatter','bridge_chatter');doc.getElementById('bridge-save').click();
       await command(1,'colcon build','Summary: 1 package(s) built');
-      await command(1,'ros2 launch my_robot_pkg system.launch.py','Started 2 processes');
+      await command(1,'ros2 launch my_robot_pkg system_launch.py','Started 2 processes');
       for(let i=0;i<120;i++){if(/Delivered student messages: ([1-9][0-9]*)/.test(doc.getElementById('bridge-graph').textContent))return 'ready';await wait(250);}throw Error('No launched message');
     })()`);
     if(type==='ament_python'){

@@ -8,9 +8,19 @@ import {BridgeTerminal} from '../src/bridge/terminal.js';
 import {exportPackageZip} from '../src/bridge/export.js';
 import {Runtime} from '../src/runtime/graph.js';
 import {RuntimeAdapter} from '../src/runtime/adapter.js';
+import {BRIDGE_TEXT} from '../src/ui/bridge-locales.js';
+
+test('workspace command and editor explanations exist in every UI language',()=>{
+  for(const code of ['en','nl','fr','es','de','pt','it']){
+    const text=BRIDGE_TEXT[code];
+    for(const key of ['fileHelp','filePurposeDefault','filePurposeManifest','filePurposeSetup','filePurposeSetupCfg','filePurposeCmake','filePurposeLaunch','filePurposeNode','guideTitle','guideCdSrc','guideCreate','guideCd','guideBuild','guideSource','guideRun','guideLaunch','guideInspect'])assert.ok(text[key]?.length>12,code+' '+key);
+    assert.match(text.fileHelp,/ros2_ws/);
+    assert.match(text.fileHelp,/cd src/);
+  }
+});
 
 test('workspace paths stay bounded and edits invalidate only their package',async()=>{
-  const w=new WorkspaceModel();assert.equal(normalizePath('./src'),ROOT+'/src');assert.throws(()=>normalizePath('../src'),/limited/);assert.throws(()=>normalizePath('/tmp'),/limited/);
+  const w=new WorkspaceModel();assert.equal(normalizePath('./src'),ROOT+'/src');assert.equal(normalizePath('~/ros2_ws/src'),ROOT+'/src');assert.throws(()=>normalizePath('../src'),/limited/);assert.throws(()=>normalizePath('~/other_ws'),/limited/);assert.throws(()=>normalizePath('/tmp'),/limited/);
   w.createPackage('alpha','ament_python');w.createPackage('beta','ament_cmake');
   const build=new BuildSystemAdapter(w,async task=>({kind:'build_ok',imports:task.type==='python'?['rclpy','std_msgs']:[]}));
   await build.build();assert.equal(w.installed.size,2);
@@ -31,6 +41,8 @@ test('package metadata, entry points and CMake declarations cause useful build f
   await assert.rejects(new BuildSystemAdapter(w,async()=>({imports:['std_msgs']})).build(),/std_msgs.*not declared/);
   w.write(base+'/package.xml',xml);let setup=w.read(base+'/setup.py');w.write(base+'/setup.py',setup.replace('robot.publisher:main','robot.missing:main'));
   assert.throws(()=>inspectPackage(w,'robot'),/missing robot\/missing.py/);
+  w.write(base+'/setup.py',setup.replace('launch/system_launch.py','launch/missing_launch.py'));
+  assert.throws(()=>inspectPackage(w,'robot'),/system_launch.py is not installed/);
   w.reset();w.createPackage('robot','ament_cmake');let cmake=w.read(base+'/CMakeLists.txt');w.write(base+'/CMakeLists.txt',cmake.replace('install(TARGETS publisher subscriber','install(TARGETS publisher'));
   assert.throws(()=>inspectPackage(w,'robot'),/subscriber is not installed/);
   assert.equal(parsePackageXml(xml).buildType,'ament_python');assert.equal(parseCmake(cmake,'robot').targets.size,2);
@@ -46,7 +58,7 @@ test('build failures cannot leave a stale executable discoverable',async()=>{
 
 test('launch parser applies literal node configuration and rejects arbitrary Python',()=>{
   const w=new WorkspaceModel();w.createPackage('robot','ament_python');
-  const launch=w.read(ROOT+'/src/robot/launch/system.launch.py'),actions=parseLaunch(launch);
+  const launch=w.read(ROOT+'/src/robot/launch/system_launch.py'),actions=parseLaunch(launch);
   assert.equal(actions.length,2);assert.equal(actions[1].parameters.prefix,'received');assert.deepEqual(actions[1].remappings,[['chatter','other_chatter']]);
   assert.throws(()=>parseLaunch(launch+'\nimport os'),/Unsupported statements/);
   assert.throws(()=>parseLaunch(launch.replace("'received'",'__import__("x")')),/literal/);
@@ -90,7 +102,7 @@ test('terminal requires build and source before run and rejects shell syntax',as
   const terminal=new BridgeTerminal(1,r,w,build,manager,line=>lines.push(line));
   await assert.rejects(terminal.run('ros2 run robot publisher'),/source/);
   await assert.rejects(terminal.run('ls | cat'),/Pipes/);
-  await terminal.run('cd src');await terminal.run('ros2 pkg create --build-type ament_python --license Apache-2.0 robot');await terminal.run('cd ..');await terminal.run('colcon build');
+  assert.equal(terminal.cwd,ROOT);await terminal.run('cd src');await terminal.run('ros2 pkg create --build-type ament_python --license Apache-2.0 robot');await terminal.run('cd ..');await terminal.run('colcon build');
   await terminal.run('source install/local_setup.bash');assert.equal(terminal.sourced,true);assert(lines.some(x=>x.includes('Finished <<< robot')));
 });
 
@@ -120,6 +132,6 @@ test('package export contains the editable source and package metadata',async()=
   assert.equal(blob.type,'application/zip');
   assert(text.includes('robot/package.xml'));
   assert(text.includes('robot/robot/publisher.py'));
-  assert(text.includes('robot/launch/system.launch.py'));
+  assert(text.includes('robot/launch/system_launch.py'));
   assert.equal(new DataView(data.buffer).getUint32(data.length-22,true),0x06054b50);
 });
