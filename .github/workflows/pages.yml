@@ -1,4 +1,4 @@
-name: Test and deploy KineNest
+name: Validate and publish KineNest
 on:
   push:
     branches: [main]
@@ -8,138 +8,46 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: pages-${{ github.ref }}
-  cancel-in-progress: true
+  group: kinenest-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
-  test-build:
+  validate:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
           node-version: '22'
-          package-manager-cache: false
+          cache: npm
       - run: npm ci
       - run: npm test
       - run: npm run build
-      - name: Validate static Worker configuration without publishing
-        run: npx wrangler deploy --dry-run
-      - name: Validate actual Workers root routing
-        run: node scripts/check-worker-assets.mjs
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - name: Real browser runtimes
+        run: npm run test:browser
+      - name: BASICS and product acceptance
+        run: |
+          PORT=8018 npm run preview > /tmp/kinenest-preview.log 2>&1 &
+          preview_pid=$!
+          trap 'kill "$preview_pid"' EXIT
+          for attempt in $(seq 1 40); do curl -fsS http://127.0.0.1:8018/build-info.json && break || sleep 1; done
+          SITE_URL=http://127.0.0.1:8018/ npm run test:product
+          LAB_URL=http://127.0.0.1:8018/basics.html npm run test:acceptance
+          LAB_LANGUAGE=cpp LAB_URL=http://127.0.0.1:8018/basics.html npm run test:acceptance
+          LAB_URL=http://127.0.0.1:8018/basics.html npm run test:actions
+      - uses: actions/upload-pages-artifact@v3
         with:
-          name: release-dist
           path: dist
-          if-no-files-found: error
-  browser-acceptance:
-    needs: test-build
-    runs-on: ubuntu-24.04
-    strategy:
-      fail-fast: false
-      matrix:
-        browser: [chrome, firefox]
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: '22'
-          package-manager-cache: false
-      - uses: browser-actions/setup-firefox@0bc507ddf224827e3b1af68e014d5e42ab93e795 # v1.7.2
-        if: matrix.browser == 'firefox'
-        id: firefox
-        with:
-          firefox-version: latest
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: release-dist
-          path: dist
-      - name: Full Python course, checkers and responsive acceptance
-        env:
-          FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
-        run: node scripts/check-course.mjs ${{ matrix.browser }} --built
-      - name: Real browser C++ acceptance
-        env:
-          FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
-        run: node scripts/check-cpp.mjs ${{ matrix.browser }} --built
-      - name: Full real C++ course — 25 exercises and API recovery
-        env:
-          FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
-        run: npm run test:cpp-course -- ${{ matrix.browser }} --built --output="$RUNNER_TEMP/cpp-course"
-      - name: Sensor provenance and standard C++ buffer access
-        env:
-          FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
-        run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=cpp-buffer-probe --query=expect=fixed
-      - name: C++ network failure and cache recovery
-        env:
-          FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
-        run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=cpp-network
-      - name: Bounded C++ output and Stop/Reset during compilation
-        env:
-          FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
-        run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=cpp-ui-stress
-      - name: All C++ drafts, Compare, translations and mobile controls
-        env:
-          FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
-        run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=cpp-parity-ui --query=wave=9
-      - name: Real slow C++ camera callbacks and bounded sensor queues
-        env:
-          FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
-        run: node scripts/check-browser.mjs ${{ matrix.browser }} --built --suite=cpp-camera-stress
-      - name: Visible transitions, first click and history
-        env:
-          FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
-        run: node scripts/check-transitions.mjs ${{ matrix.browser }} --output="$RUNNER_TEMP/transitions"
-      - name: Destination first paint, readiness and failure recovery
-        env:
-          FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
-        run: node scripts/check-boot.mjs ${{ matrix.browser }} --output="$RUNNER_TEMP/boot-handoff"
-      - name: Root-domain production smoke test
-        env:
-          FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}
-        run: node scripts/check-deployed.mjs ${{ matrix.browser }} --local --prefix=/ --commit="$GITHUB_SHA"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        if: always()
-        with:
-          name: transitions-${{ matrix.browser }}
-          path: |
-            ${{ runner.temp }}/transitions
-            ${{ runner.temp }}/boot-handoff
-            ${{ runner.temp }}/cpp-course
-  deploy:
-    # Preserve the working project site throughout domain migration.
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-    needs: [test-build, browser-acceptance]
-    outputs:
-      page_url: ${{ steps.deployment.outputs.page_url }}
+  publish:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: validate
     runs-on: ubuntu-24.04
     permissions:
-      contents: read
       pages: write
       id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: release-dist
-          path: dist
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
       - uses: actions/configure-pages@v5
-      - name: Deploy
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@v4
-  verify-pages:
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-    needs: deploy
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: '22'
-          package-manager-cache: false
-      - run: npm run test:deployed -- chrome --url="${{ needs.deploy.outputs.page_url }}" --commit="$GITHUB_SHA"
-      - run: node scripts/check-transitions.mjs chrome --url="${{ needs.deploy.outputs.page_url }}"

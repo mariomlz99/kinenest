@@ -1,24 +1,24 @@
 KineNest
+Derived execution components from KineNest / ROS2Learn.
 Copyright 2026 Mario Malizia and contributors
-
-ROS2Learn
 Copyright 2026 ROS2Learn contributors
+Apache License 2.0; see LICENSE.
+https://github.com/mariomlz99/kinenest
 
-Original code and lesson content are licensed under Apache License 2.0.
-This independent educational project is not affiliated with or endorsed by Open Robotics.
+C++ toolchain wrapper adapted from Ben Smith (binji/wasm-clang), Apache-2.0.
+Clang/LLVM and sysroot retain upstream licenses; see src/cpp/vendor/LICENSE*.
+The retained C++ yaw helper is derived from Open Source Robotics Foundation,
+Copyright 2014, Apache-2.0.
 ROS is a trademark of Open Source Robotics Foundation, Inc.
-Third-party runtime components retain their own licences; see public/third-party.html.
+This independent educational application is not endorsed by Open Robotics.
+Pyodide is externally loaded under MPL-2.0; CPython under the PSF license.
 
-Experimental C++: adapted shared.js by Ben Smith (binji/wasm-clang), Apache-2.0.
-Clang/LLVM and the sysroot retain their upstream licences, including LLVM
-exceptions and component notices. See src/cpp/vendor/LICENSE* and licences.html.
-Language badges (Py, C++) are original text artwork under Apache-2.0.
+Canonical ROS interface field definitions are transcribed from Jazzy packages:
+builtin_interfaces, action_msgs, std_msgs, geometry_msgs, sensor_msgs,
+nav_msgs, std_srvs and example_interfaces (Apache License 2.0), and the
+unique_identifier_msgs UUID field declaration (upstream package license: BSD).
+See docs/INTERFACES.md for source package versions and scope.
 
-The monochrome support cup is original KineNest SVG artwork, Apache-2.0.
-No Buy Me a Coffee brand asset or widget is included.
-
-The C++ yaw helper adapts the formulas and singularity convention in
-tf2/include/tf2/impl/utils.hpp (ros2/geometry2).
-Copyright 2014 Open Source Robotics Foundation, Inc. Licensed Apache-2.0.
-Modified for the educational compatibility header; no native tf2 is bundled.
-Source: https://github.com/ros2/geometry2/blob/rolling/tf2/include/tf2/impl/utils.hpp
+CodeMirror and xterm.js are bundled under their MIT licenses.
+The build retains their legal notices alongside src/vendor/ui.js.
+Fibonacci fields follow action_tutorials_interfaces (Apache-2.0).
