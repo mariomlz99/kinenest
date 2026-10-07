@@ -7,6 +7,7 @@ import {WorkspaceModel,ROOT} from '../bridge/workspace.js';
 import {BuildSystemAdapter} from '../bridge/build.js';
 import {ProcessManager} from '../bridge/processes.js';
 import {BridgeTerminal} from '../bridge/terminal.js';
+import {installCommandPaste} from '../terminal/cli.js';
 import {exportPackageZip} from '../bridge/export.js';
 
 const $=id=>document.getElementById(id),runtime=new Runtime(),workspace=new WorkspaceModel(),builder=new BuildSystemAdapter(workspace);
@@ -40,6 +41,7 @@ $('bridge-export').onclick=()=>{const name=workspace.packages()[0];if(!name){$('
 function createTerminal(){
   const id=++nextTerminal,panel=document.createElement('section');panel.className='panel terminal bridge-terminal';panel.innerHTML='<div class="panel-head"><h3>Terminal '+id+'</h3><span class="bridge-cwd">~/ros2_ws</span><span class="session-state" role="status">'+status().ready+'</span><button type="button" class="bridge-stop">'+status().stop+'</button><button type="button" class="bridge-close" aria-label="'+status().close+' '+id+'">×</button></div><pre role="log" tabindex="0" aria-label="Terminal '+id+' '+status().output+'"></pre><form><label for="bridge-command-'+id+'">$</label><input id="bridge-command-'+id+'" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" placeholder="help"><button type="submit">'+status().execute+'</button></form><p class="terminal-tip">'+status().tip+'</p>';
   const output=panel.querySelector('pre'),input=panel.querySelector('input'),stop=panel.querySelector('.bridge-stop');
+  installCommandPaste(input);
   const write=line=>{if(line==='\f'){output.textContent='';return;}const follow=output.scrollHeight-output.scrollTop-output.clientHeight<35;output.textContent=(output.textContent+'\n'+line+'\n').slice(-30000);if(follow)output.scrollTop=output.scrollHeight;};
   const terminal=new BridgeTerminal(id,runtime,workspace,builder,processes,write,()=>{panel.querySelector('.session-state').textContent=terminal.running?status().active:status().ready;panel.querySelector('.bridge-cwd').textContent=terminal.cwd.replace('/home/learner','~');stop.disabled=!terminal.running;renderGraph();});
   let history=[],cursor=0;

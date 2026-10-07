@@ -1,6 +1,6 @@
 import {ROOT,normalizePath} from './workspace.js';
 import {TerminalSession} from '../terminal/session.js';
-import {tokens} from '../terminal/cli.js';
+import {tokens,normalizeCommand} from '../terminal/cli.js';
 
 const HELP='Workspace commands: pwd, cd, ls [-a] [-l] [PATH], tree [PATH], mkdir [-p] PATH, touch PATH, cat PATH, cp [-r] SOURCE DEST, mv SOURCE DEST, rm [-r] [-f] PATH, clear. ROS commands: ros2 pkg create --build-type TYPE --license Apache-2.0 NAME, colcon build, source ~/ros2_ws/install/local_setup.bash, ros2 run PACKAGE EXECUTABLE, ros2 launch PACKAGE FILE, ros2 node list, ros2 topic list, ros2 topic echo TOPIC. Ctrl+C stops this terminal’s processes. This is a bounded educational terminal, not Bash or native ROS 2.';
 function flags(args,allowed){const found=new Set(),paths=[];let positional=false;for(const arg of args){if(arg==='--'&&!positional){positional=true;continue;}if(!positional&&arg.startsWith('-')&&arg!=='-'){const names=arg.startsWith('--')?[arg.slice(2)]:[...arg.slice(1)];for(const name of names){const key=allowed[name];if(!key)throw Error('Unsupported option: '+arg);found.add(key);}}else paths.push(arg);}return {found,paths};}
@@ -16,7 +16,7 @@ export class BridgeTerminal {
   tree(path,depth=0){const lines=[];for(const item of this.workspace.list(path)){lines.push('  '.repeat(depth)+item.name+(item.kind==='dir'?'/':''));if(item.kind==='dir'&&depth<4)lines.push(this.tree(this.path(path+'/'+item.name),depth+1));}return lines.filter(Boolean).join('\n');}
   async run(input){
     if(this.busy||this.graph.running)throw Error('Stop the active command before entering another.');
-    const command=input.trim();if(!command)return;
+    const command=normalizeCommand(input).trim();if(!command)return;
     this.history.push(command);if(this.history.length>100)this.history.shift();this.cursor=this.history.length;
     this.write('$ '+command);
     if(/[|;&<>`]/.test(command)||/\$[({A-Za-z_]/.test(command)||/[?*]/.test(command)||/^(sudo|apt|bash|sh|python3?|g\+\+|clang)\b/.test(command))throw Error('This terminal supports only the listed learning commands. Pipes, redirection, scripts, expansion, wildcards and arbitrary binaries are unavailable.');

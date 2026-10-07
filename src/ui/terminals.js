@@ -2,6 +2,7 @@ import { BridgeTerminal } from '../bridge/terminal.js';
 import { WorkspaceModel } from '../bridge/workspace.js';
 import { BuildSystemAdapter } from '../bridge/build.js';
 import { ProcessManager } from '../bridge/processes.js';
+import {installCommandPaste} from '../terminal/cli.js';
 
 export function createTerminals(runtime, onCommand) {
   const container=document.getElementById('terminals');
@@ -16,6 +17,7 @@ export function createTerminals(runtime, onCommand) {
     panel.setAttribute('aria-labelledby',headingId);
     panel.innerHTML='<div class="panel-head"><h3 id="'+headingId+'">Terminal '+id+'</h3><span class="terminal-cwd">~/ros2_ws</span><span class="session-state" role="status">Ready</span><button type="button" class="stop-echo" disabled>Stop command</button><button type="button" class="close-terminal" aria-label="Close terminal '+id+'">Close</button></div><pre tabindex="0" role="log" aria-live="off" aria-label="Terminal '+id+' output"></pre><form><label for="'+inputId+'">$ <span class="sr-only">Command in terminal '+id+'</span></label><input id="'+inputId+'" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" placeholder="ros2 topic list"><button type="submit">Execute</button></form><p class="terminal-tip">Enter to execute · ↑ / ↓ history · Ctrl+C to stop</p>';
     const output=panel.querySelector('pre'),form=panel.querySelector('form'),input=panel.querySelector('input');
+    installCommandPaste(input);
     const submit=form.querySelector('button'),stop=panel.querySelector('.stop-echo'),close=panel.querySelector('.close-terminal');
     if(first){output.id='output';form.id='terminal-form';submit.id='execute';}
     const write=text=>{

@@ -1,5 +1,15 @@
 import { setParameter } from '../runtime/course.js';
 import { interfaceType, INTERFACES } from '../runtime/interfaces.js';
+// Shell-style line continuations, before a single-line input strips newlines.
+export function normalizeCommand(input){return input.replace(/\\\r?\n/g,'');}
+export function installCommandPaste(input){
+  input.addEventListener('paste',event=>{
+    const text=event.clipboardData?.getData('text/plain');
+    if(input.readOnly||!text||!/[\r\n]/.test(text))return;
+    event.preventDefault();input.setRangeText(normalizeCommand(text).replace(/[\r\n]+/g,' '),input.selectionStart,input.selectionEnd,'end');
+    input.dispatchEvent(new Event('input',{bubbles:true}));
+  });
+}
 export function parseMessage(text) {
   let value=text.trim();
   if((value.startsWith('"')&&value.endsWith('"'))||(value.startsWith("'")&&value.endsWith("'")))value=value.slice(1,-1);
@@ -19,7 +29,7 @@ export function tokens(text){
   if(quote||depth!==0)throw new Error('Unclosed quote or message mapping');if(token)result.push(token);return result;
 }
 export function parsePublication(input){
-  const args=tokens(input.trim().replace(/^ros2\s+topic\s+pub\s+/,''));let once=false,rate=1;const positional=[];
+  const args=tokens(normalizeCommand(input).trim().replace(/^ros2\s+topic\s+pub\s+/,''));let once=false,rate=1;const positional=[];
   for(let i=0;i<args.length;i++){
     if(args[i]==='--once')once=true;
     else if(['-r','--rate'].includes(args[i])){rate=Number(args[++i]);if(!Number.isFinite(rate)||rate<1/60||rate>20)throw new Error('Lab rate must be between 1/60 and 20 Hz.');}

@@ -50,6 +50,20 @@ try{
   panels[0].querySelector('.stop-echo').click();
   const topics=await command(2,'ros2 topic list','/cmd_vel');
   assert(!topics.split('\n').includes('/cmdd_vel'),'Empty typo topic survived publisher Stop');
+  assert(!topics.split('\n').includes('/scan'),'Session 1 exposes LiDAR');
+  // Paste the same continued command learners copy from ROS documentation.
+  const pasteInput=panels[0].querySelector('input');
+  const pasted='ros2 topic pub -r 10 /cmd_vel geometry_msgs/msg/Twist \\\n"{linear: {x: 0.5}, angular: {z: 0.0}}"';
+  const pasteEvent=new Event('paste',{bubbles:true,cancelable:true});Object.defineProperty(pasteEvent,'clipboardData',{value:{getData:()=>pasted}});
+  pasteInput.dispatchEvent(pasteEvent);assert(!pasteInput.value.includes('\\'),'Pasted line continuation survived');
+  await command(0,pasteInput.value,'at 10 Hz');
+  await until(()=>panels[0].querySelector('pre').textContent.includes('publishing #11 on /cmd_vel'),'10 Hz repeated publisher');
+  panels[0].dispatchEvent(new KeyboardEvent('keydown',{key:'c',ctrlKey:true,bubbles:true}));
+  assert(!panels[0].querySelector('input').readOnly,'Ctrl+C did not restore prompt');
+  await command(0,'ros2 topic pub /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.5, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}"','at 1 Hz');
+  panels[0].querySelector('.stop-echo').click();
+  d.getElementById('reset').click();
+  const resetTopics=await command(2,'ros2 topic list','/cmd_vel');assert(!resetTopics.split('\n').includes('/scan'),'Reset restored LiDAR');
   for(const [input,message] of [
     ['ros2 topic pub --once cmdvel geometry_msgs/msg/Twist "{linear: {x: 0.6}}"','Use an absolute topic name'],
     [`ros2 topic pub --once /cmd_vel std_msgs/msg/String '{"data":"oops"}'`,'Topic type mismatch: geometry_msgs/msg/Twist'],

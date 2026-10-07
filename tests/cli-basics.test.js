@@ -4,6 +4,20 @@ import {Runtime,TWIST} from '../src/runtime/graph.js';
 import {execute,parsePublication} from '../src/terminal/cli.js';
 import {TerminalSession} from '../src/terminal/session.js';
 
+test('Session 1 omits LiDAR across reset while retaining odometry',()=>{
+ const r=new Runtime({lidar:false});
+ for(let i=0;i<2;i++){assert.deepEqual([...r.topics.keys()],['/cmd_vel','/odom']);r.step(1);assert.equal(r.latestScan,null);assert.equal(r.sensorSamples.lidar,undefined);assert.throws(()=>r.topic('/scan'));r.reset();}
+ assert.ok(new Runtime().topics.has('/scan'));
+});
+test('copied multiline Twist commands support 10 Hz, default 1 Hz and once',()=>{
+ for(const [flag,count] of [['-r 10',11],['--rate 10',11],['',2],['--once',1]]){
+  const r=new Runtime({lidar:false}),pub=new TerminalSession(r,1,()=>{});
+  pub.run('ros2 topic pub '+flag+' /cmd_vel '+TWIST+' \\\n"{linear: {x: 0.5, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}"');
+  r.step(1);assert.equal(r.publications,count);assert.ok(Math.abs(r.robot.x-.5)<1e-9);
+  assert.equal(pub.running,flag!=='--once');pub.stop();const before=r.publications;r.step(3);assert.equal(r.publications,before);assert.equal(r.robot.linear,0);assert.equal(r.topic('/cmd_vel').publishers.size,0);
+ }
+});
+
 test('core discovery commands reflect the live graph',()=>{
  const r=new Runtime();assert.match(execute(r,'ros2 topic list -t'),/cmd_vel \[geometry_msgs\/msg\/Twist\]/);
  assert.equal(execute(r,'ros2 topic find '+TWIST),'/cmd_vel');assert.match(execute(r,'ros2 node info /simulator'),/Subscribers:[\s\S]*cmd_vel/);

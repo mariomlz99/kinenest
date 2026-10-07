@@ -6,7 +6,7 @@ import { resetCourse, enableCourse, transforms, cancelGoal } from './course.js';
 import { Robot } from '../simulator/robot.js';
 export const TWIST='geometry_msgs/msg/Twist';
 export class Runtime {
-  constructor() { this.robot=new Robot(); this.reset(); }
+  constructor({lidar=true}={}) { this.lidarEnabled=lidar;this.robot=new Robot(); this.reset(); }
   reset() {
     resetCourse(this);this.world=null;this.collisions=0;this.robot.reset(); this.discovered=false; this.publications=0;
     this.latestScan=null;this.sensorSamples={};this.jobs=new Set();this.listeners=new Map(); this.time=0; this.odomElapsed=0;
@@ -17,6 +17,7 @@ export class Runtime {
       ['/odom',{type:'nav_msgs/msg/Odometry',publishers:new Set(['/simulator']),subscribers:new Set()}],
       ['/scan',{type:'sensor_msgs/msg/LaserScan',publishers:new Set(['/simulator']),subscribers:new Set()}]
     ]);
+    if(!this.lidarEnabled)this.topics.delete('/scan');
     if(this.session3Enabled)this.enableSession3();
   }
   every(period,callback){if(!Number.isFinite(period)||period<.05||period>60)throw new Error('Lab publication rate must be between 1/60 and 20 Hz.');const job={period,remaining:period,callback};this.jobs.add(job);return ()=>this.jobs.delete(job);}
@@ -75,7 +76,7 @@ export class Runtime {
       const slice=Math.min(remaining,1/60,0.2-this.odomElapsed,this.session3Enabled?CAMERA_PERIOD-this.cameraElapsed:Infinity,...[...this.jobs].map(job=>job.remaining));
       const before={x:this.robot.x,y:this.robot.y,distance:this.robot.distance};this.robot.step(slice);if(collides(this.robot,this.world)){Object.assign(this.robot,before);this.robot.command(0,0);this.collisions++;}this.time+=slice;this.odomElapsed+=slice;this.cameraElapsed+=this.session3Enabled?slice:0;remaining-=slice;
       if(this.session3Enabled&&this.cameraElapsed>=CAMERA_PERIOD-1e-12){this.cameraElapsed=0;this.cameraFrame();}
-      if(this.odomElapsed>=0.2-1e-12){this.odomElapsed=0;if(this.topics.has('/tf'))this.emit('/tf',transforms(this));this.emit('/odom',this.odometry());const scan=this.scan();this.sensorSamples.lidar={stamp:scan.header.stamp,basePose:{x:this.robot.x,y:this.robot.y,yaw:this.robot.yaw},pose:sensorPose(this.robot,'lidar')};this.latestScan=scan;this.emit('/scan',scan);}
+      if(this.odomElapsed>=0.2-1e-12){this.odomElapsed=0;if(this.topics.has('/tf'))this.emit('/tf',transforms(this));this.emit('/odom',this.odometry());if(this.lidarEnabled){const scan=this.scan();this.sensorSamples.lidar={stamp:scan.header.stamp,basePose:{x:this.robot.x,y:this.robot.y,yaw:this.robot.yaw},pose:sensorPose(this.robot,'lidar')};this.latestScan=scan;this.emit('/scan',scan);}}
       for(const job of [...this.jobs]){job.remaining-=slice;if(job.remaining<1e-12){job.remaining=job.period;job.callback();}}
     }
   }
