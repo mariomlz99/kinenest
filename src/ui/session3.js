@@ -71,7 +71,7 @@ function renderPath(){
   if(!path){path=document.createElement('aside');path.id='lesson-path';path.className='lesson-path';$('description').after(path);}
   const optional=isFurther(lesson.id);
   path.replaceChildren();
-  const label=document.createElement('strong');label.textContent=translate(optional?'Further exercises — optional':'Core exercise');path.append(label);
+  const label=document.createElement('strong');label.textContent=translate(optional?'Further exercises: optional':'Core exercise');path.append(label);
   const note=document.createElement('p');note.textContent=translate(optional?'Optional practice. You can complete Core without this exercise.':'Follow the Core exercises, then continue to Build & launch. Further exercises are optional.');path.append(note);
   if(optional){const preparation=document.createElement('p');preparation.append(translate('Preparation')+': ');for(const [i,id] of (FURTHER_PREREQUISITES[lesson.id]??[]).entries()){if(i)preparation.append(' · ');const a=document.createElement('a');a.href=lessonHref(id);a.textContent=Number(id.slice(8,10))+'.'+Number(id.slice(11,13));preparation.append(a);}path.append(preparation);}
   const next=optional?CORE_EXERCISES.find(id=>id.slice(0,10)===lesson.id.slice(0,10)):CORE_EXERCISES[CORE_EXERCISES.indexOf(lesson.id)+1];
@@ -81,8 +81,8 @@ function renderCatalog(){
   const select=$('lesson-select'),selected=select.value;select.replaceChildren();
   for(const optional of [false,true]){
     const entries=catalog.filter(entry=>isFurther(entry.id)===optional);if(!entries.length)continue;
-    const group=document.createElement('optgroup');group.label=translate(optional?'Further exercises — optional':'Core exercises');
-    for(const entry of entries){const option=document.createElement('option');option.value=entry.id;option.textContent=entry.number+' — '+(entry.translations?.[language()]??entry.title);group.append(option);}
+    const group=document.createElement('optgroup');group.label=translate(optional?'Further exercises: optional':'Core exercises');
+    for(const entry of entries){const option=document.createElement('option');option.value=entry.id;option.textContent=entry.number+': '+(entry.translations?.[language()]??entry.title);group.append(option);}
     select.append(group);
   }
   if(selected)select.value=selected;

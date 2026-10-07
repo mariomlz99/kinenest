@@ -17,7 +17,7 @@ export function installNavigationTransitions({root=document,navigate=url=>locati
   if(url.origin!==location.origin||!url.pathname.startsWith(base.pathname)||url.hash||url.pathname===location.pathname||!(/\.html$/.test(url.pathname)||url.pathname.endsWith('/')))return;
   event.preventDefault();if(busy)return;wasInert=document.body.inert;busy=true;document.body.inert=true;
   let previous;try{previous=sessionStorage.getItem('kinenest-transition');}catch{}
-  const variant=VARIANTS.includes(forcedVariant)?forcedVariant:'robot-yaw';try{sessionStorage.setItem('kinenest-transition',variant);}catch{}
+  const variant=VARIANTS.includes(forcedVariant)?forcedVariant:chooseTransitionVariant(previous);try{sessionStorage.setItem('kinenest-transition',variant);}catch{}
   const calm=reducedMotion();
   if(!calm){try{sessionStorage.setItem('kinenest-motion-handoff',JSON.stringify({startedAt:Date.now(),destination:url.href}));}catch{}overlay=createTransition({variant,reducedMotion:false});document.body.append(overlay);}
   timer=setTimeout(()=>{try{navigate(url.href);}catch{clear();}},calm?0:dwell);

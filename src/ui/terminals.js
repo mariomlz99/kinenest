@@ -29,7 +29,7 @@ export function createTerminals(runtime, onCommand) {
       input.readOnly=foreground;submit.disabled=foreground;stop.disabled=!session.running;
       panel.querySelector('.session-state').textContent=session.running?'Command running':'Ready';
       panel.querySelector('.terminal-cwd').textContent=session.cwd.replace('/home/learner','~');
-      input.placeholder=foreground?'Command active — Ctrl+C to stop':'ros2 topic list';
+      input.placeholder=foreground?'Command active: Ctrl+C to stop':'ros2 topic list';
     });
     form.addEventListener('submit',async event=>{
       event.preventDefault();const text=input.value.trim();if(!text||session.busy||session.graph.running)return;

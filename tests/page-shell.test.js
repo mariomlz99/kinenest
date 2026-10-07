@@ -8,9 +8,9 @@ test('landing and explicit session routes have distinct identity',()=>{
  assert.equal(pageSession('/'),null);assert.equal(pageSession('/index.html'),null);
  for(let i=1;i<=6;i++)assert.equal(pageSession('/prefix/session-0'+i+'.html'),String(i));
  assert.equal(pageSession('/session-07.html'),null);
- assert.equal(pageTitle(null,'about.html'),'KineNest — About');
- assert.equal(pageTitle(null,'real-ros.html'),'KineNest — Transition to native ROS 2');
- assert.equal(pageTitle(null,'bridge.html'),'KineNest — From KineNest to ROS 2');
+ assert.equal(pageTitle(null,'about.html'),'KineNest: About');
+ assert.equal(pageTitle(null,'real-ros.html'),'KineNest: Transition to native ROS 2');
+ assert.equal(pageTitle(null,'bridge.html'),'KineNest: From KineNest to ROS 2');
  assert.match(brandMark(),/class="brand-tagline" data-product-tagline>A safe place/);
 });
 test('every public source has a synchronized first-paint shell and no-JS escape',async()=>{

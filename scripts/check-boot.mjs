@@ -66,7 +66,7 @@ try{
   assert.ok(samples?.length,'No destination paint samples');
   const loading=samples.filter(s=>s.boot==='loading');
   if(!remote)assert.ok(loading.length,'Missing loading frame');
-  for(const s of loading){assert.equal(s.logoAnimation,'kn-boot-spin','Destination must not replace the spinning logo with a static image');assert.equal(s.logoIterations,'infinite');}
+  for(const s of loading){assert.equal(s.logoAnimation,'kn-boot-spin','Destination must not replace the spinning logo with a static image');assert.equal(s.logoIterations,'1');}
   if(loading.length>2)assert.ok(new Set(loading.map(s=>s.logoTransform)).size>1,'Destination logo stopped rotating');
   for(const s of samples){
    assert.equal(s.theme,theme,'Wrong-theme first paint');assert.equal(s.lang,lang,'Wrong-language first paint');
@@ -87,11 +87,11 @@ try{
   await b.navigate(base+from);await ready();
   await b.evaluate('document.querySelector(".session-nav a[href=\\"./'+to+'\\"]").click();true');
   await wait(350);await capture(from+'-outgoing');
-  assert.equal(await b.evaluate('getComputedStyle(document.querySelector(".page-transition img")).animationIterationCount'),'infinite');
-  assert.equal(await b.evaluate('getComputedStyle(document.querySelector(".page-transition svg")).display'),'none','Navigation must show only the rotating logo');
+  assert.equal(await b.evaluate('getComputedStyle(document.querySelector(".page-transition img")).animationIterationCount'),'1');
+  assert.notEqual(await b.evaluate('getComputedStyle(document.querySelector(".page-transition svg")).display'),'none','Original transition artwork must remain available');
   if(!remote){await until('location.pathname.endsWith('+JSON.stringify(to)+')&&document.documentElement.dataset.kinenestBoot==="loading"');await capture(from+'-incoming');}
   await until('location.pathname.endsWith('+JSON.stringify(to)+')&&document.documentElement.dataset.kinenestBoot==="ready"');
-  assert.ok(Number.parseFloat(await b.evaluate('document.documentElement.style.getPropertyValue("--kn-motion-delay")'))<=0,'Destination did not continue the outgoing rotation phase');
+  assert.equal(await b.evaluate('getComputedStyle(document.querySelector("#kn-boot-cover img")).visibility'),'hidden','Destination must not flash a second logo after the single outgoing animation');
   await capture(from+'-complete');
  }
  // Direct reload and back/forward use the same contract.
