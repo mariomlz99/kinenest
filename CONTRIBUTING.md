@@ -1,9 +1,9 @@
 # Contributing
 
-Read README.md and docs/ARCHITECTURE.md. Keep student execution static and installation-free. Run npm test and npm run build with Node.js 22+; no dependency installation is needed.
+Use GitHub issues for reproducible bugs and focused proposals. Include the browser, interface/programming language, unit and step, commands, expected behavior and actual output. Remove personal data from workspace exports before sharing.
 
-Edit public/lessons/topics-01.json for mission wording, hints and thresholds. New concepts may require runtime/checker extensions and tests.
+Keep one clear BASICS path. A feature should teach a concrete ROS concept, work through the visible terminal/editor workflow, and state its browser limits. Keep commands and code unchanged by interface translations.
 
-Verify CLI → robot → check → reset in a browser at the domain root and under a project subpath, keyboard navigation and laptop layout. Discuss dependencies and backend changes first. Never commit credentials or dist. Contributions are under Apache-2.0; third-party dependencies keep their own licences.
+Run `npm test` and `npm run build`. For runtime changes, run the relevant real-browser checks; action changes must cover both server languages, both client languages, rejection, feedback, success, cancellation and cleanup. For exported examples, check native ROS 2 Jazzy as well.
 
-For course lessons, include EN/NL/FR teaching text while keeping code and ROS identifiers unchanged. Add reference programs under tests/python/course and behavioural checks under src/exercises; never bundle reference answers into public/. Run the relevant browser suite before expanding a runtime API. Full course acceptance commands run all six sessions. Test layout/theme/language switches without resetting student work.
+Generated builds, browser profiles, screenshots and local checkpoints do not belong in the source repository. Put short release evidence in `docs/RELEASE.md`; older evidence remains in Git history.

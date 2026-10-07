@@ -1,105 +1,19 @@
-import {SENSORS,sensorPose} from '../simulator/sensors.js';
-import { laserScan, collides } from '../simulator/lidar.js';
-import { renderCamera, inspectPixels, CAMERA_PERIOD } from '../simulator/camera.js';
-import { newEvidence } from '../exercises/perception.js';
-import { resetCourse, enableCourse, transforms, cancelGoal } from './course.js';
-import { Robot } from '../simulator/robot.js';
-export const TWIST='geometry_msgs/msg/Twist';
-export class Runtime {
-  constructor({lidar=true}={}) { this.lidarEnabled=lidar;this.robot=new Robot(); this.reset(); }
-  reset() {
-    resetCourse(this);this.world=null;this.collisions=0;this.robot.reset(); this.discovered=false; this.publications=0;
-    this.latestScan=null;this.sensorSamples={};this.jobs=new Set();this.listeners=new Map(); this.time=0; this.odomElapsed=0;
-    this.nodes=new Set(['/simulator']);
-    this.services=new Map();this.evidence=newEvidence();this.cameraElapsed=0;this.frameId=0;this.frames=new Map();this.camera=null;this.targets=undefined;this.testCase=null;
-    this.topics=new Map([
-      ['/cmd_vel',{type:TWIST,publishers:new Set(),subscribers:new Set(['/simulator'])}],
-      ['/odom',{type:'nav_msgs/msg/Odometry',publishers:new Set(['/simulator']),subscribers:new Set()}],
-      ['/scan',{type:'sensor_msgs/msg/LaserScan',publishers:new Set(['/simulator']),subscribers:new Set()}]
-    ]);
-    if(!this.lidarEnabled)this.topics.delete('/scan');
-    if(this.session3Enabled)this.enableSession3();
-  }
-  every(period,callback){if(!Number.isFinite(period)||period<.05||period>60)throw new Error('Lab publication rate must be between 1/60 and 20 Hz.');const job={period,remaining:period,callback};this.jobs.add(job);return ()=>this.jobs.delete(job);}
-  stamp(){const nanos=Math.round(this.time*1e9);return {sec:Math.floor(nanos/1e9),nanosec:nanos%1e9};}
-  scan(){return laserScan(this.robot,this.world,this.stamp());}
-  ensureTopic(name,type){if(!/^\/[A-Za-z_][A-Za-z_0-9/]*$/.test(name))throw new Error('Use an absolute topic name such as /chatter');const existing=this.topics.get(name);if(existing&&existing.type!==type)throw new Error('Topic type mismatch: '+existing.type);if(!existing)this.topics.set(name,{type,publishers:new Set(),subscribers:new Set(),dynamic:true});return this.topic(name);}
-  removeEmptyTopics(){for(const [name,t] of this.topics)if(t.dynamic&&!t.publishers.size&&!t.subscribers.size)this.topics.delete(name);}
-  enableSession3() {
-    this.session3Enabled=true;enableCourse(this);
-    this.topics.set('/camera/image_raw',{type:'sensor_msgs/msg/Image',publishers:new Set(['/simulator']),subscribers:new Set()});
-    this.nodes.add('/reset_server');
-    this.services.set('/reset_robot',{type:'std_srvs/srv/Trigger',node:'/reset_server',clients:new Set(),handler:()=>{for(const id of this.goals.keys())cancelGoal(this,id);this.robot.reset();return {success:true,message:'Robot reset'};}});
-  }
-  service(name){const service=this.services.get(name);if(!service)throw new Error('Unknown service: '+name);return service;}
-  callService(name,type,request={}) {
-    const service=this.service(name);if(type!==service.type)throw new Error('Expected '+service.type);
-    if(!request||typeof request!=='object'||Array.isArray(request)||Object.keys(request).length)throw new Error('Trigger request must be empty.');
-    return service.handler(request);
-  }
-  cameraFrame() {
-    const image=renderCamera(this.robot,this.targets,this.world);image.header={stamp:this.stamp(),frame_id:SENSORS.camera.frame};
-    this.emit('/tf',transforms(this));
-    this.sensorSamples.camera={stamp:image.header.stamp,basePose:{x:this.robot.x,y:this.robot.y,yaw:this.robot.yaw},pose:sensorPose(this.robot,'camera')};
-    this.camera=image;const id=++this.frameId,truth=inspectPixels(image);
-    this.frames.set(id,{truth,caseId:this.testCase??'practice'});if(this.frames.size>32)this.frames.delete(this.frames.keys().next().value);
-    if(truth.visible&&Math.abs(truth.cx-160)<12&&Math.abs(this.robot.angular)<0.02&&Math.abs(this.robot.linear)<0.02)this.evidence.centeredFrames++;else this.evidence.centeredFrames=0;
-    this.emit('/camera/image_raw',{...image,_frameId:id});
-  }
-  topic(name) { const topic=this.topics.get(name); if(!topic) throw new Error('Unknown topic: '+name); return topic; }
-  subscribe(topicName, nodeName, callback, {existingNode=false,id=nodeName}={}) {
-    const topic=this.topic(topicName);
-    if(this.nodes.has(nodeName)&&!existingNode) throw new Error('Subscriber node already exists: '+nodeName);
-    const listeners=this.listeners, nodes=this.nodes;
-    const entries=listeners.get(topicName)??new Map();
-    listeners.set(topicName,entries); entries.set(id,callback);
-    nodes.add(nodeName); topic.subscribers.add(nodeName);
-    return ()=>{entries.delete(id);if(![...entries.keys()].some(key=>String(key).startsWith(nodeName+':')))topic.subscribers.delete(nodeName);if(!existingNode)nodes.delete(nodeName);this.removeEmptyTopics();};
-  }
-  emit(topic, message, publisher=null) {
-    for(const callback of [...(this.listeners.get(topic)?.values()??[])]) callback(structuredClone(message),publisher);
-  }
-  odometry() {
-    const r=this.robot, nanos=Math.round(this.time*1e9);
-    return {
-      header:{stamp:{sec:Math.floor(nanos/1e9),nanosec:nanos%1e9},frame_id:'odom'},
-      child_frame_id:'base_link',
-      pose:{pose:{position:{x:r.x,y:r.y,z:0},orientation:{x:0,y:0,z:Math.sin(r.yaw/2),w:Math.cos(r.yaw/2)}},covariance:Array(36).fill(0)},
-      twist:{twist:{linear:{x:r.linear,y:0,z:0},angular:{x:0,y:0,z:r.angular}},covariance:Array(36).fill(0)}
-    };
-  }
-  step(dt) {
-    if(!Number.isFinite(dt)||dt<0) throw new Error('Invalid timestep');
-    // Integrate to each 5 Hz odometry boundary, independent of caller step size.
-    let remaining=dt;
-    while(remaining>1e-12) {
-      const slice=Math.min(remaining,1/60,0.2-this.odomElapsed,this.session3Enabled?CAMERA_PERIOD-this.cameraElapsed:Infinity,...[...this.jobs].map(job=>job.remaining));
-      const before={x:this.robot.x,y:this.robot.y,distance:this.robot.distance};this.robot.step(slice);if(collides(this.robot,this.world)){Object.assign(this.robot,before);this.robot.command(0,0);this.collisions++;}this.time+=slice;this.odomElapsed+=slice;this.cameraElapsed+=this.session3Enabled?slice:0;remaining-=slice;
-      if(this.session3Enabled&&this.cameraElapsed>=CAMERA_PERIOD-1e-12){this.cameraElapsed=0;this.cameraFrame();}
-      if(this.odomElapsed>=0.2-1e-12){this.odomElapsed=0;if(this.topics.has('/tf'))this.emit('/tf',transforms(this));this.emit('/odom',this.odometry());if(this.lidarEnabled){const scan=this.scan();this.sensorSamples.lidar={stamp:scan.header.stamp,basePose:{x:this.robot.x,y:this.robot.y,yaw:this.robot.yaw},pose:sensorPose(this.robot,'lidar')};this.latestScan=scan;this.emit('/scan',scan);}}
-      for(const job of [...this.jobs]){job.remaining-=slice;if(job.remaining<1e-12){job.remaining=job.period;job.callback();}}
-    }
-  }
-  publish(topic,type,msg,publisher=null) {
-    if(type==='ros2learn_interfaces/msg/TargetInfo'){
-      if(!msg||typeof msg.visible!=='boolean'||typeof msg.position!=='string'||typeof msg.confidence!=='number'||!Number.isFinite(msg.confidence)||msg.confidence<0||msg.confidence>1||Object.keys(msg).some(k=>!['visible','position','confidence'].includes(k)))throw Error('TargetInfo needs bool visible, string position and confidence in [0,1]');
-      this.ensureTopic(topic,type);this.course.custom=(this.course.custom??0)+1;this.emit(topic,msg,publisher);return;
-    }
-    if(type==='std_msgs/msg/String'){if(!msg||typeof msg.data!=='string'||Object.keys(msg).some(k=>k!=='data'))throw new Error('String requires {data: "text"}');this.ensureTopic(topic,type);this.emit(topic,{data:msg.data},publisher);return;}
-    if(type!==TWIST)throw new Error('Publishing supports geometry_msgs/msg/Twist and std_msgs/msg/String.');
-    const existing=this.topics.get(topic);if(existing&&existing.type!==type)throw new Error('Expected '+existing.type);
-    if (!msg || typeof msg!=='object' || Array.isArray(msg)) throw new Error('Twist must be a mapping.');
-    for(const [field,vector] of Object.entries(msg)) {
-      if(!['linear','angular'].includes(field) || !vector || typeof vector!=='object' || Array.isArray(vector)) throw new Error('Expected linear/angular vector mappings.');
-      for(const [axis,value] of Object.entries(vector)) {
-        if(!['x','y','z'].includes(axis) || typeof value!=='number' || !Number.isFinite(value)) throw new Error('Vector components must be finite numbers.');
-        if(value!==0 && !((field==='linear' && axis==='x') || (field==='angular' && axis==='z'))) throw new Error('This 2D lab supports only linear.x and angular.z; leave other components zero.');
-      }
-    }
-    const linear=msg.linear?.x??0, angular=msg.angular?.z??0;
-    if(Math.abs(linear)>2 || Math.abs(angular)>3) throw new Error('Lab limits: |linear.x| ≤ 2 m/s, |angular.z| ≤ 3 rad/s.');
-    this.ensureTopic(topic,type);
-    if(topic==='/cmd_vel'){this.discovered=true;this.publications++;this.robot.command(linear,angular);}
-    this.emit(topic,{linear:{x:linear,y:0,z:0},angular:{x:0,y:0,z:angular}},publisher);
-  }
+import {Actions} from './actions.js';
+import {InterfaceRegistry} from '../interfaces/registry.js';
+export class Runtime{
+ constructor(registry=new InterfaceRegistry()){this.registry=registry;this.nodes=new Set();this.topics=new Map();this.listeners=new Map();this.parameters=new Map();this.parameterTypes=new Map();this.parameterListeners=new Set();this.services=new Map();this.actions=new Actions(this);this.jobs=new Set();this.samples=new Map();this.sampleCounter=0;this.serviceCalls=[];this.parameterChanges=[];this.onChange=()=>{};this.interfaces=new Map([['std_msgs/msg/String','string data'],['example_interfaces/srv/AddTwoInts','int64 a\nint64 b\n---\nint64 sum']]);this.systemNode='/_ros2cli_daemon';this.ensureSystemTopics();}
+ ensureSystemTopics(){for(const [name,type]of [['/rosout','rcl_interfaces/msg/Log'],['/parameter_events','rcl_interfaces/msg/ParameterEvent']])this.ensureTopic(name,type).publishers.add(this.systemNode);}
+ addNode(node){this.nodes.add(node);for(const topic of ['/rosout','/parameter_events'])this.topics.get(topic).publishers.add(node);}
+ removeNode(node){this.nodes.delete(node);this.parameters.delete(node);this.parameterTypes.delete(node);for(const t of this.topics.values()){t.publishers.delete(node);t.subscribers.delete(node);}this.removeEmptyTopics();}
+ stamp(){const now=Date.now();return {sec:Math.floor(now/1000),nanosec:(now%1000)*1000000};}
+ log(node,text,level=20){const message=this.registry.complete('rcl_interfaces/msg/Log',{stamp:this.stamp(),level,name:node.replace(/^\//,''),msg:String(text)});this.publish('/rosout','rcl_interfaces/msg/Log',message,{node});}
+ parameterEvent(node,name,value,kind='changed_parameters',valueType){const p=this.registry.defaultMessage('rcl_interfaces/msg/ParameterValue');p.type=valueType??this.parameterTypes.get(node)?.get(name)??(typeof value==='boolean'?1:typeof value==='string'?4:Number.isInteger(value)?2:3);p[{1:'bool_value',2:'integer_value',3:'double_value',4:'string_value'}[p.type]]=value;this.publish('/parameter_events','rcl_interfaces/msg/ParameterEvent',{stamp:this.stamp(),node,new_parameters:[],changed_parameters:[],deleted_parameters:[],[kind]:[{name,value:p}]},{node});}
+ ensureTopic(name,type){if(!/^\/[A-Za-z_][A-Za-z_0-9/]*$/.test(name))throw Error('Invalid topic name '+name);const t=this.topics.get(name);if(t&&t.type!==type)throw Error('Topic type mismatch: '+t.type+' versus '+type);if(!t)this.topics.set(name,{type,publishers:new Set(),subscribers:new Set()});return this.topics.get(name);}
+ removeEmptyTopics(){for(const [n,t]of this.topics)if(!t.publishers.size&&!t.subscribers.size)this.topics.delete(n);this.onChange();}
+ subscribe(topic,node,fn,{type=this.topics.get(topic)?.type,id=Symbol()}={}){if(!type)throw Error('Unknown topic '+topic);this.ensureTopic(topic,type).subscribers.add(node);this.listeners.set(id,{topic,node,fn});this.onChange();return()=>{this.listeners.delete(id);if(![...this.listeners.values()].some(l=>l.topic===topic&&l.node===node))this.topics.get(topic)?.subscribers.delete(node);this.removeEmptyTopics();};}
+ publish(topic,type,message,publisher){const t=this.ensureTopic(topic,type);this.registry.validate(type,message);const sample=++this.sampleCounter;this.samples.set(sample,{topic,type,publisher:publisher?.node,message,receivedBy:new Set()});if(this.samples.size>100)this.samples.delete(this.samples.keys().next().value);for(const l of [...this.listeners.values()])if(l.topic===topic)l.fn(structuredClone(message),publisher,sample);this.onChange();}
+ every(period,fn){if(!Number.isFinite(period)||period<0.05||period>60)throw Error('Browser timer period must be between 0.05 and 60 seconds');const id=setInterval(fn,period*1000);this.jobs.add(id);return()=>{clearInterval(id);this.jobs.delete(id);};}
+ setParameter(node,name,value){const p=this.parameters.get(node);if(!p?.has(name))throw Error('Parameter not declared: '+node+' '+name);if(typeof p.get(name)!==typeof value)throw Error('Parameter type cannot change');if(typeof value==='number'&&!Number.isFinite(value))throw Error('Parameter must be finite');const parameterType=this.parameterTypes.get(node)?.get(name);if((parameterType===2||parameterType===undefined&&Number.isInteger(p.get(name)))&&typeof value==='number'&&!Number.isSafeInteger(value))throw Error('Integer parameter requires an exact integer');if(name==='publish_rate'&&(value<0.1||value>20))throw Error('publish_rate must be between 0.1 and 20 Hz');this.parameterChanges.push({node,name,value,after:this.sampleCounter});p.set(name,value);this.parameterEvent(node,name,value);for(const f of this.parameterListeners)f(node,name,value);this.onChange();}
+ async callService(name,type,request){const s=this.services.get(name);if(!s)throw Error('Service not available: '+name);if(type!==s.type)throw Error('Service type mismatch');this.registry.validate(type,request);const result=await s.handler(request);this.registry.validate(type,result,true);this.serviceCalls.push({name,type,request,result});return result;}
+ reset(){this.actions.reset();for(const id of this.jobs)clearInterval(id);this.jobs.clear();this.nodes.clear();this.topics.clear();this.listeners.clear();this.parameters.clear();this.parameterTypes.clear();this.parameterListeners.clear();this.services.clear();this.samples.clear();this.serviceCalls=[];this.parameterChanges=[];this.ensureSystemTopics();this.onChange();}
 }

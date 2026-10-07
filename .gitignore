@@ -1,8 +1,11 @@
-dist/
 node_modules/
-.DS_Store
-
-# Local Cloudflare tooling state (never deployed)
+dist/
+artifacts/
+src/vendor/
 .wrangler/
 .dev.vars
 .dev.vars.*
+.DS_Store
+# Local handoff notes are not product source.
+/CHECKPOINT.md
+/docs/checkpoints/
