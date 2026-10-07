@@ -115,7 +115,7 @@
     "cpp": {
       "supported": true,
       "experimental": true,
-      "starterCode": "#include <rclcpp/rclcpp.hpp>\n#include <sensor_msgs/msg/laser_scan.hpp>\n#include <geometry_msgs/msg/twist.hpp>\n#include <cmath>\n\nclass Controller : public rclcpp::Node {\npublic:\n    Controller() : Node(\"student_controller\") {\n        // TODO: create a Twist publisher and LaserScan subscription.\n    }\nprivate:\n    void receive(sensor_msgs::msg::LaserScan::SharedPtr msg) {\n        // TODO: find the front sector; choose forward motion or a left turn.\n    }\n    rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr publisher_;\n    rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_;\n};\n\nint main() {\n    rclcpp::init();\n    rclcpp::spin(std::make_shared<Controller>());\n}\n",
+      "starterCode": "#include <rclcpp/rclcpp.hpp>\n#include <sensor_msgs/msg/laser_scan.hpp>\n#include <geometry_msgs/msg/twist.hpp>\n#include <cmath>\n\nclass Controller : public rclcpp::Node {\npublic:\n    Controller() : Node(\"student_controller\") {\n        // TODO: create a Twist publisher and LaserScan subscription.\n    }\nprivate:\n    void receive(sensor_msgs::msg::LaserScan::SharedPtr msg) {\n        // TODO: find the front sector; choose forward motion or a left turn.\n    }\n    rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr publisher_;\n    rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_;\n};\n\nint main(int argc, char **argv) {\n    rclcpp::init(argc, argv);\n    rclcpp::spin(std::make_shared<Controller>());\n}\n",
       "visibility": "public"
     }
   }

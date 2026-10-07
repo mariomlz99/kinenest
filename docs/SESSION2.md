@@ -1,6 +1,6 @@
 # Session 2 — subscribers and reactive control
 
-Four exercises: receive LaserScan, share callback state through String pub/sub and a timer, calculate three angular sectors, then avoid a block. Suggested pacing: 15-minute explanation, 10 + 15 + 15 + 20 minutes of exercises, 10 minutes debugging and 5 minutes discussion.
+Four exercises: receive LaserScan, share callback state through String publication and a timer, calculate three angular sectors, then avoid a block. Exercises 2.1–2.2 are Core; 2.3–2.4 are optional Further practice. Suggested pacing: 15-minute explanation, 10 + 15 + 15 + 20 minutes of exercises, 10 minutes debugging and 5 minutes discussion.
 
 The scan has 120 beams at 5 Hz, starts at −π, and uses actual rectangular-obstacle/boundary intersections. The laser_link origin is 0.2 m ahead of base_link. Angles are in radians, distances in metres, and no return is infinity. The circular robot has radius 0.18 m; attempted contacts stop translation and count as collisions. This is kinematics with a collision guard, not contact physics.
 

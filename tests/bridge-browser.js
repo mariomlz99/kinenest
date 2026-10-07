@@ -24,7 +24,7 @@ try{
   await command(1,'cd ..');
   if(target==='cpp'){
     const panel=frame.contentDocument.querySelectorAll('.bridge-terminal')[0],input=panel.querySelector('input');
-    input.value='colcon build';panel.querySelector('form').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));panel.querySelector('.bridge-stop').click();
+    input.value='colcon build';panel.querySelector('form').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));frame.contentDocument.getElementById('bridge-stop-all').click();
     await until(()=>panel.querySelector('pre').textContent.includes('Build cancelled.'),'C++ compile cancellation',10000);
     if([...frame.contentDocument.querySelectorAll('#bridge-tree button')].some(el=>el.title.includes('/install/my_robot_pkg/lib/')))throw Error('Cancelled C++ build left installed executable');
   }
@@ -46,6 +46,13 @@ try{
   panels[0].querySelector('.bridge-stop').click();await until(()=>!graph().includes('/talker')&&graph().includes('/listener'),'stop one manual process',10000);
   started=performance.now();panels[1].querySelector('.bridge-stop').click();await until(()=>!graph().includes('/listener'),'stop second manual process',10000);timings.stopMs=Math.round(performance.now()-started);
   const manualBaseline=delivered();await command(1,'ros2 run my_robot_pkg publisher','Started my_robot_pkg/publisher');await command(2,'ros2 run my_robot_pkg subscriber','Started my_robot_pkg/subscriber');await until(()=>delivered()>manualBaseline,'manual rerun',30000);frame.contentDocument.getElementById('bridge-stop-all').click();
+  await until(()=>!graph().includes('/ros2cli_')&&!graph().includes('/talker')&&!graph().includes('/listener'),'Stop All removes package and echo endpoints',10000);
+  await command(3,'ros2 topic pub /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.2}}"');
+  await command(2,'ros2 topic echo /cmd_vel');
+  await until(()=>graph().includes('/ros2cli_pub_')&&graph().includes('/ros2cli_echo_'),'CLI processes active',10000);
+  frame.contentDocument.getElementById('bridge-stop-all').click();
+  await sleep(1200);
+  if(graph().includes('/ros2cli_')||[...frame.contentDocument.querySelectorAll('.bridge-stop')].some(button=>!button.disabled))throw Error('Stop All retained an active CLI process');
   await report('manual run/stop complete');
   await command(1,'ros2 launch my_robot_pkg system_launch.py','Started 2 processes');
   await until(()=>graph().includes('/other_chatter')&&graph().includes('/bridge_chatter'),'faulty remap',120000);

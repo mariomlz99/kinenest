@@ -12,7 +12,7 @@
   "hints": [
     "A subscription callback takes the received message as its argument.",
     "This 120-ray scan starts at −π; ray 60 points forward.",
-    "Python: node.create_subscription(LaserScan, \"/scan\", receive, 10) · C++: create_subscription<sensor_msgs::msg::LaserScan>(\"/scan\", 10, receive)"
+    "Python: node.create_subscription(LaserScan, \"/scan\", receive, 10) · C++: scan_ = create_subscription<sensor_msgs::msg::LaserScan>(\"/scan\", 10, [this](sensor_msgs::msg::LaserScan::SharedPtr msg) { receive(msg); });"
   ],
   "checks": [
     {
@@ -33,7 +33,7 @@
       "hints": [
         "De callback ontvangt één bericht.",
         "Er zijn 120 stralen; straal 60 wijst vooruit.",
-        "Python: node.create_subscription(LaserScan, \"/scan\", receive, 10) · C++: create_subscription<sensor_msgs::msg::LaserScan>(\"/scan\", 10, receive)"
+        "Python: node.create_subscription(LaserScan, \"/scan\", receive, 10) · C++: scan_ = create_subscription<sensor_msgs::msg::LaserScan>(\"/scan\", 10, [this](sensor_msgs::msg::LaserScan::SharedPtr msg) { receive(msg); });"
       ]
     },
     "fr": {
@@ -47,7 +47,7 @@
       "hints": [
         "Le callback reçoit un message.",
         "Il y a 120 rayons ; le rayon 60 pointe devant.",
-        "Python: node.create_subscription(LaserScan, \"/scan\", receive, 10) · C++: create_subscription<sensor_msgs::msg::LaserScan>(\"/scan\", 10, receive)"
+        "Python: node.create_subscription(LaserScan, \"/scan\", receive, 10) · C++: scan_ = create_subscription<sensor_msgs::msg::LaserScan>(\"/scan\", 10, [this](sensor_msgs::msg::LaserScan::SharedPtr msg) { receive(msg); });"
       ]
     },
     "es": {
@@ -61,7 +61,7 @@
       "hints": [
         "El callback recibe el mensaje como argumento.",
         "Este scan de 120 rayos empieza en −π; el rayo 60 apunta hacia delante.",
-        "Python: node.create_subscription(LaserScan, \"/scan\", receive, 10) · C++: create_subscription<sensor_msgs::msg::LaserScan>(\"/scan\", 10, receive)"
+        "Python: node.create_subscription(LaserScan, \"/scan\", receive, 10) · C++: scan_ = create_subscription<sensor_msgs::msg::LaserScan>(\"/scan\", 10, [this](sensor_msgs::msg::LaserScan::SharedPtr msg) { receive(msg); });"
       ]
     },
     "de": {
@@ -75,7 +75,7 @@
       "hints": [
         "Der Callback erhält die Nachricht als Argument.",
         "Der Scan hat 120 Strahlen ab −π; Strahl 60 zeigt nach vorne.",
-        "Python: node.create_subscription(LaserScan, \"/scan\", receive, 10) · C++: create_subscription<sensor_msgs::msg::LaserScan>(\"/scan\", 10, receive)"
+        "Python: node.create_subscription(LaserScan, \"/scan\", receive, 10) · C++: scan_ = create_subscription<sensor_msgs::msg::LaserScan>(\"/scan\", 10, [this](sensor_msgs::msg::LaserScan::SharedPtr msg) { receive(msg); });"
       ]
     },
     "pt": {
@@ -89,7 +89,7 @@
       "hints": [
         "O callback recebe a mensagem como argumento.",
         "Este scan tem 120 raios a partir de −π; o raio 60 aponta em frente.",
-        "Python: node.create_subscription(LaserScan, \"/scan\", receive, 10) · C++: create_subscription<sensor_msgs::msg::LaserScan>(\"/scan\", 10, receive)"
+        "Python: node.create_subscription(LaserScan, \"/scan\", receive, 10) · C++: scan_ = create_subscription<sensor_msgs::msg::LaserScan>(\"/scan\", 10, [this](sensor_msgs::msg::LaserScan::SharedPtr msg) { receive(msg); });"
       ]
     },
     "it": {
@@ -103,7 +103,7 @@
       "hints": [
         "Il callback di una subscription riceve il messaggio come argomento.",
         "Questa scansione di 120 raggi parte da −π; il raggio 60 punta avanti.",
-        "Python: node.create_subscription(LaserScan, \"/scan\", receive, 10) · C++: create_subscription<sensor_msgs::msg::LaserScan>(\"/scan\", 10, receive)"
+        "Python: node.create_subscription(LaserScan, \"/scan\", receive, 10) · C++: scan_ = create_subscription<sensor_msgs::msg::LaserScan>(\"/scan\", 10, [this](sensor_msgs::msg::LaserScan::SharedPtr msg) { receive(msg); });"
       ]
     }
   },
@@ -115,7 +115,7 @@
     "cpp": {
       "supported": true,
       "experimental": true,
-      "starterCode": "#include <rclcpp/rclcpp.hpp>\n#include <sensor_msgs/msg/laser_scan.hpp>\n\nclass Reader : public rclcpp::Node {\npublic:\n    Reader() : Node(\"student_controller\") {\n        // TODO: create a LaserScan subscription on /scan.\n    }\nprivate:\n    void receive(sensor_msgs::msg::LaserScan::SharedPtr msg) {\n        // TODO: print the beam count and forward distance.\n    }\n    rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_;\n};\n\nint main() {\n    rclcpp::init();\n    auto node = std::make_shared<Reader>();\n    rclcpp::spin(node);\n}\n",
+      "starterCode": "#include <rclcpp/rclcpp.hpp>\n#include <sensor_msgs/msg/laser_scan.hpp>\n\nclass Reader : public rclcpp::Node {\npublic:\n    Reader() : Node(\"student_controller\") {\n        // TODO: create a LaserScan subscription on /scan.\n    }\nprivate:\n    void receive(sensor_msgs::msg::LaserScan::SharedPtr msg) {\n        // TODO: print the beam count and forward distance.\n    }\n    rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_;\n};\n\nint main(int argc, char **argv) {\n    rclcpp::init(argc, argv);\n    auto node = std::make_shared<Reader>();\n    rclcpp::spin(node);\n}\n",
       "visibility": "public"
     }
   }

@@ -26,16 +26,16 @@ No installation, account, backend, API key or paid service is required. The firs
 
 ## Six-session course
 
-Each session is designed for approximately 90 minutes. Sessions 1–2 introduce the basics; allow time for explanation and experimentation. All coding exercises in Sessions 2–6 offer Python, C++ and Compare.
+Each session is designed for approximately 90 minutes, including optional practice. Sessions 1–2 introduce the basics; allow time for explanation and experimentation. All coding exercises in Sessions 2–6 offer Python, C++ and Compare. Core contains 16 Foundations exercises (one CLI exercise and 15 coding exercises), followed by Build & launch and the native transition. The other 10 exercises are optional Further practice.
 
 | Session | Focus | Exercises |
 | --- | --- | --- |
 | 1 | Nodes & Topics | CLI discovery and robot commands |
-| 2 | Callbacks & LiDAR | 4 Python/C++ exercises |
-| 3 | Perception & Services | 6 Python/C++ exercises |
-| 4 | Parameters & Actions | 5 core exercises + optional cancellation |
-| 5 | Odometry & Frames | 5 core exercises + obstacle integration |
-| 6 | Debugging Challenge | 2 repairs + an integrated beacon mission |
+| 2 | Subscribers & Callbacks | 2 Core + 2 Further exercises |
+| 3 | Messages & Services | 2 Core + 4 Further exercises |
+| 4 | Parameters & Actions | 5 Core + optional cancellation |
+| 5 | Odometry & Frames | 4 Core + 2 Further exercises |
+| 6 | Debugging Challenge | 2 Core repairs + optional beacon mission |
 
 The UI and teaching material support English, Nederlands, Français, Español, Deutsch, Português and Italiano. Code, ROS identifiers and technical output remain English. Switching UI language preserves code and running programs. Light/dark and split/stacked layouts are available. Course timings and translations still need classroom and native-speaker review.
 

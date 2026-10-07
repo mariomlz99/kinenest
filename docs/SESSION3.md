@@ -2,7 +2,7 @@
 
 ## Six exercises
 
-3.1 subscribes to Image and accesses dimensions. 3.2 converts to NumPy and reports shape/channel means. 3.3 detects red pixels. 3.4 computes their horizontal centroid. 3.5 creates a Trigger client and receives the reset response. 3.6 rotates a robot until the target is centered and stops. Lessons and starter programs are JSON under public/lessons. Session 2 now supplies the subscriber/callback foundation before this session.
+3.1 subscribes to Image and accesses dimensions. 3.2 converts to NumPy and reports shape/channel means. 3.3 detects red pixels. 3.4 computes their horizontal centroid. 3.5 creates a Trigger client and receives the reset response. 3.6 rotates a robot until the target is centered and stops. Lessons and starter programs are JSON under public/lessons. Session 2 supplies the subscriber/callback foundation before this session. Exercises 3.1 and 3.5 are Core; 3.2–3.4 and 3.6 are optional Further practice. Services do not require the pixel-processing exercises.
 
 ## Runtime and camera
 

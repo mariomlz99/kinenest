@@ -9,6 +9,30 @@ import {exportPackageZip} from '../src/bridge/export.js';
 import {Runtime} from '../src/runtime/graph.js';
 import {RuntimeAdapter} from '../src/runtime/adapter.js';
 import {BRIDGE_TEXT} from '../src/ui/bridge-locales.js';
+test('bridge communication requires fresh messages between the claimed process owners',()=>{
+ const runtime=new Runtime(),workspace=new WorkspaceModel(),manager=new ProcessManager(runtime,workspace);
+ const pub=new RuntimeAdapter(runtime),sub=new RuntimeAdapter(runtime),other=new RuntimeAdapter(runtime);
+ const nodes=[[pub,'/talker'],[sub,'/listener'],[other,'/unrelated']];
+ for(const [adapter,node]of nodes){adapter.worker={postMessage(){},terminate(){}};adapter.handle({kind:'node',node});}
+ const type='std_msgs/msg/String',topic='/alternate_remap';
+ pub.handle({kind:'publisher',node:'/talker',topic,type});
+ sub.handle({kind:'subscribe',node:'/listener',topic,type,id:'sub'});
+ other.handle({kind:'subscribe',node:'/unrelated',topic:'/noise',type,id:'other'});
+ const active=[{executable:'publisher',adapter:pub,sampleStart:0},{executable:'subscriber',adapter:sub,sampleStart:0}];
+ const processed=adapter=>{adapter.handle({kind:'message_processed',sample:runtime.sampleCounter});adapter.handle({kind:'frame_done',subscription:adapter===sub?'sub':'other'});};
+ runtime.publish('/noise',type,{data:'unrelated'});processed(other);
+ assert.equal(manager.communicated(active),false);
+ runtime.publish(topic,type,{data:'external terminal'});processed(sub);
+ assert.equal(manager.communicated(active),false);
+ pub.handle({kind:'publish',node:'/talker',topic,type,message:{data:'student code'}});
+ assert.equal(manager.communicated(active),false,'delivery must reach the callback');processed(sub);
+ assert.equal(manager.communicated(active,{topics:new Set(['/wrong'])}),false);
+ assert.equal(manager.communicated(active,{topics:new Set([topic])}),true);
+ for(const process of active)process.sampleStart=runtime.sampleCounter;
+ assert.equal(manager.communicated(active),false,'new runs cannot reuse old delivery');
+ for(const [adapter] of nodes)adapter.stop();runtime.reset();
+ assert.equal(manager.communicated(active),false,'Reset clears communication evidence');
+});
 
 test('workspace command and editor explanations exist in every UI language',()=>{
   for(const code of ['en','nl','fr','es','de','pt','it']){
@@ -154,4 +178,39 @@ test('package export contains the editable source and package metadata',async()=
   assert(text.includes('robot/robot/publisher.py'));
   assert(text.includes('robot/launch/system_launch.py'));
   assert.equal(new DataView(data.buffer).getUint32(data.length-22,true),0x06054b50);
+});
+// Add beside the other bridge communication regression; uses its existing imports.
+test('queued delivery from an old publisher cannot credit a same-name replacement',()=>{
+  const runtime=new Runtime(),manager=new ProcessManager(runtime,new WorkspaceModel());
+  const oldPublisher=new RuntimeAdapter(runtime),subscriber=new RuntimeAdapter(runtime);
+  const deliveries=[],type='std_msgs/msg/String',topic='/remapped';
+  subscriber.worker={postMessage(event){if(event.kind==='message')deliveries.push(event);},terminate(){}};
+  oldPublisher.handle({kind:'node',node:'/talker'});
+  oldPublisher.handle({kind:'publisher',node:'/talker',topic,type});
+  subscriber.handle({kind:'node',node:'/listener'});
+  subscriber.handle({kind:'subscribe',node:'/listener',topic,type,id:'sub'});
+  const publish=(adapter,data)=>adapter.handle({kind:'publish',node:'/talker',topic,type,message:{data}});
+  publish(oldPublisher,'first old message');
+  publish(oldPublisher,'queued old message');
+  assert.equal(deliveries.length,1,'the second old message must still be queued');
+  oldPublisher.stop();
+  const replacement=new RuntimeAdapter(runtime);
+  const sampleStart=runtime.sampleCounter;
+  replacement.handle({kind:'node',node:'/talker'});
+  replacement.handle({kind:'publisher',node:'/talker',topic,type});
+  const active=[{executable:'publisher',adapter:replacement,sampleStart},{executable:'subscriber',adapter:subscriber,sampleStart:0}];
+  try{
+    subscriber.handle({kind:'message_processed',sample:deliveries[0].sample});
+    subscriber.handle({kind:'frame_done',subscription:'sub'});
+    assert.equal(deliveries.length,2);
+    assert.equal(deliveries[1].message.data,'queued old message');
+    assert.ok(deliveries[1].sample>sampleStart,'queued delivery acquired a fresh sample ID');
+    subscriber.handle({kind:'message_processed',sample:deliveries[1].sample});
+    assert.equal(manager.communicated(active,{topics:new Set([topic])}),false,'the new publisher has never published');
+    subscriber.handle({kind:'frame_done',subscription:'sub'});
+    publish(replacement,'fresh replacement message');
+    subscriber.handle({kind:'message_processed',sample:deliveries.at(-1).sample});
+    assert.equal(manager.communicated(active,{topics:new Set([topic])}),true,'fresh replacement delivery is accepted');
+    subscriber.handle({kind:'frame_done',subscription:'sub'});
+  }finally{oldPublisher.stop();replacement.stop();subscriber.stop();}
 });

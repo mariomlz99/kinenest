@@ -3,3 +3,7 @@
 .brand-motion.no-motion *{animation:none!important}.brand-motion.no-motion{transition:none}
 
 .motion-lidar{stroke-width:2}.motion-tf path:first-child{stroke:var(--frame-x)}.motion-tf path:last-child{stroke:var(--frame-y)}
+
+/* One continuously rotating logo, including the destination boot handoff. */
+.page-transition .motion-art svg{display:none}
+.page-transition .motion-art img{animation:kn-yaw 1.2s linear infinite}

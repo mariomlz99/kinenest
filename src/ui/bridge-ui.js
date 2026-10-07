@@ -56,7 +56,7 @@ function renderGraph(){
   const active=processes.active(),groups=[...processes.groups].filter(([,ids])=>ids.size>0);
   const currentGroup=groups.at(-1)?.[0];if(currentGroup&&currentGroup!==launchGroup){launchGroup=currentGroup;launchBaseline=runtime.course.messages;}
   const manual=active.filter(p=>!p.group),manualNames=new Set(manual.map(p=>p.executable));
-  if(manualNames.has('publisher')&&manualNames.has('subscriber')&&runtime.course.messages>0)manualSeen=true;
+  if(manualNames.has('publisher')&&manualNames.has('subscriber')&&processes.communicated(manual))manualSeen=true;
   const connected=runtime.topics.get('/bridge_chatter');
   if(currentGroup&&connected?.publishers.size&&runtime.topics.get('/other_chatter')?.subscribers.size)faultSeen=true;
   const lines=['Processes: '+(active.length||'none'),...active.map(p=>'  #'+p.id+' '+p.name+'/'+p.executable+' · '+p.state+(p.group?' · '+p.group:'')), 'Nodes: '+[...runtime.nodes].sort().join(', '), 'Topics:', ...[...runtime.topics].sort(([a],[b])=>a.localeCompare(b)).map(([name,t])=>'  '+name+' ['+t.type+']  pub: '+([...t.publishers].join(', ')||'—')+'  sub: '+([...t.subscribers].join(', ')||'—')), 'Delivered student messages: '+runtime.course.messages];
@@ -68,7 +68,7 @@ function evaluateChecks(){
   const group=active.find(p=>p.group)?.group,launched=active.filter(p=>p.group===group),owned=new Set(launched.flatMap(p=>[...(p.adapter?.nodes??[])]));
   const linked=[...runtime.topics].filter(([,topic])=>[...topic.publishers].some(node=>owned.has(node))&&[...topic.subscribers].some(node=>owned.has(node)));
   const remapTargets=new Set(launched.flatMap(p=>(p.ros?.remappings??[]).map(([,to])=>to.startsWith('/')?to:'/'+[(p.ros?.namespace??'').replace(/^\/+|\/+$/g,''),to].filter(Boolean).join('/'))));
-  const launchPass=!!group&&launched.some(p=>p.executable==='publisher')&&launched.some(p=>p.executable==='subscriber')&&linked.some(([name])=>remapTargets.has(name))&&runtime.course.messages>launchBaseline;
+  const launchPass=!!group&&processes.communicated(launched,{topics:new Set(linked.map(([name])=>name).filter(name=>remapTargets.has(name)))});
   const parameter=[...owned].some(node=>runtime.parameters.get(node)?.get('prefix')==='received');
   const checks=[
     ['A supported package exists in ros2_ws/src',names.length>0],
@@ -99,7 +99,7 @@ function check(){
   return checks.every(([,passed])=>passed);
 }
 $('bridge-check').onclick=check;
-$('bridge-stop-all').onclick=()=>processes.stopAll();
+$('bridge-stop-all').onclick=()=>{builder.cancel();for(const {terminal} of terminals.values())terminal.stop(false);processes.stopAll();renderGraph();};
 $('bridge-reset').onclick=()=>{processes.reset();runtime.reset();workspace.reset();edited.clear();observed.clear();manualSeen=false;faultSeen=false;launchGroup=null;launchBaseline=0;for(const {terminal,panel,output} of terminals.values()){terminal.reset();panel.querySelector('.bridge-cwd').textContent=terminal.cwd.replace('/home/learner','~');output.textContent=status().welcome;}selected=null;$('bridge-code').value='';$('bridge-code').disabled=true;$('bridge-save').disabled=true;$('bridge-path').textContent=status().selected;$('bridge-file-explainer').textContent=(BRIDGE_TEXT[language()]??BRIDGE_TEXT.en).filePurposeDefault;$('bridge-save-state').textContent='';$('bridge-results').replaceChildren();renderFiles();renderGraph();};
 window.addEventListener('pagehide',()=>{builder.cancel();for(const {terminal} of terminals.values())terminal.stop();processes.stopAll();});
 function frame(now){if(last)accumulator+=Math.min((now-last)/1000,.1);last=now;while(accumulator>=1/60){runtime.step(1/60);accumulator-=1/60;}if(now-lastGraph>=200){renderGraph();lastGraph=now;}requestAnimationFrame(frame);}

@@ -1,5 +1,4 @@
 import {coreEdits} from './core-starter-edits.js';
-import {CORE_EXERCISES} from '../src/ui/curriculum.js';
 // Complete every Core coding starter using the APIs named in the visible lessons.
 // No reference-program fetches: a drift in a starter or an incomplete scaffold fails here.
 const language=new URLSearchParams(location.search).get('language')==='cpp'?'cpp':'python';
@@ -30,6 +29,12 @@ const edits={
 };
 Object.assign(edits,coreEdits);
 try{
+ // Resolve the registry beside the page's actual entry module: release builds
+ // keep application modules under assets/<version>/, never at /src/.
+ frame.src='../session-02.html';await new Promise(resolve=>frame.onload=resolve);
+ await until(()=>frame.contentDocument.documentElement.dataset.kinenestReady==='true','initial page ready');
+ const entry=frame.contentDocument.querySelector('script[src$="/session3-boot.js"]');
+ const {CORE_EXERCISES}=await import(new URL('curriculum.js',entry.src));
  if(CORE_EXERCISES.some(id=>!edits[id.slice(8)]))throw Error('Core starter coverage missing');
  let currentSession;
  for(const [suffix,variants] of Object.entries(edits).sort(([a],[b])=>a.localeCompare(b))){

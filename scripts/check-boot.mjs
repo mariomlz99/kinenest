@@ -34,8 +34,9 @@ function monitor(){
  const sample=()=>{
   const r=document.documentElement,cover=document.getElementById('kn-boot-cover'),main=document.querySelector('main');
   if(cover&&main){
-   const css=getComputedStyle(cover),box=cover.getBoundingClientRect();
+   const css=getComputedStyle(cover),box=cover.getBoundingClientRect(),logo=getComputedStyle(cover.querySelector('img'));
    const state={boot:r.dataset.kinenestBoot,ready:r.dataset.kinenestReady,theme:r.dataset.theme,lang:r.lang,layout:document.body.dataset.layout??null,content:getComputedStyle(main).visibility,cover:css.display,opacity:css.opacity,position:css.position,zIndex:css.zIndex,width:box.width,height:box.height,viewport:[document.documentElement.clientWidth,innerHeight],background:css.backgroundColor,pageBackground:getComputedStyle(r).backgroundColor};
+   Object.assign(state,{logoAnimation:logo.animationName,logoIterations:logo.animationIterationCount,logoTransform:logo.transform});
    const key=JSON.stringify(state);
    if(key!==prior){prior=key;window.__paintStates.push({at:performance.now(),...state});}
   }
@@ -65,6 +66,8 @@ try{
   assert.ok(samples?.length,'No destination paint samples');
   const loading=samples.filter(s=>s.boot==='loading');
   if(!remote)assert.ok(loading.length,'Missing loading frame');
+  for(const s of loading){assert.equal(s.logoAnimation,'kn-boot-spin','Destination must not replace the spinning logo with a static image');assert.equal(s.logoIterations,'infinite');}
+  if(loading.length>2)assert.ok(new Set(loading.map(s=>s.logoTransform)).size>1,'Destination logo stopped rotating');
   for(const s of samples){
    assert.equal(s.theme,theme,'Wrong-theme first paint');assert.equal(s.lang,lang,'Wrong-language first paint');
    if(s.boot==='loading'){assert.equal(s.content,'hidden');assert.equal(s.opacity,'1');assert.equal(s.position,'fixed');assert.ok(+s.zIndex>=1000);assert.equal(s.width,s.viewport[0]);assert.equal(s.height,s.viewport[1]);assert.equal(s.background,s.pageBackground);}
@@ -84,7 +87,10 @@ try{
   await b.navigate(base+from);await ready();
   await b.evaluate('document.querySelector(".session-nav a[href=\\"./'+to+'\\"]").click();true');
   await wait(350);await capture(from+'-outgoing');
+  assert.equal(await b.evaluate('getComputedStyle(document.querySelector(".page-transition img")).animationIterationCount'),'infinite');
+  assert.equal(await b.evaluate('getComputedStyle(document.querySelector(".page-transition svg")).display'),'none','Navigation must show only the rotating logo');
   if(!remote){await until('location.pathname.endsWith('+JSON.stringify(to)+')&&document.documentElement.dataset.kinenestBoot==="loading"');await capture(from+'-incoming');}
+  assert.ok(Number.parseFloat(await b.evaluate('document.documentElement.style.getPropertyValue("--kn-motion-delay")'))<0,'Destination did not continue the outgoing rotation phase');
   await until('location.pathname.endsWith('+JSON.stringify(to)+')&&document.documentElement.dataset.kinenestBoot==="ready"');
   await capture(from+'-complete');
  }
@@ -122,6 +128,7 @@ try{
   assert.ok(calmReady,'Reduced-motion destination did not become ready');
   assert.ok(Number(await calm.evaluate('sessionStorage.getItem("calm-dwell")'))<150,'Reduced motion retained intentional dwell');
   assert.equal(await calm.evaluate('getComputedStyle(document.getElementById("kn-boot-cover")).display'),'none');
+  assert.equal(await calm.evaluate('getComputedStyle(document.querySelector("#kn-boot-cover img")).animationName'),'none');
   console.log('PASS',browser,'real reduced-motion preference skips dwell and reveals ready content');
  }finally{await calm.close();}
 

@@ -55,8 +55,8 @@ export class Runtime {
     nodes.add(nodeName); topic.subscribers.add(nodeName);
     return ()=>{entries.delete(id);if(![...entries.keys()].some(key=>String(key).startsWith(nodeName+':')))topic.subscribers.delete(nodeName);if(!existingNode)nodes.delete(nodeName);this.removeEmptyTopics();};
   }
-  emit(topic, message) {
-    for(const callback of [...(this.listeners.get(topic)?.values()??[])]) callback(structuredClone(message));
+  emit(topic, message, publisher=null) {
+    for(const callback of [...(this.listeners.get(topic)?.values()??[])]) callback(structuredClone(message),publisher);
   }
   odometry() {
     const r=this.robot, nanos=Math.round(this.time*1e9);
@@ -79,12 +79,12 @@ export class Runtime {
       for(const job of [...this.jobs]){job.remaining-=slice;if(job.remaining<1e-12){job.remaining=job.period;job.callback();}}
     }
   }
-  publish(topic,type,msg) {
+  publish(topic,type,msg,publisher=null) {
     if(type==='ros2learn_interfaces/msg/TargetInfo'){
       if(!msg||typeof msg.visible!=='boolean'||typeof msg.position!=='string'||typeof msg.confidence!=='number'||!Number.isFinite(msg.confidence)||msg.confidence<0||msg.confidence>1||Object.keys(msg).some(k=>!['visible','position','confidence'].includes(k)))throw Error('TargetInfo needs bool visible, string position and confidence in [0,1]');
-      this.ensureTopic(topic,type);this.course.custom=(this.course.custom??0)+1;this.emit(topic,msg);return;
+      this.ensureTopic(topic,type);this.course.custom=(this.course.custom??0)+1;this.emit(topic,msg,publisher);return;
     }
-    if(type==='std_msgs/msg/String'){if(!msg||typeof msg.data!=='string'||Object.keys(msg).some(k=>k!=='data'))throw new Error('String requires {data: "text"}');this.ensureTopic(topic,type);this.emit(topic,{data:msg.data});return;}
+    if(type==='std_msgs/msg/String'){if(!msg||typeof msg.data!=='string'||Object.keys(msg).some(k=>k!=='data'))throw new Error('String requires {data: "text"}');this.ensureTopic(topic,type);this.emit(topic,{data:msg.data},publisher);return;}
     if(type!==TWIST)throw new Error('Publishing supports geometry_msgs/msg/Twist and std_msgs/msg/String.');
     const existing=this.topics.get(topic);if(existing&&existing.type!==type)throw new Error('Expected '+existing.type);
     if (!msg || typeof msg!=='object' || Array.isArray(msg)) throw new Error('Twist must be a mapping.');
@@ -99,6 +99,6 @@ export class Runtime {
     if(Math.abs(linear)>2 || Math.abs(angular)>3) throw new Error('Lab limits: |linear.x| ≤ 2 m/s, |angular.z| ≤ 3 rad/s.');
     this.ensureTopic(topic,type);
     if(topic==='/cmd_vel'){this.discovered=true;this.publications++;this.robot.command(linear,angular);}
-    this.emit(topic,{linear:{x:linear,y:0,z:0},angular:{x:0,y:0,z:angular}});
+    this.emit(topic,{linear:{x:linear,y:0,z:0},angular:{x:0,y:0,z:angular}},publisher);
   }
 }

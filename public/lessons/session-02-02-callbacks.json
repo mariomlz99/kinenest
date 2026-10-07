@@ -10,9 +10,10 @@
     "Observe topic hz /scan and topic echo /chatter in separate terminals. Explain which callback updates the state and which publishes it."
   ],
   "hints": [
-    "Keep a variable or self.front between callbacks.",
-    "A timer runs periodically; a subscription runs on message arrival.",
-    "Create the scan subscription and publisher once, then let rclpy.spin dispatch the scan and timer callbacks."
+    "Keep front between callbacks. When a function assigns this module variable, write global front before the assignment.",
+    "Create the publisher once: publisher = node.create_publisher(String, \"/chatter\", 10).",
+    "Inside the timer callback: status = String(); status.data = str(front); publisher.publish(status).",
+    "Register the scan callback with node.create_subscription(LaserScan, \"/scan\", scan, 10), and the timer with node.create_timer(0.2, tick). rclpy.spin(node) dispatches both callbacks."
   ],
   "checks": [
     {
@@ -37,9 +38,10 @@
         "Vergelijk ros2 topic hz /scan met ros2 topic echo /chatter."
       ],
       "hints": [
-        "Bewaar de waarde tussen callbacks.",
-        "Een timer is periodiek; een subscription reageert op nieuwe berichten.",
-        "Maak de endpoints één keer en gebruik rclpy.spin."
+        "Bewaar front tussen callbacks. Schrijf global front vóór de toekenning wanneer een functie deze modulevariabele wijzigt.",
+        "Maak de publisher één keer: publisher = node.create_publisher(String, \"/chatter\", 10).",
+        "In de timercallback: status = String(); status.data = str(front); publisher.publish(status).",
+        "Registreer de scancallback met node.create_subscription(LaserScan, \"/scan\", scan, 10), en de timer met node.create_timer(0.2, tick). rclpy.spin(node) voert beide callbacks uit."
       ]
     },
     "fr": {
@@ -51,9 +53,10 @@
         "Comparez ros2 topic hz /scan et ros2 topic echo /chatter."
       ],
       "hints": [
-        "Conservez la valeur entre les callbacks.",
-        "Un timer est périodique ; un abonnement réagit aux messages.",
-        "Créez les endpoints une fois puis utilisez rclpy.spin."
+        "Conservez front entre les callbacks. Lorsqu’une fonction modifie cette variable du module, écrivez global front avant l’affectation.",
+        "Créez le publisher une seule fois : publisher = node.create_publisher(String, \"/chatter\", 10).",
+        "Dans le callback du timer : status = String(); status.data = str(front); publisher.publish(status).",
+        "Enregistrez le callback du scan avec node.create_subscription(LaserScan, \"/scan\", scan, 10), et le timer avec node.create_timer(0.2, tick). rclpy.spin(node) exécute les deux callbacks."
       ]
     },
     "es": {
@@ -65,9 +68,10 @@
         "Observa ros2 topic hz /scan y ros2 topic echo /chatter en terminales separados. Explica qué callback actualiza el estado y cuál publica."
       ],
       "hints": [
-        "Conserva una variable o self.front entre callbacks.",
-        "Un temporizador se ejecuta periódicamente; una suscripción responde a mensajes.",
-        "Crea publishers y suscripciones una vez; rclpy.spin despacha los eventos."
+        "Conserva front entre callbacks. Cuando una función asigne esta variable del módulo, escribe global front antes de la asignación.",
+        "Crea el publisher una sola vez: publisher = node.create_publisher(String, \"/chatter\", 10).",
+        "Dentro del callback del temporizador: status = String(); status.data = str(front); publisher.publish(status).",
+        "Registra el callback del scan con node.create_subscription(LaserScan, \"/scan\", scan, 10), y el temporizador con node.create_timer(0.2, tick). rclpy.spin(node) ejecuta ambos callbacks."
       ]
     },
     "de": {
@@ -79,9 +83,10 @@
         "Beobachte ros2 topic hz /scan und ros2 topic echo /chatter getrennt. Welcher Callback aktualisiert den Zustand, welcher sendet?"
       ],
       "hints": [
-        "Bewahre eine Variable oder self.front zwischen Callbacks auf.",
-        "Timer laufen periodisch; Subscriptions reagieren auf Nachrichten.",
-        "Erstelle Publisher und Subscriptions einmal; rclpy.spin verteilt die Ereignisse."
+        "Bewahre front zwischen den Callbacks auf. Wenn eine Funktion diese Modulvariable zuweist, schreibe global front vor die Zuweisung.",
+        "Erstelle den Publisher einmal: publisher = node.create_publisher(String, \"/chatter\", 10).",
+        "Im Timer-Callback: status = String(); status.data = str(front); publisher.publish(status).",
+        "Registriere den Scan-Callback mit node.create_subscription(LaserScan, \"/scan\", scan, 10) und den Timer mit node.create_timer(0.2, tick). rclpy.spin(node) führt beide Callbacks aus."
       ]
     },
     "pt": {
@@ -93,9 +98,10 @@
         "Observa ros2 topic hz /scan e ros2 topic echo /chatter em terminais separados. Explica qual callback atualiza o estado e qual publica."
       ],
       "hints": [
-        "Mantém uma variável ou self.front entre callbacks.",
-        "Um temporizador é periódico; uma subscrição reage a mensagens.",
-        "Cria publishers e subscrições uma vez; rclpy.spin distribui os eventos."
+        "Mantém front entre callbacks. Quando uma função atribuir esta variável do módulo, escreve global front antes da atribuição.",
+        "Cria o publisher uma vez: publisher = node.create_publisher(String, \"/chatter\", 10).",
+        "No callback do temporizador: status = String(); status.data = str(front); publisher.publish(status).",
+        "Regista o callback do scan com node.create_subscription(LaserScan, \"/scan\", scan, 10), e o temporizador com node.create_timer(0.2, tick). rclpy.spin(node) executa os dois callbacks."
       ]
     },
     "it": {
@@ -107,9 +113,10 @@
         "Osserva topic hz /scan e topic echo /chatter in terminali separati. Spiega quale callback aggiorna lo stato e quale lo pubblica."
       ],
       "hints": [
-        "Conserva una variabile o self.front tra i callback.",
-        "Un timer scatta periodicamente; una subscription reagisce ai messaggi in arrivo.",
-        "Crea publisher e subscription una volta sola, poi lascia che rclpy.spin gestisca gli eventi."
+        "Mantieni front tra i callback. Quando una funzione assegna questa variabile del modulo, scrivi global front prima dell’assegnazione.",
+        "Crea il publisher una sola volta: publisher = node.create_publisher(String, \"/chatter\", 10).",
+        "Nel callback del timer: status = String(); status.data = str(front); publisher.publish(status).",
+        "Registra il callback della scansione con node.create_subscription(LaserScan, \"/scan\", scan, 10), e il timer con node.create_timer(0.2, tick). rclpy.spin(node) esegue entrambi i callback."
       ]
     }
   },
@@ -131,9 +138,10 @@
           "Observe topic hz /scan and topic echo /chatter in separate terminals. Explain which callback updates the state and which publishes it."
         ],
         "hints": [
-          "Keep latest_range_ as a node member; the scan callback updates it and the timer reads it.",
-          "Use create_wall_timer(std::chrono::milliseconds(200), ...) and a String publisher. Retain subscription and timer handles.",
-          "Create the scan subscription and publisher once; inspect /chatter with a second terminal."
+          "Keep latest_range_ as a node member: the scan callback updates it and the timer reads it.",
+          "Create the publisher once: publisher_ = create_publisher<std_msgs::msg::String>(\"/chatter\", 10); retain the subscription and timer handles too.",
+          "Inside the timer callback: std_msgs::msg::String status; status.data = std::to_string(latest_range_); publisher_->publish(status);",
+          "Register the timer with timer_ = create_wall_timer(std::chrono::milliseconds(200), [this]() { /* publish status here */ });"
         ],
         "translations": {
           "nl": {
@@ -145,9 +153,10 @@
               "Vergelijk ros2 topic hz /scan met ros2 topic echo /chatter."
             ],
             "hints": [
-              "Bewaar latest_range_ als lid van de node; de scan-callback werkt het bij en de timer leest het.",
-              "Gebruik create_wall_timer(std::chrono::milliseconds(200), ...) en een String-publisher. Bewaar de subscription- en timerhandles.",
-              "Leg this vast in de callbacks. Wijs std::to_string(latest_range_) toe aan message.data vóór publish(message)."
+              "Bewaar latest_range_ als lid van de node: de scancallback werkt het bij en de timer leest het.",
+              "Maak de publisher één keer: publisher_ = create_publisher<std_msgs::msg::String>(\"/chatter\", 10); bewaar ook de subscription- en timerhandles.",
+              "In de timercallback: std_msgs::msg::String status; status.data = std::to_string(latest_range_); publisher_->publish(status);",
+              "Registreer de timer met timer_ = create_wall_timer(std::chrono::milliseconds(200), [this]() { /* publish status here */ });"
             ]
           },
           "fr": {
@@ -159,9 +168,10 @@
               "Comparez ros2 topic hz /scan et ros2 topic echo /chatter."
             ],
             "hints": [
-              "Conservez latest_range_ comme membre du node : le callback du scan le met à jour et le timer le lit.",
-              "Utilisez create_wall_timer(std::chrono::milliseconds(200), ...) et un publisher String. Conservez les objets subscription et timer.",
-              "Capturez this dans les callbacks. Affectez std::to_string(latest_range_) à message.data avant publish(message)."
+              "Conservez latest_range_ comme membre du nœud : le callback du scan le met à jour et le timer le lit.",
+              "Créez le publisher une seule fois : publisher_ = create_publisher<std_msgs::msg::String>(\"/chatter\", 10); conservez aussi les handles de subscription et du timer.",
+              "Dans le callback du timer : std_msgs::msg::String status; status.data = std::to_string(latest_range_); publisher_->publish(status);",
+              "Enregistrez le timer avec timer_ = create_wall_timer(std::chrono::milliseconds(200), [this]() { /* publish status here */ });"
             ]
           },
           "es": {
@@ -174,8 +184,9 @@
             ],
             "hints": [
               "Conserva latest_range_ como miembro del nodo: el callback del scan lo actualiza y el temporizador lo lee.",
-              "Usa create_wall_timer(std::chrono::milliseconds(200), ...) y un publisher String. Conserva las referencias a las suscripciones y al temporizador.",
-              "Captura this en los callbacks. Asigna std::to_string(latest_range_) a message.data antes de publish(message)."
+              "Crea el publisher una sola vez: publisher_ = create_publisher<std_msgs::msg::String>(\"/chatter\", 10); conserva también los handles de subscription y temporizador.",
+              "Dentro del callback del temporizador: std_msgs::msg::String status; status.data = std::to_string(latest_range_); publisher_->publish(status);",
+              "Registra el temporizador con timer_ = create_wall_timer(std::chrono::milliseconds(200), [this]() { /* publish status here */ });"
             ]
           },
           "de": {
@@ -187,9 +198,10 @@
               "Beobachte ros2 topic hz /scan und ros2 topic echo /chatter getrennt. Welcher Callback aktualisiert den Zustand, welcher sendet?"
             ],
             "hints": [
-              "Speichere latest_range_ als Klassenmitglied: Der Scan-Callback aktualisiert es, der Timer liest es.",
-              "Verwende create_wall_timer(std::chrono::milliseconds(200), ...) und einen String-Publisher. Bewahre Subscription- und Timer-Handles auf.",
-              "Erfasse this in den Callbacks. Weise message.data vor publish(message) den Wert std::to_string(latest_range_) zu."
+              "Bewahre latest_range_ als Member des Knotens auf: Der Scan-Callback aktualisiert ihn und der Timer liest ihn.",
+              "Erstelle den Publisher einmal: publisher_ = create_publisher<std_msgs::msg::String>(\"/chatter\", 10); bewahre auch die Subscription- und Timer-Handles auf.",
+              "Im Timer-Callback: std_msgs::msg::String status; status.data = std::to_string(latest_range_); publisher_->publish(status);",
+              "Registriere den Timer mit timer_ = create_wall_timer(std::chrono::milliseconds(200), [this]() { /* publish status here */ });"
             ]
           },
           "pt": {
@@ -201,9 +213,10 @@
               "Observa ros2 topic hz /scan e ros2 topic echo /chatter em terminais separados. Explica qual callback atualiza o estado e qual publica."
             ],
             "hints": [
-              "Guarda latest_range_ como membro do nó: o callback do scan atualiza-o e o temporizador lê-o.",
-              "Usa create_wall_timer(std::chrono::milliseconds(200), ...) e um publisher String. Guarda as referências às subscrições e ao temporizador.",
-              "Captura this nos callbacks. Atribui std::to_string(latest_range_) a message.data antes de publish(message)."
+              "Mantém latest_range_ como membro do nó: o callback do scan atualiza-o e o temporizador lê-o.",
+              "Cria o publisher uma vez: publisher_ = create_publisher<std_msgs::msg::String>(\"/chatter\", 10); conserva também os handles de subscription e temporizador.",
+              "No callback do temporizador: std_msgs::msg::String status; status.data = std::to_string(latest_range_); publisher_->publish(status);",
+              "Regista o temporizador com timer_ = create_wall_timer(std::chrono::milliseconds(200), [this]() { /* publish status here */ });"
             ]
           },
           "it": {
@@ -215,9 +228,10 @@
               "Osserva topic hz /scan e topic echo /chatter in terminali separati. Spiega quale callback aggiorna lo stato e quale lo pubblica."
             ],
             "hints": [
-              "Conserva latest_range_ come membro del nodo: il callback della scansione lo aggiorna e il timer lo legge.",
-              "Usa create_wall_timer(std::chrono::milliseconds(200), ...) e un publisher String. Conserva gli handle delle subscription e del timer.",
-              "Cattura this nei callback. Assegna std::to_string(latest_range_) a message.data prima di publish(message)."
+              "Mantieni latest_range_ come membro del nodo: il callback della scansione lo aggiorna e il timer lo legge.",
+              "Crea il publisher una sola volta: publisher_ = create_publisher<std_msgs::msg::String>(\"/chatter\", 10); conserva anche gli handle di subscription e timer.",
+              "Nel callback del timer: std_msgs::msg::String status; status.data = std::to_string(latest_range_); publisher_->publish(status);",
+              "Registra il timer con timer_ = create_wall_timer(std::chrono::milliseconds(200), [this]() { /* publish status here */ });"
             ]
           }
         }

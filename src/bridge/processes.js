@@ -7,11 +7,19 @@ export class ProcessManager {
     this.processes=new Map();this.groups=new Map();this.nextId=0;this.generation=0;
   }
   active(){return [...this.processes.values()].filter(p=>p.state!=='stopped');}
+  communicated(active,{topics=null}={}){
+    const publishers=active.filter(p=>p.executable==='publisher'),subscribers=active.filter(p=>p.executable==='subscriber');
+    return publishers.some(p=>subscribers.some(s=>[...this.runtime.samples].some(([id,sample])=>
+      id>Math.max(p.sampleStart,s.sampleStart)&&sample.processed&&
+      sample.publisherOwner===p.adapter&&sample.receiverOwner===s.adapter&&
+      p.adapter?.nodes.has(sample.publisher)&&s.adapter?.nodes.has(sample.receiver)&&
+      (!topics||topics.has(sample.topic)))));
+  }
   async run(name,executable,{terminal=null,group=null,ros={}}={}){
     const installed=this.workspace.installedPackage(name),entry=installed.executables.get(executable);
     if(!entry)throw Error('Executable '+executable+' is not installed in '+name+'.');
     const id=++this.nextId,token=this.generation;
-    const process={id,name,executable,terminal,group,ros,state:'loading',language:installed.type,adapter:null,output:[]};
+    const process={id,name,executable,terminal,group,ros,state:'loading',language:installed.type,adapter:null,output:[],sampleStart:this.runtime.sampleCounter};
     this.processes.set(id,process);if(group)this.groups.get(group)?.add(id);this.onChange();
     try{
       const factory=this.factories.get(installed.type);if(!factory)throw Error('No execution adapter for '+installed.type);

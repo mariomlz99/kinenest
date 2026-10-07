@@ -1,8 +1,8 @@
 # Session 5 — pose, frames and closed-loop control
 
-Six exercises: odometry, quaternion-to-yaw helper, laser frame composition, target relative to robot, closed-loop goal reaching, then LiDAR safety. The final integrated exercise is an extension if the cohort needs more time on frames. Suggested pacing: 15 minutes explanation, 10 + 10 + 10 + 10 + 15 minutes practice, 15 minutes integration, 5 minutes discussion.
+Six exercises: odometry, quaternion-to-yaw helper, laser frame composition, target relative to robot, closed-loop goal reaching, then LiDAR safety. Exercises 5.1–5.4 are Core; both 5.5 goal control and 5.6 integrated safety are optional Further practice. Suggested pacing: 15 minutes explanation, 10 + 10 + 10 + 10 + 15 minutes practice, 15 minutes integration, 5 minutes discussion.
 
-Odometry uses valid planar quaternions and odom/base_link frame IDs. tf_transformations.euler_from_quaternion returns roll, pitch, yaw in radians. The actual published TF tree is world → odom → base_link, base_link → laser_link and camera_link, world → target. World/odom coincide in this ideal model. The laser is 0.2 m ahead of the base; camera_link is colocated with base_link in this simplified renderer.
+Odometry uses valid planar quaternions and odom/base_link frame IDs. tf_transformations.euler_from_quaternion returns roll, pitch, yaw in radians. The actual published TF tree is world → odom → base_link, base_link → laser_link and camera_link, world → target. World/odom coincide in this ideal model. The laser is 0.2 m ahead of the base; camera_link is 0.10 m ahead of base_link in this simplified renderer.
 
 Buffer and TransformListener compose/invert the latest received planar transforms. lookup_transform(target_frame, source_frame, Time()) expresses the source origin in the target frame. The browser uses a simplified latest-only time model, no history/interpolation, and periodically republishes every edge on /tf; it does not model /tf_static durability. A real machine distinguishes static and dynamic transform broadcasters. report_transform and report_relative are formative teaching helpers.
 

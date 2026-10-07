@@ -4,6 +4,7 @@ import {mkdir,writeFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {launch,wait} from './browser-driver.mjs';
 import {serveDirectory} from './static-server.mjs';
+import {destinationExpression} from './browser-destination.mjs';
 const browser=process.argv[2]??'chrome',root=fileURLToPath(new URL('../',import.meta.url));
 const option=name=>process.argv.find(x=>x.startsWith(name+'='))?.slice(name.length+1);
 const output=option('--output')??root+'../.release-artifacts/transitions',remote=option('--url');
@@ -31,7 +32,7 @@ async function navigate(from,to,{variant,theme='dark',capture=false,calm=false}=
   const second=[...document.querySelectorAll('a[href]')].find(a=>a.href!==destination&&new URL(a.href).pathname!==location.pathname);second?.click();
  }.toString()+')('+JSON.stringify(toUrl)+')');
  if(capture){await wait(330);await writeFile(output+'/'+browser+'-'+variant+'-'+theme+'.png',Buffer.from(await b.screenshot(),'base64'));}
- await until('location.href==='+JSON.stringify(toUrl)+'&&document.documentElement.dataset.kinenestBoot==="ready"');
+ await until(destinationExpression(toUrl)+'&&document.documentElement.dataset.kinenestBoot==="ready"');
  const result=await b.evaluate('JSON.parse(sessionStorage.getItem("transition-test"))');assert.ok(result?.prevented,'default navigation was not prevented');
  if(calm){assert.ok(result.dwell<150,'Reduced motion delayed '+result.dwell);}
  else{assert.ok(result.dwell>=900&&result.dwell<1200,'Navigation dwell '+result.dwell);assert.equal(result.samples.length,2);for(const s of result.samples){assert.equal(s.missing,undefined);assert.equal(s.position,'fixed');assert.equal(s.opacity,'1');assert.ok(+s.zIndex>=1000);assert.equal(s.width,s.viewport[0]);assert.equal(s.height,s.viewport[1]);assert.equal(s.background,s.pageBackground);assert.ok(s.animations.length>0);assert.ok(s.image,'Brand icon not decoded');}assert.notDeepEqual(result.samples[0].animations,result.samples[1].animations,'Animation has no changing rendered state');}

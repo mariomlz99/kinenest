@@ -3,8 +3,21 @@ import assert from 'node:assert/strict';
 import {Runtime} from '../src/runtime/graph.js';
 import {RuntimeAdapter} from '../src/runtime/adapter.js';
 import {courseChecks} from '../src/exercises/course.js';
+import {lookup} from '../src/runtime/course.js';
 const passes=(r,type)=>courseChecks(r,{checks:[{type}]})[0].passed;
 const setup=()=>{const r=new Runtime();r.enableSession3();return [r,new RuntimeAdapter(r)];};
+test('TF reports accept valid subscription callbacks as well as timers',()=>{
+ const [r,a]=setup();r.robot.x=.4;r.robot.y=-.2;r.robot.yaw=.6;
+ r.samples.set(1,{topic:'/odom',message:r.odometry(),processed:true});
+ for(const [report,target,source,key] of [['transform','odom','laser_link','transform'],['relative','base_link','target','relative']]){
+  const t=lookup(r,target,source),before=r.course[key]??0;
+  for(const sample of [null,1])a.handle({kind:'course_report',report,sample,values:[t.x,t.y]});
+  assert.equal(r.course[key],before+2);
+  for(const values of [[NaN,t.y],[t.x+1,t.y],[t.x],[t.x,t.y,0]])a.handle({kind:'course_report',report,sample:1,values});
+  assert.equal(r.course[key],before+2,'incorrect or malformed reports must fail');
+ }
+ a.stop();r.reset();assert.equal(r.course.transform,0);assert.equal(r.course.relative??0,0);
+});
 test('first parameter exercise requires declaration on the controller and motion',()=>{
  const [r,a]=setup();
  for(let i=0;i<3;i++){a.handle({kind:'parameter_read',value:.2});a.handle({kind:'publish',topic:'/noise',type:'std_msgs/msg/String',message:{data:'moving'}});}
