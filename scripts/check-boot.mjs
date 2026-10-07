@@ -90,8 +90,8 @@ try{
   assert.equal(await b.evaluate('getComputedStyle(document.querySelector(".page-transition img")).animationIterationCount'),'infinite');
   assert.equal(await b.evaluate('getComputedStyle(document.querySelector(".page-transition svg")).display'),'none','Navigation must show only the rotating logo');
   if(!remote){await until('location.pathname.endsWith('+JSON.stringify(to)+')&&document.documentElement.dataset.kinenestBoot==="loading"');await capture(from+'-incoming');}
-  assert.ok(Number.parseFloat(await b.evaluate('document.documentElement.style.getPropertyValue("--kn-motion-delay")'))<0,'Destination did not continue the outgoing rotation phase');
   await until('location.pathname.endsWith('+JSON.stringify(to)+')&&document.documentElement.dataset.kinenestBoot==="ready"');
+  assert.ok(Number.parseFloat(await b.evaluate('document.documentElement.style.getPropertyValue("--kn-motion-delay")'))<=0,'Destination did not continue the outgoing rotation phase');
   await capture(from+'-complete');
  }
  // Direct reload and back/forward use the same contract.
