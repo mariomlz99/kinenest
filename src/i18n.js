@@ -7,8 +7,8 @@ export function t(text){
  if(locale==='en')return text;
  const column=['fr','nl','es','de','pt','it'].indexOf(locale);
  if(translations[text])return translations[text][column]??text;
- const progress=/^(\d+) \/ 6 completed$/.exec(text);
- if(progress)return `${progress[1]} / 6 ${['terminées','voltooid','completadas','abgeschlossen','concluídas','completate'][column]}`;
+ const progress=/^(\d+) \/ 7 completed$/.exec(text);
+ if(progress)return `${progress[1]} / 7 ${['terminées','voltooid','completadas','abgeschlossen','concluídas','completate'][column]}`;
  const graph=/^(\d+) nodes · (\d+) topics$/.exec(text);
  if(graph)return `${graph[1]} ${['nœuds','nodes','nodos','Nodes','nós','nodi'][column]} · ${graph[2]} topics`;
  const move=/^Move to unit (\d+)$/.exec(text);if(move)return ['Passer à l’unité ','Ga naar onderdeel ','Ir a la unidad ','Weiter zu Einheit ','Ir para a unidade ','Vai all’unità '][column]+move[1];

@@ -4,7 +4,7 @@ Learn ROS 2 by building and running programs in your browser.
 
 [Open KineNest](https://kinenest.com/) · [BASICS](https://kinenest.com/basics.html?start=1)
 
-BASICS has six units: environment, workspace/packages, pub/sub, messages/parameters, services/launch, and actions. Python executes in CPython/Pyodide; C++ compiles to WebAssembly. The playground has an independent saved workspace with robot, camera and LiDAR views. The shell, build system and ROS transport are browser models.
+BASICS has seven units: environment, workspace/packages, terminal topics, pub/sub, messages/parameters, services/launch, and actions. Python executes in CPython/Pyodide; C++ compiles to WebAssembly. The playground has an independent saved workspace with robot, camera and LiDAR views. The shell, build system and ROS transport are browser models.
 
 ## Develop
 
@@ -38,7 +38,7 @@ SITE_URL=http://127.0.0.1:8017/ npm run test:product
 
 ## Repository map
 
-- `src/`: application, six units, runtimes, terminal/editor, translations and playground.
+- `src/`: application, seven units, runtimes, terminal/editor, translations and playground.
 - `public/brand/`: KineNest identity.
 - `tests/`: behavior and runtime checks.
 - `scripts/`: development, build and browser validation.
@@ -52,3 +52,5 @@ Earlier implementations and experiments remain available in Git history. There i
 Workspaces, terminal history and progress autosave in this browser. Processes must be restarted after reopening. Storage is local to the site and browser; source export provides a portable backup. No account or cloud sync is required. Session records are versioned.
 
 See [supported behavior](docs/SUPPORTED.md), [architecture](docs/ARCHITECTURE.md), and [contributing](CONTRIBUTING.md).
+
+Terminal completion follows the default Bash interaction: Tab completes an unambiguous prefix; a second Tab displays sorted matches in vertical columns. Lists of 100 or more matches ask `Display all N possibilities? (y or n)`. Long lists use `--More--` (Space for a page, Enter for one line, q to stop); declining or quitting preserves the command. Browser check: `node scripts/completion-check.mjs` (`LAB_URL` selects another local server).
