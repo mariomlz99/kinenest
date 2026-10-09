@@ -8,3 +8,6 @@ from that exact production asset URL.
 The build retains these URLs so existing open tabs can load their matching
 workers after a deployment. Do not edit archived code or overwrite a version.
 New pages use only the newly generated asset version.
+
+`434d388747d8` retains the built assets from source commit
+`26f108024cddf9c659fd304498729739c0254dde` before the compact homepage update.
