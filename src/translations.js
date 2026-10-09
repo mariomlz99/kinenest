@@ -458,9 +458,9 @@ export const translations = {
     "Leia os grupos de comandos antes de explorar o grafo.",
     "Leggi i gruppi di comandi prima di esplorare il grafo."
   ],
-  "An empty result is expected: you have not started a learner node yet.": [
-    "Un résultat vide est normal : vous n’avez pas encore démarré de nœud étudiant.",
-    "Een leeg resultaat is normaal: je hebt nog geen eigen node gestart.",
+  "An empty result means no non-hidden nodes were discovered. Use ros2 node list --all to include hidden nodes.": [
+    "Un résultat vide signifie qu’aucun nœud non masqué n’a été découvert. Utilisez ros2 node list --all pour inclure les nœuds masqués.",
+    "Een leeg resultaat betekent dat er geen niet-verborgen nodes zijn ontdekt. Gebruik ros2 node list --all om verborgen nodes te tonen.",
     "Es normal que esté vacío: todavía no has iniciado ningún nodo propio.",
     "Ein leeres Ergebnis ist normal: Du hast noch keinen eigenen Node gestartet.",
     "Um resultado vazio é esperado: você ainda não iniciou um nó próprio.",
@@ -1002,8 +1002,8 @@ export const translations = {
     "Execute publicador e assinante",
     "Avvia publisher e subscriber"
   ],
-  "Deliver a message to learner code": [
-    "Transmettre un message au code étudiant",
+  "Deliver a message to a subscribing node": [
+    "Transmettre un message à un nœud abonné",
     "Een bericht aan learnercode bezorgen",
     "Entrega un mensaje a tu código",
     "Nachricht an deinen Code zustellen",
@@ -1242,9 +1242,9 @@ export const translations = {
     "Inspecione package.xml e CMakeLists.txt. add_executable define hello; install disponibiliza para ros2 run.",
     "Esamina package.xml e CMakeLists.txt. add_executable definisce hello; install lo rende disponibile a ros2 run."
   ],
-  "The base topics /parameter_events and /rosout are already available for parameter changes and ROS logs. You have not started any learner nodes yet. A node is a running participant. A publisher sends messages on a named topic; a subscriber receives them. One topic connects nodes even when they use different languages.": [
-    "Les topics de base /parameter_events et /rosout sont déjà disponibles pour les changements de paramètres et les logs ROS. Aucun nœud étudiant n’est encore lancé. Un nœud est un participant actif. Un publisher envoie des messages sur un topic nommé ; un subscriber les reçoit. Un topic relie les nœuds même s’ils utilisent des langages différents.",
-    "De basistopics /parameter_events en /rosout zijn al beschikbaar voor parameterwijzigingen en ROS-logs. Je hebt nog geen eigen nodes gestart. Een node is een actieve deelnemer. Een publisher stuurt berichten op een topic; een subscriber ontvangt ze. Een topic verbindt nodes ook als ze verschillende programmeertalen gebruiken.",
+  "A node is a running participant in the ROS graph. A publisher sends messages on a named topic; a subscriber receives them. Nodes can communicate even when written in different languages. An empty ros2 node list means no non-hidden nodes were discovered. Use ros2 node list --all to include hidden nodes such as the discovery daemon. The topics /parameter_events and /rosout carry parameter changes and logs.": [
+    "Un nœud est un participant actif du graphe ROS. Un publisher envoie des messages sur un topic ; un subscriber les reçoit. Les nœuds peuvent utiliser des langages différents. Une liste vide signifie qu’aucun nœud non masqué n’a été découvert. ros2 node list --all inclut les nœuds masqués, comme le daemon de découverte. /parameter_events et /rosout transportent les changements de paramètres et les logs.",
+    "Een node is een actieve deelnemer aan de ROS-graaf. Een publisher verstuurt berichten op een topic; een subscriber ontvangt ze. Nodes kunnen verschillende programmeertalen gebruiken. Een lege lijst betekent dat geen niet-verborgen nodes zijn ontdekt. ros2 node list --all toont ook verborgen nodes, zoals de discovery-daemon. /parameter_events en /rosout dragen parameterwijzigingen en logs.",
     "/parameter_events y /rosout ya existen para cambios de parámetros y logs. Todavía no has iniciado tus propios nodos. Un nodo es un participante activo. Un publicador envía mensajes a un topic y un suscriptor los recibe. Un topic conecta nodos incluso en distintos lenguajes.",
     "/parameter_events und /rosout sind für Parameteränderungen und Logs verfügbar. Eigene Nodes laufen noch nicht. Ein Node ist ein aktiver Teilnehmer. Publisher senden Nachrichten an Topics; Subscriber empfangen sie. Ein Topic verbindet Nodes auch über Sprachgrenzen hinweg.",
     "/parameter_events e /rosout já existem para parâmetros e logs. Você ainda não iniciou seus próprios nós. Um nó é um participante ativo. Um publicador envia mensagens a um tópico e um assinante recebe. Um tópico conecta nós mesmo em linguagens diferentes.",
