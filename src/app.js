@@ -19,7 +19,7 @@ function save(){if(!activeFile)return;try{if(lab.fs.read(activeFile)!==saved)thr
 function openFile(path){if(activeFile&&editor.value!==saved){status('Save the current file before switching, or use Revert.');return false;}try{saved=lab.fs.read(path);activeFile=path;for(const p of [...collapsed])if(path.startsWith(p+'/'))collapsed.delete(p);editor.open(path,saved);fileTitle();return true;}catch(e){status(e.message);return false;}}
 function openFromTerminal(path){if(activeFile&&editor.value!==saved)throw Error('Save or revert current edits first.');if(!lab.fs.exists(path))lab.fs.touch(path);if(!openFile(path))throw Error('Could not open file');renderFiles();$('#files').scrollIntoView({block:'nearest'});editor.view.focus();}
 function renderFiles(){const root=$('#file-tree');root.replaceChildren();const entries=[...lab.fs.entries].filter(([p])=>p.startsWith('/home/learner/')&&!p.includes('/.')).sort(([a],[b])=>a.localeCompare(b));for(const[p,e]of entries){if([...collapsed].some(dir=>p.startsWith(dir+'/')))continue;const button=el('button',(e.kind==='dir'?(collapsed.has(p)?'▸ ':'▾ '):'  ')+p.split('/').at(-1)+(e.kind==='dir'?'/':''),p===activeFile?'active':'');button.style.paddingLeft=(8+(p.split('/').length-4)*12)+'px';button.title=p;button.dataset.path=p;button.onclick=()=>{if(e.kind==='file'){openFile(p);renderFiles();}else{collapsed.has(p)?collapsed.delete(p):collapsed.add(p);renderFiles();}};root.append(button);}if(!entries.length)root.append(el('p','Your workspace will appear here as you create it.'));}
-function addTerminal(state){if(views.length>=6){status('The lab supports up to six terminals. Close one to add another.');return;}const t=lab.terminal(state);const view=new (window.TerminalView)(lab,t,$('#terminals'),()=>{view.destroy();views=views.filter(v=>v!==view);},openFromTerminal);views.push(view);view.xterm.focus();}
+function addTerminal(state){if(views.length>=6){status('The lab supports up to six terminals. Close one to add another.');return;}const t=lab.terminal(state);const view=new (window.TerminalView)(lab,t,$('#terminals'),()=>{view.destroy();views=views.filter(v=>v!==view);},openFromTerminal);views.push(view);if(matchMedia('(pointer:fine)').matches)view.xterm.textarea?.focus({preventScroll:true});}
 function currentSessionUI(){return {unitIndex,language,progress:[...progress],guidePositions:[...guidePositions],activeFile,draft:activeFile&&editor.value!==saved?editor.value:null};}
 function changeUnit(index){
  if(LINUX_MODE&&index===7)return;
@@ -109,7 +109,7 @@ function renderUnit(){renderPlayground();$('#prepare-unit').hidden=unitIndex===0
  const nextUnit=unitIndex+1;const next=el('button',unitIndex===6?'Open playground':`Move to unit ${nextUnit+1}`);next.id='next-unit';
  if(LINUX_MODE&&unitIndex===6)next.textContent='Continue to ROS 2 Basics';
  next.onclick=()=>{if(LINUX_MODE&&unitIndex===6){location.href='./basics.html?start=1';return;}overview=false;changeUnit(nextUnit);$('#unit').scrollTop=0;$('#unit-heading').setAttribute('tabindex','-1');$('#unit-heading').focus({preventScroll:true});status('');};
- onward.append(next);checks.append(onward);onward.scrollIntoView({block:'nearest',behavior:'smooth'});
+ onward.append(next);checks.append(onward);onward.scrollIntoView({block:'nearest',behavior:'instant'});
  }else status('Keep exploring: the checklist shows what remains.');};root.append(finish,checks);}
 
 }
@@ -151,6 +151,6 @@ async function start(){const stored=await restoreCompiledModules(await loadSessi
  $('#save-session').onclick=()=>persist(true);setInterval(()=>persist(),1500);document.addEventListener('visibilitychange',()=>{if(document.hidden)persist();});
  renderUnit();refresh();window.addEventListener('beforeunload',e=>{if(activeFile&&editor.value!==saved||views.some(v=>v.nano?.buffer.dirty)){e.preventDefault();e.returnValue='';}});
 }
-$('#start').onclick=()=>start().catch(e=>{console.error(e);$('#app').append(el('p',e.message));});
+$('#start').onclick=async()=>{document.documentElement.classList.add('workspace-loading');$('#start').disabled=true;try{await start();await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));}catch(e){console.error(e);$('#app').append(el('p',e.message));}finally{document.documentElement.classList.remove('workspace-loading');}};
 initPreferences();
 if(new URLSearchParams(location.search).has('start'))$('#start').click();
