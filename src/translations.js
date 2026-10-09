@@ -1,5 +1,6 @@
 // French, Dutch, Spanish, German, Portuguese, Italian.
 export const translations = {
+"Completed": ["Terminé", "Voltooid", "Completado", "Abgeschlossen", "Concluído", "Completato"],
 "KineNest simulates ROS 2 Jazzy.": ["KineNest simule ROS 2 Jazzy.", "KineNest simuleert ROS 2 Jazzy.", "KineNest simula ROS 2 Jazzy.", "KineNest simuliert ROS 2 Jazzy.", "KineNest simula ROS 2 Jazzy.", "KineNest simula ROS 2 Jazzy."],
 "Resize unit height":["Redimensionner la hauteur de la leçon", "Hoogte van de les aanpassen"],
 "Resize editor height":["Redimensionner la hauteur de l’éditeur", "Hoogte van de editor aanpassen"],

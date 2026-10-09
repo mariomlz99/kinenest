@@ -14,3 +14,6 @@ New pages use only the newly generated asset version.
 
 `2cf5a1771fb8` retains the built assets from source commit
 `3186bdc5a04171d6ceecae64bf112776282d5da6` before the locked-card layout update.
+
+`d30653551011` retains the built assets from source commit
+`7c41a1ab21e7a4da89a0a6372ebd605e48337828` before filesystem metadata and progress updates.

@@ -11,3 +11,16 @@ Actions use explicit server registration, per-goal ownership and typed goal/feed
 Autosave stores versioned records in IndexedDB. Installed C++ bytes are recompiled into WebAssembly modules on restore. Running processes are never serialized. Build output versions executable assets by content hash; HTML points to that version so releases do not mix worker/header generations.
 
 This is not Linux, DDS, RMW or a native ROS executor. See SUPPORTED.md for supported boundaries.
+
+### Long directory listings
+
+`ls -l` / `ls -la` render virtual owner/group, permissions, directory link counts,
+UTF-8 byte sizes, modification times and aligned columns. `-a` includes `.` and
+`..`; directory operands show `total` in 1 KiB units. Allocation is modeled in
+4 KiB blocks (directories use 4096 bytes; short captured symlinks use no data
+blocks), not a measurement of browser storage. The default virtual umask is
+022. Native reference files retain captured modes/sizes; timestamps describe
+the virtual filesystem. Existing sessions acquire missing metadata without
+changing file contents. `touch`, writes, copies, moves and removals update the
+appropriate metadata. `scripts/native-ls-parity.mjs` compares controlled
+fixtures with GNU ls, normalizing account names and column padding.

@@ -24,3 +24,11 @@ The native installation inventory is partitioned into static assets under the
 Cloudflare 25 MiB limit, with all 21,333 captured paths preserved. Regenerate
 using `scripts/capture-native-installation.py`. Archived production assets are
 retained under `legacy-assets` for tabs opened before this release.
+
+Passing a lesson's “Check unit progress” adds a ✓ to its navigation button and
+immediately saves the session. Each successful IndexedDB save also updates a
+small localStorage summary for that module; the homepage reads these summaries
+without loading the runtime or complete workspace. Seven completed lessons
+show “✓ Completed”. Restarting a lesson or resetting a workspace clears the
+corresponding completion state and updates the summary. Completion is specific
+to this browser and device; it is not an account-synchronized certificate.

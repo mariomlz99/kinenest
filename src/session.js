@@ -1,3 +1,4 @@
+import {saveModuleProgress} from './module-progress.js';
 import {LINUX_MODE,SESSION_DATABASE} from './course-mode.js';
 import {migrateCurriculum} from './curriculum-session.js';
 import {snapshotUnit,restoreUnit} from './units/checks.js';
@@ -13,7 +14,7 @@ export function migrateSession(record){
  if(next.other)next.other=migrateSession(next.other);return next;
 }
 export async function loadSession(){const current=await readSession();if(current)return migrateCurriculum(migrateSession(current));if(LINUX_MODE)return undefined;const databases=await indexedDB.databases?.()??[];if(databases.some(db=>db.name==='ros2-basics-lab-session'))return migrateCurriculum(migrateSession(await readSession('ros2-basics-lab-session')));return undefined;}
-export async function saveSession(record){const db=await database();try{await new Promise((resolve,reject)=>{const tx=db.transaction('sessions','readwrite');tx.objectStore('sessions').put(serializableRecord(record),'current');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||Error('Session save aborted'));});}finally{db.close();}}
+export async function saveSession(record){const db=await database();try{await new Promise((resolve,reject)=>{const tx=db.transaction('sessions','readwrite');tx.objectStore('sessions').put(serializableRecord(record),'current');tx.oncomplete=()=>{saveModuleProgress(LINUX_MODE?'linux':'ros',record.ui?.progress??[]);resolve();};tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||Error('Session save aborted'));});}finally{db.close();}}
 function portablePackages(packages){return new Map([...packages??[]].map(([name,record])=>[name,{...record,executables:new Map([...record.executables].map(([name,entry])=>{const copy={...entry};if(copy.wasmBytes)delete copy.module;return [name,copy];}))}]));}
 export function captureSession(lab,ui){const workspace=snapshotUnit(lab);workspace.installed=portablePackages(workspace.installed);workspace.installations=portablePackages(workspace.installations);return {version:2,curriculumVersion:3,savedAt:Date.now(),workspace,terminals:[...lab.terminals.values()].map(t=>({cwd:t.cwd,env:{...t.env},vars:{...t.vars},overlays:new Set(t.overlays),history:[...t.history]})),exported:!!lab.exported,ui};}
 export function restoreSession(lab,record){record=migrateCurriculum(record);if(record.version!==2)throw Error('This saved session uses an unsupported version.');restoreUnit(lab,record.workspace);lab.exported=record.exported;return record.terminals.map(t=>({...t,env:lab.workspace.restoreEnvironment(t.env),vars:{...t.vars}}));}
