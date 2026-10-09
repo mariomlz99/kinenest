@@ -3,7 +3,7 @@ import {Lab} from '../src/lab.js';import {prepareUnit} from '../src/units/prepar
 for(const language of ['python','cpp'])test(`independent ${language} units preserve source and restore installed completion data`,async()=>{
  const lab=new Lab(),terminal=lab.terminal();lab.builder.compile=async()=>({imports:[],module:new Uint8Array([0,97,115,109])});
  await prepareUnit(lab,6,language);
- const pkg=language==='python'?'py_pubsub':'cpp_pubsub';assert(lab.workspace.current(pkg));assert(lab.workspace.current('tutorial_interfaces'));
+ const pkg='my_first_package';assert(lab.workspace.current(pkg));assert(lab.workspace.current('tutorial_interfaces'));
  assert.deepEqual(rosCompletions(lab,terminal,`ros2 run ${pkg} ta`),['talker']);assert.deepEqual(rosCompletions(lab,terminal,`ros2 launch ${pkg} `),['system.launch.py']);
  const other=lab.terminal();assert.deepEqual(rosCompletions(lab,other,'ros2 run '+pkg.slice(0,3)),[],'Unsourced terminals do not see workspace packages');
  const path=lab.workspace.sourcePath(pkg)+(language==='python'?'/'+pkg+'/talker.py':'/src/publisher_member_function.cpp');const edited=lab.fs.read(path)+'\n';lab.fs.write(path,edited);await prepareUnit(lab,6,language);assert.equal(lab.fs.read(path),edited,'Preparation preserves learner edits');
