@@ -5,7 +5,7 @@ import {linuxUnit} from '../src/linux-course.js';
 const site=process.env.SITE_URL||'http://127.0.0.1:8024/';
 const browser=await chromium.launch({executablePath:'/usr/bin/google-chrome',headless:true});
 try{const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[],requests=[];page.on('pageerror',e=>errors.push(String(e)));page.on('request',r=>requests.push(r.url()));
- await page.goto(site);assert.equal(await page.locator('.start-unit').count(),2);assert.equal(await page.locator('.module-grid small').filter({hasText:'🔒'}).count(),3);assert.equal(await page.locator('a[href="https://docs.ros.org/en/jazzy/Tutorials.html"]').count(),1);assert.equal(await page.locator('img[src$="linux-penguin.svg"]').count(),1);
+ await page.goto(site);assert.equal(await page.locator('.start-unit').count(),2);assert.equal(await page.locator('.module-grid .module-lock').count(),3);assert.equal(await page.locator('a[href="https://docs.ros.org/en/jazzy/Tutorials.html"]').count(),1);assert.equal(await page.locator('img[src$="linux-penguin.svg"]').count(),1);
  const command=async line=>{await page.locator('.xterm-helper-textarea').first().focus();await page.waitForTimeout(50);await page.keyboard.type(line,{delay:1});await page.keyboard.press('Enter');await page.waitForTimeout(250);};
  const save=async()=>{await page.locator('#save-session').click();await page.waitForFunction(()=>document.querySelector('#session-state').textContent==='Progress saved in this browser');await page.waitForTimeout(250);};
  await page.goto(site+'basics.html?start=1');await page.locator('.xterm').waitFor();await command('echo "ROS work preserved" > ~/ros-marker.txt');await save();

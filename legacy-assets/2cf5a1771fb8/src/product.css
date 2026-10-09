@@ -33,9 +33,3 @@ button,select,.start-unit,nav button{border-radius:var(--radius-control)}
 .tutorial-note a {color:var(--accent);text-underline-offset:3px;}
 
 @media(pointer:coarse){.preferences select{font-size:16px}}
-
-/* Keep locked module cards and their status marks consistent at every width. */
-.module-grid{grid-auto-rows:1fr}
-.module-grid article{display:flex;flex-direction:column;min-width:0}
-.module-grid .module-status{display:flex;align-items:center;gap:6px;margin-top:auto;padding-top:12px;line-height:16px}
-.module-lock{display:block;width:14px;height:14px;min-width:14px;flex:0 0 14px}

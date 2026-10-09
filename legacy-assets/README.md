@@ -11,3 +11,6 @@ New pages use only the newly generated asset version.
 
 `434d388747d8` retains the built assets from source commit
 `26f108024cddf9c659fd304498729739c0254dde` before the compact homepage update.
+
+`2cf5a1771fb8` retains the built assets from source commit
+`3186bdc5a04171d6ceecae64bf112776282d5da6` before the locked-card layout update.

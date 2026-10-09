@@ -1,6 +1,5 @@
 // French, Dutch, Spanish, German, Portuguese, Italian.
 export const translations = {
-"KineNest simulates ROS 2 Jazzy.": ["KineNest simule ROS 2 Jazzy.", "KineNest simuleert ROS 2 Jazzy.", "KineNest simula ROS 2 Jazzy.", "KineNest simuliert ROS 2 Jazzy.", "KineNest simula ROS 2 Jazzy.", "KineNest simula ROS 2 Jazzy."],
 "Resize unit height":["Redimensionner la hauteur de la leçon", "Hoogte van de les aanpassen"],
 "Resize editor height":["Redimensionner la hauteur de l’éditeur", "Hoogte van de editor aanpassen"],
   "Start the playground above. All three views show the same room and brown obstacle. The map uses world coordinates; the camera and LiDAR face with the robot. In the LiDAR view, forward is up and left is left. At the starting pose, the front scan is about 2.88 m from the obstacle; the nearest return is the wall behind, about 2.12 m away. Move forward and watch the front range decrease and the camera obstacle grow. The robot stops before hitting obstacles or walls.": [
