@@ -14,7 +14,7 @@ let lab,editor,views=[],activeFile=null,saved='',unitIndex=0,language='python',p
 const $=s=>document.querySelector(s),el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 function updateProgress(){
  $('#progress').textContent=`${progress.size} / 7 completed`;
- for(const b of document.querySelectorAll('#nav button')){const i=Number(b.dataset.index),done=progress.has(i);b.textContent=(done?'✓ ':'')+`${i+1}  `+UNIT_NAMES[i];b.classList.toggle('completed',done);}
+ for(const b of document.querySelectorAll('#nav button')){const i=Number(b.dataset.index),done=progress.has(i);b.classList.toggle('completed',done);b.querySelector('.completion-mark')?.remove();if(done){const mark=el('span','✓','completion-mark');mark.setAttribute('aria-label','Completed');b.append(mark);}}
 }
 function status(s){$('#status').textContent=s;}
 function refresh(){if(refreshPending)return;refreshPending=true;requestAnimationFrame(()=>{refreshPending=false;if(!lab)return;renderFiles();for(const update of exampleUpdates)update();$('#graph-state').textContent=`${lab.runtime.nodes.size} nodes · ${lab.runtime.topics.size} topics`;if(activeFile&&!lab.fs.exists(activeFile)){activeFile=null;editor.open('','');saved='';fileTitle();}else if(activeFile&&editor.value===saved&&lab.fs.read(activeFile)!==saved){saved=lab.fs.read(activeFile);editor.open(activeFile,saved);fileTitle();}});}

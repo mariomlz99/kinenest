@@ -17,3 +17,5 @@ New pages use only the newly generated asset version.
 
 `d30653551011` retains the built assets from source commit
 `7c41a1ab21e7a4da89a0a6372ebd605e48337828` before filesystem metadata and progress updates.
+
+Retained c883c8609911 for sessions open before daemon and completion updates.
