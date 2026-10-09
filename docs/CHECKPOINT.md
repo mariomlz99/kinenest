@@ -1,3 +1,7 @@
+# Lesson order updated — 9 October 2026
+
+The first three lessons are now: 1. ROS 2 environment; 2. Talking ROS 2: Topics & Terminals; 3. Workspace & packages. Curriculum version 3 migrates existing selections, progress and guide positions by content. Later lessons retain their indices. The lab review locks on lessons 4–7 and the playground remain in effect; KineNest has no review locks. Shared source changes are mirrored locally; only the lab is deployed for this update. Both automated suites pass; lab Chrome checks cover topics, workspace build/source/run, onward navigation, locks and saved work.
+
 # Local review checkpoint — 9 October 2026
 
 Resume the ROS 2 Basics Lab classroom review at the terminal-topics lesson, then continue publisher/subscriber coding. The user asked to pause until tomorrow and save everything locally. This checkpoint supersedes older status notes below.

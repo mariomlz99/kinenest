@@ -6,10 +6,10 @@ import {unit} from '../units.js';
 export async function prepareUnit(lab,index,language,report=()=>{}){
  if(index<1||index>7)throw Error('Choose a later unit to prepare.');
  if(lab.builder.controller||[...lab.terminals.values()].some(t=>t.busy))throw Error('Stop running commands before preparing a unit.');
- if(index===2)return [];
+ if(index===1)return [];
  lab.fs.mkdir(ROOT+'/src',true);
  const specs=new Map();
- // Unit 2 teaches package creation itself; unit 3 only needs the workspace.
+ // Unit 3 teaches package creation itself; unit 4 only needs the workspace.
  // Later units receive the final source state of the earlier units.
  for(let i=1;i<Math.min(index===7?1:index,6);i++)for(const step of unit(i,language)){
   if(step.kind==='commands')for(const command of step.commands){

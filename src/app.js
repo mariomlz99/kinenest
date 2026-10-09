@@ -50,7 +50,7 @@ function renderPlayground(){
  $('#playground-start').onclick=()=>{playground.start();$('#playground-status').textContent='Live sensor streams';};
  $('#playground-stop').onclick=()=>{playground.stop();$('#playground-status').textContent='Paused · simulator stopped';};
 }
-function renderUnit(){renderPlayground();$('#prepare-unit').hidden=unitIndex===0||unitIndex===2;if(!unitSnapshots.has(unitIndex))unitSnapshots.set(unitIndex,snapshotUnit(lab));const root=$('#unit');exampleUpdates=[];root.replaceChildren();$('#unit-heading').textContent=unitIndex===7?'Robotics Playground':`${unitIndex+1}. ${UNIT_NAMES[unitIndex]}`;for(const b of document.querySelectorAll('#nav button, #exercise-nav button'))b.classList.toggle('active',Number(b.dataset.index)===unitIndex);$('#workspace').classList.toggle('intro',unitIndex===0);
+function renderUnit(){renderPlayground();$('#prepare-unit').hidden=unitIndex===0||unitIndex===1;if(!unitSnapshots.has(unitIndex))unitSnapshots.set(unitIndex,snapshotUnit(lab));const root=$('#unit');exampleUpdates=[];root.replaceChildren();$('#unit-heading').textContent=unitIndex===7?'Robotics Playground':`${unitIndex+1}. ${UNIT_NAMES[unitIndex]}`;for(const b of document.querySelectorAll('#nav button, #exercise-nav button'))b.classList.toggle('active',Number(b.dataset.index)===unitIndex);$('#workspace').classList.toggle('intro',unitIndex===0);
  const allSteps=unit(unitIndex,language),pages=guidePages(allSteps.filter(step=>step.kind!=='playground')),key=unitIndex+':'+language;
  const position=Math.min(guidePositions.get(key)||0,pages.length-1),guided=!overview;
  {

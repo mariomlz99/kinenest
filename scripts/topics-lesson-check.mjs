@@ -5,7 +5,7 @@ const browser=await chromium.launch({executablePath:'/usr/bin/google-chrome',hea
 try{
  const page=await browser.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto(process.env.LAB_URL||'http://127.0.0.1:8017/ros2-basics-lab/');await page.locator('#start').click();await page.locator('.xterm').waitFor();
- await page.locator('#nav button').nth(2).click();assert.match(await page.locator('#unit-heading').textContent(),new RegExp(TOPICS_TITLE.replace('&','&')));
+ await page.locator('#nav button').nth(1).click();assert.match(await page.locator('#unit-heading').textContent(),new RegExp(TOPICS_TITLE.replace('&','&')));
  await page.locator('#guide-mode').click();
  assert.deepEqual(await page.locator('.command code').allTextContents(),topicsLesson().filter(s=>s.kind==='commands').flatMap(s=>s.commands));
  for(let i=0;i<2;i++)await page.getByRole('button',{name:'+ Terminal',exact:true}).click();
