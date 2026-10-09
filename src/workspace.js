@@ -8,7 +8,7 @@ import {BASE_PACKAGES,seedEcosystem} from './ros-ecosystem.js';
 export function manifest(name,type,dependencies=[]){return `<?xml version="1.0"?>
 <package format="3">
   <name>${name}</name><version>0.0.0</version>
-  <description>KineNest learner package</description>
+  <description>KineNest package</description>
   <maintainer email="learner@example.com">Learner</maintainer>
   <license>Apache-2.0</license>
   <buildtool_depend>${type}</buildtool_depend>
@@ -25,7 +25,7 @@ setup(
                 ('share/' + package_name, ['package.xml'])${launch.length?",\n                ('share/' + package_name + '/launch', "+JSON.stringify(launch)+')':''}],
     install_requires=['setuptools'], zip_safe=True,
     maintainer='Learner', maintainer_email='learner@example.com',
-    description='KineNest learner package', license='Apache-2.0',
+    description='KineNest package', license='Apache-2.0',
     entry_points={'console_scripts': ${JSON.stringify(entries)}},
 )
 `;}

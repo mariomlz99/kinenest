@@ -31,6 +31,7 @@ jobs:
           trap 'kill "$preview_pid"' EXIT
           for attempt in $(seq 1 40); do curl -fsS http://127.0.0.1:8018/build-info.json && break || sleep 1; done
           SITE_URL=http://127.0.0.1:8018/ npm run test:product
+          SITE_URL=http://127.0.0.1:8018/ node scripts/modules-check.mjs
           LAB_URL=http://127.0.0.1:8018/basics.html npm run test:acceptance
           LAB_LANGUAGE=cpp LAB_URL=http://127.0.0.1:8018/basics.html npm run test:acceptance
           LAB_URL=http://127.0.0.1:8018/basics.html npm run test:actions

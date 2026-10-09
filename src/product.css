@@ -16,3 +16,8 @@ button,select,.start-unit,nav button{border-radius:var(--radius-control)}
 .workspace-page .preferences{margin-right:8px}
 @media(min-width:651px) and (max-width:1100px){.workspace-page .product-header .brand{width:169px}}
 @media(max-width:850px){.workspace-page .creator{margin:10px 0 0}.workspace-page .product-header .brand{width:auto}.workspace-page .preferences{margin-right:0}}
+
+.basics-card + .basics-card {margin-top:24px}
+
+.tutorial-note {font-size:.9rem;color:var(--muted);line-height:1.6;}
+.tutorial-note a {color:var(--accent);text-underline-offset:3px;}

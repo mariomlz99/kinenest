@@ -1,11 +1,12 @@
+import {LINUX_MODE,MODULE_NAME} from './course-mode.js';
 import{Playground}from'./playground/playground.js';
 import{prepareUnit}from'./units/prepare.js';
 import{loadSession,saveSession,captureSession,restoreSession,restoreCompiledModules}from'./session.js';
 import{initLayout}from'./layout.js';
 import{guidePages,environmentHints}from'./units/guide.js';
 import{initPreferences,t}from'./i18n.js';
-import{unitChecks,snapshotUnit,restoreUnit}from'./units/checks.js';
-import{Lab}from'./lab.js';import{ROOT}from'./workspace.js';import{UNIT_NAMES,unit}from'./units.js';
+import{snapshotUnit,restoreUnit}from'./units/checks.js';
+import{Lab}from'./lab.js';import{ROOT}from'./workspace.js';import{UNIT_NAMES,unit,unitChecks}from'./active-course.js';
 let exampleUpdates=[];let preparing=false;let overview=false;const guidePositions=new Map();
 const sessionSlots=new Map();
 let playground;let unitSnapshots=new Map();const collapsed=new Set([ROOT+'/build',ROOT+'/install',ROOT+'/log']);
@@ -21,6 +22,7 @@ function renderFiles(){const root=$('#file-tree');root.replaceChildren();const e
 function addTerminal(state){if(views.length>=6){status('The lab supports up to six terminals. Close one to add another.');return;}const t=lab.terminal(state);const view=new (window.TerminalView)(lab,t,$('#terminals'),()=>{view.destroy();views=views.filter(v=>v!==view);},openFromTerminal);views.push(view);view.xterm.focus();}
 function currentSessionUI(){return {unitIndex,language,progress:[...progress],guidePositions:[...guidePositions],activeFile,draft:activeFile&&editor.value!==saved?editor.value:null};}
 function changeUnit(index){
+ if(LINUX_MODE&&index===7)return;
  if(preparing)return;
  if((index===7)!==(unitIndex===7)){
   overview=false;const from=unitIndex===7?'playground':'basics',to=index===7?'playground':'basics';
@@ -102,10 +104,11 @@ function renderUnit(){renderPlayground();$('#prepare-unit').hidden=unitIndex===0
 
  if(unitIndex<7&&(!guided||position===pages.length-1)){const checks=el('div',undefined,'checks');const finish=el('button','Check unit progress','complete');finish.onclick=()=>{const results=unitChecks(lab,unitIndex);checks.replaceChildren(...results.map(r=>el('p',(r.passed?'✓ ':'○ ')+r.label)));if(results.every(r=>r.passed)){progress.add(unitIndex);$('#progress').textContent=`${progress.size} / 7 completed`;status('Unit checks passed.');
  const onward=el('div',undefined,'unit-onward');onward.setAttribute('role','status');
- onward.append(el('strong',progress.size===7?'BASICS complete!':unitIndex===6?'Final unit complete.':'Unit complete!'));
- if(unitIndex===6)onward.append(el('p',progress.size===7?'Explore the playground to practise what you learned.':'You can explore the exercises now, or return to finish the earlier units.'));
+ onward.append(el('strong',progress.size===7?MODULE_NAME+' complete!':unitIndex===6?'Final unit complete.':'Unit complete!'));
+ if(LINUX_MODE&&unitIndex===6)onward.append(el('p','Continue with packages and nodes in ROS 2 Basics.'));else if(unitIndex===6)onward.append(el('p',progress.size===7?'Explore the playground to practise what you learned.':'You can explore the exercises now, or return to finish the earlier units.'));
  const nextUnit=unitIndex+1;const next=el('button',unitIndex===6?'Open playground':`Move to unit ${nextUnit+1}`);next.id='next-unit';
- next.onclick=()=>{overview=false;changeUnit(nextUnit);$('#unit').scrollTop=0;$('#unit-heading').setAttribute('tabindex','-1');$('#unit-heading').focus({preventScroll:true});status('');};
+ if(LINUX_MODE&&unitIndex===6)next.textContent='Continue to ROS 2 Basics';
+ next.onclick=()=>{if(LINUX_MODE&&unitIndex===6){location.href='./basics.html?start=1';return;}overview=false;changeUnit(nextUnit);$('#unit').scrollTop=0;$('#unit-heading').setAttribute('tabindex','-1');$('#unit-heading').focus({preventScroll:true});status('');};
  onward.append(next);checks.append(onward);onward.scrollIntoView({block:'nearest',behavior:'smooth'});
  }else status('Keep exploring: the checklist shows what remains.');};root.append(finish,checks);}
 
@@ -113,8 +116,11 @@ function renderUnit(){renderPlayground();$('#prepare-unit').hidden=unitIndex===0
 async function start(){const stored=await restoreCompiledModules(await loadSession());const [{CodeEditor},{TerminalView}]=await Promise.all([import('./vendor/ui.js'),import('./terminal-view.js')]);window.TerminalView=TerminalView;
  $('#app').innerHTML=`<aside><div class="eyebrow">BASICS</div><nav id="nav" aria-label="Units"></nav><div class="eyebrow exercise-heading">PLAYGROUND</div><nav id="exercise-nav" aria-label="Playground"></nav><div id="progress">0 / 7 completed</div><label>Learning path<select id="language"><option value="python">Python</option><option value="cpp">C++</option></select></label><p class="disclosure">BASICS · Build, run and understand ROS 2.</p><button id="prepare-unit">Prepare this unit</button><button id="reset-unit">Restart unit</button><button id="reset">Reset workspace</button><button id="save-session">Save session</button><p id="session-state" role="status"></p><p id="save-scope">Stored on this device in this browser. Export your source for a portable copy.</p><button id="export">Export source workspace</button></aside><section class="workarea"><div class="workspace-top"><h1 id="unit-heading"></h1><span id="graph-state">0 nodes · 0 topics</span><button id="restore-layout">Restore layout</button></div><section id="playground-stage" hidden></section><div id="workspace"><article id="unit"></article><section id="files"><div class="panel-title">Workspace files <button id="new-file">New file</button></div><div class="editor-layout"><div id="file-tree"></div><div class="editor-pane"><div class="editor-title"><span id="active-file">Choose a file</span><button id="save">Save</button><button id="revert">Revert</button></div><div class="editor-help">Suggestions: Ctrl+Space · Tab accepts · Esc closes</div><div id="editor"></div></div></div></section></div><div class="terminal-toolbar"><strong>Terminals</strong><span>Shared files & graph · separate environments</span><button id="add-terminal">+ Terminal</button></div><div id="terminals"></div><footer id="status" role="status"></footer></section>`;
  $('#app').className='lab';initLayout();lab=new Lab({onChange:refresh,onOutput:(id,s)=>{const match=/(?:controller\.cpp|\.py)["']?[:,](?: line )?(\d+)/.exec(s);if(match&&activeFile)editor.diagnostic(Number(match[1]),s);}});editor=new CodeEditor($('#editor'),fileTitle,save,()=>lab.workspace.registry.definitions);document.addEventListener('lab-diagnostic',event=>{if(!activeFile)return;const text=event.detail.text;const cpp=/([\w./-]+\.cpp):(\d+):/.exec(text),python=/File ["']([^"']+\.py)["'], line (\d+)/.exec(text),m=cpp??python;if(m&&(activeFile.endsWith(m[1])||m[1]==='controller.cpp'))editor.diagnostic(Number(m[2]),text);});
- UNIT_NAMES.concat('Robotics Playground').forEach((name,index)=>{const b=el('button',(index<7?`${index+1}  `:'↗  ')+name);b.dataset.index=index;b.onclick=()=>changeUnit(index);$(index<7?'#nav':'#exercise-nav').append(b);});
- $('#language').onchange=e=>{language=e.target.value;renderUnit();};$('#save').onclick=save;$('#revert').onclick=()=>{if(activeFile){saved=lab.fs.read(activeFile);editor.open(activeFile,saved);fileTitle();}};$('#new-file').onclick=()=>{const p=prompt(t('New file path (absolute or relative to ~/ros2_ws):'),'src/');if(!p)return;try{const path=p.startsWith('/')?p:ROOT+'/'+p;lab.fs.touch(path);openFile(path);}catch(e){status(e.message);}};$('#add-terminal').onclick=()=>addTerminal();
+ UNIT_NAMES.concat(LINUX_MODE?'🔒 Robotics Playground':'Robotics Playground').forEach((name,index)=>{const b=el('button',(index<7?`${index+1}  `:'↗  ')+name);b.dataset.index=index;if(LINUX_MODE&&index===7){b.disabled=true;b.title='Available in ROS 2 Basics';}b.onclick=()=>changeUnit(index);$(index<7?'#nav':'#exercise-nav').append(b);});
+ if(!LINUX_MODE){const p=el('p');p.className='tutorial-note';const a=el('a','Official ROS 2 Jazzy tutorials');a.href='https://docs.ros.org/en/jazzy/Tutorials.html';a.target='_blank';a.rel='noopener noreferrer';p.append(a);document.querySelector('aside .disclosure').after(p);}
+ document.querySelector('aside .eyebrow').textContent=MODULE_NAME;document.querySelector('aside .disclosure').textContent=LINUX_MODE?'Linux · Navigate, edit and organise files.':'ROS 2 Basics · Build, run and understand nodes.';
+ if(LINUX_MODE){const icon=document.createElement('img');icon.src=new URL('../public/brand/linux-penguin.svg',import.meta.url).href;icon.width=44;icon.height=44;icon.alt='Linux penguin';document.querySelector('aside .eyebrow').before(icon);document.querySelector('.terminal-toolbar span').textContent='Shared files · separate environments';$('#language').closest('label').style.display='none';$('#graph-state').hidden=true;$('#prepare-unit').hidden=true;$('#prepare-unit').style.display='none';}
+ $('#language').onchange=e=>{language=e.target.value;renderUnit();};$('#save').onclick=save;$('#revert').onclick=()=>{if(activeFile){saved=lab.fs.read(activeFile);editor.open(activeFile,saved);fileTitle();}};$('#new-file').onclick=()=>{const p=prompt(t('New file path (absolute or relative to your workspace):'),'src/');if(!p)return;try{const path=p.startsWith('/')?p:(LINUX_MODE?'/home/learner/linux_ws':ROOT)+'/'+p;lab.fs.touch(path);openFile(path);}catch(e){status(e.message);}};$('#add-terminal').onclick=()=>addTerminal();
  $('#reset').onclick=()=>{if(!confirm(t('Delete the virtual workspace and stop all processes?')))return;for(const v of views)v.destroy();views=[];playground?.stop();playground=null;lab.reset();lab=new Lab({onChange:refresh});unitSnapshots=new Map();for(const key of [...guidePositions.keys()])if((unitIndex===7)===key.startsWith('7:'))guidePositions.delete(key);if(unitIndex!==7)progress.clear();$('#progress').textContent=`${progress.size} / 7 completed`;activeFile=null;saved='';editor.open('','');fileTitle();addTerminal();renderUnit();refresh();status('Workspace reset.');};
  $('#reset-unit').onclick=()=>{if(!confirm(t('Restore files and environments to when you first opened this unit? Current unit edits will be replaced.')))return;playground?.stop();playground=null;restoreUnit(lab,unitSnapshots.get(unitIndex));activeFile=null;saved='';editor.open('','');fileTitle();for(const v of views){v.output('Unit restored.');v.prompt();}guidePositions.delete(unitIndex+':'+language);progress.delete(unitIndex);$('#progress').textContent=`${progress.size} / 7 completed`;renderUnit();status('Restored this unit’s starting files and environments.');};
 
@@ -126,14 +132,14 @@ async function start(){const stored=await restoreCompiledModules(await loadSessi
   try{await prepareUnit(lab,unitIndex,language,line=>{status(line);views[0]?.output(line);});unitSnapshots.set(unitIndex,snapshotUnit(lab));guidePositions.delete(unitIndex+':'+language);for(const view of views)view.prompt();renderUnit();refresh();status('Unit ready. Prerequisites are available; earlier units were not marked complete.');}
   catch(error){status(error.message);}finally{preparing=false;controls.forEach(node=>node.disabled=false);}
  };
- $('#export').onclick=async()=>{try{const{downloadWorkspace}=await import('./export.js');downloadWorkspace(lab.fs);lab.exported=true;status('Source workspace exported. Keep this copy as a backup.');}catch(e){status(e.message);}};
+ $('#export').onclick=async()=>{try{const{downloadWorkspace}=await import('./export.js');downloadWorkspace(lab.fs,...(LINUX_MODE?['/home/learner/linux_ws','linux_ws']:[]));lab.exported=true;status('Source workspace exported. Keep this copy as a backup.');}catch(e){status(e.message);}};
  if(stored){
   if(stored.other)sessionSlots.set(stored.other.ui.unitIndex===7?'playground':'basics',{record:stored.other});
-  const terminals=restoreSession(lab,stored);unitIndex=stored.ui.unitIndex;language=stored.ui.language;progress=new Set(stored.ui.progress);for(const [key,value]of stored.ui.guidePositions)guidePositions.set(key,value);
+  const terminals=restoreSession(lab,stored);unitIndex=LINUX_MODE?Math.min(6,stored.ui.unitIndex):stored.ui.unitIndex;language=stored.ui.language;progress=new Set(stored.ui.progress);for(const [key,value]of stored.ui.guidePositions)guidePositions.set(key,value);
   $('#language').value=language;$('#progress').textContent=`${progress.size} / 7 completed`;
   for(const terminal of terminals)addTerminal(terminal);if(!terminals.length)addTerminal();
   if(stored.ui.activeFile&&lab.fs.exists(stored.ui.activeFile)){openFile(stored.ui.activeFile);if(stored.ui.draft!==null){editor.open(activeFile,stored.ui.draft);fileTitle();}}
-  status('Saved session restored. Start your nodes again when needed.');
+  status(LINUX_MODE?'Saved Linux workspace restored.':'Saved session restored. Start your nodes again when needed.');
  }else addTerminal();
  let signature='',saving=false,savePending=false;
  const persist=async(force=false)=>{
