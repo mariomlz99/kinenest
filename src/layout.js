@@ -1,3 +1,4 @@
+import {initFileTreeLayout} from './file-tree-layout.js';
 import {initTerminalLayout} from './terminal-layout.js';
 import {t} from './i18n.js';
 
@@ -5,6 +6,7 @@ export function initLayout(){
  const workspace=document.querySelector('#workspace');
  const terminals=initTerminalLayout(document.querySelector('#terminals'));
  const storageKey='ros2lab.layout';
+ const fileTree=initFileTreeLayout(document.querySelector('.editor-layout'),storageKey+'.fileTree');
  let values={};
  try{const saved=JSON.parse(localStorage.getItem(storageKey)||'{}');for(const key of ['split','height','streams','textHeight','editorHeight'])if(Number.isFinite(saved[key]))values[key]=saved[key];}catch{}
  const clamp=(value,min,max)=>Math.min(max,Math.max(min,value));
@@ -44,7 +46,7 @@ export function initLayout(){
  bind(widthHandle,'split','clientX',()=>values.split??43);
  bind(heightHandle,'height','clientY',()=>workspace.getBoundingClientRect().height);
  document.querySelector('#restore-layout').onclick=()=>{
-  terminals.reset();
+  terminals.reset();fileTree.reset();
   workspace.style.removeProperty('--text-height');workspace.style.removeProperty('--editor-height');
   values={};workspace.style.removeProperty('--unit-share');workspace.style.removeProperty('--editor-share');workspace.style.removeProperty('--workspace-height');
   for(const node of document.querySelectorAll('.terminal-screen,#unit,#files')){node.style.removeProperty('height');node.style.removeProperty('width');}
