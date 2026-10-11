@@ -10,6 +10,8 @@ The terminal supports `nano <file>` as a bounded in-terminal editor: Ctrl+O then
 
 Use Ctrl+Shift+V to paste in the terminal. The terminal supports Ctrl+C, history arrows, cursor editing, Ctrl+A/E/U/K/W/L, Tab path completion and Ctrl+D to close an empty terminal. Closing a terminal stops its processes and subscriptions.
 
+CMake files have local command and argument completion, package/target/source-file suggestions, variable completion, syntax colors and call help. Use Ctrl+Space, Tab and Esc. This assistance reads the current file and workspace; it is not a CMake language server or native configure step. The editor disables browser spelling and requests that writing-assistant extensions ignore code.
+
 ## Packages and builds
 
 The course uses `~/ros2_ws`, but builds discover packages recursively below the current terminal directory. Folders marked `COLCON_IGNORE` are skipped. Package names come from package.xml. An empty build creates build/install/log spaces and reports zero packages; unknown `--packages-select` names produce warnings. Building from src/ creates src/build and src/install, so the setup file to source depends on where you built. The model retains one current install record per package name; full native overlay precedence between multiple versions of the same package is not implemented. `ros2 pkg create` supports `ament_python`, `ament_cmake`, dependencies, node name and the Apache-2.0 template license. The package parser reads beginner metadata and dependencies, rejecting malformed or unsupported configuration.
