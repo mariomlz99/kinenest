@@ -1,0 +1,44 @@
+{
+  "distribution": "jazzy",
+  "messageType": "tutorial_interfaces/msg/Status",
+  "topic": "/status",
+  "typedWithoutPublisher": "waits silently",
+  "cases": {
+    "absent": {
+      "command": "ros2 topic echo /prova",
+      "stdout": "WARNING: topic [/prova] does not appear to be published yet\n",
+      "stderr": "Could not determine the type for the passed topic\n",
+      "code": 1
+    },
+    "explicit_invalid": {
+      "command": "ros2 topic echo /status missing/msg/Status",
+      "stdout": "",
+      "stderr": "The passed message type is invalid\n",
+      "code": 1
+    },
+    "custom_unsourced": {
+      "command": "ros2 topic echo /status",
+      "stdout": "",
+      "stderr": "The message type 'tutorial_interfaces/msg/Status' is invalid\n",
+      "code": 1
+    },
+    "custom_explicit_unsourced": {
+      "command": "ros2 topic echo /status tutorial_interfaces/msg/Status",
+      "stdout": "",
+      "stderr": "The passed message type is invalid\n",
+      "code": 1
+    },
+    "custom_sourced": {
+      "command": "ros2 topic echo /status --once",
+      "stdout": "name: Ada\ncounter: 7\nready: true\n---\n",
+      "stderr": "",
+      "code": 0
+    },
+    "custom_stopped": {
+      "command": "ros2 topic echo /status",
+      "stdout": "WARNING: topic [/status] does not appear to be published yet\n",
+      "stderr": "Could not determine the type for the passed topic\n",
+      "code": 1
+    }
+  }
+}
