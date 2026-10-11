@@ -1,3 +1,4 @@
+import {sessionScope, savedSlots} from './session-scopes.js';
 import {playgroundSections} from './playground/sections.js';
 import {pubsubDiagram} from './pubsub-diagram.js';
 import {LINUX_MODE,MODULE_NAME} from './course-mode.js';
@@ -11,6 +12,7 @@ import{snapshotUnit,restoreUnit}from'./units/checks.js';
 import{Lab}from'./lab.js';import{ROOT,BASE_PACKAGES}from'./workspace.js';import{UNIT_NAMES,unit,unitChecks}from'./active-course.js';
 let exampleUpdates=[];let preparing=false;let overview=false;const guidePositions=new Map();
 const sessionSlots=new Map();
+let freeRobot=false;
 let playground;let unitSnapshots=new Map();const collapsed=new Set([ROOT+'/build',ROOT+'/install',ROOT+'/log']);
 let lab,editor,views=[],activeFile=null,saved='',unitIndex=0,language='python',progress=new Set(),refreshPending=false;
 const $=s=>document.querySelector(s),el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
@@ -26,12 +28,12 @@ function openFile(path){if(activeFile&&editor.value!==saved){status('Save the cu
 function openFromTerminal(path){if(activeFile&&editor.value!==saved)throw Error('Save or revert current edits first.');if(!lab.fs.exists(path))lab.fs.touch(path);if(!openFile(path))throw Error('Could not open file');renderFiles();$('#files').scrollIntoView({block:'nearest'});editor.view.focus();}
 function renderFiles(){const root=$('#file-tree');root.replaceChildren();const entries=[...lab.fs.entries].filter(([p])=>p.startsWith('/home/learner/')&&!p.includes('/.')).sort(([a],[b])=>a.localeCompare(b));for(const[p,e]of entries){if([...collapsed].some(dir=>p.startsWith(dir+'/')))continue;const button=el('button',(e.kind==='dir'?(collapsed.has(p)?'▸ ':'▾ '):'  ')+p.split('/').at(-1)+(e.kind==='dir'?'/':''),p===activeFile?'active':'');button.style.paddingLeft=(8+(p.split('/').length-4)*12)+'px';button.title=p;button.dataset.path=p;button.onclick=()=>{if(e.kind==='file'){openFile(p);renderFiles();}else{collapsed.has(p)?collapsed.delete(p):collapsed.add(p);renderFiles();}};root.append(button);}if(!entries.length)root.append(el('p','Your workspace will appear here as you create it.'));}
 function addTerminal(state){if(views.length>=6){status('The lab supports up to six terminals. Close one to add another.');return;}const t=lab.terminal(state);const view=new (window.TerminalView)(lab,t,$('#terminals'),()=>{view.destroy();views=views.filter(v=>v!==view);},openFromTerminal);views.push(view);if(matchMedia('(pointer:fine)').matches)view.xterm.textarea?.focus({preventScroll:true});}
-function currentSessionUI(){return {unitIndex,language,progress:[...progress],guidePositions:[...guidePositions],activeFile,draft:activeFile&&editor.value!==saved?editor.value:null};}
+function currentSessionUI(){return {unitIndex,language,freeRobot,progress:[...progress],guidePositions:[...guidePositions],activeFile,draft:activeFile&&editor.value!==saved?editor.value:null};}
 function changeUnit(index){
  if(LINUX_MODE&&index===7)return;
  if(preparing)return;
- if((index===7)!==(unitIndex===7)){
-  overview=false;const from=unitIndex===7?'playground':'basics',to=index===7?'playground':'basics';
+ if(sessionScope(index)!==sessionScope(unitIndex)){
+  overview=false;const from=sessionScope(unitIndex),to=sessionScope(index);
   sessionSlots.set(from,{lab,views,activeFile,saved,draft:editor.value,unitSnapshots,ui:currentSessionUI()});
   for(const view of views)view.element.remove();
   const state=sessionSlots.get(to);
@@ -39,6 +41,7 @@ function changeUnit(index){
   else{
    lab=new Lab({onChange:refresh});views=[];activeFile=null;saved='';unitSnapshots=new Map();editor.open('','');
    if(state?.record){const terminals=restoreSession(lab,state.record);for(const terminal of terminals)addTerminal(terminal);if(state.record.ui.activeFile&&lab.fs.exists(state.record.ui.activeFile)){openFile(state.record.ui.activeFile);if(state.record.ui.draft!==null)editor.open(activeFile,state.record.ui.draft);}}
+   if(index===8&&!state)lab.fs.mkdir(ROOT+'/src',true);
    if(!views.length)addTerminal();
   }
   sessionSlots.delete(to);fileTitle();
@@ -46,27 +49,28 @@ function changeUnit(index){
  unitIndex=index;renderUnit();renderFiles();refresh();status('');
 }
 function renderPlayground(){
- const stage=$('#playground-stage');stage.hidden=unitIndex!==7;if(unitIndex!==7){playground?.stop();if($('#playground-status'))$('#playground-status').textContent='Paused · simulator stopped';return;}
+ const stage=$('#playground-stage');stage.hidden=unitIndex!==7&&!(unitIndex===8&&freeRobot);if(stage.hidden){playground?.stop();if($('#playground-status'))$('#playground-status').textContent='Paused · simulator stopped';return;}
  if(playground?.runtime===lab.runtime)return;
- playground?.stop();stage.innerHTML='<div class="playground-streams"><figure><figcaption>Robot world</figcaption><canvas class="world" width="800" height="640"></canvas></figure><figure><figcaption>Camera · /camera/image_raw</figcaption><canvas class="camera" width="320" height="240"></canvas></figure><figure><figcaption>LiDAR · /scan</figcaption><canvas class="scan" width="320" height="240"></canvas></figure></div><div class="playground-controls"><button id="playground-start">Start playground</button><button id="playground-stop">Stop playground</button><button id="playground-reset">Reset robot pose</button><button id="playground-view" aria-pressed="false">Room overview</button><span id="playground-status">Preview · simulator stopped</span></div>';
+ playground?.stop();stage.innerHTML='<div class="playground-streams"><figure><figcaption>Robot world | 1 square = 1 m</figcaption><canvas class="world" width="800" height="640"></canvas></figure><figure><figcaption>Camera · /camera/image_raw</figcaption><canvas class="camera" width="320" height="240"></canvas></figure><figure><figcaption>LiDAR · /scan</figcaption><canvas class="scan" width="320" height="240"></canvas></figure></div><div class="playground-controls"><button id="playground-start">Start playground</button><button id="playground-stop">Stop playground</button><button id="playground-reset">Reset robot pose</button><button id="playground-view" aria-pressed="false">Room overview</button><span id="playground-status">Preview · simulator stopped</span></div>';
  for(const [index,figure]of [...stage.querySelectorAll('figure')].entries()){
   const caption=figure.querySelector('figcaption'),canvas=figure.querySelector('canvas');caption.id='stream-caption-'+index;canvas.id='stream-view-'+index;
   const button=el('button','Enlarge','stream-expand');button.setAttribute('aria-expanded','false');button.setAttribute('aria-controls',canvas.id);button.setAttribute('aria-describedby',caption.id);
   button.onclick=()=>{const expanded=figure.classList.toggle('expanded');button.textContent=expanded?'Restore view':'Enlarge';button.setAttribute('aria-expanded',String(expanded));};figure.insertBefore(button,canvas);
  }
  playground=new Playground(lab.runtime,stage.querySelector('.world'),stage.querySelector('.camera'),stage.querySelector('.scan'));
- $('#playground-start').onclick=()=>{playground.start();$('#playground-status').textContent='Live sensor streams';};
+ $('#playground-start').onclick=()=>{try{playground.start();$('#playground-status').textContent='Live sensor streams';}catch(error){status(error.message);}};
  $('#playground-view').onclick=()=>{playground.overview=!playground.overview;$('#playground-view').textContent=playground.overview?'Follow robot':'Room overview';$('#playground-view').setAttribute('aria-pressed',String(playground.overview));playground.draw();};
  $('#playground-reset').onclick=()=>{playground.resetPose();status('Robot pose reset. Stop any velocity publisher before resetting.');};
  $('#playground-stop').onclick=()=>{playground.stop();$('#playground-status').textContent='Paused · simulator stopped';};
 }
-function renderUnit(){renderPlayground();$('#prepare-unit').hidden=unitIndex===0||unitIndex===1;if(!unitSnapshots.has(unitIndex))unitSnapshots.set(unitIndex,snapshotUnit(lab));const root=$('#unit');exampleUpdates=[];root.replaceChildren();$('#unit-heading').textContent=unitIndex===7?'Robotics Playground':`${unitIndex+1}. ${UNIT_NAMES[unitIndex]}`;for(const b of document.querySelectorAll('#nav button, #exercise-nav button'))b.classList.toggle('active',Number(b.dataset.index)===unitIndex);$('#workspace').classList.toggle('intro',unitIndex===0);
- const allSteps=unit(unitIndex,language),pages=guidePages(allSteps.filter(step=>step.kind!=='playground')).slice(0,unitIndex===7?-1:undefined),key=unitIndex+':'+language;
- const position=Math.min(guidePositions.get(key)||0,pages.length-1),guided=!overview;
+function renderUnit(){renderPlayground();$('#prepare-unit').textContent=unitIndex===7?'Prepare this exercise':'Prepare this unit';$('#prepare-unit').hidden=LINUX_MODE||unitIndex===0||unitIndex===1||unitIndex===8;$('#reset-unit').hidden=unitIndex===8;if(!unitSnapshots.has(unitIndex))unitSnapshots.set(unitIndex,snapshotUnit(lab));const root=$('#unit');exampleUpdates=[];root.replaceChildren();$('#unit-heading').textContent=unitIndex===8?'Free Lab':unitIndex===7?'Robotics Playground':`${unitIndex+1}. ${UNIT_NAMES[unitIndex]}`;for(const b of document.querySelectorAll('#nav button, #exercise-nav button'))b.classList.toggle('active',Number(b.dataset.index)===unitIndex);$('#workspace').classList.toggle('intro',unitIndex===0);
+ const allSteps=unit(unitIndex,language),pages=guidePages(allSteps.filter(step=>step.kind!=='playground')).slice(0,unitIndex>=7?-1:undefined),key=unitIndex+':'+language;
+ if(unitIndex===8){const toggle=el('button',freeRobot?'Disable robot and sensors':'Enable robot and sensors');toggle.id='free-robot';toggle.setAttribute('aria-pressed',String(freeRobot));toggle.onclick=()=>{freeRobot=!freeRobot;renderUnit();};root.append(toggle);}
+ const position=Math.min(guidePositions.get(key)||0,pages.length-1),guided=!overview&&unitIndex!==8;
  const sections=unitIndex===7?playgroundSections(pages):[],section=sections.find(s=>position>=s.start&&position<=s.end);
  if(sections.length){const nav=el('nav',undefined,'playground-exercises');nav.setAttribute('aria-label','Playground exercises');for(const item of sections){const button=el('button',item.title);button.dataset.exercise=item.id;button.classList.toggle('active',guided&&item.id===section.id);if(guided&&item.id===section.id)button.setAttribute('aria-current','step');button.onclick=()=>{guidePositions.set(key,item.start);overview=false;renderUnit();$('#unit').scrollTop=0;};nav.append(button);}root.append(nav);if(guided)root.append(el('h2',section.title,'exercise-title'));}
 
- {
+ if(unitIndex!==8){
   const controls=el('div',undefined,'guide-controls');
   const mode=el('button',overview?'Guided steps':'Unit overview');mode.id='guide-mode';mode.setAttribute('aria-pressed',String(overview));mode.onclick=()=>{overview=!overview;renderUnit();};
   if(guided){
@@ -81,7 +85,7 @@ function renderUnit(){renderPlayground();$('#prepare-unit').hidden=unitIndex===0
  for(const step of (guided?pages[position]:allSteps)){
   if(step.kind==='section'&&!guided)root.append(el('h2',step.title,'exercise-title'));
   if(step.kind==='simulator-action')root.append(el('p',step.body,'guide-observation'));
-  if(step.kind==='frame-tree'){const tree=el('pre','odom\n└─ base_link  (moving: /tf)\n   ├─ laser_link  (fixed: /tf_static)\n   └─ camera_link  (fixed: /tf_static)\n      └─ camera_optical_frame  (fixed: /tf_static)','frame-tree');tree.setAttribute('aria-label','Robot coordinate frames');root.append(tree);}
+  if(step.kind==='frame-tree'){const tree=el('pre','odom\n└─ base_link  (moving: /tf)\n   ├─ left_wheel_link  (rolling: /tf)\n   ├─ right_wheel_link  (rolling: /tf)\n   ├─ laser_link  (fixed: /tf_static)\n   └─ camera_link  (fixed: /tf_static)\n      └─ camera_optical_frame  (fixed: /tf_static)','frame-tree');tree.setAttribute('aria-label','Robot coordinate frames');root.append(tree);}
   if(step.kind==='text')root.append(el('p',step.body));
   if(step.kind==='diagram')root.append(pubsubDiagram());
   if(step.kind==='topic-diagram'){const d=el('div','Terminal 1: pub  →  /lab_chat : String  →  Terminal 2: echo','diagram');d.setAttribute('role','img');d.setAttribute('aria-label','A publisher and subscriber exchange messages on the same typed topic.');root.append(d);}
@@ -90,6 +94,7 @@ function renderUnit(){renderPlayground();$('#prepare-unit').hidden=unitIndex===0
   if(step.kind==='files'){for(const[path,source]of Object.entries(step.items)){
    const details=el('details'),summary=el('summary',`${step.pkg}/${path}`),pre=el('pre',source),actions=el('div',undefined,'example-actions');if(guided)details.open=true;
    const base=ROOT+'/src/'+step.pkg,full=base+'/'+path;
+   const starter=step.starters?.[path];if(starter){pre.hidden=true;const reveal=el('button','Show reference solution');reveal.onclick=()=>{pre.hidden=!pre.hidden;reveal.textContent=pre.hidden?'Show reference solution':'Hide reference solution';};details.append(reveal);}
    let actionState;const update=()=>{
     const signature=JSON.stringify([lab.fs.exists(base),lab.fs.entries.get(full)]);if(signature===actionState)return;actionState=signature;actions.replaceChildren();
     if(!lab.fs.exists(base)){
@@ -99,6 +104,7 @@ function renderUnit(){renderPlayground();$('#prepare-unit').hidden=unitIndex===0
       if(target>=0){overview=false;guidePositions.set(key,target);renderUnit();$('#unit').scrollTop=0;}else{$('#prepare-unit').focus();status('Use Prepare this unit to supply the prerequisite package.');}
      };actions.append(jump);return;
     }
+    if(starter){const skeleton=el('button',lab.fs.exists(full)?'Replace with starter skeleton':'Add starter skeleton');skeleton.onclick=()=>{if(activeFile&&editor.value!==saved){status('Save or revert current edits first.');return;}if(lab.fs.exists(full)&&!confirm(t('Replace this file with the starter skeleton? Existing contents will be lost.')))return;lab.fs.mkdir(full.slice(0,full.lastIndexOf('/')),true);lab.fs.write(full,starter);if(activeFile===full){saved=starter;editor.open(full,starter);fileTitle();}else openFile(full);update();};actions.append(skeleton);}
     const exists=lab.fs.exists(full),open=el('button',exists?'Open file':'Add file');open.dataset.file=path;
     open.onclick=()=>{
      if(activeFile===full){editor.view.focus();status('File is already open in the workspace editor.');return;}
@@ -130,12 +136,12 @@ function renderUnit(){renderPlayground();$('#prepare-unit').hidden=unitIndex===0
 async function start(){const stored=await restoreCompiledModules(await loadSession());const [{CodeEditor},{TerminalView}]=await Promise.all([import('./vendor/ui.js'),import('./terminal-view.js')]);window.TerminalView=TerminalView;
  $('#app').innerHTML=`<aside><div class="eyebrow">BASICS</div><nav id="nav" aria-label="Units"></nav><div class="eyebrow exercise-heading">PLAYGROUND</div><nav id="exercise-nav" aria-label="Playground"></nav><div id="progress">0 / 7 completed</div><label>Learning path<select id="language"><option value="python">Python</option><option value="cpp">C++</option></select></label><p class="disclosure">BASICS · Build, run and understand ROS 2.</p><button id="prepare-unit">Prepare this unit</button><button id="reset-unit">Restart unit</button><button id="reset">Reset workspace</button><button id="save-session">Save session</button><p id="session-state" role="status"></p><p id="save-scope">Stored on this device in this browser. Export your source for a portable copy.</p><button id="export">Export source workspace</button></aside><section class="workarea"><div class="workspace-top"><h1 id="unit-heading"></h1><span id="graph-state">0 nodes · 0 topics</span><button id="restore-layout">Restore layout</button></div><section id="playground-stage" hidden></section><div id="workspace"><article id="unit"></article><section id="files"><div class="panel-title">Workspace files <button id="new-file">New file</button></div><div class="editor-layout"><div id="file-tree"></div><div class="editor-pane"><div class="editor-title"><span id="active-file">Choose a file</span><button id="save">Save</button><button id="revert">Revert</button></div><div class="editor-help">Suggestions: Ctrl+Space · Tab accepts · Esc closes</div><div id="editor"></div></div></div></section></div><div class="terminal-toolbar"><strong>Terminals</strong><span>Shared files & graph · separate environments</span><button id="add-terminal">+ Terminal</button></div><div id="terminals"></div><footer id="status" role="status"></footer></section>`;
  $('#app').className='lab';initLayout();lab=new Lab({onChange:refresh,onOutput:(id,s)=>{const match=/(?:controller\.cpp|\.py)["']?[:,](?: line )?(\d+)/.exec(s);if(match&&activeFile)editor.diagnostic(Number(match[1]),s);}});editor=new CodeEditor($('#editor'),fileTitle,save,()=>lab.workspace.registry.definitions,()=>({packages:[...BASE_PACKAGES,...lab.workspace.packages()],files:activeFile?Object.keys(lab.fs.filesUnder(activeFile.slice(0,activeFile.lastIndexOf('/')))):[]}));document.addEventListener('lab-diagnostic',event=>{if(!activeFile)return;const text=event.detail.text;const cpp=/([\w./-]+\.cpp):(\d+):/.exec(text),python=/File ["']([^"']+\.py)["'], line (\d+)/.exec(text),m=cpp??python;if(m&&(activeFile.endsWith(m[1])||m[1]==='controller.cpp'))editor.diagnostic(Number(m[2]),text);});
- UNIT_NAMES.concat(LINUX_MODE?'🔒 Robotics Playground':'Robotics Playground').forEach((name,index)=>{const b=el('button',(index<7?`${index+1}  `:'↗  ')+name);b.dataset.index=index;if(LINUX_MODE&&index===7){b.disabled=true;b.title='Available in ROS 2 Basics';}b.onclick=()=>changeUnit(index);$(index<7?'#nav':'#exercise-nav').append(b);});
+ UNIT_NAMES.concat(LINUX_MODE?[]:['Robotics Playground','Free Lab · experiment freely']).forEach((name,index)=>{const b=el('button',(index<7?`${index+1}  `:'↗  ')+name);b.dataset.index=index;b.onclick=()=>changeUnit(index);$(index<7?'#nav':'#exercise-nav').append(b);});
  if(!LINUX_MODE){const p=el('p');p.className='tutorial-note';const a=el('a','Official ROS 2 Jazzy tutorials');a.href='https://docs.ros.org/en/jazzy/Tutorials.html';a.target='_blank';a.rel='noopener noreferrer';p.append(a);document.querySelector('aside .disclosure').after(p);}
- document.querySelector('aside .eyebrow').textContent=MODULE_NAME;document.querySelector('aside .disclosure').textContent=LINUX_MODE?'Linux · Navigate, edit and organise files.':'ROS 2 Basics · Build, run and understand nodes.';
- if(LINUX_MODE){const icon=document.createElement('img');icon.src=new URL('../public/brand/linux-penguin.svg',import.meta.url).href;icon.width=44;icon.height=44;icon.alt='Linux penguin';document.querySelector('aside .eyebrow').before(icon);document.querySelector('.terminal-toolbar span').textContent='Shared files · separate environments';$('#language').closest('label').style.display='none';$('#graph-state').hidden=true;$('#prepare-unit').hidden=true;$('#prepare-unit').style.display='none';}
+ document.querySelector('aside .eyebrow').textContent=LINUX_MODE?MODULE_NAME:'LESSONS';if(!LINUX_MODE){document.querySelector('.exercise-heading').textContent='EXERCISES';$('#nav').setAttribute('aria-label','Lessons');$('#exercise-nav').setAttribute('aria-label','Exercises');}document.querySelector('aside .disclosure').textContent=LINUX_MODE?'Linux · Navigate, edit and organise files.':'ROS 2 Basics · Build, run and understand nodes.';
+ if(LINUX_MODE){document.querySelector('.exercise-heading').hidden=true;$('#exercise-nav').hidden=true;const icon=document.createElement('img');icon.src=new URL('../public/brand/linux-penguin.svg',import.meta.url).href;icon.width=44;icon.height=44;icon.alt='Linux penguin';document.querySelector('aside .eyebrow').before(icon);document.querySelector('.terminal-toolbar span').textContent='Shared files · separate environments';$('#language').closest('label').style.display='none';$('#graph-state').hidden=true;$('#prepare-unit').hidden=true;$('#prepare-unit').style.display='none';}
  $('#language').onchange=e=>{language=e.target.value;renderUnit();};$('#save').onclick=save;$('#revert').onclick=()=>{if(activeFile){saved=lab.fs.read(activeFile);editor.open(activeFile,saved);fileTitle();}};$('#new-file').onclick=()=>{const p=prompt(t('New file path (absolute or relative to your workspace):'),'src/');if(!p)return;try{const path=p.startsWith('/')?p:(LINUX_MODE?'/home/learner/linux_ws':ROOT)+'/'+p;lab.fs.touch(path);openFile(path);}catch(e){status(e.message);}};$('#add-terminal').onclick=()=>addTerminal();
- $('#reset').onclick=()=>{if(!confirm(t('Delete the virtual workspace and stop all processes?')))return;for(const v of views)v.destroy();views=[];playground?.stop();playground=null;lab.reset();lab=new Lab({onChange:refresh});unitSnapshots=new Map();for(const key of [...guidePositions.keys()])if((unitIndex===7)===key.startsWith('7:'))guidePositions.delete(key);if(unitIndex!==7)progress.clear();updateProgress();activeFile=null;saved='';editor.open('','');fileTitle();addTerminal();renderUnit();refresh();status('Workspace reset.');$('#save-session').click();};
+ $('#reset').onclick=()=>{if(!confirm(t('Delete the virtual workspace and stop all processes?')))return;for(const v of views)v.destroy();views=[];playground?.stop();playground=null;lab.reset();lab=new Lab({onChange:refresh});unitSnapshots=new Map();for(const key of [...guidePositions.keys()])if(sessionScope(unitIndex)===sessionScope(Number(key.split(':')[0])))guidePositions.delete(key);if(unitIndex<7)progress.clear();if(unitIndex===8)lab.fs.mkdir(ROOT+'/src',true);updateProgress();activeFile=null;saved='';editor.open('','');fileTitle();addTerminal();renderUnit();refresh();status('Workspace reset.');$('#save-session').click();};
  $('#reset-unit').onclick=()=>{if(!confirm(t('Restore files and environments to when you first opened this unit? Current unit edits will be replaced.')))return;playground?.stop();playground=null;restoreUnit(lab,unitSnapshots.get(unitIndex));activeFile=null;saved='';editor.open('','');fileTitle();for(const v of views){v.output('Unit restored.');v.prompt();}guidePositions.delete(unitIndex+':'+language);progress.delete(unitIndex);updateProgress();renderUnit();status('Restored this unit’s starting files and environments.');$('#save-session').click();};
 
  $('#prepare-unit').onclick=async()=>{
@@ -143,12 +149,12 @@ async function start(){const stored=await restoreCompiledModules(await loadSessi
   if(views.some(v=>v.terminal.busy||v.executing||v.line)||activeFile&&editor.value!==saved){status('Stop running commands and save edits before preparing a unit.');return;}
   preparing=true;const controls=[...document.querySelectorAll('#nav button,#exercise-nav button,#language,#reset,#reset-unit,#prepare-unit,#add-terminal')];controls.forEach(node=>node.disabled=true);
   status('Preparing prerequisite files and builds. Existing files are kept.');
-  try{await prepareUnit(lab,unitIndex,language,line=>{status(line);views[0]?.output(line);});unitSnapshots.set(unitIndex,snapshotUnit(lab));guidePositions.delete(unitIndex+':'+language);for(const view of views)view.prompt();renderUnit();refresh();status('Unit ready. Prerequisites are available; earlier units were not marked complete.');}
+  try{await prepareUnit(lab,unitIndex,language,line=>{status(line);views[0]?.output(line);});unitSnapshots.set(unitIndex,snapshotUnit(lab));if(unitIndex!==7)guidePositions.delete(unitIndex+':'+language);for(const view of views)view.redraw();renderUnit();refresh();status('Unit ready. Prerequisites are available; earlier units were not marked complete.');}
   catch(error){status(error.message);}finally{preparing=false;controls.forEach(node=>node.disabled=false);}
  };
  $('#export').onclick=async()=>{try{const{downloadWorkspace}=await import('./export.js');downloadWorkspace(lab.fs,...(LINUX_MODE?['/home/learner/linux_ws','linux_ws']:[]));lab.exported=true;status('Source workspace exported. Keep this copy as a backup.');}catch(e){status(e.message);}};
  if(stored){
-  if(stored.other)sessionSlots.set(stored.other.ui.unitIndex===7?'playground':'basics',{record:stored.other});
+  for(const [scope,record]of savedSlots(stored))sessionSlots.set(scope,{record});freeRobot=!!stored.ui.freeRobot;
   const terminals=restoreSession(lab,stored);unitIndex=LINUX_MODE?Math.min(6,stored.ui.unitIndex):stored.ui.unitIndex;language=stored.ui.language;progress=new Set(stored.ui.progress);for(const [key,value]of stored.ui.guidePositions)guidePositions.set(key,value);
   $('#language').value=language;updateProgress();
   for(const terminal of terminals)addTerminal(terminal);if(!terminals.length)addTerminal();
@@ -160,7 +166,7 @@ async function start(){const stored=await restoreCompiledModules(await loadSessi
   if(saving){savePending||=force;return;}if(preparing)return;const ui=currentSessionUI();
   const current=JSON.stringify([lab.fs.revision,ui,[...lab.terminals.values()].map(t=>[t.cwd,t.env,t.vars,[...t.overlays],t.history]),!!lab.exported]);
   if(!force&&current===signature)return;
-  saving=true;try{const record=captureSession(lab,ui);const other=sessionSlots.values().next().value;if(other)record.other=other.record??captureSession(other.lab,other.ui);await saveSession(record);signature=current;$('#session-state').textContent='Progress saved in this browser';}catch(error){$('#session-state').textContent='Session could not be saved. Export your workspace to keep a copy.';console.error(error);}finally{saving=false;if(savePending){savePending=false;persist(true);}}
+  saving=true;try{const record=captureSession(lab,ui);record.slots=Object.fromEntries([...sessionSlots].map(([scope,state])=>[scope,state.record??captureSession(state.lab,state.ui)]));await saveSession(record);signature=current;$('#session-state').textContent='Progress saved in this browser';}catch(error){$('#session-state').textContent='Session could not be saved. Export your workspace to keep a copy.';console.error(error);}finally{saving=false;if(savePending){savePending=false;persist(true);}}
  };
  $('#save-session').onclick=()=>persist(true);setInterval(()=>persist(),1500);document.addEventListener('visibilitychange',()=>{if(document.hidden)persist();});
  renderUnit();refresh();window.addEventListener('beforeunload',e=>{if(activeFile&&editor.value!==saved||views.some(v=>v.nano?.buffer.dirty)){e.preventDefault();e.returnValue='';}});

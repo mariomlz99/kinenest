@@ -3,7 +3,7 @@ export function saveModuleProgress(module,progress){const units=[...new Set(prog
 export function readModuleProgress(module){try{const data=JSON.parse(localStorage.getItem(key(module))||'null');if(data?.version===1&&Array.isArray(data.units))return [...new Set(data.units)].filter(i=>Number.isInteger(i)&&i>=0&&i<7);}catch{}return [];}
 
 // The playground has separate work; it must not replace course completion.
-export function sessionProgress(record){return (record?.ui?.unitIndex===7?record.other:record)?.ui?.progress??[];}
+export function sessionProgress(record){return (record?.ui?.unitIndex>=7?(record.slots?.course??record.other??record):record)?.ui?.progress??[];}
 export async function syncSavedModuleProgress(){
  for(const [module,name] of [['linux','kinenest-linux-session'],['ros','kinenest-basics-session']]){
   try{const record=await new Promise((resolve,reject)=>{
