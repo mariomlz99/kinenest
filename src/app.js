@@ -1,3 +1,4 @@
+import {pubsubDiagram} from './pubsub-diagram.js';
 import {LINUX_MODE,MODULE_NAME} from './course-mode.js';
 import{Playground}from'./playground/playground.js';
 import{prepareUnit}from'./units/prepare.js';
@@ -73,7 +74,7 @@ function renderUnit(){renderPlayground();$('#prepare-unit').hidden=unitIndex===0
  }
  for(const step of (guided?pages[position]:allSteps)){
   if(step.kind==='text')root.append(el('p',step.body));
-  if(step.kind==='diagram'){const d=el('div','/talker  →  /topic : String  →  /listener','diagram');d.setAttribute('role','img');d.setAttribute('aria-label','Talker publishes a String message on topic; listener subscribes.');root.append(d);}
+  if(step.kind==='diagram')root.append(pubsubDiagram());
   if(step.kind==='topic-diagram'){const d=el('div','Terminal 1: pub  →  /lab_chat : String  →  Terminal 2: echo','diagram');d.setAttribute('role','img');d.setAttribute('aria-label','A publisher and subscriber exchange messages on the same typed topic.');root.append(d);}
   if(step.kind==='terminal-action')root.append(el('p','Terminal '+step.terminal+' — press Ctrl+C to stop its running command.','guide-observation'));
   if(step.kind==='commands'){if(step.terminal)root.append(el('strong','Terminal '+step.terminal,'command-terminal'));if(guided&&unitIndex===0&&environmentHints[step.commands[0]])root.append(el('p',environmentHints[step.commands[0]],'guide-observation'));const group=el('div',undefined,'command-group');for(const command of step.commands){const row=el('div',undefined,'command');const code=el('code',command);const copy=el('button','Copy');let copyTimer;copy.setAttribute('aria-live','polite');copy.onclick=async()=>{clearTimeout(copyTimer);copy.disabled=true;try{await navigator.clipboard.writeText(command);copy.textContent='Copied!';status('Copied command');}catch{copy.textContent='Copy failed';status('Copy failed. Select the command and copy it manually.');}finally{copy.disabled=false;copyTimer=setTimeout(()=>{copy.textContent='Copy';},1800);}};row.append(code,copy);group.append(row);}root.append(group);}
