@@ -9,3 +9,5 @@ src/vendor/
 # Local handoff notes are not product source.
 /CHECKPOINT.md
 /docs/checkpoints/
+
+dist.staging-*/

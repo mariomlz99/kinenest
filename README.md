@@ -54,3 +54,5 @@ Workspaces, terminal history and progress autosave in this browser. Processes mu
 See [supported behavior](docs/SUPPORTED.md), [architecture](docs/ARCHITECTURE.md), and [contributing](CONTRIBUTING.md).
 
 Terminal completion follows the default Bash interaction: Tab completes an unambiguous prefix; a second Tab displays sorted matches in vertical columns. Lists of 100 or more matches ask `Display all N possibilities? (y or n)`. Long lists use `--More--` (Space for a page, Enter for one line, q to stop); declining or quitting preserves the command. Browser check: `node scripts/completion-check.mjs` (`LAB_URL` selects another local server).
+
+Local rebuilds retain previous versioned assets so already-open student tabs can load workers and run installed programs. New HTML is published after its assets are ready. Verify with `node scripts/rebuild-session-check.mjs --kinenest`. Clear `dist/` only when no sessions depend on it.
