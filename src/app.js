@@ -1,3 +1,4 @@
+import {playgroundSections} from './playground/sections.js';
 import {pubsubDiagram} from './pubsub-diagram.js';
 import {LINUX_MODE,MODULE_NAME} from './course-mode.js';
 import{Playground}from'./playground/playground.js';
@@ -47,7 +48,7 @@ function changeUnit(index){
 function renderPlayground(){
  const stage=$('#playground-stage');stage.hidden=unitIndex!==7;if(unitIndex!==7){playground?.stop();if($('#playground-status'))$('#playground-status').textContent='Paused · simulator stopped';return;}
  if(playground?.runtime===lab.runtime)return;
- playground?.stop();stage.innerHTML='<div class="playground-streams"><figure><figcaption>Robot world</figcaption><canvas class="world" width="400" height="320"></canvas></figure><figure><figcaption>Camera · /camera/image_raw</figcaption><canvas class="camera" width="320" height="240"></canvas></figure><figure><figcaption>LiDAR · /scan</figcaption><canvas class="scan" width="320" height="240"></canvas></figure></div><div class="playground-controls"><button id="playground-start">Start playground</button><button id="playground-stop">Stop playground</button><span id="playground-status">Preview · simulator stopped</span></div>';
+ playground?.stop();stage.innerHTML='<div class="playground-streams"><figure><figcaption>Robot world</figcaption><canvas class="world" width="800" height="640"></canvas></figure><figure><figcaption>Camera · /camera/image_raw</figcaption><canvas class="camera" width="320" height="240"></canvas></figure><figure><figcaption>LiDAR · /scan</figcaption><canvas class="scan" width="320" height="240"></canvas></figure></div><div class="playground-controls"><button id="playground-start">Start playground</button><button id="playground-stop">Stop playground</button><button id="playground-reset">Reset robot pose</button><button id="playground-view" aria-pressed="false">Room overview</button><span id="playground-status">Preview · simulator stopped</span></div>';
  for(const [index,figure]of [...stage.querySelectorAll('figure')].entries()){
   const caption=figure.querySelector('figcaption'),canvas=figure.querySelector('canvas');caption.id='stream-caption-'+index;canvas.id='stream-view-'+index;
   const button=el('button','Enlarge','stream-expand');button.setAttribute('aria-expanded','false');button.setAttribute('aria-controls',canvas.id);button.setAttribute('aria-describedby',caption.id);
@@ -55,16 +56,21 @@ function renderPlayground(){
  }
  playground=new Playground(lab.runtime,stage.querySelector('.world'),stage.querySelector('.camera'),stage.querySelector('.scan'));
  $('#playground-start').onclick=()=>{playground.start();$('#playground-status').textContent='Live sensor streams';};
+ $('#playground-view').onclick=()=>{playground.overview=!playground.overview;$('#playground-view').textContent=playground.overview?'Follow robot':'Room overview';$('#playground-view').setAttribute('aria-pressed',String(playground.overview));playground.draw();};
+ $('#playground-reset').onclick=()=>{playground.resetPose();status('Robot pose reset. Stop any velocity publisher before resetting.');};
  $('#playground-stop').onclick=()=>{playground.stop();$('#playground-status').textContent='Paused · simulator stopped';};
 }
 function renderUnit(){renderPlayground();$('#prepare-unit').hidden=unitIndex===0||unitIndex===1;if(!unitSnapshots.has(unitIndex))unitSnapshots.set(unitIndex,snapshotUnit(lab));const root=$('#unit');exampleUpdates=[];root.replaceChildren();$('#unit-heading').textContent=unitIndex===7?'Robotics Playground':`${unitIndex+1}. ${UNIT_NAMES[unitIndex]}`;for(const b of document.querySelectorAll('#nav button, #exercise-nav button'))b.classList.toggle('active',Number(b.dataset.index)===unitIndex);$('#workspace').classList.toggle('intro',unitIndex===0);
- const allSteps=unit(unitIndex,language),pages=guidePages(allSteps.filter(step=>step.kind!=='playground')),key=unitIndex+':'+language;
+ const allSteps=unit(unitIndex,language),pages=guidePages(allSteps.filter(step=>step.kind!=='playground')).slice(0,unitIndex===7?-1:undefined),key=unitIndex+':'+language;
  const position=Math.min(guidePositions.get(key)||0,pages.length-1),guided=!overview;
+ const sections=unitIndex===7?playgroundSections(pages):[],section=sections.find(s=>position>=s.start&&position<=s.end);
+ if(sections.length){const nav=el('nav',undefined,'playground-exercises');nav.setAttribute('aria-label','Playground exercises');for(const item of sections){const button=el('button',item.title);button.dataset.exercise=item.id;button.classList.toggle('active',guided&&item.id===section.id);if(guided&&item.id===section.id)button.setAttribute('aria-current','step');button.onclick=()=>{guidePositions.set(key,item.start);overview=false;renderUnit();$('#unit').scrollTop=0;};nav.append(button);}root.append(nav);if(guided)root.append(el('h2',section.title,'exercise-title'));}
+
  {
   const controls=el('div',undefined,'guide-controls');
   const mode=el('button',overview?'Guided steps':'Unit overview');mode.id='guide-mode';mode.setAttribute('aria-pressed',String(overview));mode.onclick=()=>{overview=!overview;renderUnit();};
   if(guided){
-   const indicator=el('span',undefined,'guide-progress');indicator.append(el('span','Step'),document.createTextNode(` ${position+1} / ${pages.length}`));indicator.setAttribute('aria-live','polite');
+   const indicator=el('span',undefined,'guide-progress');indicator.append(el('span','Step'),document.createTextNode(` ${section?position-section.start+1:position+1} / ${section?section.end-section.start+1:pages.length}`));indicator.setAttribute('aria-live','polite');
    const back=el('button','Back');back.id='guide-back';back.disabled=position===0;
    const next=el('button','Next');next.id='guide-next';next.disabled=position===pages.length-1;
    const move=n=>{guidePositions.set(key,n);renderUnit();$('#unit').scrollTop=0;$('#guide-next').focus({preventScroll:true});};
@@ -73,6 +79,9 @@ function renderUnit(){renderPlayground();$('#prepare-unit').hidden=unitIndex===0
   }controls.append(mode);root.append(controls);
  }
  for(const step of (guided?pages[position]:allSteps)){
+  if(step.kind==='section'&&!guided)root.append(el('h2',step.title,'exercise-title'));
+  if(step.kind==='simulator-action')root.append(el('p',step.body,'guide-observation'));
+  if(step.kind==='frame-tree'){const tree=el('pre','odom\n└─ base_link  (moving: /tf)\n   ├─ laser_link  (fixed: /tf_static)\n   └─ camera_link  (fixed: /tf_static)\n      └─ camera_optical_frame  (fixed: /tf_static)','frame-tree');tree.setAttribute('aria-label','Robot coordinate frames');root.append(tree);}
   if(step.kind==='text')root.append(el('p',step.body));
   if(step.kind==='diagram')root.append(pubsubDiagram());
   if(step.kind==='topic-diagram'){const d=el('div','Terminal 1: pub  →  /lab_chat : String  →  Terminal 2: echo','diagram');d.setAttribute('role','img');d.setAttribute('aria-label','A publisher and subscriber exchange messages on the same typed topic.');root.append(d);}

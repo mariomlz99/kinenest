@@ -1,5 +1,17 @@
 // French, Dutch, Spanish, German, Portuguese, Italian.
 export const translations = {
+"Introduction to the simulator":["Introduction au simulateur", "Inleiding tot de simulator"],
+"1. Odometry — where is the robot?":["1. Odométrie — où est le robot ?", "1. Odometrie — waar is de robot?"],
+"2. TF — how do frames connect?":["2. TF — comment les repères sont-ils reliés ?", "2. TF — hoe zijn coördinatenstelsels verbonden?"],
+"3. LiDAR — measure the room":["3. LiDAR — mesurer la pièce", "3. LiDAR — meet de ruimte"],
+"4. Camera — understand an image":["4. Caméra — comprendre une image", "4. Camera — begrijp een beeld"],
+"Optional — write a sensor reader":["Facultatif — programmer un lecteur de capteur", "Optioneel — schrijf een sensorlezer"],
+"Playground exercises":["Exercices du simulateur", "Simulatoroefeningen"],
+"Reset robot pose":["Réinitialiser la pose du robot", "Robotpositie herstellen"],
+"Room overview":["Vue d’ensemble de la pièce", "Ruimteoverzicht"],
+"Follow robot":["Suivre le robot", "Robot volgen"],
+"Robot coordinate frames":["Repères du robot", "Coördinatenstelsels van de robot"],
+"Robot pose reset. Stop any velocity publisher before resetting.":["Pose réinitialisée. Arrêtez les publications de vitesse avant de réinitialiser.", "Robotpositie hersteld. Stop snelheidspublishers voordat je de positie herstelt."],
 "Resize file tree and code editor":["Redimensionner l’arborescence et l’éditeur de code", "Bestandsboom en code-editor vergroten of verkleinen"],
 
 "Leave the status publisher running. In a second terminal, source the workspace again to make the newly installed custom message package available, then echo its topic. Sourcing one terminal does not update the others.":["Laissez l’éditeur de statut actif. Dans un deuxième terminal, sourcez à nouveau l’espace de travail pour rendre le nouveau paquet de messages disponible, puis utilisez echo sur son topic. Sourcer un terminal ne met pas les autres à jour.", "Laat de statuspublisher draaien. Source de werkruimte opnieuw in een tweede terminal zodat het nieuw geïnstalleerde berichtenpakket beschikbaar wordt. Gebruik daar echo op het topic. Sourcen in één terminal werkt de andere terminals niet bij."],
