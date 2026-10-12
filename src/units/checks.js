@@ -1,4 +1,5 @@
 import {shellChecks} from '../runtime/shell-evidence.js';
+import {actionChecks} from './action-checks.js';
 import {programOwners,programDeliveries} from '../runtime/program-evidence.js';
 import {topicsChecks} from '../topics-lesson.js';
 import {BUILTIN} from '../interfaces/builtin.js';
@@ -13,7 +14,7 @@ export function unitChecks(lab,index){const w=lab.workspace,r=lab.runtime,ts=[..
  case 2:return [check('Build executable packages',current.some(n=>w.installed.get(n).executables.size>=2)),check('Run a publisher and subscriber',deliveries.length>0),check('Deliver a message to a subscribing node',deliveries.length>0)];
  case 3:return [check('Build a custom interface',current.some(n=>w.installed.get(n).generated)),check('Publish a custom message',[...r.programPublications].some(([owner,publications])=>owners.has(owner)&&[...publications.values()].some(s=>!Object.hasOwn(BUILTIN,s.type)&&current.some(n=>Object.hasOwn(w.installed.get(n).generated??{},s.type))))),check('Change a parameter and observe later output',r.parameterChanges.some(c=>owners.has(c.owner)&&c.observed))];
  case 4:return [check('Run the service client and make a successful terminal service call',[true,false].every(client=>r.serviceCalls.some(c=>owners.has(c.owner)&&!!c.caller===client&&(!client||owners.has(c.caller))&&c.type==='example_interfaces/srv/AddTwoInts'&&c.result.sum===c.request.a+c.request.b))),check('Start two processes from one launch', [...lab.processes.groups.values()].some(ids=>ids.size>=2)),check('Exchange messages in the launched system',deliveries.some(s=>activeOwners.get(s.publisher).group&&activeOwners.get(s.publisher).group===activeOwners.get(s.receiver).group))];
- case 5:return [check('Receive action feedback',r.actions.events.some(e=>e.event==='feedback')),check('Complete an action goal',r.actions.events.some(e=>e.event==='result'&&e.status===4)),check('Cancel an action goal',r.actions.events.some(e=>e.event==='result'&&e.status===5)),check('Observe a rejected goal',r.actions.events.some(e=>e.event==='rejected'))];
+ case 5:return actionChecks(r,owners);
  default:return [];
  }
 }

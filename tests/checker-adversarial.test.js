@@ -96,3 +96,26 @@ test('workspace check requires an actual current build and per-terminal source',
   await t.execute('rm src/alternate_pkg/package.xml');assert.equal(lessonChecks(lab,2)[1].passed,false);
  }finally{lab.reset();}
 });
+test('action completion rejects hardcoded wrong Fibonacci feedback/results',async()=>{
+ const lab=await fixture();try{
+  const server=await program(lab,'talker','/alternate_server'),client=await program(lab,'listener','/alternate_client'),a=lab.runtime.actions,owner=server.adapter.owner,type='action_tutorials_interfaces/action/Fibonacci';
+  a.register('/alternate_action',type,'/alternate_server',owner,()=>{});
+  let id=a.goal('/alternate_action',type,{order:6},client.adapter.owner,()=>{});
+  a.serverEvent(owner,id,'accepted',{accepted:true});a.serverEvent(owner,id,'feedback',{partial_sequence:[99]});a.serverEvent(owner,id,'result',{status:4,result:{sequence:[99]}});
+  id=a.goal('/alternate_action',type,{order:20},client.adapter.owner,()=>{});a.serverEvent(owner,id,'accepted',{accepted:true});a.cancel(client.adapter.owner,id,()=>{});a.serverEvent(owner,id,'cancel',{accepted:true});a.serverEvent(owner,id,'result',{status:5,result:{sequence:[]}});
+  id=a.goal('/alternate_action',type,{order:-1},client.adapter.owner,()=>{});a.serverEvent(owner,id,'accepted',{accepted:false});
+  assert(!lessonChecks(lab,6).every(c=>c.passed),'status codes alone must not pass incorrect action output');
+ }finally{lab.reset();}
+});
+test('action evidence accepts alternate names and valid output, but not another server run',async()=>{
+ const lab=await fixture();try{
+  const server=await program(lab,'talker','/alternate_server'),client=await program(lab,'listener','/alternate_client'),a=lab.runtime.actions,owner=server.adapter.owner,type='action_tutorials_interfaces/action/Fibonacci';
+  a.register('/alternate_action',type,'/alternate_server',owner,()=>{});
+  let id=a.goal('/alternate_action',type,{order:8},client.adapter.owner,()=>{});
+  a.serverEvent(owner,id,'accepted',{accepted:true});a.serverEvent(owner,id,'feedback',{partial_sequence:[0,1,1,2]});a.serverEvent(owner,id,'result',{status:4,result:{sequence:[0,1,1,2,3,5,8,13]}});
+  id=a.goal('/alternate_action',type,{order:20},client.adapter.owner,()=>{});a.serverEvent(owner,id,'accepted',{accepted:true});a.cancel(client.adapter.owner,id,()=>{});a.serverEvent(owner,id,'cancel',{accepted:true});a.serverEvent(owner,id,'result',{status:5,result:{sequence:[]}});
+  id=a.goal('/alternate_action',type,{order:-1},client.adapter.owner,()=>{});a.serverEvent(owner,id,'accepted',{accepted:false});
+  assert(lessonChecks(lab,6).every(c=>c.passed));lab.processes.stop(server.id);assert(lessonChecks(lab,6).every(c=>c.passed),'the visible final step stops the server');
+  await program(lab,'talker','/alternate_server');assert(lessonChecks(lab,6).every(c=>!c.passed),'a fresh server must earn its own action evidence');
+ }finally{lab.reset();}
+});
