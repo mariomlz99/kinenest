@@ -3,3 +3,12 @@ test('one registry covers nested standard types, defaults, validation and genera
 test('custom messages use the same model',()=>{const r=new InterfaceRegistry();r.add('tutorial_interfaces/msg/Status',parseMessage('string name\nint32 counter\nbool ready'));assert.equal(r.defaultMessage('tutorial_interfaces/msg/Status').ready,false);assert.ok(r.cppHeaders()['/include/tutorial_interfaces/msg/status.hpp']);assert.throws(()=>parseMessage('string[] names'));assert.throws(()=>parseMessage('bool ready\nbool ready'));});
 import{FileSystem}from'../src/fs.js';import{Workspace,Builder,ROOT}from'../src/workspace.js';import{customFiles}from'../src/examples.js';
 test('custom binding appears only after a valid build; dependency order',async()=>{const f=new FileSystem();f.mkdir(ROOT+'/src',true);const w=new Workspace(f);w.create('tutorial_interfaces','ament_cmake');for(const[p,s]of Object.entries(customFiles())){const full=ROOT+'/src/tutorial_interfaces/'+p;f.mkdir(full.slice(0,full.lastIndexOf('/')),true);f.write(full,s);}assert.throws(()=>w.registry.show('tutorial_interfaces/msg/Status'));await new Builder(w).build();assert.match(w.registry.show('tutorial_interfaces/msg/Status'),/bool ready/);f.write(ROOT+'/src/tutorial_interfaces/msg/Status.msg','string[] unsupported');await assert.rejects(()=>new Builder(w).build(),/Custom messages support/);assert.equal(w.current('tutorial_interfaces'),false);});
+test('typed byte fields preserve schema, bounds and validation of other arrays',()=>{
+ const r=new InterfaceRegistry(),image=r.defaultMessage('sensor_msgs/msg/Image');
+ for(const data of [new Uint8Array([0,128,255]),new Uint8ClampedArray([0,128,255]),[0,128,255]])assert.doesNotThrow(()=>r.validate('sensor_msgs/msg/Image',{...image,data}));
+ for(const data of [[-1],[256],[.5],['1'],new Int8Array([-1]),new Float64Array([256]),new Float32Array([NaN]),new DataView(new ArrayBuffer(8)),new Uint8Array(1000001)])assert.throws(()=>r.validate('sensor_msgs/msg/Image',{...image,data}));
+ assert.doesNotThrow(()=>r.validate('unique_identifier_msgs/msg/UUID',{uuid:new Uint8Array(16)}));
+ assert.throws(()=>r.validate('unique_identifier_msgs/msg/UUID',{uuid:new Uint8Array(15)}),/16 elements/);
+ assert.throws(()=>r.validateFields([{type:'bool[]',name:'values'}],{values:new Uint8Array([0,1])},'test/msg/Test'),/must be bool/);
+ assert.throws(()=>r.validateFields([{type:'int8[]',name:'values'}],{values:new Uint8Array([255])},'test/msg/Test'),/outside/);
+});

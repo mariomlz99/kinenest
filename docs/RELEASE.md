@@ -1,7 +1,12 @@
-# BASICS release — 2026-10-07
+# Current audit candidate
 
-One landing page, six BASICS units and a separate playground replace the previous implementations. Seven languages, local browser saving, source export and KineNest branding are included. Actions supports Python/C++ servers and clients, feedback, results, rejection and cancellation.
+12 October 2026. These changes are local and have not been deployed.
 
-Validation: 35 unit tests; real browser runtime checks; full visible Python and C++ walkthroughs; all four Python/C++ Actions combinations with success and cancellation; seven-language, desktop/mobile layout, save/reload and source export checks. The same Actions examples were also compiled and exercised internally on ROS 2 Jazzy in all four language combinations, including cancellation.
+- Independent endpoint cleanup, timer/service lifecycle and nested interface fixes.
+- More reliable package/build/source checks and checker evidence.
+- Faster image transfer/decoding, C++ clocks and extensive sensor Start/Stop tests.
+- Responsive simulator cards, isolated Free Lab, and TF & Odometry coming soon.
 
-Browser transport and shell remain bounded models. See SUPPORTED.md. Browser storage is local to each site origin and profile; accounts and cloud synchronization are future work.
+Current checks: 42 model test files pass. Real Python/C++ image feedback, varied targets, slow-callback interruption and UI state tests pass. The complete adversarial review and final deployment verification remain in progress; this is not release approval.
+
+Detailed engineering evidence is in [AUDIT-HANDOFF.md](AUDIT-HANDOFF.md). Older releases remain in Git history.

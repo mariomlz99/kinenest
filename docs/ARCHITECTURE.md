@@ -1,26 +1,17 @@
 # Architecture
 
-The landing page opens BASICS. `src/app.js` owns the UI and saved workspaces; `src/units.js` defines the six units and playground. `src/units/` supplies guided steps, prerequisites and behavior checks. Visible examples in `src/examples.js` and `src/action-examples.js` are also the build/runtime test inputs.
+`src/app.js` connects the UI and saved workspaces. `src/units.js` defines ROS lessons; `src/units/` contains guidance, preparation and checks. Linux has its own module. Visible examples also supply runtime test fixtures.
 
-The causal chain is files → package metadata → build → installed artifacts → sourced terminal → process → shared graph. `Lab` connects the filesystem, shell, workspace, builder and process manager. Terminals share files and a graph while retaining independent shell environments. BASICS and Playground use independent Lab instances and saved slots.
+The shared environment follows:
 
-Python workers run CPython/Pyodide with a bounded rclpy compatibility API. C++ workers run Clang/LLD and execute WebAssembly with a bounded rclcpp API. InterfaceRegistry supplies matching Python classes, C++ headers, CLI inspection and wire validation. RuntimeAdapter registers nodes, publishers, subscriptions, timers, services and actions on a browser graph. Stopping a process cleans up its owned endpoints and pending work.
+```text
+files → package → build → install → source → process → ROS graph
+```
 
-Actions use explicit server registration, per-goal ownership and typed goal/feedback/result payloads. Server callbacks execute in the chosen language worker. The transport enforces acceptance, cancellation and terminal states. Fibonacci is the supplied action interface. No action server runs until the user starts its executable.
+`Lab` connects the virtual filesystem, shell, builder and process manager. Terminals share files and graph state, with independent directories and environments. Lessons, Playground and Free Lab use the same implementation in separate saved scopes.
 
-Autosave stores versioned records in IndexedDB. Installed C++ bytes are recompiled into WebAssembly modules on restore. Running processes are never serialized. Build output versions executable assets by content hash; HTML points to that version so releases do not mix worker/header generations.
+Python runs in CPython/Pyodide workers. C++ compiles with browser Clang/LLD and runs as WebAssembly. The canonical interface registry supplies CLI inspection, Python types, C++ headers and validation. Process cleanup removes owned endpoints, timers and pending callbacks.
 
-This is not Linux, DDS, RMW or a native ROS executor. See SUPPORTED.md for supported boundaries.
+Image messages use typed byte storage and bulk C++ decoding. Subscription queues retain one running callback and one replaceable latest message.
 
-### Long directory listings
-
-`ls -l` / `ls -la` render virtual owner/group, permissions, directory link counts,
-UTF-8 byte sizes, modification times and aligned columns. `-a` includes `.` and
-`..`; directory operands show `total` in 1 KiB units. Allocation is modeled in
-4 KiB blocks (directories use 4096 bytes; short captured symlinks use no data
-blocks), not a measurement of browser storage. The default virtual umask is
-022. Native reference files retain captured modes/sizes; timestamps describe
-the virtual filesystem. Existing sessions acquire missing metadata without
-changing file contents. `touch`, writes, copies, moves and removals update the
-appropriate metadata. `scripts/native-ls-parity.mjs` compares controlled
-fixtures with GNU ls, normalizing account names and column padding.
+IndexedDB stores workspaces, installed artifacts, history and progress, not running processes. Content-versioned assets keep existing tabs compatible during updates. See [supported behavior](SUPPORTED.md) and [interface provenance](INTERFACES.md).

@@ -1,94 +1,47 @@
 # Supported behavior
 
-## Workstation
+KineNest models beginner ROS 2 Jazzy workflows. Python executes in CPython/Pyodide; C++ compiles with Clang/LLD to WebAssembly. The filesystem, shell, build system and ROS graph are browser models.
 
-The in-memory filesystem starts with `/home/learner`, `/opt/ros/jazzy`, `/tmp` and `/etc`. Paths support home expansion, relative components and root clamping. Terminals share files and the graph but own their working directory, history, environment and foreground task. The Jazzy base environment is available initially; workspace overlays must be sourced separately in each terminal.
+## Workspace and terminal
 
-Shell commands: `pwd`, `cd`, `ls` (`-a`, `-l`), `mkdir` (`-p`), `touch`, `cat`, `cp` (`-r`), `mv`, `rm` (`-r`, `-f`), `tree`, `echo`, `clear`, `history`, `which`, `printenv`, and controlled `source`. Quotes, simple environment expansion and unquoted `*`/`?` wildcard paths work. Quoted wildcards stay literal, and `*` does not match hidden files. `echo text > file` creates or overwrites a file; `echo text >> file` appends; `echo -n` omits the redirected newline. Other output redirection, pipes, input redirection, substitution, background jobs, sudo and arbitrary shell scripts are unsupported and rejected. This is not Bash.
+Terminals share files and graph state. Each keeps its own directory, history and environment. Source a workspace separately in every terminal:
 
-The terminal supports `nano <file>` as a bounded in-terminal editor: Ctrl+O then Enter writes the current filename, Ctrl+S saves directly, and Ctrl+X exits with a save/discard choice. `gedit <file>` opens the workspace editor; both modify the same virtual filesystem. Conflicting edits from another editor are rejected before overwriting. `nano ~/.bashrc` and `gedit ~/.bashrc` work, and each new terminal executes its supported startup commands. `source ~/.bashrc` updates the current shell; restoring a saved terminal preserves its existing environment. These are teaching editors, not the native applications; Vim is not implemented.
+```sh
+cd ~/ros2_ws
+colcon build
+source install/setup.bash
+```
 
-Use Ctrl+Shift+V to paste in the terminal. The terminal supports Ctrl+C, history arrows, cursor editing, Ctrl+A/E/U/K/W/L, Tab path completion and Ctrl+D to close an empty terminal. Closing a terminal stops its processes and subscriptions.
+The virtual `/opt/ros/jazzy` contains inspectable supported packages, interfaces, bindings and installation metadata. Reference binaries are explicitly simulated; their presence does not enable native applications. Browser commands never modify the host filesystem.
 
-CMake files have local command and argument completion, package/target/source-file suggestions, variable completion, syntax colors and call help. Use Ctrl+Space, Tab and Esc. This assistance reads the current file and workspace; it is not a CMake language server or native configure step. The editor disables browser spelling and requests that writing-assistant extensions ignore code.
+Common file commands, environment variables, bounded shell scripts, nano/gedit, history, completion and CLI topic job control are supported. Use command help for exact options. Pipes, command substitution, arbitrary native binaries and full Bash are unsupported. Closing a terminal stops its processes.
 
-## Packages and builds
+## Build and run
 
-The course uses `~/ros2_ws`, but builds discover packages recursively below the current terminal directory. Folders marked `COLCON_IGNORE` are skipped. Package names come from package.xml. An empty build creates build/install/log spaces and reports zero packages; unknown `--packages-select` names produce warnings. Building from src/ creates src/build and src/install, so the setup file to source depends on where you built. The model retains one current install record per package name; full native overlay precedence between multiple versions of the same package is not implemented. `ros2 pkg create` supports `ament_python`, `ament_cmake`, dependencies, node name and the Apache-2.0 template license. The package parser reads beginner metadata and dependencies, rejecting malformed or unsupported configuration.
+- `ament_python` and `ament_cmake`; package.xml dependencies; selected-package builds.
+- Real Python syntax checks at build time; module imports and entry-point lookup at run time.
+- Beginner CMake: project, required packages, executable targets, dependencies, install rules and ament_package. One source file per executable.
+- Build/install/log are created where you build. Building inside src creates src/install.
+- Source edits require rebuilding. Failed rebuilds preserve the last successful installation; a failed first build installs nothing. Uninstalled targets cannot run.
 
-BASICS uses `~/ros2_ws`, but builds discover packages recursively below the current terminal directory. Folders marked `COLCON_IGNORE` are skipped. Package names come from package.xml. An empty build creates build/install/log spaces and reports zero packages; unknown `--packages-select` names produce warnings. Building from src/ creates src/build and src/install, so the setup file to source depends on where you built. `ros2 pkg create` supports `ament_python`, `ament_cmake`, dependencies, node name and the Apache-2.0 template license. The package parser reads beginner metadata and dependencies, rejecting malformed or unsupported configuration.
+Arbitrary setup.py/launch execution, advanced CMake, external native libraries and full overlay precedence between duplicate package versions are unsupported.
 
-`colcon build` and `colcon build --packages-select ...` validate current files. Python parses actual Python syntax in CPython and verifies callable entry points. C++ uses actual Clang/LLD diagnostics. A failed first build produces no installed package; a failed rebuild preserves the last successful installation. Successful builds create virtual build/install/log directories and setup scripts. Source edits mark the workspace as needing a rebuild but leave the installed program runnable. A successful rebuild replaces that installation. Builds at different directory levels remain separate; AMENT_PREFIX_PATH selects the installed package. Re-sourcing a prefix already present does not reorder it.
+## ROS and languages
 
-Supported CMake calls are `cmake_minimum_required`, `project`, `find_package(... REQUIRED)`, `add_executable`, `ament_target_dependencies`, `install(TARGETS ... DESTINATION lib/${PROJECT_NAME})`, `install(DIRECTORY launch DESTINATION share/${PROJECT_NAME})`, and `ament_package`. Executables have one source file each. Interface packages additionally accept the demonstrated `rosidl_generate_interfaces` form. Arbitrary CMake, external libraries, colcon plugins and arbitrary setup.py execution are not supported.
+Use `ros2 --help` and subcommand help. Supported groups include pkg, node, topic, interface, param, service, action, run and launch. Python and C++ exchange typed messages on the same graph. Supported APIs include nodes, pub/sub, timers, scalar parameters, services and asynchronous clients. Actions support goal acceptance/rejection, feedback, results and cancellation through the displayed API subset.
 
-## ROS communication
+Standard interfaces and generated bindings come from one registry. Custom messages support scalar bool, int32, int64, float32, float64 and string fields after building. Exact integers are limited to JavaScript's safe-integer range. Declarative launch supports nodes, names, namespaces, parameters and remappings.
 
-Topic echo distinguishes an undiscovered type (native warning followed by an error), a discovered custom type unavailable in the terminal (native invalid-type error), and an explicitly supplied available type (waits silently for messages). After adding an interface package, re-source the receiving terminal even if it previously sourced the workspace. Native fixtures: `scripts/capture-topic-echo.py`; matching lab cases: `tests/topic-echo-parity.test.js`.
+C++ wall and monotonic clocks use browser clocks. Native threads, C++ exceptions, general executors and arbitrary pip installs are unsupported. Pyodide-distributed packages can load on demand. DDS/RMW internals are outside the current module and are not release blockers.
 
-The terminal-topic lesson precedes publisher/subscriber coding. `ros2 topic pub` supports continuous publishing (default 1 Hz), `--once`/`-1`, `--times`/`-t`, `--rate`/`-r` (1/60–20 Hz), and `--wait-matching-subscriptions`/`-w`. Finite publishers wait for one subscriber by default; `-w 0` disables that wait. `echo` accepts an explicit message type before discovery and `--once`. Default volatile delivery does not replay past messages. `hz` measures received samples. Native comparisons run with `source /opt/ros/jazzy/setup.bash; python3 scripts/native-topics-check.py`; the visible browser mirror is `node scripts/topics-lesson-check.mjs` (set `LAB_URL` for another local server).
+## Playground and Free Lab
 
-Use `ros2 --help` or a subcommand’s `--help` for exact CLI forms. The modeled CLI includes package creation/listing/executables, node inspection, topic list/type/info/echo/hz/pub, interface list/show, scalar parameters, services, run and declarative launch. Topic publishers, echo subscriptions and launch children are owned by their terminal and removed on stop. Python and C++ processes exchange messages on the same graph. The base channels `/rosout` (`rcl_interfaces/msg/Log`) and `/parameter_events` (`rcl_interfaces/msg/ParameterEvent`) have a modeled, hidden CLI-daemon publisher. Running nodes add their own publishers and produce real logger messages and parameter declaration/change events. Echo stays silent until an event occurs. Stopping a node or CLI subscription removes its endpoints; the base publisher remains. This models the standard CLI environment without running a native daemon.
+The optional playground provides `/cmd_vel`, `/odom`, `/tf`, `/tf_static`, `/scan` and `/camera/image_raw`. Camera output is RGB8 at 320×240. Motion targets 20 Hz; sensors target 10 Hz in an active tab. Browser scheduling is not a real-time guarantee. A two-second command timeout stops the robot. Camera pixels, scan geometry and ideal odometry share the simulated scene; physical sensor noise and drift are not modeled.
 
-The canonical interface registry supplies standard message/service fields, arrays, constants, defaults, generated teaching types and validation. JavaScript numbers restrict exact integers to the safe-integer range. Custom `.msg` files support scalar bool, int32, int64, float32, float64 and string fields; arbitrary rosidl syntax is not implemented.
+TF inspection uses standard messages, not a complete tf2 buffer or RViz. Start the simulator explicitly. Stop, pose reset and workspace reset have separate purposes.
 
-The beginner APIs include node creation, publishers, subscriptions, timers, scalar parameters, services and asynchronous clients. Launch safely parses the shown `LaunchDescription`/`Node` form with package, executable, name, namespace, parameters and remappings. It does not execute arbitrary launch Python. Native DDS discovery, RMW, QoS guarantees, full ROS APIs and native Linux processes are outside this lab’s contract.
+Free Lab offers the same environment without a checker. It saves and resets independently from graded units and Playground.
 
-The playground creates robot, LiDAR and camera endpoints only when explicitly started. It uses the module graph. LiDAR no-return readings use range_max; a two-second command timeout stops the robot. This is a teaching simulation, not a physics or sensor accuracy model.
+## Saving and recovery
 
-## Actions
-
-Python and C++ action servers use timers to remain responsive, with callback-based clients. The browser supports the displayed ActionServer/ActionClient and rclcpp_action subset, including goal acceptance/rejection, feedback, results, cancellation and cleanup. Futures are callback-based; Python action execution may await a rclpy.task.Future. Blocking waits, native threads, general executor behavior, arbitrary action definitions and advanced action options are not implemented. Runtime checks cover mixed-language communication; see RELEASE.md for native evidence.
-
-## UI and persistence
-
-English, Dutch, French, Spanish, German, Portuguese and Italian cover unit explanations and workstation controls. Commands, source code and runtime diagnostics retain their original text. Switching languages or themes preserves live workstation state. Workspaces, installed Python/C++ artifacts, terminal environments/history, unit positions, completion progress and workspace-editor drafts autosave to IndexedDB. Save session requests an immediate save. Running processes and Python interpreter variables are not resumed; save nano buffers before leaving. Browser storage is scoped to the site origin and browser profile and may be cleared; source export provides a portable copy. The playground has its own files, terminals and graph; returning to the module restores the separate BASICS workspace. Workspace reset requests confirmation, and unit reset restores the snapshot from first entering that unit.
-
-
-Later units can be started independently using Prepare this unit. It creates prerequisite packages from the visible examples, builds them with the real browser runtimes, and sources the result without awarding earlier unit completion. Existing packages are preserved; errors in existing learner work remain errors to fix.
-
-`python3`, `python3 script.py [args]`, `python3 -c "code"`, and `python3 --version` use a CPython/Pyodide worker. The interactive interpreter supports multiline input, exit() and Ctrl+D. Ctrl+C can terminate a busy interpreter. Text files under the virtual home directory synchronize back to the workspace; simultaneous edits in another editor are kept instead of overwritten. Binary-file persistence, native OS processes and arbitrary pip installs are not supported. Standard-library imports and Pyodide-distributed packages, including NumPy, run in the browser. Python package builds and ROS node workers load supported imported packages on demand. Use ros2 run for the modeled ROS graph APIs.
-
-Tab completion includes ROS verbs, sourced package executables and launch files, and live graph names. Unsourced terminal environments do not receive workspace executable suggestions.
-
-Terminal parity checks live in `tests/terminal-semantics.test.js`; `bash scripts/native-terminal-check.sh` verifies the corresponding workflows using native Jazzy in a temporary workspace. The shell supports assignments, export/unset, comments, source, executable lookup through PATH or explicit paths, chmod for executable bits, and bounded Bash scripts. Pipes, control-flow syntax, command substitution and arbitrary native binaries remain explicitly unsupported.
-
-
-### Optional robotics mini-exercises
-
-The playground has an introduction, independent odometry/TF/LiDAR/camera exercises,
-and an optional Python/C++ sensor-reader package. The required seven lessons remain
-robot-free. A fresh playground must be started explicitly. Each mini-exercise explains
-terminal ownership, observations, and stopping motion before resetting the pose.
-
-The standard topics are `/cmd_vel` (`geometry_msgs/msg/Twist`), `/odom`
-(`nav_msgs/msg/Odometry`), `/tf` and `/tf_static` (`tf2_msgs/msg/TFMessage`),
-`/scan` and `/camera/image_raw`. Dynamic TF and odometry use the same robot pose;
-the frames are `odom → base_link → laser_link` and
-`odom → base_link → camera_link → camera_optical_frame`. Mount heights and camera
-projection share the sensor catalog. Camera optical axes follow ROS conventions.
-Fixed transforms use modeled transient-local retention while the publisher lives.
-Inspection uses standard `ros2 topic echo --once`, composite/scalar `--field`, and
-explicit `--qos-durability transient_local --qos-reliability reliable` for static TF.
-
-The robot model advances at 20 Hz; camera, scan, odometry and dynamic TF publish at
-10 Hz while the tab is active. These are browser scheduling targets, not real-time
-guarantees. Stamps use the browser wall clock. Odometry is ideal simulator pose,
-with zero covariance; no wheel noise, localization, drift, DDS transport or Gazebo
-physics is implied. The browser currently teaches TF by inspecting its standard
-messages, not by providing a complete tf2 buffer, tf2_echo executable or RViz.
-QoS support here models the retained latest sample for each static publisher;
-it does not model network loss or every DDS QoS policy. Array-valued `--field`
-selection is not modeled; the full scan message exposes its ranges.
-
-The native reference capture (`scripts/capture-playground-native.py`, after sourcing
-Jazzy) runs every inspection command with native messages on a private ROS domain,
-checks velocity/stop commands, and composes the tree with native tf2.
-`native-sensor-readers.py` also creates temporary native workspaces, builds the
-exact visible Python/C++ reader sources and checks both execution and the
-expected failure before sourcing. The inspection outputs
-are compared verbatim by `tests/playground-native.test.js`. The browser check
-`scripts/playground-exercises-check.mjs` follows every guided page, builds and runs
-both sensor readers with real Python/Clang workers, checks sensor cadence, and
-checks that leaving the playground stops its simulator. These checks do not claim
-that an arbitrary physical robot will have the same topic names or geometry.
+Files, installed artifacts, terminal environments/history, progress and workspace-editor drafts autosave locally. Save nano buffers before leaving. Processes and interpreter variables do not resume. Export source to keep a portable backup. Prepare this unit creates missing prerequisites from visible examples while preserving existing packages and their errors.

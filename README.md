@@ -1,23 +1,23 @@
 # KineNest
 
-Learn ROS 2 by building and running programs in your browser.
+Build it. Run it. Understand it.
 
-[Open KineNest](https://kinenest.com/) · [BASICS](https://kinenest.com/basics.html?start=1)
+[Open KineNest](https://kinenest.com/) · [Linux & Terminal](https://kinenest.com/linux.html) · [ROS 2 Basics](https://kinenest.com/basics.html)
 
-BASICS has seven units: environment, workspace/packages, terminal topics, pub/sub, messages/parameters, services/launch, and actions. Python executes in CPython/Pyodide; C++ compiles to WebAssembly. The playground has an independent saved workspace with robot, camera and LiDAR views. The shell, build system and ROS transport are browser models.
+Learn with a shared terminal, filesystem and editor. ROS 2 Basics has seven units, Python and C++, an optional robotics playground, and an ungraded Free Lab. TF & Odometry is coming soon, before Communication & QoS.
 
-## Develop
+Workspaces and progress save in this browser. Export source for a portable backup. Running programs stop when you leave; restart them after reopening.
 
-Node.js 22 or newer:
+## Develop and check
+
+Requires Node.js 22 or newer.
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Open http://127.0.0.1:8017/ . Python and C++ runtimes download on first use.
-
-## Check and build
+Open http://127.0.0.1:8017/. Python and C++ runtimes download only when needed.
 
 ```sh
 npm test
@@ -25,34 +25,6 @@ npm run build
 npm run preview
 ```
 
-With the preview running, browser checks use Chrome:
+Run the relevant browser checks before release; see [contributing](CONTRIBUTING.md). Deploy only `dist/`. Preserve previous versioned assets for open tabs. `npm run deploy` publishes the built site to the configured KineNest Worker.
 
-```sh
-LAB_URL=http://127.0.0.1:8017/basics.html npm run test:acceptance
-LAB_LANGUAGE=cpp LAB_URL=http://127.0.0.1:8017/basics.html npm run test:acceptance
-LAB_URL=http://127.0.0.1:8017/basics.html npm run test:actions
-SITE_URL=http://127.0.0.1:8017/ npm run test:product
-```
-
-`npm run test:browser` checks real language runtimes against the source with its own temporary server. `dist/` is the only deployable output. CI builds and tests it before publishing GitHub Pages. `npm run deploy` publishes the tested build to the KineNest Cloudflare Worker.
-
-## Repository map
-
-- `src/`: application, seven units, runtimes, terminal/editor, translations and playground.
-- `public/brand/`: KineNest identity.
-- `tests/`: behavior and runtime checks.
-- `scripts/`: development, build and browser validation.
-- `docs/`: architecture, supported behavior, interface provenance and release notes.
-- `index.html`, `basics.html`, `licences.html`: three public pages.
-
-Earlier implementations and experiments remain available in Git history. There is one active application and one curriculum source.
-
-## Saved work
-
-Workspaces, terminal history and progress autosave in this browser. Processes must be restarted after reopening. Storage is local to the site and browser; source export provides a portable backup. No account or cloud sync is required. Session records are versioned.
-
-See [supported behavior](docs/SUPPORTED.md), [architecture](docs/ARCHITECTURE.md), and [contributing](CONTRIBUTING.md).
-
-Terminal completion follows the default Bash interaction: Tab completes an unambiguous prefix; a second Tab displays sorted matches in vertical columns. Lists of 100 or more matches ask `Display all N possibilities? (y or n)`. Long lists use `--More--` (Space for a page, Enter for one line, q to stop); declining or quitting preserves the command. Browser check: `node scripts/completion-check.mjs` (`LAB_URL` selects another local server).
-
-Local rebuilds retain previous versioned assets so already-open student tabs can load workers and run installed programs. New HTML is published after its assets are ready. Verify with `node scripts/rebuild-session-check.mjs --kinenest`. Clear `dist/` only when no sessions depend on it.
+[Supported behavior](docs/SUPPORTED.md) · [Modules](docs/MODULES.md) · [Architecture](docs/ARCHITECTURE.md) · [Interface provenance](docs/INTERFACES.md)
