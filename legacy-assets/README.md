@@ -23,3 +23,7 @@ Retained c883c8609911 for sessions open before daemon and completion updates.
 `cd17da0cdcf0` retains the production assets from source commit
 `1f2744e6975b6f60e1fc4e748453e68a51e9cab9` before the student-readiness release.
 All 98 archived files were compared byte-for-byte with the live deployment.
+
+`836933e97cf5` retains all 115 production assets from source commit
+`c1fefa19268fcd818149f3246d2dd9400b8962d4` before the topic-info argument-order fix.
+These files were also compared byte-for-byte with the live deployment.
