@@ -19,3 +19,7 @@ New pages use only the newly generated asset version.
 `7c41a1ab21e7a4da89a0a6372ebd605e48337828` before filesystem metadata and progress updates.
 
 Retained c883c8609911 for sessions open before daemon and completion updates.
+
+`cd17da0cdcf0` retains the production assets from source commit
+`1f2744e6975b6f60e1fc4e748453e68a51e9cab9` before the student-readiness release.
+All 98 archived files were compared byte-for-byte with the live deployment.
