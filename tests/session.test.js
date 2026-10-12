@@ -20,3 +20,7 @@ test('legacy session migration retains files and maps progress without completin
  assert.equal(result.version,2);assert.equal(result.ui.unitIndex,5);assert.deepEqual(result.ui.progress,[0,1]);assert.deepEqual(result.ui.guidePositions,[['0:python',2]]);
  assert.equal(result.workspace.files.get('/home/learner/notes.txt'),'my notes');assert.equal(result.terminals[0].cwd,'/home/learner/ros2_ws');assert(result.terminals[0].overlays.has('/home/learner/ros2_ws'));assert.deepEqual(result.workspace.bytes,bytes);assert.equal(saved.version,1);
 });
+
+test('restoring a unit also restores export acknowledgement',async()=>{
+ const {snapshotUnit,restoreUnit}=await import('../src/units/checks.js');const lab=new Lab();try{const before=snapshotUnit(lab);lab.exported=true;restoreUnit(lab,before);assert.equal(lab.exported,false);}finally{lab.reset();}
+});

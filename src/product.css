@@ -35,7 +35,10 @@ button,select,.start-unit,nav button{border-radius:var(--radius-control)}
 @media(pointer:coarse){.preferences select{font-size:16px}}
 
 /* Keep locked module cards and their status marks consistent at every width. */
-.module-grid{grid-auto-rows:1fr}
+.module-grid{grid-auto-rows:1fr;grid-template-columns:repeat(2,minmax(0,1fr))}
+.module-mark{display:flex;align-items:center;justify-content:space-between;min-height:34px}
+.module-icon{color:var(--accent);flex-shrink:0}
+@media(max-width:650px){.module-grid{grid-template-columns:1fr}}
 .module-grid article{display:flex;flex-direction:column;min-width:0}
 .module-grid .module-status{display:flex;align-items:center;gap:6px;margin-top:auto;padding-top:12px;line-height:16px}
 .module-lock{display:block;width:14px;height:14px;min-width:14px;flex:0 0 14px}
@@ -43,3 +46,5 @@ button,select,.start-unit,nav button{border-radius:var(--radius-control)}
 .available-modules .basics-copy>.module-progress{font-size:12px;margin:12px 0 0;color:var(--accent);min-height:20px}
 .module-progress.completed{font-weight:650}
 #nav button.completed{color:var(--accent)}
+
+.module-grid article>.module-number{display:flex;align-items:center;min-height:34px}

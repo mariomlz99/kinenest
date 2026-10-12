@@ -1,11 +1,11 @@
 // French, Dutch, Spanish, German, Portuguese, Italian.
 export const translations = {
 "Introduction to the simulator":["Introduction au simulateur", "Inleiding tot de simulator"],
-"1. Odometry — where is the robot?":["1. Odométrie — où est le robot ?", "1. Odometrie — waar is de robot?"],
-"2. TF — how do frames connect?":["2. TF — comment les repères sont-ils reliés ?", "2. TF — hoe zijn coördinatenstelsels verbonden?"],
-"3. LiDAR — measure the room":["3. LiDAR — mesurer la pièce", "3. LiDAR — meet de ruimte"],
-"4. Camera — understand an image":["4. Caméra — comprendre une image", "4. Camera — begrijp een beeld"],
-"Optional — write a sensor reader":["Facultatif — programmer un lecteur de capteur", "Optioneel — schrijf een sensorlezer"],
+"1. Odometry: where is the robot?":["1. Odométrie: où est le robot ?", "1. Odometrie: waar is de robot?"],
+"2. TF: how do frames connect?":["2. TF: comment les repères sont-ils reliés ?", "2. TF: hoe zijn coördinatenstelsels verbonden?"],
+"3. LiDAR: measure the room":["3. LiDAR: mesurer la pièce", "3. LiDAR: meet de ruimte"],
+"4. Camera: understand an image":["4. Caméra: comprendre une image", "4. Camera: begrijp een beeld"],
+"Optional: write a sensor reader":["Facultatif: programmer un lecteur de capteur", "Optioneel: schrijf een sensorlezer"],
 "Playground exercises":["Exercices du simulateur", "Simulatoroefeningen"],
 "Reset robot pose":["Réinitialiser la pose du robot", "Robotpositie herstellen"],
 "Room overview":["Vue d’ensemble de la pièce", "Ruimteoverzicht"],
@@ -1498,6 +1498,22 @@ export const translations = {
     "Demnächst",
     "Em breve",
     "In arrivo"
+  ],
+  "TF & Odometry": [
+    "TF et odométrie",
+    "TF & odometrie",
+    "TF y odometría",
+    "TF & Odometrie",
+    "TF e odometria",
+    "TF e odometria"
+  ],
+  "Connect coordinate frames, track robot motion and understand where sensor data belongs.": [
+    "Reliez les repères, suivez le mouvement du robot et comprenez à quel repère se rapportent les données des capteurs.",
+    "Verbind coördinatenstelsels, volg de beweging van de robot en begrijp bij welk stelsel sensorgegevens horen.",
+    "Conecta sistemas de coordenadas, sigue el movimiento del robot y comprende a qué sistema pertenecen los datos de los sensores.",
+    "Verbinde Koordinatensysteme, verfolge die Roboterbewegung und verstehe, welchem System Sensordaten zugeordnet sind.",
+    "Conecte sistemas de coordenadas, acompanhe o movimento do robô e entenda a que sistema pertencem os dados dos sensores.",
+    "Collega i sistemi di coordinate, segui il movimento del robot e comprendi a quale sistema appartengono i dati dei sensori."
   ],
   "Communication & QoS": [
     "Communication et QoS",
