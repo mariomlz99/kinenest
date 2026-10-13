@@ -17,8 +17,8 @@ The browser event loop delivers each update before the next worker callback;
 there is no separate simulation or interpolation in a worker. A running program
 can observe the previous publication until its next callback, as ordinary topic
 delivery is asynchronous. Comparisons use the exact observed revision and an
-absolute numerical tolerance of `1e-10` for geometry; the UI rounds to two decimal
-places.
+absolute numerical tolerance of `1e-10` for geometry; the UI rounds to three decimal
+places (lesson program output uses two).
 
 `RuntimeAdapter` verifies successful operations against the corresponding
 dispatched snapshot before recording `runtime.tfEvidence`. Evidence belongs to
@@ -26,7 +26,8 @@ the executing adapter and deduplicates repeated observations. A new run on the
 same adapter clears its old evidence; the course additionally checks current
 installed source and latest program ownership. Stop releases listener endpoints
 and worker updates; Reset clears transforms and evidence. Publisher removal
-removes its live transform entries.
+removes its live transform entries. Explicit evidence invalidation advances the
+snapshot revision floor so a queued pre-reset callback cannot restore old proof.
 
 Supported lesson APIs are `Buffer`, `TransformListener`, latest-time
 `lookup_transform` / `lookupTransform`, and `Buffer.transform(PointStamped,

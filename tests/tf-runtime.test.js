@@ -60,3 +60,11 @@ test('TF runtime modules, headers, package indexes and libraries are inspectable
  for(const path of ['/include/tf2_ros/buffer.h','/include/tf2_ros/transform_listener.h','/include/tf2_geometry_msgs/tf2_geometry_msgs.hpp','/include/tf2/time.h','/lib/python3.12/site-packages/tf2_ros/__init__.py','/lib/python3.12/site-packages/tf2_ros/buffer.py','/lib/python3.12/site-packages/tf2_geometry_msgs/__init__.py','/lib/libtf2.so','/lib/libtf2_ros.so'])assert(lab.fs.exists(base+path),path);
  assert.match(lab.fs.read(base+'/include/tf2_ros/buffer.h'),/lookupTransform/);assert.match(lab.fs.read(base+'/lib/libtf2.so'),/not a native ELF/);lab.reset();
 });
+
+test('Reset pose and navigation invalidation reject queued evidence from an earlier snapshot',()=>{
+ const runtime=new Runtime();seed(runtime);const adapter=new RuntimeAdapter(runtime);adapter.worker={postMessage(){},terminate(){}};adapter.attachTransforms();adapter.handle({kind:'node',node:'/learner'});adapter.handle({kind:'tf_listener',node:'/learner',id:1});
+ let queued;const client=new TransformClient(event=>{queued=event;});client.update(runtime.tf.snapshot());client.request({operation:'lookup',target:'base_link',source:'laser_link'});adapter.handle(queued);assert.equal(runtime.tfEvidence.length,1);
+ runtime.invalidateTfEvidence();assert.equal(runtime.tfEvidence.length,0);assert(runtime.tfEvidenceFloor>queued.revision);adapter.handle(queued);assert.equal(runtime.tfEvidence.length,0,'in-flight callback cannot restore pre-reset proof');
+ client.update(runtime.tf.snapshot());client.request({operation:'lookup',target:'base_link',source:'laser_link'});adapter.handle(queued);assert.equal(runtime.tfEvidence.length,1,'fresh observation is accepted');
+ runtime.reset();adapter.handle(queued);assert.equal(runtime.tfEvidence.length,0,'full runtime reset also fences old callbacks');adapter.stop();
+});

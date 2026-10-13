@@ -3,10 +3,11 @@ import assert from 'node:assert/strict';
 import {mkdir,writeFile} from 'node:fs/promises';
 const browser=await chromium.launch({executablePath:process.env.CHROME_BIN||'/usr/bin/google-chrome',headless:true});
 try{
- const page=await browser.newPage();await page.route('**/tf-runtime-probe',route=>route.fulfill({contentType:'text/html',body:'<!doctype html><title>TF runtime acceptance</title>'}));await page.goto((process.env.LAB_URL||'http://127.0.0.1:8043')+'/tf-runtime-probe');
+ const page=await browser.newPage(),url=new URL(process.env.LAB_URL||'http://127.0.0.1:8043/basics.html');if(!url.pathname.endsWith('.html'))url.pathname=url.pathname.replace(/\/$/,'')+'/basics.html';await page.goto(url.href);
  await page.exposeFunction('tfProgress',message=>console.log(message));
  const result=await page.evaluate(async()=>{
-  const {Runtime}=await import('/src/runtime/graph.js'),{PythonBridge}=await import('/src/python/bridge.js'),{CppBridge}=await import('/src/cpp/bridge.js'),{tfFiles}=await import('/src/tf/lesson.js'),{dynamicTransforms,staticTransforms}=await import('/src/playground/frames.js');
+  const base=document.querySelector('script[src*="/app.js"]').src;
+  const {Runtime}=await import(new URL('runtime/graph.js',base)),{PythonBridge}=await import(new URL('python/bridge.js',base)),{CppBridge}=await import(new URL('cpp/bridge.js',base)),{tfFiles}=await import(new URL('tf/lesson.js',base)),{dynamicTransforms,staticTransforms}=await import(new URL('playground/frames.js',base));
   const runtime=new Runtime(),cases=[],logs=[];let current;
   const seed=pose=>{const stamp=runtime.stamp();runtime.publish('/tf_static','tf2_msgs/msg/TFMessage',staticTransforms(stamp),{node:'/robot',durability:'transient_local'});runtime.publish('/tf','tf2_msgs/msg/TFMessage',dynamicTransforms(pose,stamp),{node:'/robot'});};
   const until=async(predicate,label)=>{for(let count=0;count<2400;count++){if(predicate())return;await new Promise(resolve=>setTimeout(resolve,50));}throw Error(label+'\n'+logs.slice(-20).join('\n'));};
