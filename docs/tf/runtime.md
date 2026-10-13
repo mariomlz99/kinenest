@@ -22,7 +22,13 @@ places (lesson program output uses two).
 
 `RuntimeAdapter` verifies successful operations against the corresponding
 dispatched snapshot before recording `runtime.tfEvidence`. Evidence belongs to
-the executing adapter and deduplicates repeated observations. A new run on the
+the executing adapter and deduplicates repeated observations. Each run also has
+an opaque worker proof, captured before learner code starts and held privately
+by `TransformClient`. It is sent only with the initial snapshot and is omitted
+from stored checker evidence. A copied result submitted through `emit_json`
+cannot impersonate a successful TF operation. These checks validate supported
+learner behavior; they are not an anti-tampering boundary against modifying the
+browser's JavaScript runtime or developer tools. A new run on the
 same adapter clears its old evidence; the course additionally checks current
 installed source and latest program ownership. Stop releases listener endpoints
 and worker updates; Reset clears transforms and evidence. Publisher removal
@@ -37,6 +43,9 @@ and listener threads are deliberately unsupported and diagnosed. Python exposes
 following the platform's existing worker error model. The lesson C++ source uses
 an uncaught lookup, which is also valid on native Jazzy. No `tf2_echo` executable
 or free `do_transform_point` API is advertised.
+
+Multiple listeners may share a buffer. C++ tracks their lifetimes with a count;
+destroying one listener does not disable another. Listeners cannot be copied.
 
 The installed Python modules, canonical C++ headers, package metadata, indexes
 and explicitly simulated libraries are generated under `/opt/ros/jazzy`.
@@ -57,3 +66,13 @@ Regression coverage:
 - `scripts/tf-runtime-check.mjs`: real Pyodide and compiled C++ execution of the
   actual lesson sources, starter failures, successful lookup/point use, moved
   pose, reset pose, alternative node/timer, Stop, rerun, and Reset.
+- `tests/tf-adversarial.test.js`: 512 seeded poses checked against independent
+  planar equations, malformed batches, disconnected frames and replay attacks.
+- `scripts/tf-adversarial-runtime.mjs` and `scripts/native-tf-review.mjs`:
+  unchanged learner-shaped probes in both languages, 11 poses, seven lookup
+  pairs and the target point. Printed browser/native values agree within
+  `1e-9`; equivalent quaternion signs are accepted as the same orientation.
+- `npm run test:tf-review`: checker attacks, language parity, saved sessions,
+  seven-language responsive checks and 55 navigation/run/reset cycles.
+
+See [the adversarial review](review.md) for reproduced defects and evidence.
