@@ -16,5 +16,20 @@ try{
   ];
   try{for(const [name,body,expected]of cases){logs.length=0;l.processes.stopAll();l.fs.write('/home/learner/ros2_ws/src/tf_lab/tf_lab/lookup.py',pre+body+post);await l.builder.build();await l.processes.run('tf_lab','lookup');for(let i=0;i<1200;i++){if(l.processes.active().some(p=>p.status==='Running')||logs.some(s=>/Error|Traceback/.test(s)))break;await new Promise(r=>setTimeout(r,50));}await new Promise(r=>setTimeout(r,100));results.push({name,expected,passed:tfChecks(l,'lookup')[0].passed,logs:[...logs]});}return results;}finally{l.reset();}
  });
- await writeFile('artifacts/review/checker-attacks.json',JSON.stringify(results,null,2));for(const r of results){console.log(r.name+': checker '+r.passed+' expected '+r.expected);if(!process.env.PROBE_ONLY)assert.equal(r.passed,r.expected,r.name);}
+ results.forEach(result=>result.language='python');
+ results.push(...await page.evaluate(async()=>{
+  const base=document.querySelector('script[src*="/app.js"]').src,{Lab}=await import(new URL('lab.js',base)),{prepareUnit}=await import(new URL('units/prepare.js',base)),{tfChecks}=await import(new URL('tf/lesson.js',base)),{staticTransforms,dynamicTransforms}=await import(new URL('playground/frames.js',base));
+  const l=new Lab(),results=[],logs=[];l.onOutput=(_,s)=>logs.push(s);l.terminal();await prepareUnit(l,9,'cpp');
+  l.runtime.publish('/tf_static','tf2_msgs/msg/TFMessage',staticTransforms(l.runtime.stamp()),{node:'/robot'});l.runtime.publish('/tf','tf2_msgs/msg/TFMessage',dynamicTransforms({x:.3,y:-.7,yaw:1.2},l.runtime.stamp()),{node:'/robot'});
+  const listener='tf2_ros::Buffer b(n->get_clock()); tf2_ros::TransformListener listener(b,n,false);';
+  const cases=[
+   ['print-only','RCLCPP_INFO(n->get_logger(),"x = 0.12, y = 0.00 m");',false],
+   ['hardcoded with listener',listener+'RCLCPP_INFO(n->get_logger(),"x = 0.12, y = 0.00 m");',false],
+   ['wrong-pair',listener+'auto t=b.lookupTransform("laser_link","base_link",tf2::TimePointZero); RCLCPP_INFO(n->get_logger(),"x = 0.12, y = 0.00 m");',false],
+   ['unknown frame',listener+'b.lookupTransform("base_link","laser",tf2::TimePointZero);',false],
+   ['functional alternative',listener+'const std::string sensor="laser_link",reference="base_link"; auto value=b.lookupTransform(reference,sensor,tf2::TimePointZero); RCLCPP_INFO(n->get_logger(),"%f %f",value.transform.translation.x,value.transform.translation.y);',true],
+  ];
+  try{for(const [name,body,expected]of cases){logs.length=0;l.processes.stopAll();l.fs.write('/home/learner/ros2_ws/src/tf_lab/src/lookup.cpp','#include <rclcpp/rclcpp.hpp>\n#include <tf2_ros/buffer.hpp>\n#include <tf2_ros/transform_listener.hpp>\nint main(int argc,char**argv){rclcpp::init(argc,argv);auto n=std::make_shared<rclcpp::Node>("attack");'+body+'rclcpp::spin(n);rclcpp::shutdown();}');await l.builder.build();await l.processes.run('tf_lab','lookup');for(let i=0;i<1200;i++){if(l.processes.active().some(p=>p.status==='Running')||logs.some(s=>/Error|Unknown frame/.test(s)))break;await new Promise(r=>setTimeout(r,50));}await new Promise(r=>setTimeout(r,100));results.push({language:'cpp',name,expected,passed:tfChecks(l,'lookup')[0].passed,logs:[...logs]});}return results;}finally{l.reset();}
+ }));
+ await writeFile('artifacts/review/checker-attacks.json',JSON.stringify(results,null,2));for(const r of results){console.log(r.language+' '+r.name+': checker '+r.passed+' expected '+r.expected);if(!process.env.PROBE_ONLY)assert.equal(r.passed,r.expected,r.name);}
 }finally{await browser.close();}

@@ -25,12 +25,23 @@ try{for(const language of (process.env.LAB_LANGUAGE||'python,cpp').split(',')){
   const check=async(id,expected)=>{await page.locator(`[data-tf-check="${id}"]`).click();assert.equal((await page.locator('#status').textContent()).includes('passed'),expected);};
   // A visible-page walk: execute only the command currently displayed, use the
   // existing file cards, and follow Next through every instruction in a section.
-  const walk=async(id,{reference=false,expected=true}={})=>{
+  const walk=async(id,{repair=false,expected=true}={})=>{
    await page.locator(`[data-exercise="${id}"]`).click();
    const count=Number((await page.locator('.guide-progress').textContent()).match(/\/\s*(\d+)/)[1]);
    for(let index=0;index<count;index++){
-    if(reference){const reveal=page.getByRole('button',{name:'Show reference solution',exact:true});if(await reveal.count())await reveal.first().click();const replace=page.getByRole('button',{name:'Replace with example',exact:true});if(await replace.count())await replace.first().click();}
-    else{const open=page.getByRole('button',{name:'Open file',exact:true});if(await open.count())await open.first().click();}
+    const open=page.getByRole('button',{name:'Open file',exact:true});
+    if(await open.count()){
+     await open.first().click();
+     if(repair){
+      // Read only the visible starter and apply the instructions. Never reveal
+      // or import a reference solution during the beginner walkthrough.
+      const content=page.locator('.cm-content');let source=await content.innerText();
+      if(id==='lookup')source=source.replace(language==='python'?"'laser'":'"laser"',language==='python'?"'laser_link'":'"laser_link"');
+      else if(language==='python')source=source.replace("self.get_logger().info('Target is ready in odom')","result = self.buffer.transform(target, 'base_link')\n            self.get_logger().info(f'x = {result.point.x:.2f}, y = {result.point.y:.2f} m')");
+      else source=source.replace('RCLCPP_INFO(node->get_logger(), "Target is ready in odom");','auto result = buffer.transform(target, "base_link");\n    RCLCPP_INFO(node->get_logger(), "x = %.2f, y = %.2f m", result.point.x, result.point.y);');
+      await content.focus();await page.keyboard.press('Control+a');await page.keyboard.insertText(source);await page.locator('#save').click();
+     }
+    }
     for(const line of await page.locator('#unit .command code').allTextContents()){
      await command(line);
      if(line.startsWith('ros2 run ')){
@@ -50,9 +61,9 @@ try{for(const language of (process.env.LAB_LANGUAGE||'python,cpp').split(',')){
   await walk('tree');record('static/dynamic comparison and retained static sample');
   await page.locator('#tf-reset-pose').click();await prepare();
   await walk('lookup',{expected:false});await stop();record('unchanged lookup starter reports the deliberate frame-name failure');
-  await walk('lookup',{reference:true});await output('x = 0.12, y = 0.00 m');await stop();record('visible lookup reference builds, runs and passes the runtime checker');
+  await walk('lookup',{repair:true});await output('x = 0.12, y = 0.00 m');await stop();record('learner repairs the visible starter without references, builds, runs and passes the runtime checker');
   await walk('point',{expected:false});await stop();record('unchanged point starter cannot pass by printing');
-  await walk('point',{reference:true});await output('x = 1.00, y = 1.00 m');
+  await walk('point',{repair:true});await output('x = 1.00, y = 1.00 m');
   await page.locator('#tf-forward').click();await page.waitForTimeout(450);await page.locator('#tf-turn').click();await page.waitForTimeout(450);await page.locator('#tf-halt').click();
   await page.waitForFunction(()=>window.tfAuditLab.runtime.tfEvidence.some(event=>event.operation==='point'&&Math.abs(event.result.point.x-1)>.01),null,{timeout:10000});
   await check('point',true);await stop();record('target result follows moved robot and agrees with live program evidence');
@@ -71,7 +82,7 @@ try{for(const language of (process.env.LAB_LANGUAGE||'python,cpp').split(',')){
   assert(await page.evaluate(()=>window.priorTfLab.processes.active().length===0&&window.priorTfLab.runtime.jobs.size===0&&window.priorTfLab.runtime.tf.listeners.size===0&&window.priorTfLab.runtime.tfEvidence.length===0),'navigation left a ghost program, timer, listener or proof');
   await page.locator('[data-index="9"]').click();assert.equal(await page.evaluate(()=>window.tfAuditLab===window.priorTfLab),true);
   assert.equal(await page.evaluate(()=>window.tfAuditLab.runtime.tf.frames().length),0);record('navigation preserves TF workspace but clears all live processes and proof');
-  await page.locator('#tf-start').click();await walk('point',{reference:true});await stop();
+  await page.locator('#tf-start').click();await walk('point',{repair:true});await stop();
   await page.locator('#reset-unit').click();
   assert(await page.evaluate(()=>window.tfAuditLab.processes.active().length===0&&window.tfAuditLab.runtime.tfEvidence.length===0&&window.tfAuditLab.runtime.tf.listeners.size===0));
   await page.locator('[data-exercise="lookup"]').click();const count=Number((await page.locator('.guide-progress').textContent()).match(/\/\s*(\d+)/)[1]);for(let i=1;i<count;i++)await page.locator('#guide-next').click();await check('lookup',false);

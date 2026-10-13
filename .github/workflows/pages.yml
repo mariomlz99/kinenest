@@ -22,6 +22,7 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+      - run: node scripts/tf-artifact-review.mjs
       - name: Real browser runtimes
         run: npm run test:browser
       - name: BASICS and product acceptance
@@ -36,6 +37,7 @@ jobs:
           LAB_LANGUAGE=cpp LAB_URL=http://127.0.0.1:8018/basics.html npm run test:acceptance
           LAB_URL=http://127.0.0.1:8018/basics.html npm run test:actions
           LAB_URL=http://127.0.0.1:8018/basics.html npm run test:tf
+          LAB_URL=http://127.0.0.1:8018/basics.html npm run test:tf-review
           node node_modules/playwright-core/cli.js install firefox
           LAB_URL=http://127.0.0.1:8018/basics.html npm run test:terminal-shortcuts
       - uses: actions/upload-pages-artifact@v3
