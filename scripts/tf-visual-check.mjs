@@ -26,6 +26,8 @@ try{
  await page.locator('[data-exercise="point"]').click();
  await page.locator('#tf-turn').click();await page.waitForTimeout(650);await page.locator('#tf-halt').click();
  assert(await page.locator('.tf-target').isVisible());
+ const targetBounds=await page.locator('.tf-target-mark').evaluate(el=>{const b=el.getBBox();return {x:b.x,y:b.y,right:b.x+b.width,bottom:b.y+b.height};});
+ assert(targetBounds.x>=0&&targetBounds.y>=0&&targetBounds.right<=600&&targetBounds.bottom<=310,'The world target stays inside the spatial view');
  await page.screenshot({path:'artifacts/tf/target-desktop.png',fullPage:true});
  for(const [name,width,height]of [['desktop',1440,900],['tablet',820,1180],['phone',390,844]]){
   await page.setViewportSize({width,height});await page.waitForTimeout(200);

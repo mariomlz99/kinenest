@@ -95,7 +95,7 @@ export class TFVisualizer {
   // Keep the world origin anchored on screen. Only mount detail follows the
   // selected pair; an automatically expanding room scale never pans odom.
   const scale=this.mountView?250/span:Math.min(160,180/Math.max(.1,-minX+.35),370/Math.max(.1,maxX+.35),180/Math.max(.1,maxY+.35),85/Math.max(.1,-minY+.35));
-  const centre=this.mountView?{x:(minX+maxX)/2,y:(minY+maxY)/2}:{x:100/scale,y:-55/scale};
+  const centre=this.mountView?{x:(minX+maxX)/2,y:(minY+maxY)/2}:{x:100/scale,y:55/scale};
   const px=p=>300+(p.x-centre.x)*scale,py=p=>155-(p.y-centre.y)*scale;
   const line=(p,q,cls)=>add('line',{x1:px(p),y1:py(p),x2:px(q),y2:py(q),class:cls});
   const step=this.mountView?.1:.5;
