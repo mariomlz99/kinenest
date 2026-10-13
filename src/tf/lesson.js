@@ -53,12 +53,12 @@ def main(args=None):
 
 function cppProgram(exercise,starter){
  const point=exercise==='point';
- const body=point?(starter?`      // TODO: express target in base_link with buffer.transform.
-      // Print the result's point.x and point.y.
-      RCLCPP_INFO(node->get_logger(), "Target is ready in odom");`:`      auto result = buffer.transform(target, "base_link");
-      RCLCPP_INFO(node->get_logger(), "x = %.2f, y = %.2f m", result.point.x, result.point.y);`):`      auto transform = buffer.lookupTransform("base_link", "${starter?'laser':'laser_link'}", tf2::TimePointZero);
-      RCLCPP_INFO(node->get_logger(), "x = %.2f, y = %.2f m",
-        transform.transform.translation.x, transform.transform.translation.y);`;
+ const body=point?(starter?`    // TODO: express target in base_link with buffer.transform.
+    // Print the result's point.x and point.y.
+    RCLCPP_INFO(node->get_logger(), "Target is ready in odom");`:`    auto result = buffer.transform(target, "base_link");
+    RCLCPP_INFO(node->get_logger(), "x = %.2f, y = %.2f m", result.point.x, result.point.y);`):`    auto transform = buffer.lookupTransform("base_link", "${starter?'laser':'laser_link'}", tf2::TimePointZero);
+    RCLCPP_INFO(node->get_logger(), "x = %.2f, y = %.2f m",
+      transform.transform.translation.x, transform.transform.translation.y);`;
  return `#include <chrono>
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
@@ -75,11 +75,8 @@ ${point?`    geometry_msgs::msg::PointStamped target;
     target.header.frame_id = "odom";
     target.point.x = ${TF_TARGET.x.toFixed(1)};
     target.point.y = ${TF_TARGET.y.toFixed(1)};
-`:''}    try {
+`:''}
 ${body}
-    } catch (const tf2::TransformException &error) {
-      RCLCPP_INFO(node->get_logger(), "TF lookup failed: %s", error.what());
-    }
   });
   rclcpp::spin(node);
   rclcpp::shutdown();
@@ -120,7 +117,7 @@ export function tfExercises(language){const py=language==='python';return [
   text('Prepare this unit to create the small tf_lab package and starter files. Keep the simulator running. The listener receives TF into a Buffer; a timer lets incoming transforms arrive before each lookup. This program prints twice per second. Ctrl+C or Stop ends it.'),
   text(py?"lookup_transform('base_link', 'laser_link', Time()) asks for laser_link expressed in base_link: target frame first, source frame second. Time() requests the latest available transform.":'lookupTransform("base_link", "laser_link", tf2::TimePointZero) asks for laser_link expressed in base_link: target frame first, source frame second. TimePointZero requests the latest available transform.'),
   {kind:'files',pkg:TF_PACKAGE,items:tfFiles(language,'lookup'),starters:tfFiles(language,'lookup',{starter:true})},
-  text('Run the starter unchanged once. It deliberately asks for laser, which is not a frame in this tree. Expect a clear TF lookup failure. Stop the program, inspect the tree, and change laser to laser_link. Save, rebuild, source and run again using the commands below. Expect x = 0.12, y = 0.00 m.'),
+  text('Run the starter unchanged once. It deliberately asks for laser, which is not a frame in this tree. Expect a clear TF lookup failure.'+(py?' Stop the program.':' This uncaught error ends the C++ program.')+' Inspect the tree and change laser to laser_link. Save, rebuild, source and run again using the commands below. Expect x = 0.12, y = 0.00 m.'),
   build('lookup'),
   text('The result is a TransformStamped. transform.translation.x and .y locate the laser origin in base_link. Reading the live transform is the task; printing copied numbers does not pass. Frame names must match the TF tree.'),
   {kind:'tf-check',exercise:'lookup'}
