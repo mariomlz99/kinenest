@@ -13,6 +13,8 @@
     "test:acceptance": "node scripts/acceptance.mjs",
     "test:actions": "node scripts/actions.mjs",
     "test:product": "node scripts/product.mjs",
+    "test:tf": "node scripts/tf-runtime-check.mjs && node scripts/tf-visual-check.mjs && node scripts/tf-learning-check.mjs",
+    "test:terminal-shortcuts": "node scripts/terminal-shortcuts-check.mjs",
     "deploy": "wrangler deploy",
     "bundle:installation": "node scripts/installation-assets.mjs"
   },

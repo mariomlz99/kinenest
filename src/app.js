@@ -185,7 +185,7 @@ async function start(){const stored=await restoreCompiledModules(await loadSessi
   saving=true;try{const record=captureSession(lab,ui);record.slots=Object.fromEntries([...sessionSlots].map(([scope,state])=>[scope,state.record??captureSession(state.lab,state.ui)]));await saveSession(record);signature=current;$('#session-state').textContent='Progress saved in this browser';}catch(error){$('#session-state').textContent='Session could not be saved. Export your workspace to keep a copy.';console.error(error);}finally{saving=false;if(savePending){savePending=false;persist(true);}}
  };
  $('#save-session').onclick=()=>persist(true);setInterval(()=>persist(),1500);document.addEventListener('visibilitychange',()=>{if(document.hidden)persist();});
- renderUnit();refresh();window.addEventListener('beforeunload',e=>{if(activeFile&&editor.value!==saved||views.some(v=>v.nano?.buffer.dirty)){e.preventDefault();e.returnValue='';}});
+ renderUnit();refresh();if(!LINUX_MODE&&new URLSearchParams(location.search).get('unit')==='tf')changeUnit(9);window.addEventListener('beforeunload',e=>{if(activeFile&&editor.value!==saved||views.some(v=>v.nano?.buffer.dirty)){e.preventDefault();e.returnValue='';}});
 }
 $('#start').onclick=async()=>{document.documentElement.classList.add('workspace-loading');$('#start').disabled=true;try{await start();await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));}catch(e){console.error(e);$('#app').append(el('p',e.message));}finally{document.documentElement.classList.remove('workspace-loading');}};
 initPreferences();
