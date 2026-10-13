@@ -46,7 +46,7 @@ test('TF tree validates cycles/unknown/disconnected frames and clears stopped pu
 
 test('TF evidence needs a real listener, matching snapshot/result and owner; rerun/reset clear it',()=>{
  const runtime=new Runtime();seed(runtime);const adapter=new RuntimeAdapter(runtime),sent=[];adapter.worker={postMessage:d=>sent.push(d),terminate(){}};adapter.attachTransforms();adapter.handle({kind:'node',node:'/learner'});
- const client=new TransformClient(event=>adapter.handle(event));client.update(runtime.tf.snapshot());client.request({operation:'lookup',target:'base_link',source:'laser_link'});assert.equal(runtime.tfEvidence.length,0);
+ const client=new TransformClient(event=>adapter.handle(event),adapter.tfProof);client.update(runtime.tf.snapshot());client.request({operation:'lookup',target:'base_link',source:'laser_link'});assert.equal(runtime.tfEvidence.length,0);
  adapter.handle({kind:'tf_listener',node:'/learner',id:'listener'});assert.equal(runtime.topics.get('/tf_static').subscribers.size,1);
  client.request({operation:'lookup',target:'base_link',source:'laser_link'});assert.equal(runtime.tfEvidence.length,1);assert.equal(runtime.tfEvidence[0].owner,adapter);
  const fake={kind:'tf_evidence',...runtime.tfEvidence[0],result:{transform:{translation:{x:999}}}};adapter.handle(fake);assert.equal(runtime.tfEvidence.length,1);
@@ -63,7 +63,7 @@ test('TF runtime modules, headers, package indexes and libraries are inspectable
 
 test('Reset pose and navigation invalidation reject queued evidence from an earlier snapshot',()=>{
  const runtime=new Runtime();seed(runtime);const adapter=new RuntimeAdapter(runtime);adapter.worker={postMessage(){},terminate(){}};adapter.attachTransforms();adapter.handle({kind:'node',node:'/learner'});adapter.handle({kind:'tf_listener',node:'/learner',id:1});
- let queued;const client=new TransformClient(event=>{queued=event;});client.update(runtime.tf.snapshot());client.request({operation:'lookup',target:'base_link',source:'laser_link'});adapter.handle(queued);assert.equal(runtime.tfEvidence.length,1);
+ let queued;const client=new TransformClient(event=>{queued=event;},adapter.tfProof);client.update(runtime.tf.snapshot());client.request({operation:'lookup',target:'base_link',source:'laser_link'});adapter.handle(queued);assert.equal(runtime.tfEvidence.length,1);
  runtime.invalidateTfEvidence();assert.equal(runtime.tfEvidence.length,0);assert(runtime.tfEvidenceFloor>queued.revision);adapter.handle(queued);assert.equal(runtime.tfEvidence.length,0,'in-flight callback cannot restore pre-reset proof');
  client.update(runtime.tf.snapshot());client.request({operation:'lookup',target:'base_link',source:'laser_link'});adapter.handle(queued);assert.equal(runtime.tfEvidence.length,1,'fresh observation is accepted');
  runtime.reset();adapter.handle(queued);assert.equal(runtime.tfEvidence.length,0,'full runtime reset also fences old callbacks');adapter.stop();

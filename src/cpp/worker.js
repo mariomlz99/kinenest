@@ -32,4 +32,4 @@ async function handle(data){
  else if(data.kind==='action_event'||data.kind==='action_server_event'){currentPayload=data;try{app.exports[data.kind==='action_event'?'kn_action_event':'kn_action_server_event'](Number(data.id));flush();}finally{currentPayload=null;}}
  else if(data.kind==='parameter_update'){currentPayload=data;try{app.exports.kn_parameter_update();}finally{currentPayload=null;}}
 }
-onmessage=({data})=>{if(data.kind==='tf_snapshot'){tfClient.update(data.snapshot);return;}chain=chain.then(()=>handle(data)).catch(e=>{flush();postMessage({kind:'error',text:'C++: '+(e.message??e)});});};
+onmessage=({data})=>{if(data.kind==='tf_snapshot'){tfClient.authorize(data.proof);tfClient.update(data.snapshot);return;}chain=chain.then(()=>handle(data)).catch(e=>{flush();postMessage({kind:'error',text:'C++: '+(e.message??e)});});};

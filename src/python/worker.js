@@ -1,5 +1,5 @@
 // Modified for KineNest BASICS: lean CPython load and finite program lifecycle.
-let pyodide, chain=Promise.resolve(),tfClient,tfSnapshot;
+let pyodide, chain=Promise.resolve(),tfClient,tfSnapshot,tfClientReady;
 const INDEX='https://cdn.jsdelivr.net/pyodide/v0.28.3/full/';
 let outputCount=0, outputTime=0;
 self.emit_json=text=>emit(JSON.parse(text));
@@ -14,8 +14,7 @@ async function teachingAPI(){
   }
 }
 async function prepareTransforms(){
-  const {TransformClient}=await import('../runtime/tf.js');
-  tfClient=new TransformClient(emit);tfClient.update(tfSnapshot);
+  await tfClientReady;
   self.tf_request_json=text=>{try{return JSON.stringify({result:tfClient.request(JSON.parse(text))});}catch(error){return JSON.stringify({error:error.message});}};
 }
 async function preparePython(){
@@ -90,4 +89,4 @@ async function handle(data){
     pyodide.runPython('_service_response(response_key, response_json)');
   }
 }
-onmessage=event=>{if(event.data.kind==='tf_snapshot'){tfSnapshot=event.data.snapshot;tfClient?.update(tfSnapshot);return;}chain=chain.then(()=>handle(event.data)).catch(error=>postMessage({kind:'error',text:String(error)}));};
+onmessage=event=>{if(event.data.kind==='tf_snapshot'){tfSnapshot=event.data.snapshot;if(!tfClientReady){const proof=event.data.proof;tfClientReady=import('../runtime/tf.js').then(({TransformClient})=>{tfClient=new TransformClient(emit,proof);tfClient.update(tfSnapshot);});}else tfClient?.update(tfSnapshot);return;}chain=chain.then(()=>handle(event.data)).catch(error=>postMessage({kind:'error',text:String(error)}));};

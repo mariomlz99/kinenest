@@ -33,7 +33,9 @@ export class TransformStore{
 // The worker mirrors publication-derived transforms, never robot pose. Operation
 // evidence carries the revision so the main bridge can verify the same snapshot.
 export class TransformClient{
- constructor(emit){this.store=new TransformStore();this.emit=emit;}
+ #proof;
+ constructor(emit,proof){this.store=new TransformStore();this.emit=emit;this.#proof=proof;}
+ authorize(proof){if(this.#proof===undefined)this.#proof=proof;}
  update(snapshot){if(snapshot&&snapshot.revision>=this.store.revision)this.store.replace(snapshot);}
- request(request){const {operation,target,source,input}=request;let result;if(operation==='lookup')result=this.store.lookup(target,source);else if(operation==='point')result=this.store.transformPoint(target,input);else throw Error('Unsupported TF operation');this.emit({kind:'tf_evidence',operation,target,source:source??input.header.frame_id,input,result,revision:this.store.revision});return result;}
+ request(request){const {operation,target,source,input}=request;let result;if(operation==='lookup')result=this.store.lookup(target,source);else if(operation==='point')result=this.store.transformPoint(target,input);else throw Error('Unsupported TF operation');this.emit({kind:'tf_evidence',proof:this.#proof,operation,target,source:source??input.header.frame_id,input,result,revision:this.store.revision});return result;}
 }

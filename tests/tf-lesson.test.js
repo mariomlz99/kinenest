@@ -33,7 +33,7 @@ async function program(lab,executable='lookup',{listen=true}={}){
  return process;
 }
 function request(lab,process,options){
- const client=new TransformClient(event=>process.adapter.handle(event));
+ const client=new TransformClient(event=>process.adapter.handle(event),process.adapter.tfProof);
  client.update(lab.runtime.tf.snapshot());return client.request(options);
 }
 const lookup={operation:'lookup',target:'base_link',source:'laser_link'};

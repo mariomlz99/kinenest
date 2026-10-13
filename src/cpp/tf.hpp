@@ -14,7 +14,7 @@ inline const TimePoint TimePointZero=TimePoint(std::chrono::nanoseconds::zero())
 }
 namespace tf2_ros {
 class Buffer {
- bool listening_=false;
+ unsigned listening_=0;
  void ready()const{if(!listening_)kinenest::fail("Create a TransformListener before looking up TF.");}
  template<class T> T request(const std::string& request)const{kn_tf_request(request.data(),request.size());auto result=kinenest::MessageTraits<T>::decode();kn_tf_done();return result;}
  friend class TransformListener;
@@ -34,9 +34,11 @@ class TransformListener {
 public:
  TransformListener(Buffer& buffer,rclcpp::Node::SharedPtr node,bool spin_thread=false):buffer_(buffer),id_(++kinenest::next_id){
   if(spin_thread)kinenest::fail("Use the existing node executor: spin_thread is not supported.");
-  buffer_.listening_=true;kinenest::emit("{\"kind\":\"tf_listener\",\"node\":"+kinenest::quote(node->get_name())+",\"id\":"+std::to_string(id_)+"}");
+  ++buffer_.listening_;kinenest::emit("{\"kind\":\"tf_listener\",\"node\":"+kinenest::quote(node->get_name())+",\"id\":"+std::to_string(id_)+"}");
  }
- ~TransformListener(){buffer_.listening_=false;kinenest::emit("{\"kind\":\"tf_unlistener\",\"id\":"+std::to_string(id_)+"}");}
+ TransformListener(const TransformListener&)=delete;
+ TransformListener& operator=(const TransformListener&)=delete;
+ ~TransformListener(){--buffer_.listening_;kinenest::emit("{\"kind\":\"tf_unlistener\",\"id\":"+std::to_string(id_)+"}");}
 };
 }
 
