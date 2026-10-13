@@ -107,7 +107,7 @@ export function tfExercises(language){const py=language==='python';return [
   reflection('Which frame stays fixed when the robot moves? Which frames travel with it?','odom stays fixed here. base_link, laser_link, camera_link, camera_optical_frame and both wheel frames travel with the robot. A frame is a coordinate system; it is not a topic or a ROS node.')
  ]},
  {id:'tree',title:'2. Tree | fixed mounts, moving robot',steps:[
-  text('Select odom → base_link in the tree. Use Move robot and watch the moving relationship beside the fixed laser mount. The robot position and heading change in odom. base_link → laser_link stays x = 0.12 m, y = 0.00 m, yaw = 0.00 rad because the sensor is bolted to the body.'),
+  text('Select odom → base_link in the tree. Use Move forward, then Turn left, and watch the moving relationship beside the fixed laser mount. The robot position and heading change in odom. base_link → laser_link stays x = 0.12 m, y = 0.00 m, yaw = 0.00 rad because the sensor is bolted to the body. Use Halt to stop.'),
   text('A static transform stays constant: the laser mount, camera mount and camera optical frame. A dynamic transform can change: odom → base_link and the wheels. The wheel centres stay at their mounts, but the wheels roll, so their orientation changes. The tree labels these edges static or dynamic.'),
   commands('ros2 topic echo /tf_static --once --qos-durability transient_local --qos-reliability reliable'),
   text('This command asks for the retained static sample, even after its original publication. /tf carries changing relationships; /tf_static carries fixed relationships. A chain through the tree connects laser_link to odom through base_link. The inspector emphasizes x, y and yaw; ROS message details shows the quaternion fields ROS uses for orientation.'),
@@ -128,7 +128,7 @@ export function tfExercises(language){const py=language==='python';return [
   {kind:'files',pkg:TF_PACKAGE,items:tfFiles(language,'point'),starters:tfFiles(language,'point',{starter:true})},
   text(py?"Use self.buffer.transform(target, 'base_link'). Importing tf2_geometry_msgs registers PointStamped so the Buffer knows how to transform it.":'Use buffer.transform(target, "base_link"). The tf2_geometry_msgs header supplies the PointStamped transform support.'),
   build('point'),
-  text('Compare the printed x/y with “Target in base_link” in the view. Reset pose gives (1.00, 1.00); move again and both readings change together. Positive x means ahead of the robot; positive y means to its left. TF handles the translation and rotation for you. No driving algorithm is needed.'),
+  text('Compare the printed x/y with the target’s base_link coordinates in the view. Reset pose gives (1.00, 1.00); move again and both readings change together. Positive x means ahead of the robot; positive y means to its left. TF handles the translation and rotation for you. No driving algorithm is needed.'),
   {kind:'tf-check',exercise:'point'},
   reflection('Why transform a measurement or target into another frame?','It lets values described by different coordinate systems be compared. Here TF expresses a room target relative to the robot; the same idea lets a robot interpret a sensor measurement relative to its body.')
  ]}
