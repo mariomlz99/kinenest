@@ -27,3 +27,9 @@ All 98 archived files were compared byte-for-byte with the live deployment.
 `836933e97cf5` retains all 115 production assets from source commit
 `c1fefa19268fcd818149f3246d2dd9400b8962d4` before the topic-info argument-order fix.
 These files were also compared byte-for-byte with the live deployment.
+
+`fdd7cb638f68` retains all 115 assets from production source commit
+`2ae347acc02c98b3cfaa96715ce79c27f1bb78e3`, before Frames & TF.
+Every file was downloaded read-only and compared byte-for-byte on 14 October
+2026. `tests/fixtures/production-assets-fdd7cb638f68.json` pins their hashes;
+clean CI builds must include this version for already-open production tabs.
