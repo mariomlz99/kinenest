@@ -40,7 +40,7 @@ function changeUnit(index){
   sessionSlots.set(from,{lab,views,activeFile,saved,draft:editor.value,unitSnapshots,ui:currentSessionUI()});
   for(const view of views)view.element.remove();
   const state=sessionSlots.get(to);
-  if(state&&!state.record){lab=state.lab;views=state.views;activeFile=state.activeFile;saved=state.saved;unitSnapshots=state.unitSnapshots;editor.open(activeFile??'',state.draft);for(const view of views){$('#terminals').append(view.element);view.fit.fit();}}
+  if(state&&!state.record){lab=state.lab;views=state.views;activeFile=state.activeFile;saved=state.saved;unitSnapshots=state.unitSnapshots;editor.open(activeFile??'',state.draft);for(const view of views){$('#terminals').append(view.element);view.fitInput();}}
   else{
    lab=new Lab({onChange:refresh});views=[];activeFile=null;saved='';unitSnapshots=new Map();editor.open('','');
    if(state?.record){const terminals=restoreSession(lab,state.record);for(const terminal of terminals)addTerminal(terminal);if(state.record.ui.activeFile&&lab.fs.exists(state.record.ui.activeFile)){openFile(state.record.ui.activeFile);if(state.record.ui.draft!==null)editor.open(activeFile,state.record.ui.draft);}}
