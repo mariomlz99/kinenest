@@ -1,5 +1,16 @@
 // French, Dutch, Spanish, German, Portuguese, Italian.
 export const translations = {
+"Keyboard":["Clavier","Toetsenbord","Teclado","Tastatur","Teclado","Tastiera"],
+"While terminal input is focused.":["Quand la saisie du terminal est active.","Wanneer de terminalinvoer actief is.","Cuando la entrada del terminal está activa.","Wenn die Terminaleingabe fokussiert ist.","Quando a entrada do terminal está ativa.","Quando l’input del terminale è attivo."],
+"Start of line":["Début de ligne","Begin van de regel","Inicio de línea","Zeilenanfang","Início da linha","Inizio riga"],
+"End of line":["Fin de ligne","Einde van de regel","Fin de línea","Zeilenende","Fim da linha","Fine riga"],
+"Clear to start":["Effacer jusqu’au début","Wissen tot het begin","Borrar hasta el inicio","Bis zum Anfang löschen","Apagar até ao início","Cancella fino all’inizio"],
+"Clear to end":["Effacer jusqu’à la fin","Wissen tot het einde","Borrar hasta el final","Bis zum Ende löschen","Apagar até ao fim","Cancella fino alla fine"],
+"Delete previous word":["Effacer le mot précédent","Vorig woord verwijderen","Borrar palabra anterior","Vorheriges Wort löschen","Apagar palavra anterior","Cancella parola precedente"],
+"Command history":["Historique des commandes","Opdrachtgeschiedenis","Historial de comandos","Befehlsverlauf","Histórico de comandos","Cronologia comandi"],
+"Complete":["Compléter","Aanvullen","Completar","Vervollständigen","Completar","Completa"],
+"Copy selection / interrupt":["Copier la sélection / interrompre","Selectie kopiëren / onderbreken","Copiar selección / interrumpir","Auswahl kopieren / unterbrechen","Copiar seleção / interromper","Copia selezione / interrompi"],
+"Suspend, when supported":["Suspendre, si disponible","Onderbreken, indien ondersteund","Suspender, si está disponible","Anhalten, wenn unterstützt","Suspender, se disponível","Sospendi, se supportato"],
 "Introduction to the simulator":["Introduction au simulateur", "Inleiding tot de simulator"],
 "1. Odometry: where is the robot?":["1. Odométrie: où est le robot ?", "1. Odometrie: waar is de robot?"],
 "2. TF: how do frames connect?":["2. TF: comment les repères sont-ils reliés ?", "2. TF: hoe zijn coördinatenstelsels verbonden?"],
@@ -1091,13 +1102,13 @@ export const translations = {
     "Onde estou? O terminal recebe comandos. O prompt mostra o diretório atual; ~ significa /home/learner. Cada terminal tem o ambiente Jazzy base, porque o .bashrc padrão carrega /opt/ros/jazzy/setup.bash.",
     "Dove sono? Il terminale riceve comandi. Il prompt mostra la cartella corrente; ~ indica /home/learner. Ogni terminale parte con l’ambiente Jazzy, perché il file .bashrc predefinito carica /opt/ros/jazzy/setup.bash."
   ],
-  "Try Ctrl+C while typing: it cancels the line and returns a fresh prompt. Up/Down recall commands. Ctrl+A/E move to the beginning/end; Ctrl+U clears the line. Tab completes paths. No robot is needed.": [
-    "Essayez Ctrl+C pendant la saisie : la ligne est annulée et une nouvelle invite apparaît. Haut/Bas rappellent les commandes. Ctrl+A/E vont au début/à la fin ; Ctrl+U efface la ligne. Tab complète les chemins. Aucun robot n’est nécessaire.",
-    "Probeer Ctrl+C tijdens het typen: de regel wordt geannuleerd en je krijgt een nieuwe prompt. Omhoog/omlaag halen opdrachten terug. Ctrl+A/E gaan naar het begin/einde; Ctrl+U wist de regel. Tab vult paden aan. Je hebt geen robot nodig.",
-    "Prueba Ctrl+C mientras escribes: cancela la línea. Arriba/Abajo recuperan comandos; Ctrl+A/E van al principio/final; Ctrl+U borra la línea. Tab completa rutas. No hace falta un robot.",
-    "Probiere Ctrl+C beim Tippen: Es verwirft die Zeile. Auf/Ab ruft Befehle ab; Ctrl+A/E springt zum Anfang/Ende; Ctrl+U leert die Zeile. Tab ergänzt Pfade. Kein Roboter nötig.",
-    "Teste Ctrl+C ao digitar: cancela a linha. Cima/Baixo recuperam comandos; Ctrl+A/E vão ao início/fim; Ctrl+U limpa a linha. Tab completa caminhos. Não precisa de robô.",
-    "Prova Ctrl+C mentre scrivi: annulla la riga. Su/Giù recuperano comandi; Ctrl+A/E vanno a inizio/fine; Ctrl+U cancella la riga. Tab completa i percorsi. Non serve un robot."
+  "Try Ctrl+C while typing: it cancels the line and returns a fresh prompt. Up/Down recall commands. Ctrl+A/E move to the beginning/end; Ctrl+U clears to the start of the line. Tab completes paths. No robot is needed.": [
+    "Essayez Ctrl+C pendant la saisie : la ligne est annulée et une nouvelle invite apparaît. Haut/Bas rappellent les commandes. Ctrl+A/E vont au début/à la fin ; Ctrl+U efface jusqu’au début de la ligne. Tab complète les chemins. Aucun robot n’est nécessaire.",
+    "Probeer Ctrl+C tijdens het typen: de regel wordt geannuleerd en je krijgt een nieuwe prompt. Omhoog/omlaag halen opdrachten terug. Ctrl+A/E gaan naar het begin/einde; Ctrl+U wist tot het begin van de regel. Tab vult paden aan. Je hebt geen robot nodig.",
+    "Prueba Ctrl+C mientras escribes: cancela la línea. Arriba/Abajo recuperan comandos; Ctrl+A/E van al principio/final; Ctrl+U borra hasta el inicio de la línea. Tab completa rutas. No hace falta un robot.",
+    "Probiere Ctrl+C beim Tippen: Es verwirft die Zeile. Auf/Ab ruft Befehle ab; Ctrl+A/E springt zum Anfang/Ende; Ctrl+U löscht bis zum Zeilenanfang. Tab ergänzt Pfade. Kein Roboter nötig.",
+    "Teste Ctrl+C ao digitar: cancela a linha. Cima/Baixo recuperam comandos; Ctrl+A/E vão ao início/fim; Ctrl+U apaga até ao início da linha. Tab completa caminhos. Não precisa de robô.",
+    "Prova Ctrl+C mentre scrivi: annulla la riga. Su/Giù recuperano comandi; Ctrl+A/E vanno a inizio/fine; Ctrl+U cancella fino all’inizio della riga. Tab completa i percorsi. Non serve un robot."
   ],
   "A workspace holds source packages and build results. A package is a named unit containing code, metadata and installation instructions. Create the directories yourself:": [
     "Un espace de travail contient les paquets sources et les résultats de compilation. Un paquet regroupe du code, des métadonnées et des instructions d’installation sous un nom. Créez vous-même les dossiers :",
