@@ -14,6 +14,7 @@ await cp('legacy-assets',output+'/assets',{recursive:true});
 // Public legal/social image URLs stay stable; executable assets are versioned.
 await cp('public',output+'/public',{recursive:true});
 await mkdir(output+'/docs',{recursive:true});for(const name of ['SUPPORTED.md','ARCHITECTURE.md','INTERFACES.md'])await cp('docs/'+name,output+'/docs/'+name);
+await mkdir(output+'/docs/tf',{recursive:true});await cp('docs/tf/runtime.md',output+'/docs/tf/runtime.md');
 for(const name of ['LICENSE','NOTICE','_redirects'])await cp(name,output+'/'+name);
 await writeFile(output+'/.nojekyll','');
 const commit=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),dirty=!!execFileSync('git',['status','--porcelain'],{encoding:'utf8'}).trim();

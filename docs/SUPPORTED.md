@@ -38,7 +38,19 @@ C++ wall and monotonic clocks use browser clocks. Native threads, C++ exceptions
 
 The optional playground provides `/cmd_vel`, `/odom`, `/tf`, `/tf_static`, `/scan` and `/camera/image_raw`. Camera output is RGB8 at 320×240. Motion targets 20 Hz; sensors target 10 Hz in an active tab. Browser scheduling is not a real-time guarantee. A two-second command timeout stops the robot. Camera pixels, scan geometry and ideal odometry share the simulated scene; physical sensor noise and drift are not modeled.
 
-TF inspection uses standard messages, not a complete tf2 buffer or RViz. Start the simulator explicitly. Stop, pose reset and workspace reset have separate purposes.
+Frames & TF is a separate, four-exercise session using the same simulator,
+editor, terminals and lesson controls. Its live tree, top view and inspector
+read the actual published transforms. Python and C++ support
+`tf2_ros::Buffer` / `tf2_ros.Buffer`, `TransformListener`, latest-time lookup
+and `Buffer.transform` for `PointStamped`. Source/target ordering follows
+Jazzy: lookup(target, source) expresses the source frame in the target frame.
+Historical queries, blocking waits, a full tf2 cache and `tf2_echo` are not
+supported. C++ lookup errors stop the program; Python can catch
+`TransformException`. See [TF runtime](tf/runtime.md) for the tested subset.
+
+Start the simulator explicitly. Pose and dynamic TF publish together at
+20 Hz, including an immediate update on pose reset; camera and scan remain
+10 Hz. Stop, pose reset and workspace reset have separate purposes.
 
 Free Lab offers the same environment without a checker. It saves and resets independently from graded units and Playground.
 
