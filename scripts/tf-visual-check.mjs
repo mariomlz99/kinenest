@@ -20,7 +20,9 @@ try{
  await page.locator('[data-frame="laser_link"]').focus();await page.keyboard.press('Enter');
  assert.equal(await page.locator('#tf-reference').inputValue(),'base_link');assert.equal(await page.locator('#tf-frame').inputValue(),'laser_link');
  assert.match(await page.locator('.tf-values').textContent(),/0.120 m/);
+ await page.locator('.tf-ros summary').click();assert.match(await page.locator('.tf-ros pre').textContent(),/rotation.z:.*\nrotation.w:/);await page.locator('.tf-ros summary').click();
  await page.screenshot({path:'artifacts/tf/mount-detail.png',fullPage:true});
+ await page.locator('#tf-stage').screenshot({path:'artifacts/tf/visualizer-mount.png'});
  await page.locator('[data-exercise="point"]').click();
  await page.locator('#tf-turn').click();await page.waitForTimeout(650);await page.locator('#tf-halt').click();
  assert(await page.locator('.tf-target').isVisible());
@@ -33,6 +35,7 @@ try{
  }
  await page.setViewportSize({width:1440,height:900});await page.locator('#theme').selectOption('dark');
  await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:'artifacts/tf/target-dark.png',fullPage:true});
+ await page.locator('#tf-stage').screenshot({path:'artifacts/tf/visualizer-target.png'});
  await page.locator('#tf-stop').click();assert.equal(await page.locator('.tf-node').count(),0);
  assert.match(await page.locator('.tf-live').textContent(),/stopped/);
  await page.locator('#tf-start').click();assert.equal(await page.locator('.tf-node').count(),7);
