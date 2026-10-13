@@ -1,5 +1,6 @@
 import {translations} from './translations.js';
 const languages=['en','nl','fr','es','de','pt','it'];
+export function registerTranslations(entries){Object.assign(translations,entries);}
 const read=(key,fallback)=>{try{return localStorage.getItem(key)??fallback;}catch{return fallback;}};
 const save=(key,value)=>{try{localStorage.setItem(key,value);}catch{}};
 let locale=read('kinenest.locale','en');if(!languages.includes(locale))locale='en';
@@ -14,6 +15,11 @@ export function t(text){
  const move=/^Move to unit (\d+)$/.exec(text);if(move)return ['Passer à l’unité ','Ga naar onderdeel ','Ir a la unidad ','Weiter zu Einheit ','Ir para a unidade ','Vai all’unità '][column]+move[1];
  const decorated=/^(\d+[. ]+|↗  |[✓○] )(.*)$/.exec(text);
  if(decorated)return decorated[1]+t(decorated[2]);
+ if(text.startsWith('Think it through: '))return t('Think it through:')+' '+t(text.slice(18));
+ const pose=/^Pose of (.+) in (.+)\.$/.exec(text);
+ if(pose)return t('Pose of {frame} in {reference}.').replace('{frame}',pose[1]).replace('{reference}',pose[2]);
+ const square=/^1 square = (.+) m · (mount detail|room view)$/.exec(text);
+ if(square)return t('1 square = {size} m · {view}').replace('{size}',square[1]).replace('{view}',t(square[2]==='mount detail'?'Mount detail':'Room view'));
  if(column<2)for(const [prefix,fr,nl] of [['Saved ','Enregistré : ','Opgeslagen: '],['Added visible example ','Exemple ajouté : ','Voorbeeld toegevoegd: ']])if(text.startsWith(prefix))return (column===0?fr:nl)+text.slice(prefix.length);
  if(text.endsWith(' • unsaved'))return text.slice(0,-10)+[' • non enregistré',' • niet opgeslagen',' • sin guardar',' • ungespeichert',' • não salvo',' • non salvato'][column];
  return text;
@@ -36,6 +42,7 @@ export function translateUI(){
   originals.set(node,{source,translated});
  }
  for(const node of document.querySelectorAll('[data-layout-label]')){node.setAttribute('aria-label',t(node.dataset.layoutLabel));node.title=t(node.dataset.layoutLabel);}
+ for(const node of document.querySelectorAll('[data-i18n-label]'))node.setAttribute('aria-label',t(node.dataset.i18nLabel));
  document.documentElement.lang=locale;
  document.querySelector('#locale')?.setAttribute('aria-label',t('Language'));
  document.querySelector('#theme')?.setAttribute('aria-label',t('Theme'));

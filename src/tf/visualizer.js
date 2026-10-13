@@ -12,10 +12,11 @@ export class TFVisualizer {
   Object.assign(this,{container,runtime,playground,reference:'odom',frame:'base_link',targetVisible:false,mountView:false});
   container.className='tf-visualizer';container.setAttribute('aria-label','Live coordinate frames');
   container.innerHTML='<div class="tf-heading"><div><strong>One robot. Several points of view.</strong><p><b>Frame</b>: an origin and axes. <b>Transform</b>: a relationship between frames. <b>TF tree</b>: their connected hierarchy.</p></div><span class="tf-live" role="status"></span></div><div class="tf-views"><section class="tf-tree-panel"><h2>TF tree</h2><div class="tf-tree" role="group" aria-label="Frame hierarchy"></div><p class="tf-key">Solid: dynamic · Dashed: static</p></section><section class="tf-space-panel"><div class="tf-space-heading"><h2>Spatial view</h2><button class="tf-zoom" aria-pressed="false">Mount detail</button></div><svg class="tf-space" viewBox="0 0 600 310" role="img" aria-label="Top view of robot coordinate frames"></svg><p class="tf-space-caption">Top view · <span class="tf-x">x → red</span> · <span class="tf-y">y → green</span> · metres</p></section><section class="tf-inspector"><h2>Transform inspector</h2><div class="tf-pair"></div><p class="tf-direction"></p><dl class="tf-values"></dl><p class="tf-rotation-note"></p><details class="tf-ros"><summary>ROS message details</summary><p>ROS stores orientation as a quaternion. This lesson uses yaw for planar frames.</p><pre></pre></details></section></div><div class="tf-comparison" aria-label="Compare dynamic and static transforms"></div><div class="tf-target" hidden></div><div class="tf-controls"></div>';
+  for(const element of [container,...container.querySelectorAll('[aria-label]')])element.dataset.i18nLabel=element.getAttribute('aria-label');
   this.tree=container.querySelector('.tf-tree');this.space=container.querySelector('.tf-space');
   const pair=container.querySelector('.tf-pair');
-  for(const [key,title]of [['reference','From · reference'],['frame','To · frame']]){
-   const label=node('label',title),select=node('select');select.setAttribute('aria-label',title);select.id='tf-'+key;
+  for(const [key,title]of [['reference','Reference · target'],['frame','Frame · source']]){
+   const label=node('label',title),select=node('select');select.setAttribute('aria-label',title);select.dataset.i18nLabel=title;select.id='tf-'+key;
    select.onchange=()=>{this[key]=select.value;this.update(true);};label.append(select);pair.append(label);this[key+'Select']=select;
   }
   container.querySelector('.tf-zoom').onclick=()=>{this.mountView=!this.mountView;this.update(true);};
@@ -49,7 +50,7 @@ export class TFVisualizer {
     button.onclick=()=>{this.reference=row.edge?.parent??row.name;this.frame=row.name;this.mountView=!!row.edge&&row.edge.parent!=='odom';this.update(true);};
     this.tree.append(button);
    }
-   for(const select of [this.referenceSelect,this.frameSelect])select.replaceChildren(...names.map(name=>{const option=node('option',name);option.value=name;return option;}));
+   for(const select of [this.referenceSelect,this.frameSelect])select.replaceChildren(...names.map(name=>{const option=node('option',name);option.value=name;option.setAttribute('translate','no');return option;}));
   }
   for(const button of this.tree.querySelectorAll('button')){
    const selected=button.dataset.frame===this.frame,parent=button.dataset.frame===this.reference;
@@ -89,7 +90,8 @@ export class TFVisualizer {
   const poses=new Map(model.poses.map(p=>[p.name,p]));
   const a=poses.get(this.reference),b=poses.get(this.frame),robot=poses.get('base_link');
   const focus=this.mountView&&a&&b?[a.origin,b.origin]:model.poses.map(p=>p.origin);
-  if(this.targetVisible)focus.push(TF_TARGET);
+  const showTarget=this.targetVisible&&model.root==='odom'&&!!model.relativeTarget;
+  if(showTarget)focus.push(TF_TARGET);
   const minX=Math.min(...focus.map(p=>p.x)),maxX=Math.max(...focus.map(p=>p.x)),minY=Math.min(...focus.map(p=>p.y)),maxY=Math.max(...focus.map(p=>p.y));
   const span=Math.max(.65,(maxX-minX)*1.5,(maxY-minY)*2.1);
   // Keep the world origin anchored on screen. Only mount detail follows the
@@ -98,7 +100,11 @@ export class TFVisualizer {
   const centre=this.mountView?{x:(minX+maxX)/2,y:(minY+maxY)/2}:{x:100/scale,y:55/scale};
   const px=p=>300+(p.x-centre.x)*scale,py=p=>155-(p.y-centre.y)*scale;
   const line=(p,q,cls)=>add('line',{x1:px(p),y1:py(p),x2:px(q),y2:py(q),class:cls});
-  const step=this.mountView?.1:.5;
+  // Keep grid work bounded even for a learner-published frame far from odom.
+  // The square size is always disclosed; all geometry uses the same scale.
+  const spacing=Math.max(this.mountView?.1:.5,45/scale),power=10**Math.floor(Math.log10(spacing));
+  const step=[1,2,5,10].find(n=>n*power>=spacing)*power;
+  if(!Number.isFinite(step)||!Number.isFinite(centre.x)||!Number.isFinite(centre.y)||!Number.isFinite(300/scale)||!(scale>0)){add('text',{x:300,y:145,'text-anchor':'middle',class:'tf-svg-empty'},'Coordinates exceed the spatial view range.');return;}
   for(let x=Math.floor((centre.x-300/scale)/step)*step;x<=centre.x+300/scale;x+=step)line({x,y:centre.y-155/scale},{x,y:centre.y+155/scale},'tf-grid');
   for(let y=Math.floor((centre.y-155/scale)/step)*step;y<=centre.y+155/scale;y+=step)line({x:centre.x-300/scale,y},{x:centre.x+300/scale,y},'tf-grid');
   if(robot){
@@ -108,7 +114,7 @@ export class TFVisualizer {
    body.append(svg('path',{d:`M ${ROBOT_RADIUS*scale} 0 L ${.075*scale} ${-.035*scale} L ${.075*scale} ${.035*scale} Z`,class:'tf-nose'}));this.space.append(body);
   }
   if(a&&b)line(a.origin,b.origin,'tf-selected-edge'+(model.edges.find(e=>e.parent===this.reference&&e.child===this.frame)?.static?' static':''));
-  if(this.targetVisible){
+  if(showTarget){
    if(robot)line(robot.origin,TF_TARGET,'tf-target-vector');
    add('path',{d:`M ${px(TF_TARGET)-7} ${py(TF_TARGET)} h 14 M ${px(TF_TARGET)} ${py(TF_TARGET)-7} v 14`,class:'tf-target-mark'});
    add('text',{x:px(TF_TARGET)+12,y:py(TF_TARGET)-10,class:'tf-svg-label'},'target');
@@ -116,7 +122,7 @@ export class TFVisualizer {
   for(const p of model.poses){
    const selected=p.name===this.reference||p.name===this.frame;
    const x=px(p.origin),y=py(p.origin);if(x<0||x>600||y<0||y>310)continue;
-   const circle=add('circle',{cx:x,cy:y,r:selected?4:3,class:'tf-origin'+(selected?' selected':''),'data-frame-origin':p.name});circle.append(svg('title'));circle.firstChild.textContent=p.name;
+   const circle=add('circle',{cx:x,cy:y,r:selected?4:3,class:'tf-origin'+(selected?' selected':''),'data-frame-origin':p.name,translate:'no'});circle.append(svg('title'));circle.firstChild.textContent=p.name;
    if(!selected)continue;
    const length=this.mountView?.13:.25;
    for(const [endpoint,cls]of [[p.xAxis,'tf-axis-x'],[p.yAxis,'tf-axis-y']]){
@@ -126,7 +132,7 @@ export class TFVisualizer {
     if(Math.hypot(px(end)-x,py(end)-y)>6)add('text',{x:px(end)+5,y:py(end)-5,class:'tf-axis-letter '+cls},cls==='tf-axis-x'?'x':'y');
    }
    const isRoot=p.name===this.reference,dy=isRoot?30:-22;
-   add('text',{x:x+(isRoot?-10:12),y:y+dy,'text-anchor':isRoot?'end':'start',class:'tf-svg-label'},p.name);
+   add('text',{x:x+(isRoot?-10:12),y:y+dy,'text-anchor':isRoot?'end':'start',class:'tf-svg-label',translate:'no'},p.name);
   }
   add('text',{x:12,y:294,class:'tf-svg-scale'},`1 square = ${step} m · ${this.mountView?'mount detail':'room view'}`);
  }

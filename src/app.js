@@ -1,5 +1,6 @@
 import {TFVisualizer} from './tf/visualizer.js';
 import {TF_TITLE,tfChecks} from './tf/lesson.js';
+import {tfTranslations} from './tf/translations.js';
 import {sessionScope, savedSlots} from './session-scopes.js';
 import {playgroundSections} from './playground/sections.js';
 import {pubsubDiagram} from './pubsub-diagram.js';
@@ -9,7 +10,8 @@ import{prepareUnit}from'./units/prepare.js';
 import{loadSession,saveSession,captureSession,restoreSession,restoreCompiledModules}from'./session.js';
 import{initLayout}from'./layout.js';
 import{guidePages,environmentHints}from'./units/guide.js';
-import{initPreferences,t}from'./i18n.js';
+import{initPreferences,t,registerTranslations}from'./i18n.js';
+registerTranslations(tfTranslations);
 import{snapshotUnit,restoreUnit}from'./units/checks.js';
 import{Lab}from'./lab.js';import{ROOT,BASE_PACKAGES}from'./workspace.js';import{UNIT_NAMES,unit,unitChecks}from'./active-course.js';
 let exampleUpdates=[];let preparing=false;let overview=false;const guidePositions=new Map();
@@ -82,7 +84,7 @@ function renderUnit(){renderPlayground();renderTF();$('#prepare-unit').textConte
  const position=Math.min(guidePositions.get(key)||0,pages.length-1),guided=!overview&&unitIndex!==8;
  const sections=unitIndex===7||unitIndex===9?playgroundSections(pages):[],section=sections.find(s=>position>=s.start&&position<=s.end);
  if(unitIndex===9)tfVisualizer?.setExercise(section?.id??'frames');
- if(sections.length){const nav=el('nav',undefined,'playground-exercises');nav.setAttribute('aria-label',unitIndex===9?'TF exercises':'Playground exercises');for(const item of sections){const button=el('button',item.title);button.dataset.exercise=item.id;button.classList.toggle('active',guided&&item.id===section.id);if(guided&&item.id===section.id)button.setAttribute('aria-current','step');button.onclick=()=>{guidePositions.set(key,item.start);overview=false;renderUnit();$('#unit').scrollTop=0;};nav.append(button);}root.append(nav);if(guided)root.append(el('h2',section.title,'exercise-title'));}
+ if(sections.length){const nav=el('nav',undefined,'playground-exercises');nav.setAttribute('aria-label',unitIndex===9?'TF exercises':'Playground exercises');if(unitIndex===9)nav.dataset.i18nLabel='TF exercises';for(const item of sections){const button=el('button',item.title);button.dataset.exercise=item.id;button.classList.toggle('active',guided&&item.id===section.id);if(guided&&item.id===section.id)button.setAttribute('aria-current','step');button.onclick=()=>{guidePositions.set(key,item.start);overview=false;renderUnit();$('#unit').scrollTop=0;};nav.append(button);}root.append(nav);if(guided)root.append(el('h2',section.title,'exercise-title'));}
 
  if(unitIndex!==8){
   const controls=el('div',undefined,'guide-controls');
