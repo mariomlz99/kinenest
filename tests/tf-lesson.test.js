@@ -40,9 +40,9 @@ const lookup={operation:'lookup',target:'base_link',source:'laser_link'};
 const point={operation:'point',target:'base_link',input:{header:{frame_id:'odom',stamp},point:{...TF_TARGET}}};
 const passed=(lab,id)=>tfChecks(lab,id).every(check=>check.passed);
 
-test('TF has four short exercises with ungraded reflection and bounded topic samples',()=>{
+test('TF has four frame exercises and a shared odometry extension with ungraded reflection and bounded topic samples',()=>{
  for(const language of ['python','cpp']){
-  const exercises=tfExercises(language);assert.deepEqual(exercises.map(e=>e.id),['frames','tree','lookup','point']);
+  const exercises=tfExercises(language);assert.deepEqual(exercises.map(e=>e.id),['frames','tree','lookup','point','odometry']);
   assert(exercises.slice(0,2).every(e=>e.steps.some(step=>step.kind==='tf-reflection')));
   assert(exercises.slice(0,2).every(e=>!e.steps.some(step=>step.kind==='tf-check')));
   for(const command of exercises.flatMap(e=>e.steps).flatMap(step=>step.commands??[]).filter(command=>command.startsWith('ros2 topic echo ')))assert(command.includes('--once'));

@@ -1,3 +1,4 @@
+import {OdometryView} from '../playground/odometry-view.js';
 import {tfViewModel,tfTreeRows} from './view-model.js';
 import {quaternionYaw} from '../runtime/tf.js';
 import {TF_TARGET} from './target.js';
@@ -26,13 +27,15 @@ export class TFVisualizer {
   action('tf-forward','Move forward',()=>playground.robot.command(.25,0));
   action('tf-turn','Turn left',()=>playground.robot.command(0,.5));
   action('tf-halt','Stop motion',()=>playground.robot.command(0,0));
-  action('tf-reset-pose','Reset pose',()=>{playground.robot.command(0,0);playground.resetPose();runtime.invalidateTfEvidence();});
+  action('tf-reset-pose','Reset pose',()=>{playground.robot.command(0,0);playground.resetPose();this.odometry.reset();runtime.invalidateTfEvidence();});
   action('tf-stop','Stop simulator',()=>{playground.stop();runtime.invalidateTfEvidence();});
   controls.append(node('span','Movement lasts up to 2 seconds.','tf-motion-help'));
+  const notebook=node('section');container.append(notebook);this.odometry=new OdometryView(notebook,runtime,playground);notebook.hidden=true;
   this.update(true);
  }
- setExercise(id){if(this.exercise===id)return;this.exercise=id;this.targetVisible=id==='point';if(this.targetVisible){this.reference='base_link';this.frame='odom';this.mountView=false;}this.update(true);}
+ setExercise(id){if(this.exercise===id)return;this.exercise=id;this.targetVisible=id==='point';this.odometry.container.hidden=id!=='odometry';if(this.targetVisible){this.reference='base_link';this.frame='odom';this.mountView=false;}this.update(true);}
  update(force=false){
+  this.odometry?.update();
   const tf=this.runtime.tf,revision=tf.snapshot().revision;
   if(!force&&this.revision===revision)return;
   this.revision=revision;
@@ -136,5 +139,5 @@ export class TFVisualizer {
   }
   add('text',{x:12,y:294,class:'tf-svg-scale'},`1 square = ${step} m · ${this.mountView?'mount detail':'room view'}`);
  }
- destroy(){this.container.replaceChildren();}
+ destroy(){this.odometry.destroy();this.container.replaceChildren();}
 }

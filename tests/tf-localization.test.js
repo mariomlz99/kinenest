@@ -1,8 +1,9 @@
+import {odometryTranslations} from '../src/playground/odometry-translations.js';
 import test from 'node:test';import assert from 'node:assert/strict';
 import {tfExercises} from '../src/tf/lesson.js';import {tfTranslations} from '../src/tf/translations.js';
 test('all TF lesson prose, reflection, and interface entries cover six translated languages',()=>{
  const keys=new Set(['python','cpp'].flatMap(language=>tfExercises(language).flatMap(e=>[e.title.replace(/^\d+\. /,''),...e.steps.flatMap(s=>s.kind==='text'?[s.body]:s.kind==='tf-reflection'?[s.question,s.answer]:[])])));
- for(const key of keys)assert(tfTranslations[key],key);
+ for(const key of keys)assert(tfTranslations[key]||odometryTranslations[key],key);
  for(const [key,values]of Object.entries(tfTranslations)){
   assert.equal(values.length,6,key);assert(values.every(value=>typeof value==='string'&&value.trim()&&(value!==key||key==='Frame')),key);
   for(const placeholder of key.match(/\{\w+\}/g)??[])assert(values.every(value=>value.includes(placeholder)),key+' '+placeholder);

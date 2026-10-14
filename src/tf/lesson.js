@@ -1,3 +1,4 @@
+import {odometryExercise} from '../playground/odometry-lesson.js';
 import {setup,cmake} from '../workspace.js';
 import {programOwners} from '../runtime/program-evidence.js';
 import {TF_TARGET} from './target.js';
@@ -131,7 +132,7 @@ export function tfExercises(language){const py=language==='python';return [
   text('Compare the printed x/y with the target’s base_link coordinates in the view. Reset pose gives (1.00, 1.00); move again and both readings change together. Positive x means ahead of the robot; positive y means to its left. TF handles the translation and rotation for you. No driving algorithm is needed.'),
   {kind:'tf-check',exercise:'point'},
   reflection('Why transform a measurement or target into another frame?','It lets values described by different coordinate systems be compared. Here TF expresses a room target relative to the robot; the same idea lets a robot interpret a sensor measurement relative to its body.')
- ]}
+ ]},odometryExercise(language)
 ];}
 export function tfLesson(language){return tfExercises(language).flatMap(({id,title,steps})=>[{kind:'section',id,title},...steps]);}
 

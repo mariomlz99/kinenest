@@ -1,3 +1,7 @@
+# Odometry development — 14 October 2026
+
+Shared odometry notebook and motion experiments are implemented locally. See [tf/odometry.md](tf/odometry.md) for code, limits and verification commands. Workspace checkpoint: `/home/mari0/Desktop/ROS_COURSE_2627/checkpoints/2026-10-14-odometry/`. Earlier entries below describe historical work.
+
 > Historical notes. For current behavior see [SUPPORTED.md](SUPPORTED.md); for current audit status see [RELEASE.md](RELEASE.md).
 
 # Package continuity, local IntelliSense and terminal widths — 9 October 2026

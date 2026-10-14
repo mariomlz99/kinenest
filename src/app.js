@@ -1,3 +1,5 @@
+import {odometryTranslations} from './playground/odometry-translations.js';
+import {OdometryView} from './playground/odometry-view.js';
 import {TFVisualizer} from './tf/visualizer.js';
 import {TF_TITLE,tfChecks} from './tf/lesson.js';
 import {tfTranslations} from './tf/translations.js';
@@ -12,12 +14,13 @@ import{initLayout}from'./layout.js';
 import{guidePages,environmentHints}from'./units/guide.js';
 import{initPreferences,t,registerTranslations}from'./i18n.js';
 registerTranslations(tfTranslations);
+registerTranslations(odometryTranslations);
 import{snapshotUnit,restoreUnit}from'./units/checks.js';
 import{Lab}from'./lab.js';import{ROOT,BASE_PACKAGES}from'./workspace.js';import{UNIT_NAMES,unit,unitChecks}from'./active-course.js';
 let exampleUpdates=[];let preparing=false;let overview=false;const guidePositions=new Map();
 const sessionSlots=new Map();
 let freeRobot=false;
-let playground,tfVisualizer,tfPlayground;let unitSnapshots=new Map();const collapsed=new Set([ROOT+'/build',ROOT+'/install',ROOT+'/log']);
+let odometryView,playground,tfVisualizer,tfPlayground;let unitSnapshots=new Map();const collapsed=new Set([ROOT+'/build',ROOT+'/install',ROOT+'/log']);
 let lab,editor,views=[],activeFile=null,saved='',unitIndex=0,language='python',progress=new Set(),refreshPending=false;
 const $=s=>document.querySelector(s),el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 function updateProgress(){
@@ -25,7 +28,7 @@ function updateProgress(){
  for(const b of document.querySelectorAll('#nav button')){const i=Number(b.dataset.index),done=progress.has(i);b.classList.toggle('completed',done);b.querySelector('.completion-mark')?.remove();if(done){const mark=el('span','✓','completion-mark');mark.setAttribute('aria-label','Completed');b.append(mark);}}
 }
 function status(s){$('#status').textContent=s;}
-function refresh(){if(refreshPending)return;refreshPending=true;requestAnimationFrame(()=>{refreshPending=false;if(!lab)return;tfVisualizer?.update();renderFiles();for(const update of exampleUpdates)update();$('#graph-state').textContent=`${lab.runtime.nodes.size} nodes · ${lab.runtime.topics.size} topics`;if(activeFile&&!lab.fs.exists(activeFile)){activeFile=null;editor.open('','');saved='';fileTitle();}else if(activeFile&&editor.value===saved&&lab.fs.read(activeFile)!==saved){saved=lab.fs.read(activeFile);editor.open(activeFile,saved);fileTitle();}});}
+function refresh(){if(refreshPending)return;refreshPending=true;requestAnimationFrame(()=>{refreshPending=false;if(!lab)return;tfVisualizer?.update();odometryView?.update();renderFiles();for(const update of exampleUpdates)update();$('#graph-state').textContent=`${lab.runtime.nodes.size} nodes · ${lab.runtime.topics.size} topics`;if(activeFile&&!lab.fs.exists(activeFile)){activeFile=null;editor.open('','');saved='';fileTitle();}else if(activeFile&&editor.value===saved&&lab.fs.read(activeFile)!==saved){saved=lab.fs.read(activeFile);editor.open(activeFile,saved);fileTitle();}});}
 function fileTitle(){const dirty=activeFile&&editor.value!==saved;$('#active-file').textContent=(activeFile?.replace('/home/learner/','~/')??'Choose a file')+(dirty?' • unsaved':'');$('#save').disabled=!activeFile;}
 function save(){if(!activeFile)return;try{if(lab.fs.read(activeFile)!==saved)throw Error('File changed in another editor. Reopen it before saving.');lab.fs.write(activeFile,editor.value);saved=editor.value;fileTitle();status('Saved '+activeFile.split('/').at(-1));}catch(e){status(e.message);}}
 function openFile(path){if(activeFile&&editor.value!==saved){status('Save the current file before switching, or use Revert.');return false;}try{saved=lab.fs.read(path);activeFile=path;for(const p of [...collapsed])if(path.startsWith(p+'/'))collapsed.delete(p);editor.open(path,saved);fileTitle();return true;}catch(e){status(e.message);return false;}}
@@ -63,9 +66,10 @@ function renderPlayground(){
   button.onclick=()=>{const expanded=figure.classList.toggle('expanded');button.textContent=expanded?'Restore view':'Enlarge';button.setAttribute('aria-expanded',String(expanded));};figure.insertBefore(button,canvas);
  }
  playground=new Playground(lab.runtime,stage.querySelector('.world'),stage.querySelector('.camera'),stage.querySelector('.scan'));
+ const notebook=el('section');stage.append(notebook);odometryView?.destroy();odometryView=new OdometryView(notebook,lab.runtime,playground);
  $('#playground-start').onclick=()=>{try{playground.start();$('#playground-status').textContent='Live sensor streams';}catch(error){status(error.message);}};
  $('#playground-view').onclick=()=>{playground.overview=!playground.overview;$('#playground-view').textContent=playground.overview?'Follow robot':'Room overview';$('#playground-view').setAttribute('aria-pressed',String(playground.overview));playground.draw();};
- $('#playground-reset').onclick=()=>{playground.resetPose();status('Robot pose reset. Stop any velocity publisher before resetting.');};
+ $('#playground-reset').onclick=()=>{playground.resetPose();odometryView?.reset();status('Robot pose reset. Stop any velocity publisher before resetting.');};
  $('#playground-stop').onclick=()=>{playground.stop();$('#playground-status').textContent='Paused · simulator stopped';};
 }
 function renderTF(){
@@ -84,6 +88,7 @@ function renderUnit(){renderPlayground();renderTF();$('#prepare-unit').textConte
  const position=Math.min(guidePositions.get(key)||0,pages.length-1),guided=!overview&&unitIndex!==8;
  const sections=unitIndex===7||unitIndex===9?playgroundSections(pages):[],section=sections.find(s=>position>=s.start&&position<=s.end);
  if(unitIndex===9)tfVisualizer?.setExercise(section?.id??'frames');
+ if(odometryView)odometryView.container.hidden=unitIndex!==7||section?.id!=='odometry';
  if(sections.length){const nav=el('nav',undefined,'playground-exercises');nav.setAttribute('aria-label',unitIndex===9?'TF exercises':'Playground exercises');if(unitIndex===9)nav.dataset.i18nLabel='TF exercises';for(const item of sections){const button=el('button',item.title);button.dataset.exercise=item.id;button.classList.toggle('active',guided&&item.id===section.id);if(guided&&item.id===section.id)button.setAttribute('aria-current','step');button.onclick=()=>{guidePositions.set(key,item.start);overview=false;renderUnit();$('#unit').scrollTop=0;};nav.append(button);}root.append(nav);if(guided)root.append(el('h2',section.title,'exercise-title'));}
 
  if(unitIndex!==8){

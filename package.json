@@ -17,7 +17,9 @@
     "test:terminal-shortcuts": "node scripts/terminal-shortcuts-check.mjs && node scripts/terminal-wrap-review.mjs",
     "test:tf-review": "node scripts/tf-adversarial-runtime.mjs && node scripts/tf-checker-attacks.mjs && node scripts/tf-session-review.mjs && node scripts/tf-review-ui.mjs",
     "deploy": "wrangler deploy",
-    "bundle:installation": "node scripts/installation-assets.mjs"
+    "bundle:installation": "node scripts/installation-assets.mjs",
+    "test:odometry": "node scripts/odometry-check.mjs",
+    "test:odometry:native": "node scripts/native-odometry-check.mjs"
   },
   "dependencies": {
     "@codemirror/autocomplete": "6.20.3",
