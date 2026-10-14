@@ -1,10 +1,17 @@
 import {ROOT} from '../workspace.js';
 import {unit} from '../units.js';
 import {tfFiles,tfDependencies,TF_PACKAGE} from '../tf/lesson.js';
+import {prepareOdometryWorkspace} from '../playground/odometry-workspace.js';
 
 // Prerequisite source state is taken from the same visible unit examples.
 // Existing packages are left untouched: preparing must never erase learner work.
-export async function prepareUnit(lab,index,language,report=()=>{}){
+export async function prepareUnit(lab,index,language,report=()=>{},{exercise}={}){
+ if((index===7||index===9)&&exercise==='odometry'){
+  if(lab.builder.controller||[...lab.terminals.values()].some(t=>t.busy))throw Error('Stop running commands before preparing a unit.');
+  const result=prepareOdometryWorkspace(lab,language);
+  report('Odometry workspace ready. Follow the package and file steps below.');
+  return result;
+ }
  if(index===9){
   if(lab.builder.controller||[...lab.terminals.values()].some(t=>t.busy))throw Error('Stop running commands before preparing a unit.');
   const base=ROOT+'/src/'+TF_PACKAGE,type=language==='python'?'ament_python':'ament_cmake',created=!lab.fs.exists(base);

@@ -19,7 +19,8 @@
     "deploy": "wrangler deploy",
     "bundle:installation": "node scripts/installation-assets.mjs",
     "test:odometry": "node scripts/odometry-check.mjs",
-    "test:odometry:native": "node scripts/native-odometry-check.mjs"
+    "test:odometry:native": "node scripts/native-odometry-check.mjs",
+    "test:odometry:ui": "node scripts/odometry-ui-check.mjs"
   },
   "dependencies": {
     "@codemirror/autocomplete": "6.20.3",

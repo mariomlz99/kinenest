@@ -1,5 +1,6 @@
 // French, Dutch, Spanish, German, Portuguese, Italian. ROS identifiers stay unchanged.
 export const tfTranslations = {
+ "TF & Odometry": ["TF et odométrie","TF en odometrie","TF y odometría","TF und Odometrie","TF e odometria","TF e odometria"],
  "Frames & TF": [
   "Repères et TF",
   "Frames en TF",

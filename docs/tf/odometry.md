@@ -1,5 +1,12 @@
 # Odometry notebook — local development, 14 October 2026
 
+The subsequent exercise review fixes are included in the third-module release:
+explicit metadata registration instructions, package-language protection,
+directory-only preparation, timed-motion guidance, stable accessible statuses,
+and a real file-card regression (`npm run test:odometry:ui`). The standalone Lab
+now also contains the complete five-exercise TF & Odometry module. Historical
+validation counts below describe the earlier development checkpoint.
+
 The fifth Frames & TF exercise, **Odometry | motion detective**, connects a
 published pose to a recorded path, distance from the starting point, heading,
 and velocity expressed in the body and odom frames. The same exercise, files,

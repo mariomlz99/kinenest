@@ -136,7 +136,7 @@ for(const [name,engine,executablePath] of [
   await page.locator('#locale').selectOption('en');
   // Offscreen xterm canvases pause rendering. Scroll into view when checking a
   // new session, then type visibly and revisit it to exercise resize/lifecycle.
-  const tf=page.getByRole('button',{name:'↗ Frames & TF',exact:true});
+  const tf=page.getByRole('button',{name:'↗ TF & Odometry',exact:true});
   if(await tf.count()){
    await tf.click();await input.scrollIntoViewIfNeeded();await input.focus();await page.keyboard.press('Control+a');
    await begin();await page.keyboard.type('echo navigation');await visible('echo navigation',15,'TF session');

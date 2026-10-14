@@ -1,3 +1,16 @@
+# 14 October 2026 — third module release
+
+TF & Odometry is available from the third homepage card. The independent
+exercise review’s metadata guidance, wrong-language package, Lab parity and
+visible-test coverage findings are fixed. Repeated live-region updates are
+removed. The original review evidence is retained; release evidence is in
+`checkpoints/2026-10-14-tf-odometry-release/` at the workspace root.
+
+Use `npm run test:odometry:ui` for the real file-card/build/run regression and
+`npm run test:tf` for the existing TF exercises. Source worktrees remain
+`kinenest-tf/` and `.worktrees/ros2-basics-lab-analysis/`; older dirty checkouts
+are deliberately preserved.
+
 # Odometry development — 14 October 2026
 
 Shared odometry notebook and motion experiments are implemented locally. See [tf/odometry.md](tf/odometry.md) for code, limits and verification commands. Workspace checkpoint: `/home/mari0/Desktop/ROS_COURSE_2627/checkpoints/2026-10-14-odometry/`. Earlier entries below describe historical work.

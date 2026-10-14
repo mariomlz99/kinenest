@@ -1,3 +1,4 @@
+import {odometryPackageState,odometryPackageBlocked,odometryPackageNotice} from './playground/odometry-workspace.js';
 import {odometryTranslations} from './playground/odometry-translations.js';
 import {OdometryView} from './playground/odometry-view.js';
 import {TFVisualizer} from './tf/visualizer.js';
@@ -18,6 +19,7 @@ registerTranslations(odometryTranslations);
 import{snapshotUnit,restoreUnit}from'./units/checks.js';
 import{Lab}from'./lab.js';import{ROOT,BASE_PACKAGES}from'./workspace.js';import{UNIT_NAMES,unit,unitChecks}from'./active-course.js';
 let exampleUpdates=[];let preparing=false;let overview=false;const guidePositions=new Map();
+let activeExercise=null,odometryStateSignature='',odometryFileRevision=-1,odometrySwitchNotice=null;
 const sessionSlots=new Map();
 let freeRobot=false;
 let odometryView,playground,tfVisualizer,tfPlayground;let unitSnapshots=new Map();const collapsed=new Set([ROOT+'/build',ROOT+'/install',ROOT+'/log']);
@@ -28,7 +30,7 @@ function updateProgress(){
  for(const b of document.querySelectorAll('#nav button')){const i=Number(b.dataset.index),done=progress.has(i);b.classList.toggle('completed',done);b.querySelector('.completion-mark')?.remove();if(done){const mark=el('span','✓','completion-mark');mark.setAttribute('aria-label','Completed');b.append(mark);}}
 }
 function status(s){$('#status').textContent=s;}
-function refresh(){if(refreshPending)return;refreshPending=true;requestAnimationFrame(()=>{refreshPending=false;if(!lab)return;tfVisualizer?.update();odometryView?.update();renderFiles();for(const update of exampleUpdates)update();$('#graph-state').textContent=`${lab.runtime.nodes.size} nodes · ${lab.runtime.topics.size} topics`;if(activeFile&&!lab.fs.exists(activeFile)){activeFile=null;editor.open('','');saved='';fileTitle();}else if(activeFile&&editor.value===saved&&lab.fs.read(activeFile)!==saved){saved=lab.fs.read(activeFile);editor.open(activeFile,saved);fileTitle();}});}
+function refresh(){if(refreshPending)return;refreshPending=true;requestAnimationFrame(()=>{refreshPending=false;if(!lab)return;if((unitIndex===7||unitIndex===9)&&odometryFileRevision!==lab.fs.revision){odometryFileRevision=lab.fs.revision;if(odometryStateSignature!==JSON.stringify(odometryPackageState(lab.fs,language)))renderUnit();}tfVisualizer?.update();odometryView?.update();renderFiles();for(const update of exampleUpdates)update();$('#graph-state').textContent=`${lab.runtime.nodes.size} nodes · ${lab.runtime.topics.size} topics`;if(activeFile&&!lab.fs.exists(activeFile)){activeFile=null;editor.open('','');saved='';fileTitle();}else if(activeFile&&editor.value===saved&&lab.fs.read(activeFile)!==saved){saved=lab.fs.read(activeFile);editor.open(activeFile,saved);fileTitle();}});}
 function fileTitle(){const dirty=activeFile&&editor.value!==saved;$('#active-file').textContent=(activeFile?.replace('/home/learner/','~/')??'Choose a file')+(dirty?' • unsaved':'');$('#save').disabled=!activeFile;}
 function save(){if(!activeFile)return;try{if(lab.fs.read(activeFile)!==saved)throw Error('File changed in another editor. Reopen it before saving.');lab.fs.write(activeFile,editor.value);saved=editor.value;fileTitle();status('Saved '+activeFile.split('/').at(-1));}catch(e){status(e.message);}}
 function openFile(path){if(activeFile&&editor.value!==saved){status('Save the current file before switching, or use Revert.');return false;}try{saved=lab.fs.read(path);activeFile=path;for(const p of [...collapsed])if(path.startsWith(p+'/'))collapsed.delete(p);editor.open(path,saved);fileTitle();return true;}catch(e){status(e.message);return false;}}
@@ -37,6 +39,7 @@ function renderFiles(){const root=$('#file-tree');root.replaceChildren();const e
 function addTerminal(state){if(views.length>=6){status('The lab supports up to six terminals. Close one to add another.');return;}const t=lab.terminal(state);const view=new (window.TerminalView)(lab,t,$('#terminals'),()=>{view.destroy();views=views.filter(v=>v!==view);},openFromTerminal);views.push(view);if(matchMedia('(pointer:fine)').matches)view.xterm.textarea?.focus({preventScroll:true});}
 function currentSessionUI(){return {unitIndex,language,freeRobot,progress:[...progress],guidePositions:[...guidePositions],activeFile,draft:activeFile&&editor.value!==saved?editor.value:null};}
 function changeUnit(index){
+ if(index!==unitIndex)odometrySwitchNotice=null;
  if(LINUX_MODE&&index===7)return;
  if(preparing)return;
  if(unitIndex===9&&index!==9){tfPlayground?.stop();lab.processes.reset();for(const terminal of lab.terminals.values())terminal.stop();lab.runtime.invalidateTfEvidence();}
@@ -82,11 +85,22 @@ function renderTF(){
  tfPlayground=new Playground(lab.runtime,document.createElement('canvas'),document.createElement('canvas'));
  tfVisualizer=new TFVisualizer(stage,lab.runtime,tfPlayground);
 }
+function odometryNotice(root,state,{rejected=false}={}){
+ const notice=el('div',undefined,'guide-observation odom-language-notice');notice.dataset.odometryGuard=state.kind;notice.setAttribute('role','status');
+ if(rejected)notice.append(el('strong','Learning path unchanged. Your files and unsaved edits are preserved.'));
+ notice.append(el('p',odometryPackageNotice(state)));
+ if(state.buildType){const info=el('p');info.append(el('code','package.xml: '+state.buildType));notice.append(info);}
+ if(state.detail)notice.append(el('pre',state.detail));
+ if(state.language){const use=el('button','Use package language');use.dataset.odometryLanguage=state.language;use.onclick=()=>{language=state.language;$('#language').value=language;odometrySwitchNotice=null;renderUnit();};notice.append(use);}
+ root.append(notice);
+}
 function renderUnit(){renderPlayground();renderTF();$('#prepare-unit').textContent=unitIndex===7?'Prepare this exercise':'Prepare this unit';$('#prepare-unit').hidden=LINUX_MODE||unitIndex===0||unitIndex===1||unitIndex===8;$('#reset-unit').hidden=unitIndex===8;if(!unitSnapshots.has(unitIndex))unitSnapshots.set(unitIndex,snapshotUnit(lab));const root=$('#unit');exampleUpdates=[];root.replaceChildren();$('#unit-heading').textContent=unitIndex===9?TF_TITLE:unitIndex===8?'Free Lab':unitIndex===7?'Robotics Playground':`${unitIndex+1}. ${UNIT_NAMES[unitIndex]}`;for(const b of document.querySelectorAll('#nav button, #exercise-nav button'))b.classList.toggle('active',Number(b.dataset.index)===unitIndex);$('#workspace').classList.toggle('intro',unitIndex===0);
  const allSteps=unit(unitIndex,language),pages=guidePages(allSteps.filter(step=>step.kind!=='playground')).slice(0,unitIndex>=7?-1:undefined),key=unitIndex+':'+language;
  if(unitIndex===8){const toggle=el('button',freeRobot?'Disable robot and sensors':'Enable robot and sensors');toggle.id='free-robot';toggle.setAttribute('aria-pressed',String(freeRobot));toggle.onclick=()=>{freeRobot=!freeRobot;renderUnit();};root.append(toggle);}
  const position=Math.min(guidePositions.get(key)||0,pages.length-1),guided=!overview&&unitIndex!==8;
  const sections=unitIndex===7||unitIndex===9?playgroundSections(pages):[],section=sections.find(s=>position>=s.start&&position<=s.end);
+ activeExercise=section?.id??null;const odometryState=odometryPackageState(lab.fs,language),odometryBlocked=odometryPackageBlocked(odometryState);odometryStateSignature=JSON.stringify(odometryState);odometryFileRevision=lab.fs.revision;if(odometryState.kind==='missing')odometrySwitchNotice=null;
+ if(activeExercise==='odometry')$('#prepare-unit').textContent='Prepare odometry workspace';
  if(unitIndex===9)tfVisualizer?.setExercise(section?.id??'frames');
  if(odometryView)odometryView.container.hidden=unitIndex!==7||section?.id!=='odometry';
  if(sections.length){const nav=el('nav',undefined,'playground-exercises');nav.setAttribute('aria-label',unitIndex===9?'TF exercises':'Playground exercises');if(unitIndex===9)nav.dataset.i18nLabel='TF exercises';for(const item of sections){const button=el('button',item.title);button.dataset.exercise=item.id;button.classList.toggle('active',guided&&item.id===section.id);if(guided&&item.id===section.id)button.setAttribute('aria-current','step');button.onclick=()=>{guidePositions.set(key,item.start);overview=false;renderUnit();$('#unit').scrollTop=0;};nav.append(button);}root.append(nav);if(guided)root.append(el('h2',section.title,'exercise-title'));}
@@ -103,7 +117,10 @@ function renderUnit(){renderPlayground();renderTF();$('#prepare-unit').textConte
    controls.append(indicator,back,next);
   }controls.append(mode);root.append(controls);
  }
+ let odometryNoticeShown=false;
+ if(activeExercise==='odometry'&&(odometryBlocked||odometrySwitchNotice)){odometryNotice(root,odometryBlocked?odometryState:odometrySwitchNotice,{rejected:!odometryBlocked});odometryNoticeShown=true;}
  for(const step of (guided?pages[position]:allSteps)){
+  if(step.odometryPackage&&odometryBlocked){if(!odometryNoticeShown){odometryNotice(root,odometryState);odometryNoticeShown=true;}continue;}
   if(step.kind==='section'&&!guided)root.append(el('h2',step.title,'exercise-title'));
   if(step.kind==='simulator-action')root.append(el('p',step.body,'guide-observation'));
   if(step.kind==='frame-tree'){const tree=el('pre','odom\n└─ base_link  (moving: /tf)\n   ├─ left_wheel_link  (rolling: /tf)\n   ├─ right_wheel_link  (rolling: /tf)\n   ├─ laser_link  (fixed: /tf_static)\n   └─ camera_link  (fixed: /tf_static)\n      └─ camera_optical_frame  (fixed: /tf_static)','frame-tree');tree.setAttribute('aria-label','Robot coordinate frames');root.append(tree);}
@@ -116,6 +133,7 @@ function renderUnit(){renderPlayground();renderTF();$('#prepare-unit').textConte
   if(step.kind==='commands'){if(step.terminal)root.append(el('strong','Terminal '+step.terminal,'command-terminal'));if(guided&&unitIndex===0&&environmentHints[step.commands[0]])root.append(el('p',environmentHints[step.commands[0]],'guide-observation'));const group=el('div',undefined,'command-group');for(const command of step.commands){const row=el('div',undefined,'command');const code=el('code',command);const copy=el('button','Copy');let copyTimer;copy.setAttribute('aria-live','polite');copy.onclick=async()=>{clearTimeout(copyTimer);copy.disabled=true;try{await navigator.clipboard.writeText(command);copy.textContent='Copied!';status('Copied command');}catch{copy.textContent='Copy failed';status('Copy failed. Select the command and copy it manually.');}finally{copy.disabled=false;copyTimer=setTimeout(()=>{copy.textContent='Copy';},1800);}};row.append(code,copy);group.append(row);}root.append(group);}
   if(step.kind==='files'){for(const[path,source]of Object.entries(step.items)){
    const details=el('details'),summary=el('summary',`${step.pkg}/${path}`),pre=el('pre',source),actions=el('div',undefined,'example-actions');if(guided)details.open=true;
+   if(step.instructions?.[path])root.append(el('p',step.instructions[path],'guide-observation'));
    const base=ROOT+'/src/'+step.pkg,full=base+'/'+path;
    const starter=step.starters?.[path];if(starter){pre.hidden=true;const reveal=el('button','Show reference solution');reveal.onclick=()=>{pre.hidden=!pre.hidden;reveal.textContent=pre.hidden?'Show reference solution':'Hide reference solution';};details.append(reveal);}
    let actionState;const update=()=>{
@@ -143,7 +161,7 @@ function renderUnit(){renderPlayground();renderTF();$('#prepare-unit').textConte
   }}
  }
  if(unitIndex===7&&guided&&position===pages.length-1)root.append(el('p','Exercise walkthrough complete. Keep experimenting here, or return to any unit. Your BASICS workspace is separate.'));
- if(guided&&pages[position].some(step=>step.kind==='commands'))root.append(el('p','Run the command, inspect the output, then choose Next. If it keeps running, leave it active unless the unit asks you to stop it.','guide-hint'));
+ if(guided&&pages[position].some(step=>step.kind==='commands'&&!(step.odometryPackage&&odometryBlocked)))root.append(el('p','Run the command, inspect the output, then choose Next. If it keeps running, leave it active unless the unit asks you to stop it.','guide-hint'));
 
  if(unitIndex<7&&(!guided||position===pages.length-1)){const checks=el('div',undefined,'checks');const finish=el('button','Check unit progress','complete');finish.onclick=()=>{const results=unitChecks(lab,unitIndex);checks.replaceChildren(...results.map(r=>el('p',(r.passed?'✓ ':'○ ')+r.label)));if(results.every(r=>r.passed)){progress.add(unitIndex);updateProgress();$('#save-session').click();status('Unit checks passed.');
  const onward=el('div',undefined,'unit-onward');onward.setAttribute('role','status');
@@ -163,7 +181,7 @@ async function start(){const stored=await restoreCompiledModules(await loadSessi
  if(!LINUX_MODE){const p=el('p');p.className='tutorial-note';const a=el('a','Official ROS 2 Jazzy tutorials');a.href='https://docs.ros.org/en/jazzy/Tutorials.html';a.target='_blank';a.rel='noopener noreferrer';p.append(a);document.querySelector('aside .disclosure').after(p);}
  document.querySelector('aside .eyebrow').textContent=LINUX_MODE?MODULE_NAME:'LESSONS';if(!LINUX_MODE){document.querySelector('.exercise-heading').textContent='EXERCISES';$('#nav').setAttribute('aria-label','Lessons');$('#exercise-nav').setAttribute('aria-label','Exercises');}document.querySelector('aside .disclosure').textContent=LINUX_MODE?'Linux · Navigate, edit and organise files.':'ROS 2 Basics · Build, run and understand nodes.';
  if(LINUX_MODE){document.querySelector('.exercise-heading').hidden=true;$('#exercise-nav').hidden=true;const icon=document.createElement('img');icon.src=new URL('../public/brand/linux-penguin.svg',import.meta.url).href;icon.width=44;icon.height=44;icon.alt='Linux penguin';document.querySelector('aside .eyebrow').before(icon);document.querySelector('.terminal-toolbar span').textContent='Shared files · separate environments';$('#language').closest('label').style.display='none';$('#graph-state').hidden=true;$('#prepare-unit').hidden=true;$('#prepare-unit').style.display='none';}
- $('#language').onchange=e=>{language=e.target.value;renderUnit();};$('#save').onclick=save;$('#revert').onclick=()=>{if(activeFile){saved=lab.fs.read(activeFile);editor.open(activeFile,saved);fileTitle();}};$('#new-file').onclick=()=>{const p=prompt(t('New file path (absolute or relative to your workspace):'),'src/');if(!p)return;try{const path=p.startsWith('/')?p:(LINUX_MODE?'/home/learner/linux_ws':ROOT)+'/'+p;lab.fs.touch(path);openFile(path);}catch(e){status(e.message);}};$('#add-terminal').onclick=()=>addTerminal();
+ $('#language').onchange=e=>{const requested=e.target.value,state=odometryPackageState(lab.fs,requested);if(activeExercise==='odometry'&&odometryPackageBlocked(state)){e.target.value=language;odometrySwitchNotice=state;renderUnit();status('Learning path unchanged. Your files and unsaved edits are preserved.');return;}language=requested;odometrySwitchNotice=null;renderUnit();};$('#save').onclick=save;$('#revert').onclick=()=>{if(activeFile){saved=lab.fs.read(activeFile);editor.open(activeFile,saved);fileTitle();}};$('#new-file').onclick=()=>{const p=prompt(t('New file path (absolute or relative to your workspace):'),'src/');if(!p)return;try{const path=p.startsWith('/')?p:(LINUX_MODE?'/home/learner/linux_ws':ROOT)+'/'+p;lab.fs.touch(path);openFile(path);}catch(e){status(e.message);}};$('#add-terminal').onclick=()=>addTerminal();
  $('#reset').onclick=()=>{if(!confirm(t('Delete the virtual workspace and stop all processes?')))return;for(const v of views)v.destroy();views=[];playground?.stop();playground=null;tfPlayground?.stop();tfVisualizer?.destroy();tfVisualizer=null;tfPlayground=null;lab.reset();lab=new Lab({onChange:refresh});unitSnapshots=new Map();for(const key of [...guidePositions.keys()])if(sessionScope(unitIndex)===sessionScope(Number(key.split(':')[0])))guidePositions.delete(key);if(unitIndex<7)progress.clear();if(unitIndex===8)lab.fs.mkdir(ROOT+'/src',true);updateProgress();activeFile=null;saved='';editor.open('','');fileTitle();addTerminal();renderUnit();refresh();status('Workspace reset.');$('#save-session').click();};
  $('#reset-unit').onclick=()=>{if(!confirm(t('Restore files and environments to when you first opened this unit? Current unit edits will be replaced.')))return;playground?.stop();playground=null;tfPlayground?.stop();tfVisualizer?.destroy();tfVisualizer=null;tfPlayground=null;restoreUnit(lab,unitSnapshots.get(unitIndex));activeFile=null;saved='';editor.open('','');fileTitle();for(const v of views){v.output('Unit restored.');v.prompt();}guidePositions.delete(unitIndex+':'+language);progress.delete(unitIndex);updateProgress();renderUnit();status('Restored this unit’s starting files and environments.');$('#save-session').click();};
 
@@ -172,7 +190,7 @@ async function start(){const stored=await restoreCompiledModules(await loadSessi
   if(views.some(v=>v.terminal.busy||v.executing||v.line)||activeFile&&editor.value!==saved){status('Stop running commands and save edits before preparing a unit.');return;}
   preparing=true;const controls=[...document.querySelectorAll('#nav button,#exercise-nav button,#language,#reset,#reset-unit,#prepare-unit,#add-terminal')];controls.forEach(node=>node.disabled=true);
   status('Preparing prerequisite files and builds. Existing files are kept.');
-  try{await prepareUnit(lab,unitIndex,language,line=>{status(line);views[0]?.output(line);});unitSnapshots.set(unitIndex,snapshotUnit(lab));if(unitIndex!==7&&unitIndex!==9)guidePositions.delete(unitIndex+':'+language);for(const view of views)view.redraw();renderUnit();refresh();status('Unit ready. Prerequisites are available; earlier units were not marked complete.');}
+  try{await prepareUnit(lab,unitIndex,language,line=>{status(line);views[0]?.output(line);},{exercise:activeExercise});unitSnapshots.set(unitIndex,snapshotUnit(lab));if(unitIndex!==7&&unitIndex!==9)guidePositions.delete(unitIndex+':'+language);for(const view of views)view.redraw();renderUnit();refresh();status(activeExercise==='odometry'?'Odometry workspace ready. Follow the package and file steps below.':'Unit ready. Prerequisites are available; earlier units were not marked complete.');}
   catch(error){status(error.message);}finally{preparing=false;controls.forEach(node=>node.disabled=false);}
  };
  $('#export').onclick=async()=>{try{const{downloadWorkspace}=await import('./export.js');downloadWorkspace(lab.fs,...(LINUX_MODE?['/home/learner/linux_ws','linux_ws']:[]));lab.exported=true;status('Source workspace exported. Keep this copy as a backup.');}catch(e){status(e.message);}};
@@ -192,7 +210,7 @@ async function start(){const stored=await restoreCompiledModules(await loadSessi
   saving=true;try{const record=captureSession(lab,ui);record.slots=Object.fromEntries([...sessionSlots].map(([scope,state])=>[scope,state.record??captureSession(state.lab,state.ui)]));await saveSession(record);signature=current;$('#session-state').textContent='Progress saved in this browser';}catch(error){$('#session-state').textContent='Session could not be saved. Export your workspace to keep a copy.';console.error(error);}finally{saving=false;if(savePending){savePending=false;persist(true);}}
  };
  $('#save-session').onclick=()=>persist(true);setInterval(()=>persist(),1500);document.addEventListener('visibilitychange',()=>{if(document.hidden)persist();});
- renderUnit();refresh();if(!LINUX_MODE&&new URLSearchParams(location.search).get('unit')==='tf')changeUnit(9);window.addEventListener('beforeunload',e=>{if(activeFile&&editor.value!==saved||views.some(v=>v.nano?.buffer.dirty)){e.preventDefault();e.returnValue='';}});
+ renderUnit();refresh();const requestedUnit=new URLSearchParams(location.search).get('unit');if(!LINUX_MODE&&requestedUnit==='tf')changeUnit(9);else if(!LINUX_MODE&&requestedUnit==='course'&&unitIndex>=7){const course=sessionSlots.get('course');changeUnit(Math.min(6,course?.ui?.unitIndex??course?.record?.ui?.unitIndex??0));}window.addEventListener('beforeunload',e=>{if(activeFile&&editor.value!==saved||views.some(v=>v.nano?.buffer.dirty)){e.preventDefault();e.returnValue='';}});
 }
 $('#start').onclick=async()=>{document.documentElement.classList.add('workspace-loading');$('#start').disabled=true;try{await start();await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));}catch(e){console.error(e);$('#app').append(el('p',e.message));}finally{document.documentElement.classList.remove('workspace-loading');}};
 initPreferences();

@@ -3,7 +3,7 @@ import {setup,cmake} from '../workspace.js';
 import {programOwners} from '../runtime/program-evidence.js';
 import {TF_TARGET} from './target.js';
 
-export const TF_TITLE='Frames & TF';
+export const TF_TITLE='TF & Odometry';
 export const TF_PACKAGE='tf_lab';
 export {TF_TARGET};
 export const tfDependencies=language=>[language==='python'?'rclpy':'rclcpp','geometry_msgs','tf2_ros','tf2_geometry_msgs',...(language==='python'?[]:['tf2'])];

@@ -44,6 +44,6 @@ try{
  await page.locator('#nav button').first().click();assert(await page.locator('#tf-stage').isHidden());
  await page.locator('#exercise-nav button[data-index="9"]').click();assert.equal(await page.locator('.tf-node').count(),0);
  const direct=new URL(process.env.LAB_URL||'http://127.0.0.1:8042/basics.html');direct.searchParams.set('start','1');direct.searchParams.set('unit','tf');
- await page.goto(direct.href);await page.locator('#tf-start').waitFor();assert.equal(await page.locator('#unit-heading').textContent(),'Frames & TF');
+ await page.goto(direct.href);await page.locator('#tf-start').waitFor();assert.equal(await page.locator('#unit-heading').textContent(),'TF & Odometry');
  assert.deepEqual(errors,[]);await writeFile('artifacts/tf/visual-browser.json',JSON.stringify(evidence,null,2));console.log('PASS TF visual controls, keyboard selection, live tree, lifecycle, desktop/tablet/phone');
 }finally{await browser.close();}
