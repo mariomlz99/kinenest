@@ -33,3 +33,8 @@ These files were also compared byte-for-byte with the live deployment.
 Every file was downloaded read-only and compared byte-for-byte on 14 October
 2026. `tests/fixtures/production-assets-fdd7cb638f68.json` pins their hashes;
 clean CI builds must include this version for already-open production tabs.
+
+`256f0889df58` retains the first 14 October TF & Odometry release from
+`507a558424ac37e40368d1dbdc8811b0a946a20e`. All current and retained asset bodies
+were verified against kinenest.com before the module-isolation correction.
+Keep these URLs for users who opened the first release before that correction.

@@ -1,4 +1,4 @@
-# TF & Odometry — 14 October 2026
+# TF & Odometry, 14 October 2026
 
 KineNest’s third module now opens from the homepage. Five exercises connect live
 frames, the TF tree, Python/C++ transform lookups, point transformation and an
@@ -10,10 +10,15 @@ existing packages when changing language, and preserves learner edits. Preparing
 odometry supplies directories only; the visible commands and files do the work.
 Stable live statuses are no longer rewritten on every sample.
 
-TF work remains in its isolated saved workspace. The homepage’s Basics link
-explicitly resumes the saved ROS course, and the third-module link resumes TF.
-Existing TF users keep their files and guided positions. The other three future
-modules remain marked Coming soon.
+TF & Odometry has its own learning view and mini-simulator. Its exercises do not
+appear in ROS Basics or its Playground, and its view has no Basics or Playground
+sidebar entries. The minimal third homepage card displays `0/0 completed` and
+aligns its green button with the other available modules.
+
+TF work remains in its isolated saved workspace. Entering Basics resumes the
+saved ROS course, and the third-module link resumes TF. Existing TF users keep
+their files and guided positions. The other three future modules remain marked
+Coming soon.
 
 Shared runtime and the same five exercises are also present in the standalone
 Lab, with canonical inspectable TF installation entries. Its public artifact

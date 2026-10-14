@@ -1,9 +1,10 @@
+import {tfModuleUrl} from './tf-browser-route.mjs';
 import {chromium} from 'playwright-core';
 import assert from 'node:assert/strict';
 import {mkdir,writeFile} from 'node:fs/promises';
 const browser=await chromium.launch({executablePath:process.env.CHROME_BIN||'/usr/bin/google-chrome',headless:true});
 try{
- const page=await browser.newPage(),url=new URL(process.env.LAB_URL||'http://127.0.0.1:8043/basics.html');if(!url.pathname.endsWith('.html'))url.pathname=url.pathname.replace(/\/$/,'')+'/basics.html';await page.goto(url.href);
+ const page=await browser.newPage();await page.goto(tfModuleUrl(process.env.LAB_URL||'http://127.0.0.1:8043/basics.html'));
  await page.exposeFunction('tfProgress',message=>console.log(message));
  const result=await page.evaluate(async()=>{
   const base=document.querySelector('script[src*="/app.js"]').src;

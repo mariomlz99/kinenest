@@ -13,6 +13,12 @@ export function migrateCurriculum(record){
   if(record.ui?.guidePositions)record.ui.guidePositions=record.ui.guidePositions.map(([key,value])=>[key,key.startsWith('7:')?0:value]);
   record.curriculumVersion=4;
  }
+ if(record.curriculumVersion===4){
+  // TF and odometry now live only in their own module. The remaining sensor
+  // pages keep their place; only removed Playground exercises return to intro.
+  if(record.ui?.guidePositions)record.ui.guidePositions=record.ui.guidePositions.map(([key,value])=>[key,key.startsWith('7:')?(value<8?value:value>=29&&value<=61?value-21:0):value]);
+  record.curriculumVersion=5;
+ }
  if(record.other)migrateCurriculum(record.other);
  for(const slot of Object.values(record.slots??{}))migrateCurriculum(slot);
  return record;

@@ -1,4 +1,4 @@
-# 14 October 2026 — third module release
+# 14 October 2026, third module release
 
 TF & Odometry is available from the third homepage card. The independent
 exercise review’s metadata guidance, wrong-language package, Lab parity and
@@ -10,6 +10,11 @@ Use `npm run test:odometry:ui` for the real file-card/build/run regression and
 `npm run test:tf` for the existing TF exercises. Source worktrees remain
 `kinenest-tf/` and `.worktrees/ros2-basics-lab-analysis/`; older dirty checkouts
 are deliberately preserved.
+
+The final product correction isolates TF & Odometry in its own module view and
+mini-simulator. TF and odometry teaching cards are removed from the ROS Basics
+Playground. The third homepage card uses a plain `0/0 completed` counter and
+aligned green button. Existing TF work is retained in its saved slot.
 
 # Odometry development — 14 October 2026
 

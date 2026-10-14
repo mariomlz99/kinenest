@@ -8,3 +8,15 @@ export function savedSlots(record){
  slots.delete(sessionScope(record?.ui.lessonIndex??record?.ui.unitIndex));
  return slots;
 }
+
+// Module links choose an existing workspace before restoration. Keep the old
+// active snapshot alongside the other scopes, without nesting saved sessions.
+export function selectModuleSession(record,{tf=false,course=false}={}){
+ const index=record?.ui?.unitIndex??record?.ui?.lessonIndex??0,active=sessionScope(index);
+ const target=tf?'tf':course||active==='tf'?'course':active;
+ const standalone=record=>{const {slots,other,...snapshot}=record;return snapshot;};
+ const slots=new Map([...savedSlots(record)].map(([scope,snapshot])=>[scope,standalone(snapshot)]));
+ if(record)slots.set(active,standalone(record));
+ const selected=slots.get(target);slots.delete(target);
+ return {record:selected,slots,unitIndex:tf?9:selected?.ui?.unitIndex??selected?.ui?.lessonIndex??0};
+}

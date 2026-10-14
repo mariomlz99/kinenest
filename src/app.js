@@ -1,13 +1,12 @@
 import {odometryPackageState,odometryPackageBlocked,odometryPackageNotice} from './playground/odometry-workspace.js';
 import {odometryTranslations} from './playground/odometry-translations.js';
-import {OdometryView} from './playground/odometry-view.js';
 import {TFVisualizer} from './tf/visualizer.js';
 import {TF_TITLE,tfChecks} from './tf/lesson.js';
 import {tfTranslations} from './tf/translations.js';
-import {sessionScope, savedSlots} from './session-scopes.js';
+import {sessionScope, savedSlots,selectModuleSession} from './session-scopes.js';
 import {playgroundSections} from './playground/sections.js';
 import {pubsubDiagram} from './pubsub-diagram.js';
-import {LINUX_MODE,MODULE_NAME} from './course-mode.js';
+import {LINUX_MODE,TF_MODE,MODULE_NAME,moduleAllowsUnit} from './course-mode.js';
 import{Playground}from'./playground/playground.js';
 import{prepareUnit}from'./units/prepare.js';
 import{loadSession,saveSession,captureSession,restoreSession,restoreCompiledModules}from'./session.js';
@@ -22,15 +21,15 @@ let exampleUpdates=[];let preparing=false;let overview=false;const guidePosition
 let activeExercise=null,odometryStateSignature='',odometryFileRevision=-1,odometrySwitchNotice=null;
 const sessionSlots=new Map();
 let freeRobot=false;
-let odometryView,playground,tfVisualizer,tfPlayground;let unitSnapshots=new Map();const collapsed=new Set([ROOT+'/build',ROOT+'/install',ROOT+'/log']);
-let lab,editor,views=[],activeFile=null,saved='',unitIndex=0,language='python',progress=new Set(),refreshPending=false;
+let playground,tfVisualizer,tfPlayground;let unitSnapshots=new Map();const collapsed=new Set([ROOT+'/build',ROOT+'/install',ROOT+'/log']);
+let lab,editor,views=[],activeFile=null,saved='',unitIndex=TF_MODE?9:0,language='python',progress=new Set(),refreshPending=false;
 const $=s=>document.querySelector(s),el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 function updateProgress(){
- $('#progress').textContent=`${progress.size} / 7 completed`;
+ $('#progress').textContent=TF_MODE?'0 / 0 completed':`${progress.size} / 7 completed`;
  for(const b of document.querySelectorAll('#nav button')){const i=Number(b.dataset.index),done=progress.has(i);b.classList.toggle('completed',done);b.querySelector('.completion-mark')?.remove();if(done){const mark=el('span','✓','completion-mark');mark.setAttribute('aria-label','Completed');b.append(mark);}}
 }
 function status(s){$('#status').textContent=s;}
-function refresh(){if(refreshPending)return;refreshPending=true;requestAnimationFrame(()=>{refreshPending=false;if(!lab)return;if((unitIndex===7||unitIndex===9)&&odometryFileRevision!==lab.fs.revision){odometryFileRevision=lab.fs.revision;if(odometryStateSignature!==JSON.stringify(odometryPackageState(lab.fs,language)))renderUnit();}tfVisualizer?.update();odometryView?.update();renderFiles();for(const update of exampleUpdates)update();$('#graph-state').textContent=`${lab.runtime.nodes.size} nodes · ${lab.runtime.topics.size} topics`;if(activeFile&&!lab.fs.exists(activeFile)){activeFile=null;editor.open('','');saved='';fileTitle();}else if(activeFile&&editor.value===saved&&lab.fs.read(activeFile)!==saved){saved=lab.fs.read(activeFile);editor.open(activeFile,saved);fileTitle();}});}
+function refresh(){if(refreshPending)return;refreshPending=true;requestAnimationFrame(()=>{refreshPending=false;if(!lab)return;if(unitIndex===9&&odometryFileRevision!==lab.fs.revision){odometryFileRevision=lab.fs.revision;if(odometryStateSignature!==JSON.stringify(odometryPackageState(lab.fs,language)))renderUnit();}tfVisualizer?.update();renderFiles();for(const update of exampleUpdates)update();$('#graph-state').textContent=`${lab.runtime.nodes.size} nodes · ${lab.runtime.topics.size} topics`;if(activeFile&&!lab.fs.exists(activeFile)){activeFile=null;editor.open('','');saved='';fileTitle();}else if(activeFile&&editor.value===saved&&lab.fs.read(activeFile)!==saved){saved=lab.fs.read(activeFile);editor.open(activeFile,saved);fileTitle();}});}
 function fileTitle(){const dirty=activeFile&&editor.value!==saved;$('#active-file').textContent=(activeFile?.replace('/home/learner/','~/')??'Choose a file')+(dirty?' • unsaved':'');$('#save').disabled=!activeFile;}
 function save(){if(!activeFile)return;try{if(lab.fs.read(activeFile)!==saved)throw Error('File changed in another editor. Reopen it before saving.');lab.fs.write(activeFile,editor.value);saved=editor.value;fileTitle();status('Saved '+activeFile.split('/').at(-1));}catch(e){status(e.message);}}
 function openFile(path){if(activeFile&&editor.value!==saved){status('Save the current file before switching, or use Revert.');return false;}try{saved=lab.fs.read(path);activeFile=path;for(const p of [...collapsed])if(path.startsWith(p+'/'))collapsed.delete(p);editor.open(path,saved);fileTitle();return true;}catch(e){status(e.message);return false;}}
@@ -39,8 +38,8 @@ function renderFiles(){const root=$('#file-tree');root.replaceChildren();const e
 function addTerminal(state){if(views.length>=6){status('The lab supports up to six terminals. Close one to add another.');return;}const t=lab.terminal(state);const view=new (window.TerminalView)(lab,t,$('#terminals'),()=>{view.destroy();views=views.filter(v=>v!==view);},openFromTerminal);views.push(view);if(matchMedia('(pointer:fine)').matches)view.xterm.textarea?.focus({preventScroll:true});}
 function currentSessionUI(){return {unitIndex,language,freeRobot,progress:[...progress],guidePositions:[...guidePositions],activeFile,draft:activeFile&&editor.value!==saved?editor.value:null};}
 function changeUnit(index){
+ if(!moduleAllowsUnit(index))return;
  if(index!==unitIndex)odometrySwitchNotice=null;
- if(LINUX_MODE&&index===7)return;
  if(preparing)return;
  if(unitIndex===9&&index!==9){tfPlayground?.stop();lab.processes.reset();for(const terminal of lab.terminals.values())terminal.stop();lab.runtime.invalidateTfEvidence();}
  if(sessionScope(index)!==sessionScope(unitIndex)){
@@ -69,10 +68,9 @@ function renderPlayground(){
   button.onclick=()=>{const expanded=figure.classList.toggle('expanded');button.textContent=expanded?'Restore view':'Enlarge';button.setAttribute('aria-expanded',String(expanded));};figure.insertBefore(button,canvas);
  }
  playground=new Playground(lab.runtime,stage.querySelector('.world'),stage.querySelector('.camera'),stage.querySelector('.scan'));
- const notebook=el('section');stage.append(notebook);odometryView?.destroy();odometryView=new OdometryView(notebook,lab.runtime,playground);
  $('#playground-start').onclick=()=>{try{playground.start();$('#playground-status').textContent='Live sensor streams';}catch(error){status(error.message);}};
  $('#playground-view').onclick=()=>{playground.overview=!playground.overview;$('#playground-view').textContent=playground.overview?'Follow robot':'Room overview';$('#playground-view').setAttribute('aria-pressed',String(playground.overview));playground.draw();};
- $('#playground-reset').onclick=()=>{playground.resetPose();odometryView?.reset();status('Robot pose reset. Stop any velocity publisher before resetting.');};
+ $('#playground-reset').onclick=()=>{playground.resetPose();status('Robot pose reset. Stop any velocity publisher before resetting.');};
  $('#playground-stop').onclick=()=>{playground.stop();$('#playground-status').textContent='Paused · simulator stopped';};
 }
 function renderTF(){
@@ -102,7 +100,6 @@ function renderUnit(){renderPlayground();renderTF();$('#prepare-unit').textConte
  activeExercise=section?.id??null;const odometryState=odometryPackageState(lab.fs,language),odometryBlocked=odometryPackageBlocked(odometryState);odometryStateSignature=JSON.stringify(odometryState);odometryFileRevision=lab.fs.revision;if(odometryState.kind==='missing')odometrySwitchNotice=null;
  if(activeExercise==='odometry')$('#prepare-unit').textContent='Prepare odometry workspace';
  if(unitIndex===9)tfVisualizer?.setExercise(section?.id??'frames');
- if(odometryView)odometryView.container.hidden=unitIndex!==7||section?.id!=='odometry';
  if(sections.length){const nav=el('nav',undefined,'playground-exercises');nav.setAttribute('aria-label',unitIndex===9?'TF exercises':'Playground exercises');if(unitIndex===9)nav.dataset.i18nLabel='TF exercises';for(const item of sections){const button=el('button',item.title);button.dataset.exercise=item.id;button.classList.toggle('active',guided&&item.id===section.id);if(guided&&item.id===section.id)button.setAttribute('aria-current','step');button.onclick=()=>{guidePositions.set(key,item.start);overview=false;renderUnit();$('#unit').scrollTop=0;};nav.append(button);}root.append(nav);if(guided)root.append(el('h2',section.title,'exercise-title'));}
 
  if(unitIndex!==8){
@@ -174,12 +171,13 @@ function renderUnit(){renderPlayground();renderTF();$('#prepare-unit').textConte
  }else status('Keep exploring: the checklist shows what remains.');};root.append(finish,checks);}
 
 }
-async function start(){const stored=await restoreCompiledModules(await loadSession());const [{CodeEditor},{TerminalView}]=await Promise.all([import('./vendor/ui.js'),import('./terminal-view.js')]);window.TerminalView=TerminalView;
+async function start(){const loaded=await restoreCompiledModules(await loadSession()),selection=LINUX_MODE?{record:loaded,slots:savedSlots(loaded),unitIndex:Math.min(6,loaded?.ui.unitIndex??0)}:selectModuleSession(loaded,{tf:TF_MODE,course:new URLSearchParams(location.search).get('unit')==='course'}),stored=selection.record;unitIndex=selection.unitIndex;const [{CodeEditor},{TerminalView}]=await Promise.all([import('./vendor/ui.js'),import('./terminal-view.js')]);window.TerminalView=TerminalView;
  $('#app').innerHTML=`<aside><div class="eyebrow">BASICS</div><nav id="nav" aria-label="Units"></nav><div class="eyebrow exercise-heading">PLAYGROUND</div><nav id="exercise-nav" aria-label="Playground"></nav><div id="progress">0 / 7 completed</div><label>Learning path<select id="language"><option value="python">Python</option><option value="cpp">C++</option></select></label><p class="disclosure">BASICS · Build, run and understand ROS 2.</p><button id="prepare-unit">Prepare this unit</button><button id="reset-unit">Restart unit</button><button id="reset">Reset workspace</button><button id="save-session">Save session</button><p id="session-state" role="status"></p><p id="save-scope">Stored on this device in this browser. Export your source for a portable copy.</p><button id="export">Export source workspace</button></aside><section class="workarea"><div class="workspace-top"><h1 id="unit-heading"></h1><span id="graph-state">0 nodes · 0 topics</span><button id="restore-layout">Restore layout</button></div><section id="playground-stage" hidden></section><section id="tf-stage" hidden></section><div id="workspace"><article id="unit"></article><section id="files"><div class="panel-title">Workspace files <button id="new-file">New file</button></div><div class="editor-layout"><div id="file-tree"></div><div class="editor-pane"><div class="editor-title"><span id="active-file">Choose a file</span><button id="save">Save</button><button id="revert">Revert</button></div><div class="editor-help">Suggestions: Ctrl+Space · Tab accepts · Esc closes</div><div id="editor"></div></div></div></section></div><div class="terminal-toolbar"><strong>Terminals</strong><span>Shared files & graph · separate environments</span><button id="add-terminal">+ Terminal</button></div><div id="terminals"></div><footer id="status" role="status"></footer></section>`;
  $('#app').className='lab';initLayout();lab=new Lab({onChange:refresh,onOutput:(id,s)=>{const match=/(?:controller\.cpp|\.py)["']?[:,](?: line )?(\d+)/.exec(s);if(match&&activeFile)editor.diagnostic(Number(match[1]),s);}});editor=new CodeEditor($('#editor'),fileTitle,save,()=>lab.workspace.registry.definitions,()=>({packages:[...BASE_PACKAGES,...lab.workspace.packages()],files:activeFile?Object.keys(lab.fs.filesUnder(activeFile.slice(0,activeFile.lastIndexOf('/')))):[]}));document.addEventListener('lab-diagnostic',event=>{if(!activeFile)return;const text=event.detail.text;const cpp=/([\w./-]+\.cpp):(\d+):/.exec(text),python=/File ["']([^"']+\.py)["'], line (\d+)/.exec(text),m=cpp??python;if(m&&(activeFile.endsWith(m[1])||m[1]==='controller.cpp'))editor.diagnostic(Number(m[2]),text);});
- UNIT_NAMES.concat(LINUX_MODE?[]:['Robotics Playground','Free Lab · experiment freely',TF_TITLE]).forEach((name,index)=>{const b=el('button',(index<7?`${index+1}  `:'↗  ')+name);b.dataset.index=index;b.onclick=()=>changeUnit(index);$(index<7?'#nav':'#exercise-nav').append(b);});
+ (TF_MODE?[]:UNIT_NAMES.concat(LINUX_MODE?[]:['Robotics Playground','Free Lab · experiment freely'])).forEach((name,index)=>{const b=el('button',(index<7?`${index+1}  `:'↗  ')+name);b.dataset.index=index;b.onclick=()=>changeUnit(index);$(index<7?'#nav':'#exercise-nav').append(b);});
  if(!LINUX_MODE){const p=el('p');p.className='tutorial-note';const a=el('a','Official ROS 2 Jazzy tutorials');a.href='https://docs.ros.org/en/jazzy/Tutorials.html';a.target='_blank';a.rel='noopener noreferrer';p.append(a);document.querySelector('aside .disclosure').after(p);}
- document.querySelector('aside .eyebrow').textContent=LINUX_MODE?MODULE_NAME:'LESSONS';if(!LINUX_MODE){document.querySelector('.exercise-heading').textContent='EXERCISES';$('#nav').setAttribute('aria-label','Lessons');$('#exercise-nav').setAttribute('aria-label','Exercises');}document.querySelector('aside .disclosure').textContent=LINUX_MODE?'Linux · Navigate, edit and organise files.':'ROS 2 Basics · Build, run and understand nodes.';
+ document.querySelector('aside .eyebrow').textContent=LINUX_MODE||TF_MODE?MODULE_NAME:'LESSONS';if(!LINUX_MODE&&!TF_MODE){document.querySelector('.exercise-heading').textContent='EXERCISES';$('#nav').setAttribute('aria-label','Lessons');$('#exercise-nav').setAttribute('aria-label','Exercises');}document.querySelector('aside .disclosure').textContent=LINUX_MODE?'Linux · Navigate, edit and organise files.':TF_MODE?'Explore frames, transforms and robot motion.':'ROS 2 Basics · Build, run and understand nodes.';
+ if(TF_MODE){$('#nav').hidden=true;document.querySelector('.exercise-heading').hidden=true;$('#exercise-nav').hidden=true;$('#progress').hidden=true;}
  if(LINUX_MODE){document.querySelector('.exercise-heading').hidden=true;$('#exercise-nav').hidden=true;const icon=document.createElement('img');icon.src=new URL('../public/brand/linux-penguin.svg',import.meta.url).href;icon.width=44;icon.height=44;icon.alt='Linux penguin';document.querySelector('aside .eyebrow').before(icon);document.querySelector('.terminal-toolbar span').textContent='Shared files · separate environments';$('#language').closest('label').style.display='none';$('#graph-state').hidden=true;$('#prepare-unit').hidden=true;$('#prepare-unit').style.display='none';}
  $('#language').onchange=e=>{const requested=e.target.value,state=odometryPackageState(lab.fs,requested);if(activeExercise==='odometry'&&odometryPackageBlocked(state)){e.target.value=language;odometrySwitchNotice=state;renderUnit();status('Learning path unchanged. Your files and unsaved edits are preserved.');return;}language=requested;odometrySwitchNotice=null;renderUnit();};$('#save').onclick=save;$('#revert').onclick=()=>{if(activeFile){saved=lab.fs.read(activeFile);editor.open(activeFile,saved);fileTitle();}};$('#new-file').onclick=()=>{const p=prompt(t('New file path (absolute or relative to your workspace):'),'src/');if(!p)return;try{const path=p.startsWith('/')?p:(LINUX_MODE?'/home/learner/linux_ws':ROOT)+'/'+p;lab.fs.touch(path);openFile(path);}catch(e){status(e.message);}};$('#add-terminal').onclick=()=>addTerminal();
  $('#reset').onclick=()=>{if(!confirm(t('Delete the virtual workspace and stop all processes?')))return;for(const v of views)v.destroy();views=[];playground?.stop();playground=null;tfPlayground?.stop();tfVisualizer?.destroy();tfVisualizer=null;tfPlayground=null;lab.reset();lab=new Lab({onChange:refresh});unitSnapshots=new Map();for(const key of [...guidePositions.keys()])if(sessionScope(unitIndex)===sessionScope(Number(key.split(':')[0])))guidePositions.delete(key);if(unitIndex<7)progress.clear();if(unitIndex===8)lab.fs.mkdir(ROOT+'/src',true);updateProgress();activeFile=null;saved='';editor.open('','');fileTitle();addTerminal();renderUnit();refresh();status('Workspace reset.');$('#save-session').click();};
@@ -194,14 +192,16 @@ async function start(){const stored=await restoreCompiledModules(await loadSessi
   catch(error){status(error.message);}finally{preparing=false;controls.forEach(node=>node.disabled=false);}
  };
  $('#export').onclick=async()=>{try{const{downloadWorkspace}=await import('./export.js');downloadWorkspace(lab.fs,...(LINUX_MODE?['/home/learner/linux_ws','linux_ws']:[]));lab.exported=true;status('Source workspace exported. Keep this copy as a backup.');}catch(e){status(e.message);}};
+ for(const [scope,record]of selection.slots)sessionSlots.set(scope,{record});
  if(stored){
-  for(const [scope,record]of savedSlots(stored))sessionSlots.set(scope,{record});freeRobot=!!stored.ui.freeRobot;
-  const terminals=restoreSession(lab,stored);unitIndex=LINUX_MODE?Math.min(6,stored.ui.unitIndex):stored.ui.unitIndex;language=stored.ui.language;progress=new Set(stored.ui.progress);for(const [key,value]of stored.ui.guidePositions)guidePositions.set(key,value);
+  freeRobot=!!stored.ui.freeRobot;
+  const terminals=restoreSession(lab,stored);language=stored.ui.language??'python';progress=new Set(stored.ui.progress??[]);for(const [key,value]of stored.ui.guidePositions??[])guidePositions.set(key,value);
   $('#language').value=language;updateProgress();
   for(const terminal of terminals)addTerminal(terminal);if(!terminals.length)addTerminal();
   if(stored.ui.activeFile&&lab.fs.exists(stored.ui.activeFile)){openFile(stored.ui.activeFile);if(stored.ui.draft!==null){editor.open(activeFile,stored.ui.draft);fileTitle();}}
   status(LINUX_MODE?'Saved Linux workspace restored.':'Saved session restored. Start your nodes again when needed.');
  }else addTerminal();
+ updateProgress();
  let signature='',saving=false,savePending=false;
  const persist=async(force=false)=>{
   if(saving){savePending||=force;return;}if(preparing)return;const ui=currentSessionUI();
@@ -210,8 +210,9 @@ async function start(){const stored=await restoreCompiledModules(await loadSessi
   saving=true;try{const record=captureSession(lab,ui);record.slots=Object.fromEntries([...sessionSlots].map(([scope,state])=>[scope,state.record??captureSession(state.lab,state.ui)]));await saveSession(record);signature=current;$('#session-state').textContent='Progress saved in this browser';}catch(error){$('#session-state').textContent='Session could not be saved. Export your workspace to keep a copy.';console.error(error);}finally{saving=false;if(savePending){savePending=false;persist(true);}}
  };
  $('#save-session').onclick=()=>persist(true);setInterval(()=>persist(),1500);document.addEventListener('visibilitychange',()=>{if(document.hidden)persist();});
- renderUnit();refresh();const requestedUnit=new URLSearchParams(location.search).get('unit');if(!LINUX_MODE&&requestedUnit==='tf')changeUnit(9);else if(!LINUX_MODE&&requestedUnit==='course'&&unitIndex>=7){const course=sessionSlots.get('course');changeUnit(Math.min(6,course?.ui?.unitIndex??course?.record?.ui?.unitIndex??0));}window.addEventListener('beforeunload',e=>{if(activeFile&&editor.value!==saved||views.some(v=>v.nano?.buffer.dirty)){e.preventDefault();e.returnValue='';}});
+ renderUnit();refresh();window.addEventListener('beforeunload',e=>{if(activeFile&&editor.value!==saved||views.some(v=>v.nano?.buffer.dirty)){e.preventDefault();e.returnValue='';}});
 }
+if(TF_MODE){document.body.dataset.module='tf';document.title='KineNest · TF & Odometry';$('#app .eyebrow').textContent=MODULE_NAME;$('#app h1').textContent='Understand robot frames and motion.';$('#app h1 + p').textContent='Five exercises. Your own mini-simulator, Python and C++ workspace.';$('#start').textContent='Start TF & Odometry';}
 $('#start').onclick=async()=>{document.documentElement.classList.add('workspace-loading');$('#start').disabled=true;try{await start();await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));}catch(e){console.error(e);$('#app').append(el('p',e.message));}finally{document.documentElement.classList.remove('workspace-loading');}};
 initPreferences();
 if(new URLSearchParams(location.search).has('start'))$('#start').click();

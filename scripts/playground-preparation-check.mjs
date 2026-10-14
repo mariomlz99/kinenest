@@ -1,10 +1,11 @@
+import {basicsModuleUrl} from './tf-browser-route.mjs';
 import {chromium} from 'playwright-core';
 import assert from 'node:assert/strict';
 const browser=await chromium.launch({executablePath:'/usr/bin/google-chrome',headless:true});
 try{for(const language of ['python','cpp']){
  const page=await browser.newPage({viewport:{width:1500,height:1000}}),errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.accept());
- await page.goto(process.env.LAB_URL||'http://127.0.0.1:8034/basics.html');await page.locator('#start').click();await page.locator('.xterm').first().waitFor();await page.locator('[data-index="7"]').click();await page.locator('#language').selectOption(language);
- for(const id of ['intro','odom','tf','lidar','camera','readers']){
+ await page.goto(basicsModuleUrl(process.env.LAB_URL||'http://127.0.0.1:8034/basics.html'));await page.locator('#start').click();await page.locator('.xterm').first().waitFor();await page.locator('[data-index="7"]').click();await page.locator('#language').selectOption(language);
+ for(const id of ['intro','lidar','camera','readers']){
   await page.locator(`[data-exercise="${id}"]`).click();await page.locator('#guide-next').click();
   const before=await page.locator('.guide-progress').textContent();
   for(let n=0;n<3;n++){await page.locator('#prepare-unit').click();await page.waitForFunction(()=>!document.querySelector('#prepare-unit').disabled);}
@@ -24,5 +25,5 @@ try{for(const language of ['python','cpp']){
  await cmd('cd ~/ros2_ws');await cmd('colcon build');await idle();assert.match(await page.locator('.terminal-transcript pre').textContent(),/1 package finished/);
  await cmd('source install/setup.bash');await page.locator('#playground-start').click();await cmd('ros2 run sensor_lab lidar');await page.waitForFunction(()=>document.querySelector('.terminal-state').textContent.includes('callbacks ready'),null,{timeout:180000});await page.waitForTimeout(300);
  await page.locator('.stop').click();await page.locator('#playground-stop').click();await idle();assert.doesNotMatch(await page.locator('.terminal-transcript pre').textContent(),/Traceback|Error:|Failed <<</);
- assert.deepEqual(errors,[]);console.log(`PASS ${language}: prepare preserves all six exercise positions; repeated preparation gives one prompt; optional skeleton builds and runs`);await page.close();
+ assert.deepEqual(errors,[]);console.log(`PASS ${language}: prepare preserves all four exercise positions; repeated preparation gives one prompt; optional skeleton builds and runs`);await page.close();
 }}finally{await browser.close();}

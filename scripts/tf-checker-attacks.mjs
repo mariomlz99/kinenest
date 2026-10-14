@@ -1,7 +1,8 @@
+import {tfModuleUrl} from './tf-browser-route.mjs';
 import {chromium} from 'playwright-core';import assert from 'node:assert/strict';import {mkdir,writeFile} from 'node:fs/promises';
 const browser=await chromium.launch({executablePath:'/usr/bin/google-chrome',headless:true});await mkdir('artifacts/review',{recursive:true});
 try{
- const page=await browser.newPage();await page.goto(process.env.LAB_URL||'http://127.0.0.1:8042/basics.html');
+ const page=await browser.newPage();await page.goto(tfModuleUrl(process.env.LAB_URL||'http://127.0.0.1:8042/basics.html'));
  const results=await page.evaluate(async()=>{
   const base=document.querySelector('script[src*="/app.js"]').src,{Lab}=await import(new URL('lab.js',base)),{prepareUnit}=await import(new URL('units/prepare.js',base)),{tfChecks}=await import(new URL('tf/lesson.js',base)),{staticTransforms,dynamicTransforms}=await import(new URL('playground/frames.js',base));
   const l=new Lab(),results=[],logs=[];l.onOutput=(_,s)=>logs.push(s);l.terminal();await prepareUnit(l,9,'python');

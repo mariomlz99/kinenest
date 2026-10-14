@@ -1,8 +1,9 @@
+import {tfModuleUrl,moduleHomeUrl} from './tf-browser-route.mjs';
 import {chromium} from 'playwright-core';
 import assert from 'node:assert/strict';
 import {mkdir,writeFile} from 'node:fs/promises';
 
-const url=process.env.LAB_URL||'http://127.0.0.1:8042/basics.html';
+const url=tfModuleUrl(process.env.LAB_URL||'http://127.0.0.1:8042/basics.html');
 const browser=await chromium.launch({executablePath:process.env.CHROME_BIN||'/usr/bin/google-chrome',headless:true});
 const reports=[];await mkdir('artifacts/tf',{recursive:true});
 try{for(const language of (process.env.LAB_LANGUAGE||'python,cpp').split(',')){
@@ -10,13 +11,14 @@ try{for(const language of (process.env.LAB_LANGUAGE||'python,cpp').split(',')){
  page.on('dialog',dialog=>dialog.accept());page.on('pageerror',error=>errors.push(error.message));
  const record=message=>{report.cases.push(message);console.log('PASS '+language+': '+message);};
  try{
-  await page.goto(url.replace(/[?&]start=1/,'').replace(/\?$/,''));
-  await page.evaluate(async()=>{
+  await page.goto(url);
+  const observe=async()=>page.evaluate(async()=>{
    const base=document.querySelector('script[type=module]').src,{Lab}=await import(new URL('lab.js',base)),terminal=Lab.prototype.terminal;
    Lab.prototype.terminal=function(...args){window.tfAuditLab=this;return terminal.apply(this,args);};
   });
-  await page.locator('#start').click();await page.locator('.xterm').first().waitFor();
-  await page.locator('#language').selectOption(language);await page.locator('[data-index="9"]').click();
+  await observe();await page.locator('#start').click();await page.locator('.xterm').first().waitFor();
+  assert.equal(await page.locator('#nav button,#exercise-nav button').count(),0,'TF module must not expose other courses');
+  await page.locator('#language').selectOption(language);
   const idle=()=>page.waitForFunction(()=>/^(Jazzy|ROS environment)/.test(document.querySelector('.terminal-state')?.textContent),null,{timeout:180000});
   const output=needle=>page.waitForFunction(needle=>document.querySelector('.terminal-transcript pre')?.textContent.includes(needle),needle,{timeout:180000});
   const stop=async()=>{await page.locator('.terminal-card .stop').first().click();await idle();};
@@ -77,11 +79,11 @@ try{for(const language of (process.env.LAB_LANGUAGE||'python,cpp').split(',')){
   }
   record('three pose-reset, check, rerun, Stop and simulator restart cycles');
   await command('ros2 run tf_lab point');await page.waitForFunction(()=>window.tfAuditLab.runtime.tfEvidence.some(event=>event.operation==='point'),null,{timeout:180000});
-  await page.evaluate(()=>{window.priorTfLab=window.tfAuditLab;});
-  await page.locator('[data-index="2"]').click();
-  assert(await page.evaluate(()=>window.priorTfLab.processes.active().length===0&&window.priorTfLab.runtime.jobs.size===0&&window.priorTfLab.runtime.tf.listeners.size===0&&window.priorTfLab.runtime.tfEvidence.length===0),'navigation left a ghost program, timer, listener or proof');
-  await page.locator('[data-index="9"]').click();assert.equal(await page.evaluate(()=>window.tfAuditLab===window.priorTfLab),true);
-  assert.equal(await page.evaluate(()=>window.tfAuditLab.runtime.tf.frames().length),0);record('navigation preserves TF workspace but clears all live processes and proof');
+  await page.locator('#save-session').click();await page.waitForTimeout(300);
+  await page.goto(moduleHomeUrl(url));assert.equal(page.workers().length,0,'leaving the module must release its language workers');
+  await page.goto(url);await observe();await page.locator('#start').click();await page.locator('.xterm').first().waitFor();
+  assert(await page.evaluate(()=>window.tfAuditLab.processes.active().length===0&&window.tfAuditLab.runtime.jobs.size===0&&window.tfAuditLab.runtime.tf.listeners.size===0&&window.tfAuditLab.runtime.tfEvidence.length===0),'return revived a ghost program, timer, listener or proof');
+  assert.equal(await page.evaluate(()=>window.tfAuditLab.runtime.tf.frames().length),0);record('homepage/module navigation restores TF workspace without live workers, processes or proof');
   await page.locator('#tf-start').click();await walk('point',{repair:true});await stop();
   await page.locator('#reset-unit').click();
   assert(await page.evaluate(()=>window.tfAuditLab.processes.active().length===0&&window.tfAuditLab.runtime.tfEvidence.length===0&&window.tfAuditLab.runtime.tf.listeners.size===0));

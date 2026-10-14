@@ -1819,3 +1819,54 @@ export const translations = {
     "Con l’assistenza di"
   ]
 };
+
+Object.assign(translations, {
+  "Explore frames, transforms and robot motion.": [
+    "Explorez les repères, les transformations et le mouvement du robot.",
+    "Verken coördinatenstelsels, transformaties en robotbeweging.",
+    "Explora marcos de coordenadas, transformaciones y movimiento del robot.",
+    "Erkunde Koordinatensysteme, Transformationen und Roboterbewegung.",
+    "Explora referenciais, transformações e o movimento do robô.",
+    "Esplora sistemi di riferimento, trasformazioni e movimento del robot."
+  ],
+  "Understand robot frames and motion.": [
+    "Comprenez les repères et le mouvement du robot.",
+    "Begrijp de coördinatenstelsels en beweging van een robot.",
+    "Comprende los marcos de coordenadas y el movimiento del robot.",
+    "Verstehe Koordinatensysteme und Bewegung eines Roboters.",
+    "Compreende os referenciais e o movimento do robô.",
+    "Comprendi i sistemi di riferimento e il movimento del robot."
+  ],
+  "Five exercises. Your own mini-simulator, Python and C++ workspace.": [
+    "Cinq exercices. Votre propre mini-simulateur et espace de travail Python et C++.",
+    "Vijf oefeningen. Je eigen minisimulator en werkruimte voor Python en C++.",
+    "Cinco ejercicios. Tu propio minisimulador y espacio de trabajo Python y C++.",
+    "Fünf Übungen. Dein eigener Minisimulator und Arbeitsbereich für Python und C++.",
+    "Cinco exercícios. O teu próprio minissimulador e espaço de trabalho Python e C++.",
+    "Cinque esercizi. Il tuo minisimulatore e spazio di lavoro Python e C++."
+  ],
+  "1. LiDAR | measure the room": [
+    "1. LiDAR | mesurer la pièce", "1. LiDAR | meet de ruimte", "1. LiDAR | medir la habitación",
+    "1. LiDAR | den Raum vermessen", "1. LiDAR | medir a sala", "1. LiDAR | misurare la stanza"
+  ],
+  "2. Camera | understand an image": [
+    "2. Caméra | comprendre une image", "2. Camera | begrijp een beeld", "2. Cámara | entender una imagen",
+    "2. Kamera | ein Bild verstehen", "2. Câmara | compreender uma imagem", "2. Telecamera | comprendere un'immagine"
+  ],
+  "Check: the robot stops, but sensor messages continue while the simulator is running. Stop playground ends its publishers. The sensor mini-exercises can be revisited in any order; reset the pose first for repeatable observations.": [
+    "Vérifiez : le robot s’arrête, mais les messages des capteurs continuent tant que le simulateur fonctionne. Arrêter le simulateur termine ses publications. Vous pouvez reprendre les mini-exercices des capteurs dans n’importe quel ordre ; réinitialisez d’abord la pose pour des observations reproductibles.",
+    "Controleer: de robot stopt, maar sensorberichten blijven komen zolang de simulator draait. De simulator stoppen beëindigt de publicaties. Je kunt de sensoroefeningen in elke volgorde herhalen; stel eerst de pose opnieuw in voor herhaalbare waarnemingen.",
+    "Comprueba: el robot se detiene, pero los mensajes de los sensores continúan mientras funciona el simulador. Detener el simulador finaliza sus publicaciones. Puedes repetir los ejercicios de sensores en cualquier orden; restablece primero la pose para obtener observaciones repetibles.",
+    "Prüfe: Der Roboter hält an, aber Sensornachrichten werden weiter gesendet, solange der Simulator läuft. Das Stoppen des Simulators beendet seine Publisher. Du kannst die Sensorübungen in beliebiger Reihenfolge wiederholen; setze zuerst die Pose für reproduzierbare Beobachtungen zurück.",
+    "Verifica: o robô para, mas as mensagens dos sensores continuam enquanto o simulador estiver em execução. Parar o simulador termina as suas publicações. Podes repetir os exercícios dos sensores em qualquer ordem; repõe primeiro a pose para obter observações repetíveis.",
+    "Verifica: il robot si ferma, ma i messaggi dei sensori continuano mentre il simulatore è in esecuzione. Arrestare il simulatore termina le sue pubblicazioni. Puoi ripetere gli esercizi dei sensori in qualsiasi ordine; ripristina prima la posa per osservazioni ripetibili."
+  ],
+  "Compare: the front return gets shorter as the robot approaches the brown obstacle. It measures from the laser mount, not the centre of base_link. Turn left a little and inspect again: the obstacle moves to a different angle. Compare the viewing direction with the robot’s new heading.": [
+    "Comparez : la distance mesurée devant diminue quand le robot approche de l’obstacle marron. Elle est mesurée depuis le support du laser, pas depuis le centre de base_link. Tournez un peu à gauche et inspectez à nouveau : l’obstacle apparaît à un autre angle. Comparez la direction d’observation avec la nouvelle orientation du robot.",
+    "Vergelijk: de afstand aan de voorkant wordt korter wanneer de robot het bruine obstakel nadert. De meting begint bij de laserbevestiging, niet bij het midden van base_link. Draai een beetje naar links en inspecteer opnieuw: het obstakel verschijnt onder een andere hoek. Vergelijk de kijkrichting met de nieuwe richting van de robot.",
+    "Compara: la distancia frontal disminuye cuando el robot se acerca al obstáculo marrón. Se mide desde el soporte del láser, no desde el centro de base_link. Gira un poco a la izquierda e inspecciona de nuevo: el obstáculo aparece en otro ángulo. Compara la dirección de observación con la nueva orientación del robot.",
+    "Vergleiche: Der Abstand nach vorn wird kleiner, wenn sich der Roboter dem braunen Hindernis nähert. Gemessen wird ab der Laserhalterung, nicht ab der Mitte von base_link. Drehe etwas nach links und prüfe erneut: Das Hindernis erscheint unter einem anderen Winkel. Vergleiche die Blickrichtung mit der neuen Ausrichtung des Roboters.",
+    "Compara: a distância frontal diminui à medida que o robô se aproxima do obstáculo castanho. É medida a partir do suporte do laser, não do centro de base_link. Vira um pouco à esquerda e inspeciona novamente: o obstáculo aparece noutro ângulo. Compara a direção de observação com a nova orientação do robô.",
+    "Confronta: la distanza frontale diminuisce quando il robot si avvicina all’ostacolo marrone. È misurata dal supporto del laser, non dal centro di base_link. Gira un poco a sinistra e controlla di nuovo: l’ostacolo appare a un angolo diverso. Confronta la direzione di osservazione con il nuovo orientamento del robot."
+  ]
+});

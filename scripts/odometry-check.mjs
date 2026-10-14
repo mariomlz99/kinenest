@@ -1,9 +1,11 @@
+import {tfModuleUrl} from './tf-browser-route.mjs';
 import {chromium} from 'playwright-core';
 import assert from 'node:assert/strict';
 import {mkdir,writeFile,readFile} from 'node:fs/promises';
 const browser=await chromium.launch({executablePath:'/usr/bin/google-chrome',headless:true});
 const standalone=JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8')).name==='ros2-basics-lab';
-const url=process.env.LAB_URL||(standalone?'http://127.0.0.1:8017/ros2-basics-lab/':'http://127.0.0.1:8017/basics.html');
+const suppliedUrl=process.env.LAB_URL||(standalone?'http://127.0.0.1:8017/ros2-basics-lab/':'http://127.0.0.1:8017/basics.html');
+const url=standalone?suppliedUrl:tfModuleUrl(suppliedUrl);
 await mkdir('artifacts/odometry',{recursive:true});
 try{
  const page=await browser.newPage({viewport:{width:1440,height:1050}}),errors=[];
@@ -11,8 +13,9 @@ try{
  await page.goto(url);
  await page.evaluate(async()=>{const base=document.querySelector('script[src*="/app.js"]').src,{Playground}=await import(new URL('playground/playground.js',base)),start=Playground.prototype.start;Playground.prototype.start=function(){window.odomScene=this;return start.call(this);};});
  await page.locator('#start').click();await page.locator('.xterm').waitFor();
- const tf=await page.locator('#exercise-nav button[data-index="9"]').count();
- await page.locator(`#exercise-nav button[data-index="${tf?9:7}"]`).click();
+ const tf=!standalone||await page.locator('#exercise-nav button[data-index="9"]').count()>0;
+ if(standalone)await page.locator(`#exercise-nav button[data-index="${tf?9:7}"]`).click();
+ else assert.equal(await page.locator('#nav button,#exercise-nav button').count(),0,'Independent TF module navigation');
  await page.locator('[data-exercise="odometry"]').click();
  await page.locator(tf?'#tf-start':'#playground-start').click();
  const notebook=page.locator('.odom-notebook:visible');
@@ -33,7 +36,8 @@ try{
  await page.locator('#locale').selectOption('en');
  await page.locator('#theme').selectOption('dark');await notebook.screenshot({path:'artifacts/odometry/notebook-dark.png'});
  await page.locator(tf?'#tf-stop':'#playground-stop').click();await page.waitForTimeout(100);assert.match(await notebook.locator('.odom-status').textContent(),/Paused/);
- await page.locator('#nav button').first().click();assert.equal(await page.evaluate(()=>window.odomScene.runtime.listeners.size),0);
+ if(standalone){await page.locator('#nav button').first().click();assert.equal(await page.evaluate(()=>window.odomScene.runtime.listeners.size),0);}
+ else{await page.locator('#reset').click();assert.equal(await page.evaluate(()=>window.odomScene.runtime.listeners.size),0);}
  console.log('PASS visible odometry notebook, out/back, turn, arc, mark/reset, four widths and cleanup');
  await page.exposeFunction('odomProgress',text=>console.log(text));
  const result=await page.evaluate(async()=>{

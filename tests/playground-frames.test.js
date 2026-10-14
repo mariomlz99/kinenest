@@ -62,7 +62,7 @@ test('every introductory exercise command runs against the live playground; rese
 test('playground sections are navigable and remain outside all seven required lessons',()=>{
  for(const language of ['python','cpp']){
   const steps=lesson(7,language),pages=guidePages(steps).slice(0,-1),sections=playgroundSections(pages);
-  assert.deepEqual(sections.map(s=>s.id),['intro','odom','tf','lidar','camera','readers','odometry']);
+  assert.deepEqual(sections.map(s=>s.id),['intro','lidar','camera','readers']);
   for(const section of sections)assert(section.end>=section.start);
   for(let i=0;i<7;i++)assert(!lesson(i,language).some(s=>s.kind==='section'||s.kind==='simulator-action'));
  }
@@ -80,4 +80,20 @@ test('old playground sessions gain TF installation entries and restart only thei
  assert.deepEqual(record.ui.guidePositions,[['3:python',5],['7:python',0]]);assert.deepEqual(record.ui.progress,[0,1,2]);assert.equal(restored.fs.read(HOME+'/keep.txt'),'my work');
  assert(restored.fs.exists('/opt/ros/jazzy/share/tf2_msgs/msg/TFMessage.msg'));assert(restored.fs.exists('/opt/ros/jazzy/include/tf2_msgs/msg/tf_message.hpp'));assert(restored.workspace.registry.definitions.has('tf2_msgs/msg/TFMessage'));
  record.ui.guidePositions[1][1]=6;migrateCurriculum(record);assert.equal(record.ui.guidePositions[1][1],6);lab.reset();restored.reset();
+});
+
+test('module split migrates surviving Playground pages once and preserves TF guides and files',()=>{
+ // Version 4 sections: intro 0–7, odom 8–18, TF 19–28, LiDAR 29–37,
+ // camera 38–48, readers 49–61, full odometry 62 onward (both languages).
+ for(const language of ['python','cpp']){
+  const sections=playgroundSections(guidePages(lesson(7,language)).slice(0,-1));
+  assert.deepEqual(sections.map(({id,start,end})=>[id,start,end]),[['intro',0,7],['lidar',8,16],['camera',17,27],['readers',28,40]]);
+  for(const [before,after]of [[0,0],[7,7],[8,0],[18,0],[19,0],[28,0],[29,8],[37,16],[38,17],[48,27],[49,28],[61,40],[62,0],[92,0]]){
+   const record={curriculumVersion:4,ui:{unitIndex:7,guidePositions:[['7:'+language,before],['9:'+language,65],['3:'+language,6]],draft:'keep draft'},workspace:{marker:'keep files'}};
+   const migrated=migrateCurriculum(record);assert.equal(migrated.curriculumVersion,5);assert.equal(migrated.ui.unitIndex,7);assert.deepEqual(migrated.ui.guidePositions,[['7:'+language,after],['9:'+language,65],['3:'+language,6]]);assert.equal(migrated.workspace.marker,'keep files');assert.equal(migrated.ui.draft,'keep draft');
+   const once=structuredClone(migrated);migrateCurriculum(migrated);assert.deepEqual(migrated,once);
+  }
+ }
+ const root={curriculumVersion:4,ui:{unitIndex:9,guidePositions:[['9:cpp',65]]},slots:{playground:{curriculumVersion:4,ui:{unitIndex:7,guidePositions:[['7:cpp',50]]}}}};
+ migrateCurriculum(root);assert.equal(root.slots.playground.curriculumVersion,5);assert.deepEqual(root.slots.playground.ui.guidePositions,[['7:cpp',29]]);assert.deepEqual(root.ui.guidePositions,[['9:cpp',65]]);
 });

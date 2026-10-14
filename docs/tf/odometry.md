@@ -1,4 +1,4 @@
-# Odometry notebook — local development, 14 October 2026
+# Odometry notebook, 14 October 2026
 
 The subsequent exercise review fixes are included in the third-module release:
 explicit metadata registration instructions, package-language protection,
@@ -7,10 +7,11 @@ and a real file-card regression (`npm run test:odometry:ui`). The standalone Lab
 now also contains the complete five-exercise TF & Odometry module. Historical
 validation counts below describe the earlier development checkpoint.
 
-The fifth Frames & TF exercise, **Odometry | motion detective**, connects a
+The fifth TF & Odometry exercise, **Odometry | motion detective**, connects a
 published pose to a recorded path, distance from the starting point, heading,
-and velocity expressed in the body and odom frames. The same exercise, files,
-commands and notebook are available in the standalone Lab's Playground.
+and velocity expressed in the body and odom frames. In KineNest it appears only
+inside the third module and its mini-simulator. The same exercise, files,
+commands and notebook are available in the standalone Lab's dedicated TF view.
 
 ## Implemented
 
@@ -36,7 +37,7 @@ autosave. The exercise is exploratory and does not award a completion badge.
 | `src/playground/odometry-view.js` | Published-sample notebook, SVG trace and lifecycle |
 | `src/playground/odometry-translations.js` | Prose and UI translations |
 | `src/tf/lesson.js`, `visualizer.js` | TF course integration |
-| `src/app.js`, `src/playground/lessons.js` | Shared Playground integration |
+| `src/app.js`, `src/course-mode.js` | Dedicated module route and workspace integration |
 
 Useful next developments, **not implemented**:
 
@@ -98,4 +99,6 @@ publishes `/tf`. Reset pose is a deliberate teaching discontinuity.
 - Existing KineNest TF visual regression: passed.
 - Original older checkouts: targeted odometry and playground regression files pass; their unrelated Python build work remains uncommitted and untouched.
 
-This is a local development checkpoint. Nothing was merged, pushed or deployed.
+The counts above describe the original local development checkpoint. Current
+release and deployment evidence is in
+`checkpoints/2026-10-14-tf-odometry-release/` at the workspace root.

@@ -1,3 +1,4 @@
+import {tfModuleUrl} from './tf-browser-route.mjs';
 import assert from 'node:assert/strict';
 import {chromium} from 'playwright-core';
 import {mkdir,writeFile} from 'node:fs/promises';
@@ -6,7 +7,7 @@ await mkdir('artifacts/review',{recursive:true});
 const browser=await chromium.launch({executablePath:'/usr/bin/google-chrome',headless:true});
 const reports=[];
 try{
- const page=await browser.newPage();await page.goto(process.env.LAB_URL||'http://127.0.0.1:8042/basics.html');
+ const page=await browser.newPage();await page.goto(tfModuleUrl(process.env.LAB_URL||'http://127.0.0.1:8042/basics.html'));
  await page.evaluate(async()=>{const base=document.querySelector('script[src*="/app.js"]').src;const {Runtime}=await import(new URL('runtime/graph.js',base));window.tfReview={runtime:new Runtime(),base,logs:[]};});
  for(const language of (process.env.LAB_LANGUAGE||'python,cpp').split(',')){
   const code=probeSource(language);await writeFile(`artifacts/review/probe.${language==='python'?'py':'cpp'}`,code);

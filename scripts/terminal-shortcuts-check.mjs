@@ -136,21 +136,21 @@ for(const [name,engine,executablePath] of [
   await page.locator('#locale').selectOption('en');
   // Offscreen xterm canvases pause rendering. Scroll into view when checking a
   // new session, then type visibly and revisit it to exercise resize/lifecycle.
-  const tf=page.getByRole('button',{name:'↗ TF & Odometry',exact:true});
-  if(await tf.count()){
-   await tf.click();await input.scrollIntoViewIfNeeded();await input.focus();await page.keyboard.press('Control+a');
-   await begin();await page.keyboard.type('echo navigation');await visible('echo navigation',15,'TF session');
+  const playground=page.getByRole('button',{name:'↗ Robotics Playground',exact:true});
+  if(await playground.count()){
+   await playground.click();await input.scrollIntoViewIfNeeded();await input.focus();await page.keyboard.press('Control+a');
+   await begin();await page.keyboard.type('echo navigation');await visible('echo navigation',15,'Playground session');
    await page.getByRole('button',{name:'1 ROS 2 environment',exact:true}).click();await input.focus();await page.keyboard.press('Control+a');
-   await tf.click();await input.scrollIntoViewIfNeeded();await input.focus();await page.keyboard.press('Control+e');
+   await playground.click();await input.scrollIntoViewIfNeeded();await input.focus();await page.keyboard.press('Control+e');
    const s=await snapshot();anchor=s.y-Math.floor((s.prompt.length+s.cursor)/s.cols);prior=s.rows.slice(0,anchor);
-   await visible('echo navigation',15,'TF session return');await submit('echo navigation');
+   await visible('echo navigation',15,'Playground session return');await submit('echo navigation');
   }
   const events=await page.evaluate(()=>window.shortcutEvents);
   for(const key of ['a','e','u','k','w']){
    const records=events.filter(e=>e.type==='keydown'&&e.ctrl&&e.key===key);
    assert(records.length&&records.every(e=>e.prevented&&!e.pageSelection),`${name}: Ctrl+${key} default prevented, no browser selection`);
   }
-  const result={browser:name,version:browser.version(),passed:true,keyboardEvents:events.filter(e=>e.type==='keydown').length,cases:'line editing; exact wrap; visible cursor; output preservation; submitted commands; history; completion; clipboard; cancellation; scope; help; TF navigation'};
+  const result={browser:name,version:browser.version(),passed:true,keyboardEvents:events.filter(e=>e.type==='keydown').length,cases:'line editing; exact wrap; visible cursor; output preservation; submitted commands; history; completion; clipboard; cancellation; scope; help; Playground navigation'};
   results.push(result);console.log(`PASS ${name}: scoped browser shortcuts, optional translated help and navigation`);
  }finally{await browser.close();}
 }

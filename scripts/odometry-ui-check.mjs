@@ -1,3 +1,4 @@
+import {tfModuleUrl} from './tf-browser-route.mjs';
 import assert from 'node:assert/strict';
 import {mkdir,readFile,writeFile} from 'node:fs/promises';
 import {chromium} from 'playwright-core';
@@ -5,7 +6,8 @@ import {chromium} from 'playwright-core';
 // Learner setup goes through visible file cards and real terminal input. The
 // instrumentation only observes the lab selected by the application.
 const standalone=JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8')).name==='ros2-basics-lab';
-const url=process.env.LAB_URL||(standalone?'http://127.0.0.1:8017/ros2-basics-lab/':'http://127.0.0.1:8017/basics.html');
+const suppliedUrl=process.env.LAB_URL||(standalone?'http://127.0.0.1:8017/ros2-basics-lab/':'http://127.0.0.1:8017/basics.html');
+const url=standalone?suppliedUrl:tfModuleUrl(suppliedUrl);
 const statusOnly=process.argv.includes('--status-only');
 const output=process.env.ODOMETRY_UI_ARTIFACTS||(statusOnly?'artifacts/odometry-ui/status':'artifacts/odometry-ui');
 await mkdir(output,{recursive:true});
@@ -54,8 +56,9 @@ async function run(language){
   });
   await page.locator('#start').click();await page.locator('.xterm').first().waitFor();
   await page.locator('#language').selectOption(language);
-  const tf=await page.locator('#exercise-nav [data-index="9"]').count();
-  await page.locator(`#exercise-nav [data-index="${tf?9:7}"]`).click();
+  const tf=!standalone||await page.locator('#exercise-nav [data-index="9"]').count()>0;
+  if(standalone)await page.locator(`#exercise-nav [data-index="${tf?9:7}"]`).click();
+  else assert.equal(await page.locator('#nav button,#exercise-nav button').count(),0,'Independent TF module navigation');
   await page.locator('[data-exercise="odometry"]').click();
   const start=tf?'#tf-start':'#playground-start',stopSimulator=tf?'#tf-stop':'#playground-stop',reset=tf?'#tf-reset-pose':'#playground-reset';
   const notebook=page.locator('.odom-notebook:visible'),status=notebook.locator('.odom-status');

@@ -1,3 +1,4 @@
+import {tfModuleUrl,moduleHomeUrl} from './tf-browser-route.mjs';
 import {chromium} from 'playwright-core';
 import assert from 'node:assert/strict';
 import {mkdir,writeFile} from 'node:fs/promises';
@@ -6,8 +7,9 @@ const evidence=[];
 try{
  const page=await browser.newPage({viewport:{width:1440,height:900}}),errors=[];
  page.on('pageerror',e=>errors.push(e.message));page.on('dialog',dialog=>dialog.accept());
- await page.goto((process.env.LAB_URL||'http://127.0.0.1:8042/basics.html')+'?start=1');
- await page.locator('#exercise-nav button[data-index="9"]').click();
+ const entry=tfModuleUrl(process.env.LAB_URL||'http://127.0.0.1:8042/basics.html',{autoStart:true});
+ await page.goto(entry);await page.locator('#tf-start').waitFor();
+ assert.equal(await page.locator('#nav button,#exercise-nav button').count(),0,'TF module has no ROS Basics or Playground navigation');
  await page.locator('#tf-start').click();await page.locator('.tf-node').first().waitFor();
  assert.equal(await page.locator('.tf-node').count(),7);
  const worldOrigin=async()=>page.locator('[data-frame-origin="odom"]').evaluate(el=>[el.getAttribute('cx'),el.getAttribute('cy')]);
@@ -41,8 +43,8 @@ try{
  await page.locator('#tf-stop').click();assert.equal(await page.locator('.tf-node').count(),0);
  assert.match(await page.locator('.tf-live').textContent(),/stopped/);
  await page.locator('#tf-start').click();assert.equal(await page.locator('.tf-node').count(),7);
- await page.locator('#nav button').first().click();assert(await page.locator('#tf-stage').isHidden());
- await page.locator('#exercise-nav button[data-index="9"]').click();assert.equal(await page.locator('.tf-node').count(),0);
+ await page.goto(moduleHomeUrl(entry));assert.equal(await page.locator('#tf-stage').count(),0);
+ await page.goto(entry);await page.locator('#tf-start').waitFor();assert.equal(await page.locator('.tf-node').count(),0);
  const direct=new URL(process.env.LAB_URL||'http://127.0.0.1:8042/basics.html');direct.searchParams.set('start','1');direct.searchParams.set('unit','tf');
  await page.goto(direct.href);await page.locator('#tf-start').waitFor();assert.equal(await page.locator('#unit-heading').textContent(),'TF & Odometry');
  assert.deepEqual(errors,[]);await writeFile('artifacts/tf/visual-browser.json',JSON.stringify(evidence,null,2));console.log('PASS TF visual controls, keyboard selection, live tree, lifecycle, desktop/tablet/phone');
