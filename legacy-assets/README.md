@@ -38,3 +38,9 @@ clean CI builds must include this version for already-open production tabs.
 `507a558424ac37e40368d1dbdc8811b0a946a20e`. All current and retained asset bodies
 were verified against kinenest.com before the module-isolation correction.
 Keep these URLs for users who opened the first release before that correction.
+
+`c368e2042be8` retains all 130 files from deployed commit
+`ba78dbfd827db209d8c890985d9655f6b0052ab7`. The stabilization audit on
+18 October 2026 compared every file byte-for-byte with kinenest.com.
+`tests/fixtures/production-assets-c368e2042be8.json` pins their hashes so clean
+builds preserve workers and modules needed by existing tabs.

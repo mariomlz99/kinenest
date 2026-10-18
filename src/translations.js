@@ -15,33 +15,187 @@ export const translations = {
 "Complete":["Compléter","Aanvullen","Completar","Vervollständigen","Completar","Completa"],
 "Copy selection / interrupt":["Copier la sélection / interrompre","Selectie kopiëren / onderbreken","Copiar selección / interrumpir","Auswahl kopieren / unterbrechen","Copiar seleção / interromper","Copia selezione / interrompi"],
 "Suspend, when supported":["Suspendre, si disponible","Onderbreken, indien ondersteund","Suspender, si está disponible","Anhalten, wenn unterstützt","Suspender, se disponível","Sospendi, se supportato"],
-"Introduction to the simulator":["Introduction au simulateur", "Inleiding tot de simulator"],
-"1. Odometry: where is the robot?":["1. Odométrie: où est le robot ?", "1. Odometrie: waar is de robot?"],
-"2. TF: how do frames connect?":["2. TF: comment les repères sont-ils reliés ?", "2. TF: hoe zijn coördinatenstelsels verbonden?"],
-"3. LiDAR: measure the room":["3. LiDAR: mesurer la pièce", "3. LiDAR: meet de ruimte"],
-"4. Camera: understand an image":["4. Caméra: comprendre une image", "4. Camera: begrijp een beeld"],
-"Optional: write a sensor reader":["Facultatif: programmer un lecteur de capteur", "Optioneel: schrijf een sensorlezer"],
-"Playground exercises":["Exercices du simulateur", "Simulatoroefeningen"],
-"Reset robot pose":["Réinitialiser la pose du robot", "Robotpositie herstellen"],
-"Room overview":["Vue d’ensemble de la pièce", "Ruimteoverzicht"],
-"Follow robot":["Suivre le robot", "Robot volgen"],
-"Robot coordinate frames":["Repères du robot", "Coördinatenstelsels van de robot"],
-"Robot pose reset. Stop any velocity publisher before resetting.":["Pose réinitialisée. Arrêtez les publications de vitesse avant de réinitialiser.", "Robotpositie hersteld. Stop snelheidspublishers voordat je de positie herstelt."],
-"Resize file tree and code editor":["Redimensionner l’arborescence et l’éditeur de code", "Bestandsboom en code-editor vergroten of verkleinen"],
+"Introduction to the simulator":[
+    "Introduction au simulateur",
+    "Inleiding tot de simulator",
+    "Introducción al simulador",
+    "Einführung in den Simulator",
+    "Introdução ao simulador",
+    "Introduzione al simulatore"
+  ],
+"1. Odometry: where is the robot?":[
+    "1. Odométrie: où est le robot ?",
+    "1. Odometrie: waar is de robot?",
+    "1. Odometría: ¿dónde está el robot?",
+    "1. Odometrie: Wo ist der Roboter?",
+    "1. Odometria: onde está o robô?",
+    "1. Odometria: dov’è il robot?"
+  ],
+"2. TF: how do frames connect?":[
+    "2. TF: comment les repères sont-ils reliés ?",
+    "2. TF: hoe zijn coördinatenstelsels verbonden?",
+    "2. TF: ¿cómo se conectan los marcos?",
+    "2. TF: Wie sind Koordinatensysteme verbunden?",
+    "2. TF: como se ligam os referenciais?",
+    "2. TF: come si collegano i sistemi di riferimento?"
+  ],
+"3. LiDAR: measure the room":[
+    "3. LiDAR: mesurer la pièce",
+    "3. LiDAR: meet de ruimte",
+    "3. LiDAR: medir la habitación",
+    "3. LiDAR: den Raum vermessen",
+    "3. LiDAR: medir a sala",
+    "3. LiDAR: misurare la stanza"
+  ],
+"4. Camera: understand an image":[
+    "4. Caméra: comprendre une image",
+    "4. Camera: begrijp een beeld",
+    "4. Cámara: entender una imagen",
+    "4. Kamera: ein Bild verstehen",
+    "4. Câmara: compreender uma imagem",
+    "4. Telecamera: comprendere un’immagine"
+  ],
+"Optional: write a sensor reader":[
+    "Facultatif: programmer un lecteur de capteur",
+    "Optioneel: schrijf een sensorlezer",
+    "Opcional: programar un lector de sensores",
+    "Optional: einen Sensorleser programmieren",
+    "Opcional: programar um leitor de sensores",
+    "Facoltativo: programmare un lettore di sensori"
+  ],
+"Playground exercises":[
+    "Exercices du simulateur",
+    "Simulatoroefeningen",
+    "Ejercicios del simulador",
+    "Simulatorübungen",
+    "Exercícios do simulador",
+    "Esercizi del simulatore"
+  ],
+"Reset robot pose":[
+    "Réinitialiser la pose du robot",
+    "Robotpositie herstellen",
+    "Restablecer la pose del robot",
+    "Roboterpose zurücksetzen",
+    "Repor a pose do robô",
+    "Ripristina la posa del robot"
+  ],
+"Room overview":[
+    "Vue d’ensemble de la pièce",
+    "Ruimteoverzicht",
+    "Vista general de la habitación",
+    "Raumübersicht",
+    "Vista geral da sala",
+    "Panoramica della stanza"
+  ],
+"Follow robot":[
+    "Suivre le robot",
+    "Robot volgen",
+    "Seguir al robot",
+    "Roboter folgen",
+    "Seguir o robô",
+    "Segui il robot"
+  ],
+"Robot coordinate frames":[
+    "Repères du robot",
+    "Coördinatenstelsels van de robot",
+    "Marcos de coordenadas del robot",
+    "Koordinatensysteme des Roboters",
+    "Referenciais do robô",
+    "Sistemi di riferimento del robot"
+  ],
+"Robot pose reset. Stop any velocity publisher before resetting.":[
+    "Pose réinitialisée. Arrêtez les publications de vitesse avant de réinitialiser.",
+    "Robotpositie hersteld. Stop snelheidspublishers voordat je de positie herstelt.",
+    "Pose del robot restablecida. Detén los publicadores de velocidad antes de restablecerla.",
+    "Roboterpose zurückgesetzt. Stoppe vor dem Zurücksetzen alle Geschwindigkeits-Publisher.",
+    "Pose do robô reposta. Para todos os publicadores de velocidade antes de a repor.",
+    "Posa del robot ripristinata. Ferma tutti i publisher di velocità prima del ripristino."
+  ],
+"Resize file tree and code editor":[
+    "Redimensionner l’arborescence et l’éditeur de code",
+    "Bestandsboom en code-editor vergroten of verkleinen",
+    "Cambiar el tamaño del árbol de archivos y del editor de código",
+    "Größe von Dateibaum und Codeeditor ändern",
+    "Redimensionar a árvore de ficheiros e o editor de código",
+    "Ridimensiona l’albero dei file e l’editor di codice"
+  ],
 
-"Leave the status publisher running. In a second terminal, source the workspace again to make the newly installed custom message package available, then echo its topic. Sourcing one terminal does not update the others.":["Laissez l’éditeur de statut actif. Dans un deuxième terminal, sourcez à nouveau l’espace de travail pour rendre le nouveau paquet de messages disponible, puis utilisez echo sur son topic. Sourcer un terminal ne met pas les autres à jour.", "Laat de statuspublisher draaien. Source de werkruimte opnieuw in een tweede terminal zodat het nieuw geïnstalleerde berichtenpakket beschikbaar wordt. Gebruik daar echo op het topic. Sourcen in één terminal werkt de andere terminals niet bij."],
+"Leave the status publisher running. In a second terminal, source the workspace again to make the newly installed custom message package available, then echo its topic. Sourcing one terminal does not update the others.":[
+    "Laissez l’éditeur de statut actif. Dans un deuxième terminal, sourcez à nouveau l’espace de travail pour rendre le nouveau paquet de messages disponible, puis utilisez echo sur son topic. Sourcer un terminal ne met pas les autres à jour.",
+    "Laat de statuspublisher draaien. Source de werkruimte opnieuw in een tweede terminal zodat het nieuw geïnstalleerde berichtenpakket beschikbaar wordt. Gebruik daar echo op het topic. Sourcen in één terminal werkt de andere terminals niet bij.",
+    "Deja el publicador de estado en ejecución. En una segunda terminal, vuelve a cargar el entorno del espacio de trabajo para disponer del paquete de mensajes personalizado recién instalado y usa echo en su topic. Cargar el entorno en una terminal no actualiza las demás.",
+    "Lass den Status-Publisher laufen. Lade in einem zweiten Terminal die Workspace-Umgebung erneut, damit das neu installierte Paket mit eigenen Nachrichten verfügbar ist, und zeige sein Topic mit echo an. Das Laden in einem Terminal aktualisiert die anderen nicht.",
+    "Mantém o publicador de estado em execução. Num segundo terminal, volta a carregar o ambiente do workspace para disponibilizar o pacote de mensagens personalizadas recém-instalado e usa echo no seu tópico. Carregar o ambiente num terminal não atualiza os restantes.",
+    "Lascia in esecuzione il publisher di stato. In un secondo terminale, carica nuovamente l’ambiente del workspace per rendere disponibile il pacchetto di messaggi personalizzati appena installato, quindi usa echo sul suo topic. Caricare l’ambiente in un terminale non aggiorna gli altri."
+  ],
 
-"What you will run":["Ce que vous allez exécuter", "Wat je gaat uitvoeren"],
-"Publisher node":["Nœud éditeur", "Publicerende node"],
-"Topic · message type":["Topic · type de message", "Topic · berichttype"],
-"Subscriber node":["Nœud abonné", "Abonnerende node"],
-"The talker publishes text messages on /topic. The listener subscribes to /topic and prints the messages it receives.":["Le talker publie des messages texte sur /topic. Le listener s’abonne à /topic et affiche les messages reçus.", "De talker publiceert tekstberichten op /topic. De listener abonneert zich op /topic en toont de ontvangen berichten."],
-"Building creates the executables; it does not start the nodes. After building, source the workspace in two terminals, then run the talker in one and the listener in the other.":["La compilation crée les exécutables ; elle ne démarre pas les nœuds. Ensuite, sourcez l’espace de travail dans deux terminaux, puis lancez le talker dans l’un et le listener dans l’autre.", "Bouwen maakt de uitvoerbare bestanden aan; het start de nodes niet. Source daarna de werkruimte in twee terminals. Start de talker in de ene en de listener in de andere."],
+"What you will run":[
+    "Ce que vous allez exécuter",
+    "Wat je gaat uitvoeren",
+    "Qué vas a ejecutar",
+    "Was du ausführen wirst",
+    "O que vais executar",
+    "Cosa eseguirai"
+  ],
+"Publisher node":[
+    "Nœud éditeur",
+    "Publicerende node",
+    "Nodo publicador",
+    "Publisher-Node",
+    "Nó publicador",
+    "Nodo publisher"
+  ],
+"Topic · message type":[
+    "Topic · type de message",
+    "Topic · berichttype",
+    "Topic · tipo de mensaje",
+    "Topic · Nachrichtentyp",
+    "Tópico · tipo de mensagem",
+    "Topic · tipo di messaggio"
+  ],
+"Subscriber node":[
+    "Nœud abonné",
+    "Abonnerende node",
+    "Nodo suscriptor",
+    "Subscriber-Node",
+    "Nó subscritor",
+    "Nodo subscriber"
+  ],
+"The talker publishes text messages on /topic. The listener subscribes to /topic and prints the messages it receives.":[
+    "Le talker publie des messages texte sur /topic. Le listener s’abonne à /topic et affiche les messages reçus.",
+    "De talker publiceert tekstberichten op /topic. De listener abonneert zich op /topic en toont de ontvangen berichten.",
+    "El talker publica mensajes de texto en /topic. El listener se suscribe a /topic e imprime los mensajes que recibe.",
+    "Der talker veröffentlicht Textnachrichten auf /topic. Der listener abonniert /topic und gibt die empfangenen Nachrichten aus.",
+    "O talker publica mensagens de texto em /topic. O listener subscreve /topic e mostra as mensagens que recebe.",
+    "Il talker pubblica messaggi di testo su /topic. Il listener si iscrive a /topic e stampa i messaggi ricevuti."
+  ],
+"Building creates the executables; it does not start the nodes. After building, source the workspace in two terminals, then run the talker in one and the listener in the other.":[
+    "La compilation crée les exécutables ; elle ne démarre pas les nœuds. Ensuite, sourcez l’espace de travail dans deux terminaux, puis lancez le talker dans l’un et le listener dans l’autre.",
+    "Bouwen maakt de uitvoerbare bestanden aan; het start de nodes niet. Source daarna de werkruimte in twee terminals. Start de talker in de ene en de listener in de andere.",
+    "La compilación crea los ejecutables; no inicia los nodos. Después, carga el entorno del espacio de trabajo en dos terminales y ejecuta el talker en una y el listener en la otra.",
+    "Das Bauen erstellt die ausführbaren Programme; es startet keine Nodes. Lade danach die Workspace-Umgebung in zwei Terminals und starte den talker in einem und den listener im anderen.",
+    "A compilação cria os executáveis; não inicia os nós. Depois, carrega o ambiente do workspace em dois terminais e executa o talker num e o listener no outro.",
+    "La compilazione crea gli eseguibili; non avvia i nodi. Poi carica l’ambiente del workspace in due terminali ed esegui il talker in uno e il listener nell’altro."
+  ],
 
 "Completed": ["Terminé", "Voltooid", "Completado", "Abgeschlossen", "Concluído", "Completato"],
 "KineNest simulates ROS 2 Jazzy.": ["KineNest simule ROS 2 Jazzy.", "KineNest simuleert ROS 2 Jazzy.", "KineNest simula ROS 2 Jazzy.", "KineNest simuliert ROS 2 Jazzy.", "KineNest simula ROS 2 Jazzy.", "KineNest simula ROS 2 Jazzy."],
-"Resize unit height":["Redimensionner la hauteur de la leçon", "Hoogte van de les aanpassen"],
-"Resize editor height":["Redimensionner la hauteur de l’éditeur", "Hoogte van de editor aanpassen"],
+"Resize unit height":[
+    "Redimensionner la hauteur de la leçon",
+    "Hoogte van de les aanpassen",
+    "Cambiar la altura de la unidad",
+    "Höhe der Einheit ändern",
+    "Redimensionar a altura da unidade",
+    "Ridimensiona l’altezza dell’unità"
+  ],
+"Resize editor height":[
+    "Redimensionner la hauteur de l’éditeur",
+    "Hoogte van de editor aanpassen",
+    "Cambiar la altura del editor",
+    "Höhe des Editors ändern",
+    "Redimensionar a altura do editor",
+    "Ridimensiona l’altezza dell’editor"
+  ],
   "Start the playground above. All three views show the same room and brown obstacle. The map uses world coordinates; the camera and LiDAR face with the robot. In the LiDAR view, forward is up and left is left. At the starting pose, the front scan is about 2.88 m from the obstacle; the nearest return is the wall behind, about 2.12 m away. Move forward and watch the front range decrease and the camera obstacle grow. The robot stops before hitting obstacles or walls.": [
     "Démarrez le simulateur ci-dessus. Les trois vues montrent la même pièce et le même obstacle brun. La carte utilise les coordonnées du monde ; la caméra et le LiDAR suivent l’orientation du robot. Dans la vue LiDAR, l’avant est en haut et la gauche à gauche. Au départ, la distance frontale à l’obstacle est d’environ 2,88 m ; le retour le plus proche vient du mur derrière, à environ 2,12 m. Avancez : la distance frontale diminue et l’obstacle grandit dans la caméra. Le robot s’arrête avant de heurter les obstacles ou les murs.",
     "Start de simulator hierboven. Alle drie de beelden tonen dezelfde ruimte en hetzelfde bruine obstakel. De kaart gebruikt wereldcoördinaten; camera en LiDAR draaien mee met de robot. In het LiDAR-beeld is vooruit boven en links links. Bij de start is de afstand vooruit tot het obstakel ongeveer 2,88 m; de dichtstbijzijnde meting is de muur achter de robot, op ongeveer 2,12 m. Rijd vooruit: de afstand neemt af en het obstakel wordt groter in het camerabeeld. De robot stopt vóór obstakels en muren.",
@@ -1870,3 +2024,5 @@ Object.assign(translations, {
     "Confronta: la distanza frontale diminuisce quando il robot si avvicina all’ostacolo marrone. È misurata dal supporto del laser, non dal centro di base_link. Gira un poco a sinistra e controlla di nuovo: l’ostacolo appare a un angolo diverso. Confronta la direzione di osservazione con il nuovo orientamento del robot."
   ]
 });
+
+translations["Optional | write a sensor reader"] = translations["Optional: write a sensor reader"];

@@ -17,10 +17,10 @@ const browser=await chromium.launch({executablePath:'/usr/bin/google-chrome',hea
 try{
  const page=await browser.newPage();await page.goto(process.env.LAB_URL||'http://127.0.0.1:8017/ros2-basics-lab/');
  const result=await page.evaluate(async({commands,source})=>{
-  const base=document.querySelector('script[type="module"]').src,{Lab}=await import(new URL('lab.js',base));const lab=new Lab(),t=lab.terminal(),logs=[];t.output=s=>logs.push(s);
+  const base=document.querySelector('script[type="module"]').src,{Lab}=await import(new URL('lab.js',base)),{ROOT}=await import(new URL('workspace.js',base));const lab=new Lab(),t=lab.terminal(),logs=[];t.output=s=>logs.push(s);
   try{
    for(const command of commands.slice(0,4))await t.execute(command);
-   lab.fs.write('/home/student/ros2_ws/src/my_first_package/my_first_package/hello.py',source);
+   lab.fs.write(ROOT+'/src/my_first_package/my_first_package/hello.py',source);
    const build=await t.execute(commands[4]);const buildLogs=[...logs,build].join('\n');logs.length=0;
    await t.execute(commands[5]);await t.execute(commands[6]);
    const deadline=Date.now()+120000;while(!logs.some(s=>s.includes('TypeError'))){if(Date.now()>deadline)throw Error(logs.join('\n'));await new Promise(r=>setTimeout(r,100));}

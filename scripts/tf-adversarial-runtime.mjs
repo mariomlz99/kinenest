@@ -1,10 +1,10 @@
 import {tfModuleUrl} from './tf-browser-route.mjs';
 import assert from 'node:assert/strict';
-import {chromium} from 'playwright-core';
+import {chromium,firefox} from 'playwright-core';
 import {mkdir,writeFile} from 'node:fs/promises';
 import {poses,pairs,probeSource,expected} from './tf-review-fixtures.mjs';
 await mkdir('artifacts/review',{recursive:true});
-const browser=await chromium.launch({executablePath:'/usr/bin/google-chrome',headless:true});
+const browser=await (process.env.BROWSER==='firefox'?firefox:chromium).launch({headless:true,...(process.env.BROWSER==='firefox'?{}:{executablePath:'/usr/bin/google-chrome'})});
 const reports=[];
 try{
  const page=await browser.newPage();await page.goto(tfModuleUrl(process.env.LAB_URL||'http://127.0.0.1:8042/basics.html'));
