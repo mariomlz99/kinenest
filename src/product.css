@@ -53,3 +53,6 @@ button,select,.start-unit,nav button{border-radius:var(--radius-control)}
 
 /* Share the button row even when a translated button needs two lines. */
 @media(min-width:1101px){.available-modules{row-gap:0}.available-modules .basics-card{display:grid;grid-template-columns:48px minmax(0,1fr);grid-template-rows:subgrid;grid-row:span 6;row-gap:0}.available-modules .basics-copy{display:contents}.available-modules .basics-copy>*{grid-column:2}.available-modules .unit-symbol{grid-column:1;grid-row:1 / span 2}.available-modules .start-unit{margin-top:0;align-self:start;justify-self:start}}
+
+/* Credits stay beneath the workspace and use rectangular flag artwork. */
+.product-footer{flex-wrap:wrap}.product-footer .creator{flex-basis:100%;max-width:none;margin:0;order:0}.product-footer>span,.product-footer>nav{order:1}.workspace-footer{max-width:none;margin:0;border-top:1px solid var(--line);padding:20px 24px}.credit-flag{display:inline-block;vertical-align:-3px;border:1px solid var(--line);border-radius:1px;overflow:hidden}.module-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}.module-grid{grid-template-columns:repeat(2,minmax(0,1fr))}@media(max-width:650px){.module-grid{grid-template-columns:1fr}.product-footer .creator{margin:0}.workspace-footer{padding:20px 18px}}
