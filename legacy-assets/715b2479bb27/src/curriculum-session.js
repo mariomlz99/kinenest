@@ -1,0 +1,25 @@
+// Keep saved selections, completion and guide positions attached to lesson content.
+export function migrateCurriculum(record){
+ if(!record)return record;
+ const remap=map=>{
+  if(!record.ui)return;
+  for(const key of ['lessonIndex','unitIndex'])if(key in record.ui)record.ui[key]=map(record.ui[key]);
+  if(record.ui.progress)record.ui.progress=record.ui.progress.map(map);
+  if(record.ui.guidePositions)record.ui.guidePositions=record.ui.guidePositions.map(([key,value])=>{const [index,...rest]=key.split(':');return [[map(Number(index)),...rest].join(':'),value];});
+ };
+ if((record.curriculumVersion??1)<2){remap(index=>Number.isInteger(index)&&index>=2?index+1:index);record.curriculumVersion=2;}
+ if(record.curriculumVersion===2){remap(index=>index===1?2:index===2?1:index);record.curriculumVersion=3;}
+ if(record.curriculumVersion===3){
+  if(record.ui?.guidePositions)record.ui.guidePositions=record.ui.guidePositions.map(([key,value])=>[key,key.startsWith('7:')?0:value]);
+  record.curriculumVersion=4;
+ }
+ if(record.curriculumVersion===4){
+  // TF and odometry now live only in their own module. The remaining sensor
+  // pages keep their place; only removed Playground exercises return to intro.
+  if(record.ui?.guidePositions)record.ui.guidePositions=record.ui.guidePositions.map(([key,value])=>[key,key.startsWith('7:')?(value<8?value:value>=29&&value<=61?value-21:0):value]);
+  record.curriculumVersion=5;
+ }
+ if(record.other)migrateCurriculum(record.other);
+ for(const slot of Object.values(record.slots??{}))migrateCurriculum(slot);
+ return record;
+}

@@ -2,7 +2,7 @@
 import {readdir,readFile,mkdir,writeFile,cp} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import assert from 'node:assert/strict';
-const version='c368e2042be8',commit='ba78dbfd827db209d8c890985d9655f6b0052ab7';
+const version=process.argv[2]||'c368e2042be8',commit=process.argv[3]||'ba78dbfd827db209d8c890985d9655f6b0052ab7';
 const origin='https://kinenest.com',root='dist/assets/'+version,files=[];
 const info=await fetch(origin+'/build-info.json').then(r=>r.json());assert.equal(info.commit,commit);assert.equal(info.assetVersion,version);
 async function walk(dir){for(const e of await readdir(root+'/'+dir,{withFileTypes:true})){const name=dir+'/'+e.name;if(e.isDirectory())await walk(name);else files.push(name);}}

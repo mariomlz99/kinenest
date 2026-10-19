@@ -1,3 +1,4 @@
+import {navigationStorage} from './session-navigation.js';
 import {exampleBuildType,examplePackageState,EXAMPLE_LANGUAGE_NOTICE,EXAMPLE_MANIFEST_NOTICE} from './example-package.js';
 import {odometryPackageState,odometryPackageBlocked,odometryPackageNotice} from './playground/odometry-workspace.js';
 import {odometryTranslations} from './playground/odometry-translations.js';
@@ -7,7 +8,7 @@ import {tfTranslations} from './tf/translations.js';
 import {sessionScope, savedSlots,selectModuleSession} from './session-scopes.js';
 import {playgroundSections} from './playground/sections.js';
 import {pubsubDiagram} from './pubsub-diagram.js';
-import {LINUX_MODE,TF_MODE,MODULE_NAME,moduleAllowsUnit} from './course-mode.js';
+import {LINUX_MODE,TF_MODE,MODULE_NAME,moduleAllowsUnit,SESSION_DATABASE} from './course-mode.js';
 import{Playground}from'./playground/playground.js';
 import{prepareUnit}from'./units/prepare.js';
 import{loadSession,saveSession,captureSession,restoreSession,restoreCompiledModules}from'./session.js';
@@ -21,6 +22,7 @@ import{Lab}from'./lab.js';import{ROOT,BASE_PACKAGES}from'./workspace.js';import{
 let exampleUpdates=[];let preparing=false;let overview=false;const guidePositions=new Map();
 let activeExercise=null,odometryStateSignature='',odometryFileRevision=-1,odometrySwitchNotice=null;
 const sessionSlots=new Map();
+const navigation=navigationStorage(SESSION_DATABASE,5);
 let freeRobot=false;
 let playground,tfVisualizer,tfPlayground;let unitSnapshots=new Map();const collapsed=new Set([ROOT+'/build',ROOT+'/install',ROOT+'/log']);
 let lab,editor,views=[],activeFile=null,saved='',unitIndex=TF_MODE?9:0,language='python',progress=new Set(),refreshPending=false;
@@ -217,9 +219,11 @@ async function start(){const loaded=await restoreCompiledModules(await loadSessi
   status(LINUX_MODE?'Saved Linux workspace restored.':'Saved session restored. Start your nodes again when needed.');
  }else addTerminal();
  updateProgress();
+ const restoredNavigation=navigation.load({unitIndex,language,guidePositions:[...guidePositions]},stored?.savedAt??0);
+ unitIndex=restoredNavigation.unitIndex;language=restoredNavigation.language;guidePositions.clear();for(const [key,value]of restoredNavigation.guidePositions)guidePositions.set(key,value);$('#language').value=language;
  let signature='',saving=false,savePending=false;
  const persist=async(force=false)=>{
-  if(saving){savePending||=force;return;}if(preparing)return;const ui=currentSessionUI();
+  if(preparing)return;const ui=currentSessionUI();navigation.save(ui);if(saving){savePending||=force;return;}
   const current=JSON.stringify([lab.fs.revision,ui,[...lab.terminals.values()].map(t=>[t.cwd,t.env,t.vars,[...t.overlays],t.history,t.completedCommands]),!!lab.exported]);
   if(!force&&current===signature)return;
   saving=true;try{const record=captureSession(lab,ui);record.slots=Object.fromEntries([...sessionSlots].map(([scope,state])=>[scope,state.record??captureSession(state.lab,state.ui)]));await saveSession(record);signature=current;$('#session-state').textContent='Progress saved in this browser';}catch(error){$('#session-state').textContent='Session could not be saved. Export your workspace to keep a copy.';console.error(error);}finally{saving=false;if(savePending){savePending=false;persist(true);}}
