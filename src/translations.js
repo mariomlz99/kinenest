@@ -1968,13 +1968,13 @@ export const translations = {
     "Explore o simulador para praticar.",
     "Esplora il playground per esercitarti."
   ],
-  "With the assistance of": [
-    "Avec l’assistance de",
-    "Met hulp van",
-    "Con la asistencia de",
-    "Mit Unterstützung von",
-    "Com a assistência de",
-    "Con l’assistenza di"
+  "With AI assistance.": [
+    "Avec l’aide de l’IA.",
+    "Met hulp van AI.",
+    "Con ayuda de IA.",
+    "Mit KI-Unterstützung.",
+    "Com a ajuda de IA.",
+    "Con l’aiuto dell’IA."
   ]
 };
 
