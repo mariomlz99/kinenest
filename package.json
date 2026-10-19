@@ -20,7 +20,8 @@
     "bundle:installation": "node scripts/installation-assets.mjs",
     "test:odometry": "node scripts/odometry-check.mjs",
     "test:odometry:native": "node scripts/native-odometry-check.mjs",
-    "test:odometry:ui": "node scripts/odometry-ui-check.mjs"
+    "test:odometry:ui": "node scripts/odometry-ui-check.mjs",
+    "test:unit-language": "node scripts/unit-language-check.mjs"
   },
   "dependencies": {
     "@codemirror/autocomplete": "6.20.3",

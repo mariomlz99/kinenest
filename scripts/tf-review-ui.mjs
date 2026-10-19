@@ -22,7 +22,7 @@ try{
   const update=TFVisualizer.prototype.update;TFVisualizer.prototype.update=function(...a){window.reviewVisual=this;const begin=performance.now();const result=update.apply(this,a);window.updateCosts.push(performance.now()-begin);return result;};
  });
  await observe();await page.locator('#start').click();await page.locator('.xterm').waitFor();
- assert.equal(await page.locator('#nav button,#exercise-nav button').count(),0);
+ assert.equal(await page.locator('#nav button[data-index],#exercise-nav button').count(),0);
  await page.locator('#tf-start').click();await page.locator('[data-frame="laser_link"]').waitFor();
  const pose=async(x,y,yaw)=>page.evaluate(({x,y,yaw})=>{const v=window.reviewVisual;Object.assign(v.playground.robot,{x,y,yaw});v.playground.publishPose();v.update(true);},{x,y,yaw});
  const far=await page.evaluate(()=>{const v=window.reviewVisual;clearInterval(v.playground.timer);v.playground.timer=null;Object.assign(v.playground.robot,{x:1000,y:-1000,yaw:-3.14});const begin=performance.now();v.playground.publishPose();v.update(true);return{grid:document.querySelectorAll('.tf-grid').length,ms:performance.now()-begin};});report.performance.push({far});console.log('far-pose grid',far);

@@ -58,7 +58,7 @@ async function run(language){
   await page.locator('#language').selectOption(language);
   const tf=!standalone||await page.locator('#exercise-nav [data-index="9"]').count()>0;
   if(standalone)await page.locator(`#exercise-nav [data-index="${tf?9:7}"]`).click();
-  else assert.equal(await page.locator('#nav button,#exercise-nav button').count(),0,'Independent TF module navigation');
+  else assert.equal(await page.locator('#nav button[data-index],#exercise-nav button').count(),0,'Independent TF module navigation');
   await page.locator('[data-exercise="odometry"]').click();
   const start=tf?'#tf-start':'#playground-start',stopSimulator=tf?'#tf-stop':'#playground-stop',reset=tf?'#tf-reset-pose':'#playground-reset';
   const notebook=page.locator('.odom-notebook:visible'),status=notebook.locator('.odom-status');
@@ -137,7 +137,7 @@ async function run(language){
 
   // Entering from another exercise is a distinct route to the same mismatch.
   if(tf)await page.locator('[data-exercise="frames"]').click();
-  else await page.locator('.playground-exercises button').first().click();
+  else await page.locator('[data-exercise]').first().click();
   await page.locator('#language').selectOption(language==='python'?'cpp':'python');
   await page.locator('[data-exercise="odometry"]').click();
   const usePackageLanguage=page.getByRole('button',{name:'Use package language',exact:true});

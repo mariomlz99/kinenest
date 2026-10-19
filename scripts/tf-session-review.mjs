@@ -8,7 +8,7 @@ try{
  const start=async page=>{await observe(page);if(await page.locator('#start').isVisible())await page.locator('#start').click();await page.locator('.xterm').first().waitFor();};
  const save=async()=>{await page.locator('#save-session').click();await page.waitForFunction(()=>document.querySelector('#session-state').textContent.includes('saved'));await page.waitForTimeout(300);};
  const visit=async destination=>{await page.goto(home);assert.equal(page.workers().length,0);await page.goto(destination);await start(page);};
- const isolated=async()=>{assert.equal(await page.locator('#nav button,#exercise-nav button').count(),0);assert.equal(await page.locator('[data-exercise]').count(),5);assert.equal(await page.locator('#unit-heading').textContent(),'TF & Odometry');};
+ const isolated=async()=>{assert.equal(await page.locator('#nav button[data-index],#exercise-nav button').count(),0);assert.deepEqual(await page.locator('#nav button[data-exercise]').evaluateAll(buttons=>buttons.map(button=>button.dataset.exercise)),['frames','tree','lookup','point','odometry']);assert.equal(await page.locator('#unit-heading').textContent(),'TF & Odometry');};
  await page.goto(basics);await start(page);assert.equal(await page.locator('[data-index="9"]').count(),0,'ROS Basics must not contain a TF sidebar entry');
  await page.evaluate(()=>window.sessionLab.fs.write('/home/learner/course-review.txt','course'));await save();
  await page.locator('[data-index="7"]').click();await page.evaluate(()=>window.sessionLab.fs.write('/home/learner/playground-review.txt','playground'));await save();

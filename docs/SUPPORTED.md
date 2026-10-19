@@ -38,7 +38,7 @@ C++ wall and monotonic clocks use browser clocks. Native threads, C++ exceptions
 
 The optional playground provides `/cmd_vel`, `/odom`, `/tf`, `/tf_static`, `/scan` and `/camera/image_raw`. Camera output is RGB8 at 320×240. Motion targets 20 Hz; sensors target 10 Hz in an active tab. Browser scheduling is not a real-time guarantee. A two-second command timeout stops the robot. Camera pixels, scan geometry and ideal odometry share the simulated scene; physical sensor noise and drift are not modeled.
 
-Frames & TF is a separate, four-exercise session using the same simulator,
+Frames & TF is a separate, five-exercise session using the same simulator,
 editor, terminals and lesson controls. Its live tree, top view and inspector
 read the actual published transforms. Python and C++ support
 `tf2_ros::Buffer` / `tf2_ros.Buffer`, `TransformListener`, latest-time lookup
@@ -57,3 +57,19 @@ Free Lab offers the same environment without a checker. It saves and resets inde
 ## Saving and recovery
 
 Files, installed artifacts, terminal environments/history, progress and workspace-editor drafts autosave locally. Save nano buffers before leaving. Processes and interpreter variables do not resume. Export source to keep a portable backup. Prepare this unit creates missing prerequisites from visible examples while preserving existing packages and their errors.
+
+## Python control-flow limitation
+
+The current callback bridge yields from `rclpy.spin()` by unwinding Python’s
+stack. A `finally` block or context-manager exit around `spin()` therefore runs
+immediately, rather than after interruption. Cleanup there can destroy the node
+before any callbacks run. Code after `spin()` is also not resumed. The displayed
+callback examples work within this constraint; arbitrary native executor/control
+flow is not supported. Stop/Ctrl+C removes browser graph endpoints and terminates
+the worker, without executing Python cleanup. This is an open runtime defect,
+not native Python parity.
+
+Language selection changes the examples at the current lesson step. It does not
+convert an existing package. Example buttons and prerequisite preparation reject
+incompatible package types while preserving files. Export your work before
+explicitly recreating a package in another language.

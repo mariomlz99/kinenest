@@ -17,7 +17,7 @@ try{for(const language of (process.env.LAB_LANGUAGE||'python,cpp').split(',')){
    Lab.prototype.terminal=function(...args){window.tfAuditLab=this;return terminal.apply(this,args);};
   });
   await observe();await page.locator('#start').click();await page.locator('.xterm').first().waitFor();
-  assert.equal(await page.locator('#nav button,#exercise-nav button').count(),0,'TF module must not expose other courses');
+  assert.equal(await page.locator('#nav button[data-index],#exercise-nav button').count(),0,'TF module must not expose other courses');
   await page.locator('#language').selectOption(language);
   const idle=()=>page.waitForFunction(()=>/^(Jazzy|ROS environment)/.test(document.querySelector('.terminal-state')?.textContent),null,{timeout:180000});
   const output=needle=>page.waitForFunction(needle=>document.querySelector('.terminal-transcript pre')?.textContent.includes(needle),needle,{timeout:180000});
