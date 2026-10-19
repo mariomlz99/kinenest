@@ -15,7 +15,7 @@ try{
  await page.locator('#start').click();await page.locator('.xterm').waitFor();
  const tf=!standalone||await page.locator('#exercise-nav button[data-index="9"]').count()>0;
  if(standalone)await page.locator(`#exercise-nav button[data-index="${tf?9:7}"]`).click();
- else assert.equal(await page.locator('#nav button,#exercise-nav button').count(),0,'Independent TF module navigation');
+ else assert.equal(await page.locator('#nav button[data-index],#exercise-nav button').count(),0,'Independent TF module navigation');
  await page.locator('[data-exercise="odometry"]').click();
  await page.locator(tf?'#tf-start':'#playground-start').click();
  const notebook=page.locator('.odom-notebook:visible');

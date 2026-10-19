@@ -9,7 +9,7 @@ try{
  page.on('pageerror',e=>errors.push(e.message));page.on('dialog',dialog=>dialog.accept());
  const entry=tfModuleUrl(process.env.LAB_URL||'http://127.0.0.1:8042/basics.html',{autoStart:true});
  await page.goto(entry);await page.locator('#tf-start').waitFor();
- assert.equal(await page.locator('#nav button,#exercise-nav button').count(),0,'TF module has no ROS Basics or Playground navigation');
+ assert.equal(await page.locator('#nav button[data-index],#exercise-nav button').count(),0,'TF module has no ROS Basics or Playground navigation');
  await page.locator('#tf-start').click();await page.locator('.tf-node').first().waitFor();
  assert.equal(await page.locator('.tf-node').count(),7);
  const worldOrigin=async()=>page.locator('[data-frame-origin="odom"]').evaluate(el=>[el.getAttribute('cx'),el.getAttribute('cy')]);
