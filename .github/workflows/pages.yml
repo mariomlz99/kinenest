@@ -47,6 +47,7 @@ jobs:
           node node_modules/playwright-core/cli.js install firefox
           BROWSER=firefox LAB_URL=http://127.0.0.1:8018/basics.html npm run test:python-spin
           LAB_URL=http://127.0.0.1:8018/basics.html npm run test:terminal-shortcuts
+          LAB_URL=http://127.0.0.1:8018/basics.html npm run test:keyboard-focus
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
