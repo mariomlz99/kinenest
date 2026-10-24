@@ -58,16 +58,29 @@ Free Lab offers the same environment without a checker. It saves and resets inde
 
 Files, installed artifacts, terminal environments/history, progress and workspace-editor drafts autosave locally. Save nano buffers before leaving. Processes and interpreter variables do not resume. Export source to keep a portable backup. Prepare this unit creates missing prerequisites from visible examples while preserving existing packages and their errors.
 
-## Python control-flow limitation
+## Python spin control flow
 
-The current callback bridge yields from `rclpy.spin()` by unwinding Python’s
-stack. A `finally` block or context-manager exit around `spin()` therefore runs
-immediately, rather than after interruption. Cleanup there can destroy the node
-before any callbacks run. Code after `spin()` is also not resumed. The displayed
-callback examples work within this constraint; arbitrary native executor/control
-flow is not supported. Stop/Ctrl+C removes browser graph endpoints and terminates
-the worker, without executing Python cleanup. This is an open runtime defect,
-not native Python parity.
+`rclpy.spin()` suspends the live CPython stack through Pyodide's WebAssembly
+stack switching. Timer, topic, service and supported action callbacks execute
+inside the executor; callback exceptions propagate to the caller. `finally`
+and context-manager cleanup run when spin exits, and code after spin resumes
+on normal context shutdown. A finite program exits even if it left a node alive.
+
+Stop/Ctrl+C detaches graph endpoints immediately and interrupts the suspended
+Python executor. The worker has up to one second to finish Python cleanup before
+forced termination; a non-yielding program or stuck cleanup can still be killed.
+Retired workers cannot publish messages or recreate graph endpoints. Queues are
+bounded: topic/timer traffic keeps the existing latest-sample policy, with a
+256-event ceiling for worker input. Reset and reload never restart processes.
+
+Callback execution requires browser WebAssembly stack switching (JSPI). It is
+verified in Chrome 141 and Firefox 155 without experimental flags. Unsupported
+browsers receive an explicit error; the runtime does not simulate suspension
+by unwinding student code. Native Jazzy comparisons cover normal shutdown,
+callback exceptions, interruption, context managers and sequential runs. This
+bounded API does not implement arbitrary native executors or DDS.
+
+See `scripts/python-spin-check.mjs` and `scripts/native-python-spin-check.mjs`.
 
 Language selection changes the examples at the current lesson step. It does not
 convert an existing package. Example buttons and prerequisite preparation reject

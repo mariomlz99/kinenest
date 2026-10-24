@@ -1,3 +1,4 @@
+import {courseTranslations} from './course-translations.js';
 // French, Dutch, Spanish, German, Portuguese, Italian.
 export const translations = {
 "Perception":["Perception", "Perceptie", "Percepción", "Wahrnehmung", "Perceção", "Percezione"],
@@ -2050,3 +2051,5 @@ Object.assign(translations, {
     "Correggi il file package.xml di questo pacchetto prima di aggiungere esempi. I file esistenti vengono conservati."
   ]
 });
+
+Object.assign(translations,courseTranslations);
