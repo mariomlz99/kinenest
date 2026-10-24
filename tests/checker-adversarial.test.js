@@ -119,3 +119,14 @@ test('action evidence accepts alternate names and valid output, but not another 
   await program(lab,'talker','/alternate_server');assert(lessonChecks(lab,6).every(c=>!c.passed),'a fresh server must earn its own action evidence');
  }finally{lab.reset();}
 });
+
+test('a successful action counterexample invalidates earlier completion credit for that server',async()=>{
+ const lab=await fixture();try{
+  const server=await program(lab,'talker','/server'),client=await program(lab,'listener','/client'),a=lab.runtime.actions,owner=server.adapter.owner,type='action_tutorials_interfaces/action/Fibonacci';
+  a.register('/fibonacci',type,'/server',owner,()=>{});
+  const finish=(order,caller,sequence)=>{const id=a.goal('/fibonacci',type,{order},caller,()=>{});a.serverEvent(owner,id,'accepted',{accepted:true});a.serverEvent(owner,id,'result',{status:4,result:{sequence}});};
+  finish(6,client.adapter.owner,[0,1,1,2,3,5]);assert.equal(lessonChecks(lab,6)[1].passed,true);
+  finish(9,987654,[0,1,1,2,3,5]);assert.equal(lessonChecks(lab,6)[1].passed,false,'A new CLI counterexample must invalidate old program-client success');
+  finish(6,client.adapter.owner,[0,1,1,2,3,5]);assert.equal(lessonChecks(lab,6)[1].passed,false,'Later correct output cannot conceal the same server counterexample');
+ }finally{lab.reset();}
+});
