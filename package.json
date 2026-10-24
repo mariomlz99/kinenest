@@ -24,7 +24,8 @@
     "test:unit-language": "node scripts/unit-language-check.mjs",
     "test:python-spin": "node scripts/python-spin-check.mjs",
     "test:product-regressions": "node scripts/product-regressions-check.mjs && node scripts/course-localization-check.mjs",
-    "test:keyboard-focus": "node scripts/keyboard-focus-check.mjs"
+    "test:keyboard-focus": "node scripts/keyboard-focus-check.mjs",
+    "test:long-output": "node scripts/long-output-check.mjs"
   },
   "dependencies": {
     "@codemirror/autocomplete": "6.20.3",
