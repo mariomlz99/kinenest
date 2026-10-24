@@ -223,15 +223,15 @@ async function start(){const loaded=await restoreCompiledModules(await loadSessi
  updateProgress();
  const restoredNavigation=navigation.load({unitIndex,language,guidePositions:[...guidePositions]},stored?.savedAt??0);
  unitIndex=restoredNavigation.unitIndex;language=restoredNavigation.language;guidePositions.clear();for(const [key,value]of restoredNavigation.guidePositions)guidePositions.set(key,value);$('#language').value=language;
- let signature='',saving=false,savePending=false;
+ let signature='',saving=false,savePending=false,sessionConflict=false;
  const persist=async(force=false)=>{
-  if(preparing)return;const ui=currentSessionUI();navigation.save(ui);if(saving){if(force){savePending=true;$('#session-state').textContent='Saving session…';}return;}
+  if(preparing||sessionConflict)return;const ui=currentSessionUI();navigation.save(ui);if(saving){if(force){savePending=true;$('#session-state').textContent='Saving session…';}return;}
   const current=JSON.stringify([lab.fs.revision,ui,[...lab.terminals.values()].map(t=>[t.cwd,t.env,t.vars,[...t.overlays],t.history,t.completedCommands]),!!lab.exported]);
   if(!force&&current===signature)return;
-  saving=true;$('#session-state').textContent='Saving session…';try{const record=captureSession(lab,ui);record.slots=Object.fromEntries([...sessionSlots].map(([scope,state])=>[scope,state.record??captureSession(state.lab,state.ui)]));await saveSession(record);signature=current;if(!savePending)$('#session-state').textContent='Progress saved in this browser';}catch(error){$('#session-state').textContent='Session could not be saved. Export your workspace to keep a copy.';console.error(error);}finally{saving=false;if(savePending){savePending=false;persist(true);}}
+  saving=true;$('#session-state').textContent='Saving session…';try{const record=captureSession(lab,ui);record.slots=Object.fromEntries([...sessionSlots].map(([scope,state])=>[scope,state.record??captureSession(state.lab,state.ui)]));await saveSession(record);signature=current;if(!savePending)$('#session-state').textContent='Progress saved in this browser';}catch(error){if(error.code==='SESSION_CONFLICT'){sessionConflict=true;savePending=false;$('#session-state').textContent="Another tab saved newer work. Changes in this tab are not saved. Export your source workspace before closing or reloading.";}else{$('#session-state').textContent='Session could not be saved. Export your workspace to keep a copy.';console.error(error);}}finally{saving=false;if(savePending){savePending=false;persist(true);}}
  };
  $('#save-session').onclick=()=>persist(true);setInterval(()=>persist(),1500);document.addEventListener('visibilitychange',()=>{if(document.hidden)persist();});
- renderUnit();refresh();window.addEventListener('beforeunload',e=>{if(activeFile&&editor.value!==saved||views.some(v=>v.nano?.buffer.dirty)){e.preventDefault();e.returnValue='';}});
+ renderUnit();refresh();window.addEventListener('beforeunload',e=>{if(sessionConflict||activeFile&&editor.value!==saved||views.some(v=>v.nano?.buffer.dirty)){e.preventDefault();e.returnValue='';}});
 }
 if(TF_MODE){document.body.dataset.module='tf';document.title='KineNest · TF & Odometry';$('#app .eyebrow').textContent=MODULE_NAME;$('#app h1').textContent='Understand robot frames and motion.';$('#app h1 + p').textContent='Five exercises. Your own mini-simulator, Python and C++ workspace.';$('#start').textContent='Start TF & Odometry';}
 $('#start').onclick=async()=>{document.documentElement.classList.add('workspace-loading');$('#start').disabled=true;try{await start();await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));}catch(e){console.error(e);$('#app').append(el('p',e.message));}finally{document.documentElement.classList.remove('workspace-loading');}};

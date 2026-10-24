@@ -7,7 +7,7 @@ export function sessionProgress(record){return (record?.ui?.unitIndex>=7?(record
 export async function syncSavedModuleProgress(){
  for(const [module,name] of [['linux','kinenest-linux-session'],['ros','kinenest-basics-session']]){
   try{const record=await new Promise((resolve,reject)=>{
-   const request=indexedDB.open(name,1);let absent=false;
+   const request=indexedDB.open(name);let absent=false;
    request.onupgradeneeded=()=>{absent=true;request.transaction.abort();};
    request.onerror=()=>absent?resolve(null):reject(request.error);
    request.onsuccess=()=>{const db=request.result;if(!db.objectStoreNames.contains('sessions')){db.close();resolve(null);return;}const read=db.transaction('sessions').objectStore('sessions').get('current');read.onsuccess=()=>{db.close();resolve(read.result);};read.onerror=()=>{db.close();reject(read.error);};};
